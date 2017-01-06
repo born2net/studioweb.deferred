@@ -40,4 +40,4 @@ src/**/*.map
 Thumbs.db
 
 !service-worker.js
-!SignageSDK.js
+!signageSDK.js
