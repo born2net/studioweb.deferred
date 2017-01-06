@@ -10,7 +10,6 @@
  new: https://js.signage.me/SignageSDK_combined.js
  hosted: http://go.digitalsignage.com
  **/
-
 if (window.g_protocol == undefined) {
     window.g_protocol = "https://";
 }
