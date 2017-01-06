@@ -14,7 +14,6 @@ import ICanvas = fabric.ICanvas;
                <h2>Dashboard</h2>
                <h4>user name: {{(userModel$ | async)?.getUser() }}</h4>
                <h4>account type: {{(userModel$ | async)?.getAccountType()}}</h4>
-               
                <canvas #canvas width="300" height="300"></canvas>
                <button (click)="setZoom()">zoom</button>
                
