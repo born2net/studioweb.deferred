@@ -29,8 +29,6 @@ testem.log
 
 #include
 !index.js
-!service-worker.js
-!./src/service-worker.js
 !/typings
 
 # js/map
@@ -40,4 +38,5 @@ src/**/*.map
 #System Files
 .DS_Store
 Thumbs.db
-!server/express-twofactor.js
+
+!service-worker.js
