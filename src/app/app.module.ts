@@ -45,6 +45,7 @@ import {Tabs} from "../comps/tabs/tabs";
 import {InputEdit} from "../comps/inputedit/InputEdit";
 import {Twofactor} from "../comps/twofactor/Twofactor";
 import "hammerjs";
+import "fabric";
 
 export var providing = [CommBroker, AUTH_PROVIDERS,
     {
