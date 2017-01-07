@@ -105,21 +105,18 @@ export class AppDbEffects {
         this.store.dispatch({type: EFFECT_UPDATE_USER_MODEL, payload: userModel});
 
         return this.redPepperService.dbConnect(userModel.user(), userModel.pass()).take(1).map((pepperConnection: IPepperConnection) => {
-
             if (pepperConnection.pepperAuthReply.status == false) {
                 userModel = userModel.setAuthenticated(false);
                 userModel = userModel.setAccountType(-1);
                 this.store.dispatch({type: EFFECT_UPDATE_USER_MODEL, payload: userModel});
                 this.store.dispatch({type: EFFECT_AUTH_STATUS, payload: AuthenticateFlags.WRONG_PASS});
                 return;
-
             } else {
-                if (pepperConnection.pepperAuthReply.warning == 'not a studioLite account'){
+                if (pepperConnection.pepperAuthReply.warning == 'not a studioLite account') {
                     console.log('pro account');
                 } else {
                     console.log('lite account');
                 }
-
                 userModel = userModel.setAuthenticated(true);
                 userModel = userModel.setAccountType(AuthenticateFlags.USER_ACCOUNT);
                 this.store.dispatch({type: EFFECT_UPDATE_USER_MODEL, payload: userModel});
@@ -127,18 +124,13 @@ export class AppDbEffects {
                     type: EFFECT_AUTH_STATUS, payload: AuthenticateFlags.USER_ACCOUNT
                 });
 
-                //todo: currently if logging in with enterprise account, dbConnect will timeout, Alon needs to fix so we can dispatch code below
+                //todo: currently if logging in with enterprise account, dbConnect will timeout, Alon needs to fix and we can dispatch code below
                 // userModel = userModel.setAuthenticated(true);
                 // userModel = userModel.setAccountType(AuthenticateFlags.ENTERPRISE_ACCOUNT);
                 // this.store.dispatch({type: EFFECT_UPDATE_USER_MODEL, payload: userModel});
                 // this.store.dispatch({
                 //     type: EFFECT_AUTH_STATUS, payload: AuthenticateFlags.ENTERPRISE_ACCOUNT
                 // });
-
-
-
-
-
             }
 
             // if passed check for two factor
@@ -162,36 +154,7 @@ export class AppDbEffects {
                         }
                     })
             }
-
-            // this.store.select(store => store.appDb.appBaseUrl)
-            //     .take(1)
-            //     .mergeMap(baseUrl => {
-            //         const url = `${baseUrl}?command=GetCustomers&resellerUserName=${userModel.user()}&resellerPassword=${userModel.pass()}`;
-            //         return this.http.get(url)
-            //             .catch((err: any) => {
-            //                 alert('Error getting order details');
-            //                 return Observable.throw(err);
-            //             })
-            //             .finally(() => {
-            //             })
-            //             .map(res => {
-            //                 return res.text()
-            //             }).flatMap((i_xmlData: string) => {
-            //                 const boundCallback = Observable.bindCallback(this.processXml, (xmlData: any) => xmlData);
-            //                 return boundCallback(this, i_xmlData)
-            //             }).map(result => {
-            //
-            //
-            //             })
-            //     })
-
-        })
-
-        // this.redPepperService.dbConnect(userModel.user(), userModel.pass(), (result:{[key: string]: string}) => {
-        //     console.log(result);
-        // })
-
-
+        });
     }
 
     private processXml(context, xmlData, cb) {
@@ -217,3 +180,29 @@ export class AppDbEffects {
             })
     }
 }
+
+
+// this.store.select(store => store.appDb.appBaseUrl)
+//     .take(1)
+//     .mergeMap(baseUrl => {
+//         const url = `${baseUrl}?command=GetCustomers&resellerUserName=${userModel.user()}&resellerPassword=${userModel.pass()}`;
+//         return this.http.get(url)
+//             .catch((err: any) => {
+//                 alert('Error getting order details');
+//                 return Observable.throw(err);
+//             })
+//             .finally(() => {
+//             })
+//             .map(res => {
+//                 return res.text()
+//             }).flatMap((i_xmlData: string) => {
+//                 const boundCallback = Observable.bindCallback(this.processXml, (xmlData: any) => xmlData);
+//                 return boundCallback(this, i_xmlData)
+//             }).map(result => {
+//
+//
+//             })
+//     })
+// this.redPepperService.dbConnect(userModel.user(), userModel.pass(), (result:{[key: string]: string}) => {
+//     console.log(result);
+// })
