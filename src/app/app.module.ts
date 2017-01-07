@@ -6,6 +6,7 @@ import {AlertModule, ModalModule} from "ng2-bootstrap/ng2-bootstrap";
 import {Ng2Bs3ModalModule} from "ng2-bs3-modal/ng2-bs3-modal";
 import {AppComponent} from "./app.component";
 import {LocalStorage} from "../services/LocalStorage";
+import {RedPepperService} from "../services/redpepper.service";
 import {MsLibModule} from "ng-mslib/dist/mslib.module";
 import {ToastModule} from "ng2-toastr";
 import {DropdownModule, AccordionModule} from "ng2-bootstrap";
@@ -47,19 +48,7 @@ import {Twofactor} from "../comps/twofactor/Twofactor";
 import "hammerjs";
 import "fabric";
 
-export var providing = [CommBroker, AUTH_PROVIDERS,
-    {
-        provide: LocalStorage,
-        useClass: LocalStorage
-    },
-    {
-        provide: StoreService,
-        useClass: StoreService
-    },
-    {
-        provide: AppdbAction,
-        useClass: AppdbAction
-    },
+export var providing = [CommBroker, AUTH_PROVIDERS, RedPepperService, LocalStorage, StoreService, AppdbAction,
     {
         provide: "DEV_ENV",
         useValue: Ngmslib.DevMode()
@@ -71,7 +60,7 @@ export var providing = [CommBroker, AUTH_PROVIDERS,
 ];
 
 
-var decelerations = [AppComponent, AutoLogin, LoginPanel, Logo, App1, Account, Dashboard, Privileges, Tabs, Tab, Sliderpanel, Slideritem, Orders, Logout, InputEdit, Twofactor, NgMenu, NgMenuItem, ImgLoader, BlurForwarder, ];
+var decelerations = [AppComponent, AutoLogin, LoginPanel, Logo, App1, Account, Dashboard, Privileges, Tabs, Tab, Sliderpanel, Slideritem, Orders, Logout, InputEdit, Twofactor, NgMenu, NgMenuItem, ImgLoader, BlurForwarder,];
 
 @NgModule({
     declarations: [decelerations],
@@ -118,8 +107,6 @@ var decelerations = [AppComponent, AutoLogin, LoginPanel, Logo, App1, Account, D
     providers: [providing],
     bootstrap: [AppComponent]
 })
-export class AppModule {
-    constructor() {
-    }
 
+export class AppModule {
 }

@@ -12,6 +12,7 @@ import {Observable} from "rxjs";
 import * as _ from "lodash";
 import {UserModel} from "../../models/UserModel";
 import {AuthenticateFlags} from "../actions/app-db-actions";
+import {RedPepperService, IPepperConnection} from "../../services/redpepper.service";
 
 export const EFFECT_AUTH_START = 'EFFECT_AUTH_START';
 export const EFFECT_AUTH_END = 'EFFECT_AUTH_END';
@@ -28,6 +29,7 @@ export class AppDbEffects {
     constructor(private actions$: Actions,
                 @Inject('OFFLINE_ENV') private offlineEnv,
                 private store: Store<ApplicationState>,
+                private redPepperService: RedPepperService,
                 private http: Http) {
         this.parseString = xml2js.parseString;
     }
@@ -102,71 +104,94 @@ export class AppDbEffects {
         let userModel: UserModel = action.payload;
         this.store.dispatch({type: EFFECT_UPDATE_USER_MODEL, payload: userModel});
 
-        return this.store.select(store => store.appDb.appBaseUrl)
-            .take(1)
-            .mergeMap(baseUrl => {
-                const url = `${baseUrl}?command=GetCustomers&resellerUserName=${userModel.user()}&resellerPassword=${userModel.pass()}`;
-                return this.http.get(url)
-                    .catch((err: any) => {
-                        alert('Error getting order details');
-                        return Observable.throw(err);
-                    })
-                    .finally(() => {
-                    })
-                    .map(res => {
-                        return res.text()
-                    }).flatMap((i_xmlData: string) => {
-                        const boundCallback = Observable.bindCallback(this.processXml, (xmlData: any) => xmlData);
-                        return boundCallback(this, i_xmlData)
-                    }).map(result => {
+        return this.redPepperService.dbConnect(userModel.user(), userModel.pass()).take(1).map((pepperConnection: IPepperConnection) => {
 
-                        if (_.isNull(result)) {
-                            userModel = userModel.setAuthenticated(false);
-                            userModel = userModel.setAccountType(-1);
-                            this.store.dispatch({type: EFFECT_UPDATE_USER_MODEL, payload: userModel});
-                            this.store.dispatch({type: EFFECT_AUTH_STATUS, payload: AuthenticateFlags.WRONG_PASS});
-                            return;
+            if (pepperConnection.pepperAuthReply.status == false) {
+                userModel = userModel.setAuthenticated(false);
+                userModel = userModel.setAccountType(-1);
+                this.store.dispatch({type: EFFECT_UPDATE_USER_MODEL, payload: userModel});
+                this.store.dispatch({type: EFFECT_AUTH_STATUS, payload: AuthenticateFlags.WRONG_PASS});
+                return;
 
-                        } else if (result && !result.Businesses) {
-                            userModel = userModel.setAuthenticated(true);
-                            userModel = userModel.setAccountType(AuthenticateFlags.USER_ACCOUNT);
-                            this.store.dispatch({type: EFFECT_UPDATE_USER_MODEL, payload: userModel});
+            } else {
+                if (pepperConnection.pepperAuthReply.warning == 'not a studioLite account'){
+                    console.log('pro account');
+                } else {
+                    console.log('lite account');
+                }
+
+                userModel = userModel.setAuthenticated(true);
+                userModel = userModel.setAccountType(AuthenticateFlags.USER_ACCOUNT);
+                this.store.dispatch({type: EFFECT_UPDATE_USER_MODEL, payload: userModel});
+                this.store.dispatch({
+                    type: EFFECT_AUTH_STATUS, payload: AuthenticateFlags.USER_ACCOUNT
+                });
+
+                //todo: currently if logging in with enterprise account, dbConnect will timeout, Alon needs to fix so we can dispatch code below
+                // userModel = userModel.setAuthenticated(true);
+                // userModel = userModel.setAccountType(AuthenticateFlags.ENTERPRISE_ACCOUNT);
+                // this.store.dispatch({type: EFFECT_UPDATE_USER_MODEL, payload: userModel});
+                // this.store.dispatch({
+                //     type: EFFECT_AUTH_STATUS, payload: AuthenticateFlags.ENTERPRISE_ACCOUNT
+                // });
+
+
+
+
+
+            }
+
+            // if passed check for two factor
+            if (userModel.getAuthenticated()) {
+                this.twoFactorCheck()
+                    .take(1)
+                    .subscribe((twoFactorResult) => {
+                        userModel = userModel.setBusinessId(twoFactorResult.businessId);
+                        userModel = userModel.setTwoFactorRequired(twoFactorResult.enabled);
+                        this.store.dispatch({type: EFFECT_UPDATE_USER_MODEL, payload: userModel});
+                        if (twoFactorResult.enabled) {
                             this.store.dispatch({
-                                type: EFFECT_AUTH_STATUS, payload: AuthenticateFlags.USER_ACCOUNT
+                                type: EFFECT_AUTH_STATUS,
+                                payload: AuthenticateFlags.TWO_FACTOR_ENABLED
                             });
-
                         } else {
-                            userModel = userModel.setAuthenticated(true);
-                            userModel = userModel.setAccountType(AuthenticateFlags.ENTERPRISE_ACCOUNT);
-                            this.store.dispatch({type: EFFECT_UPDATE_USER_MODEL, payload: userModel});
                             this.store.dispatch({
-                                type: EFFECT_AUTH_STATUS, payload: AuthenticateFlags.ENTERPRISE_ACCOUNT
+                                type: EFFECT_AUTH_STATUS,
+                                payload: AuthenticateFlags.AUTH_PASS_NO_TWO_FACTOR
                             });
                         }
-
-                        // if passed check for two factor
-                        if (userModel.getAuthenticated()) {
-                            this.twoFactorCheck()
-                                .take(1)
-                                .subscribe((twoFactorResult) => {
-                                    userModel = userModel.setBusinessId(twoFactorResult.businessId);
-                                    userModel = userModel.setTwoFactorRequired(twoFactorResult.enabled);
-                                    this.store.dispatch({type: EFFECT_UPDATE_USER_MODEL, payload: userModel});
-                                    if (twoFactorResult.enabled) {
-                                        this.store.dispatch({
-                                            type: EFFECT_AUTH_STATUS,
-                                            payload: AuthenticateFlags.TWO_FACTOR_ENABLED
-                                        });
-                                    } else {
-                                        this.store.dispatch({
-                                            type: EFFECT_AUTH_STATUS,
-                                            payload: AuthenticateFlags.AUTH_PASS_NO_TWO_FACTOR
-                                        });
-                                    }
-                                })
-                        }
                     })
-            })
+            }
+
+            // this.store.select(store => store.appDb.appBaseUrl)
+            //     .take(1)
+            //     .mergeMap(baseUrl => {
+            //         const url = `${baseUrl}?command=GetCustomers&resellerUserName=${userModel.user()}&resellerPassword=${userModel.pass()}`;
+            //         return this.http.get(url)
+            //             .catch((err: any) => {
+            //                 alert('Error getting order details');
+            //                 return Observable.throw(err);
+            //             })
+            //             .finally(() => {
+            //             })
+            //             .map(res => {
+            //                 return res.text()
+            //             }).flatMap((i_xmlData: string) => {
+            //                 const boundCallback = Observable.bindCallback(this.processXml, (xmlData: any) => xmlData);
+            //                 return boundCallback(this, i_xmlData)
+            //             }).map(result => {
+            //
+            //
+            //             })
+            //     })
+
+        })
+
+        // this.redPepperService.dbConnect(userModel.user(), userModel.pass(), (result:{[key: string]: string}) => {
+        //     console.log(result);
+        // })
+
+
     }
 
     private processXml(context, xmlData, cb) {

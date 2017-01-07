@@ -103,8 +103,8 @@ import {AuthenticateFlags} from "../../store/actions/app-db-actions";
                `
 })
 export class LoginPanel extends Compbaser {
-    private m_user: string = 'js1@ms.com';
-    private m_pass: string = 'aaa';
+    private m_user: string = 'lite90@ms.com';
+    private m_pass: string = '123123';
     private m_twoFactor: string;
     private m_showTwoFactor: boolean = false;
     private m_rememberMe: any;
