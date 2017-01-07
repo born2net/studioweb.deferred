@@ -32,6 +32,9 @@ declare module "*.json" {
   export default value;
 }
 
+declare class  LoaderManager {
+  create:any;
+}
 
 declare module 'xml2js' {
   var parseString;

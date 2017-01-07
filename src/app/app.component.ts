@@ -8,6 +8,7 @@ import {Ngmslib} from "ng-mslib";
 import {Consts} from "../Conts";
 import {Observable} from "rxjs";
 import * as packageJson from "../../package.json";
+import * as _ from 'lodash';
 import {AuthService} from "../services/AuthService";
 import {LocalStorage} from "../services/LocalStorage";
 
@@ -42,6 +43,29 @@ export class AppComponent {
         });
         Ngmslib.GlobalizeStringJS();
         console.log(StringJS('app-loaded-and-ready').humanize().s);
+
+        var user = 'x1@ms.com';
+        var pass = '123123';
+        var loaderManager = new LoaderManager();
+        loaderManager.create(user, pass, (i_result) => {
+            if (i_result.status) {
+                var domain = loaderManager['m_domain'];
+                var resellerInfo =  loaderManager['m_resellerInfo'];
+                var whiteLabel = parseInt($(resellerInfo).find('WhiteLabel').attr('enabled'));
+                var resellerId = parseInt($(resellerInfo).find('BusinessInfo').attr('businessId'));
+                var resellerName = $(resellerInfo).find('BusinessInfo').attr('name');
+                var businessID = loaderManager['m_businessId'];
+                var eri = loaderManager['m_eri'];
+                var authTime = Date.now();
+                var components = jQuery(resellerInfo).find('InstalledApps').find('App');
+                var installComponents = {};
+                _.each(components, function (component) {
+                    if (Number(jQuery(component).attr('installed')) == 1)
+                        installComponents[jQuery(component).attr('id')] = 1;
+                });
+            }
+        });
+
     }
 
     ngOnInit() {
