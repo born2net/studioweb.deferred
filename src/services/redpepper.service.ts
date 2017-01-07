@@ -67,6 +67,7 @@ export class RedPepperService {
                 // var resellerName = $(resellerInfo).find('BusinessInfo').attr('name');
                 // var businessID = loaderManager['m_businessId'];
                 // var eri = loaderManager['m_eri'];
+
                 // var authTime = Date.now();
                 // var components = jQuery(resellerInfo).find('InstalledApps').find('App');
                 // var installComponents = {};

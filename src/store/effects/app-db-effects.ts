@@ -105,20 +105,36 @@ export class AppDbEffects {
         this.store.dispatch({type: EFFECT_UPDATE_USER_MODEL, payload: userModel});
 
         return this.redPepperService.dbConnect(userModel.user(), userModel.pass()).take(1).map((pepperConnection: IPepperConnection) => {
+
             if (pepperConnection.pepperAuthReply.status == false) {
                 userModel = userModel.setAuthenticated(false);
                 userModel = userModel.setAccountType(-1);
                 this.store.dispatch({type: EFFECT_UPDATE_USER_MODEL, payload: userModel});
                 this.store.dispatch({type: EFFECT_AUTH_STATUS, payload: AuthenticateFlags.WRONG_PASS});
                 return;
+
             } else {
+
                 if (pepperConnection.pepperAuthReply.warning == 'not a studioLite account') {
-                    console.log('pro account');
+                    console.log('pro account!!');
                 } else {
                     console.log('lite account');
                 }
+
+                var resellerDataString =  pepperConnection.loadManager.m_resellerInfo.children[0].innerHTML
+                var resellerDataJson;
+                const boundCallback = Observable.bindCallback(this.processXml, (xmlData: any) => xmlData);
+                boundCallback(this, resellerDataString).subscribe((i_resellerDataJson)=>{
+                    resellerDataJson = i_resellerDataJson;
+                })
                 userModel = userModel.setAuthenticated(true);
                 userModel = userModel.setAccountType(AuthenticateFlags.USER_ACCOUNT);
+                userModel = userModel.setResellerInfo(pepperConnection.loadManager.m_resellerInfo);
+                userModel = userModel.setResellerName(jQuery(pepperConnection.loadManager.m_resellerInfo).find('BusinessInfo').attr('name'));
+                userModel = userModel.setResellerId(Number(jQuery(pepperConnection.loadManager.m_resellerInfo).find('BusinessInfo').attr('businessId')));
+                userModel = userModel.setEri(pepperConnection.loadManager.m_eri);
+                userModel = userModel.setResellerWhiteLabel(resellerDataJson);
+
                 this.store.dispatch({type: EFFECT_UPDATE_USER_MODEL, payload: userModel});
                 this.store.dispatch({
                     type: EFFECT_AUTH_STATUS, payload: AuthenticateFlags.USER_ACCOUNT

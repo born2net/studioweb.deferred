@@ -66,6 +66,26 @@ export class UserModel extends StoreModel {
         return this.setKey<UserModel>(UserModel, 'accountType', value);
     }
 
+    setResellerInfo(value:XMLDocument) {
+        return this.setKey<UserModel>(UserModel, 'resellerInfo', value);
+    }
+
+    setResellerId(value:number) {
+        return this.setKey<UserModel>(UserModel, 'resellerId', value);
+    }
+
+    setResellerName(value:string) {
+        return this.setKey<UserModel>(UserModel, 'resellerName', value);
+    }
+
+    setEri(value:string) {
+        return this.setKey<UserModel>(UserModel, 'eri', value);
+    }
+
+    setResellerWhiteLabel(value:{[key: string]: string}) {
+        return this.setKey<UserModel>(UserModel, 'resellerWhiteLabelJson', value);
+    }
+
     getAccountType(): boolean {
         return this.getKey('accountType');
     }
