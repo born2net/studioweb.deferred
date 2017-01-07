@@ -122,7 +122,8 @@ export class AppDbEffects {
                 }
 
                 var resellerDataString =  pepperConnection.loadManager.m_resellerInfo.children[0].innerHTML
-                var resellerDataJson;
+                // console.log(resellerDataString);
+                var resellerDataJson = {};
                 const boundCallback = Observable.bindCallback(this.processXml, (xmlData: any) => xmlData);
                 boundCallback(this, resellerDataString).subscribe((i_resellerDataJson)=>{
                     resellerDataJson = i_resellerDataJson;
