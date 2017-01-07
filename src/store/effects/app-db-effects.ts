@@ -121,18 +121,26 @@ export class AppDbEffects {
                     console.log('lite account');
                 }
 
-                var resellerDataString =  pepperConnection.loadManager.m_resellerInfo.children[0].innerHTML
+                var resellerDataString = pepperConnection.loadManager.m_resellerInfo.children[0].innerHTML
                 // console.log(resellerDataString);
                 var resellerDataJson = {};
                 const boundCallback = Observable.bindCallback(this.processXml, (xmlData: any) => xmlData);
-                boundCallback(this, resellerDataString).subscribe((i_resellerDataJson)=>{
+                boundCallback(this, resellerDataString).subscribe((i_resellerDataJson) => {
                     resellerDataJson = i_resellerDataJson;
                 })
                 userModel = userModel.setAuthenticated(true);
                 userModel = userModel.setAccountType(AuthenticateFlags.USER_ACCOUNT);
                 userModel = userModel.setResellerInfo(pepperConnection.loadManager.m_resellerInfo);
-                userModel = userModel.setResellerName(jQuery(pepperConnection.loadManager.m_resellerInfo).find('BusinessInfo').attr('name'));
-                userModel = userModel.setResellerId(Number(jQuery(pepperConnection.loadManager.m_resellerInfo).find('BusinessInfo').attr('businessId')));
+                userModel = userModel.setResellerName(
+                    jQuery(pepperConnection.loadManager.m_resellerInfo)
+                        .find('BusinessInfo')
+                        .attr('name')
+                );
+                userModel = userModel.setResellerId(
+                    Number(jQuery(pepperConnection.loadManager.m_resellerInfo)
+                        .find('BusinessInfo')
+                        .attr('businessId'))
+                );
                 userModel = userModel.setEri(pepperConnection.loadManager.m_eri);
                 userModel = userModel.setResellerWhiteLabel(resellerDataJson);
 
