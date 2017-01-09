@@ -15,6 +15,10 @@ export function storeData(state: StoreData, action: Action): StoreData {
             state.msdb.table_resources = state.msdb.table_resources.push(r);
             return state;
 
+        case 'ADDED_CAMPAIGN':
+            state.msdb.table_campaigns = action.payload;
+            return state;
+
 
         case 'MSDB2': {
             state.msdb = action.payload;

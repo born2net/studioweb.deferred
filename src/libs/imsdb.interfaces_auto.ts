@@ -1,4 +1,8 @@
 
+//---------------------------------------------------------------------------------------------------------
+
+//file: imsdb.interfaces_auto.ts
+
 import {List} from 'immutable';
 import * as Modals from "../models/msdb.modals_auto";
 
@@ -97,25 +101,25 @@ export const TableNames = [
 export interface IBaseProto {
     m_name:string;
     fields:Array<any>
-    addData: () => any;
-    getHandle: () => any;
-    setRecordId: () => any;
+    addData: (i_xmlTable) => any;
+    getHandle: (i_id) => any;
+    setRecordId: (i_handle,i_id) => any;
     createRecord: () => any;
-    addRecord: () => any;
-    getRec: () => any;
+    addRecord: (i_record,i_handle) => any;
+    getRec: (i_handle) => any;
     getAllPrimaryKeys: () => any;
-    openForEdit: () => any;
-    openForDelete: () => any;
-    appendModifyAndNewChangelist: () => any;
-    appendDeletedChangelist: () => any;
-    getPlayerDataIds: () => any;
-    convertToIds: () => any;
-    createPlayId: () => any;
+    openForEdit: (i_handel) => any;
+    openForDelete: (i_handel) => any;
+    appendModifyAndNewChangelist: (i_doc) => any;
+    appendDeletedChangelist: (i_doc) => any;
+    getPlayerDataIds: (i_playerData) => any;
+    convertToIds: (i_docPlayerData) => any;
+    createPlayId: (i_xmlPlayer) => any;
     getNewPrimaryKeys: () => any;
     getModifyPrimaryKeys: () => any;
     getDeletedPrimaryKeys: () => any;
     getConflictPrimaryKeys: () => any;
-    commitChanges: () => any;
+    commitChanges: (i_changelistId) => any;
 
 }
 

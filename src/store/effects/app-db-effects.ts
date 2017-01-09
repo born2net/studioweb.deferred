@@ -41,6 +41,12 @@ export class AppDbEffects {
             return {type: 'MSDB', payload: db}
         })
 
+    @Effect() addCampaign: Observable<Action> = this.actions$.ofType('ADD_CAMPAIGN')
+        .map(()=>{
+            var db = this.redPepperService.addCampaign('foo');
+            return {type: 'ADDED_CAMPAIGN', payload: db}
+        })
+
     @Effect({dispatch: true}) authTwoFactor$: Observable<Action> = this.actions$.ofType(EFFECT_TWO_FACTOR_AUTH)
         .switchMap(action => this.authTwoFactor(action))
         .map(authStatus => ({type: EFFECT_AUTH_END, payload: authStatus}));

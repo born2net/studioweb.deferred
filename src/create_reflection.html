@@ -38,6 +38,16 @@ http://127.0.0.1:8080/src/create_reflection.html
 
     loaderManager.create('d25@ms.com', "123123", function (v) {
 
+        function getAargs(func) {
+            return (func + '')
+                .replace(/[/][/].*$/mg,'') // strip single-line comments
+                .replace(/\s+/g, '') // strip white space
+                .replace(/[/][*][^/*]*[*][/]/g, '') // strip multi-line comments
+                .split('){', 1)[0].replace(/^[^(]*[(]/, '') // extract the parameters
+                .replace(/=[^,]+/g, '') // strip any ES6 defaults
+                .split(',').filter(Boolean); // split & filter [""]
+        }
+
         var allTables = '\nexport const TableNames = [\n';
         _.forEach(msdb.m_selectedDataBase.m_tableList, (k, v) => {
             allTables = `    ${allTables}       '${k}',\n`
@@ -49,8 +59,9 @@ http://127.0.0.1:8080/src/create_reflection.html
 
         var functions = 'm_name:string;\n';
         functions = functions + '    fields:Array&lt;any&gt;\n';
-        _.forEach(tableProto, (k, funcName) => {
-            functions = functions + `    ${funcName}: () => any;\n`
+        _.forEach(tableProto, (func, funcName) => {
+            var args = getAargs(func).join(',');
+            functions = functions + `    ${funcName}: (${args}) => any;\n`
         })
 
         var baseProto = `
@@ -146,7 +157,7 @@ ${breakHr}
 //file: imsdb.interfaces_auto.ts
 
 import {List} from 'immutable';
-import * as Modals from "../models/msdb.modals";
+import * as Modals from "../models/msdb.modals_auto";
 
 ${allReduxStores}
 

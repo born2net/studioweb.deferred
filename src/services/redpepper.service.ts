@@ -70,8 +70,19 @@ export class RedPepperService {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
-    public reduxifyMsTable(tableNameTarget?:string):{[tableName: string]: List<StoreModel>} {
-        var db:{[tableName: string]: List<StoreModel>} = {};
+    public addCampaign(i_campaignName): { [tableName: string]: List<StoreModel> } {
+        var campaigns = this.databaseManager.table_campaigns();
+        var campaign = campaigns.createRecord();
+        campaign.campaign_name = i_campaignName;
+        campaigns.addRecord(campaign,undefined);
+        var id = campaign['campaign_id'];
+        var db:any = this.reduxifyMsTable('campaigns')
+        return db.table_campaigns;
+
+    }
+
+    public reduxifyMsTable(tableNameTarget?: string): { [tableName: string]: List<StoreModel> } {
+        var db: { [tableName: string]: List<StoreModel> } = {};
         var tablesNames = tableNameTarget ? [tableNameTarget] : TableNames;
         tablesNames.forEach((table, v) => {
             var tableName = 'table_' + table;
@@ -87,33 +98,33 @@ export class RedPepperService {
         });
         return db;
     }
-
-    // /**
-    //  Get a list of all campaigns per the account
-    //  @method getCampaignIDs
-    //  @return {Array} campaigns
-    //  **/
-    // public getCampaignIDs() {
-    //     let campaigns = [];
-    //     // var aa = this.m_msdb.table_campaigns();
-    //     // this.store.dispatch({type: 'MSDB', payload: this.databaseManager})
-    //
-    //     // setTimeout(()=>{
-    //     //     this.store.dispatch({type: 'MSDB2', payload: this.databaseManager})
-    //     // },1000)
-    //
-    //     // var a = this.databaseManager.table_campaigns().getAllPrimaryKeys();
-    //     // var b = this.databaseManager.table_campaigns()
-    //
-    //     // var c = this.m_msdb.table_campaigns().m_fields[2].field
-    //     // var d = this.m_msdb.table_campaigns().m_fields[0].isNullAble;
-    //     // var e = this.m_msdb.table_campaigns().m_fields[1].field;
-    //
-    //
-    //     // $(this.m_msdb.table_campaigns().getAllPrimaryKeys()).each(function (k, campaign_id) {$(this.m_msdb.table_campaigns().getAllPrimaryKeys()).each(function (k, campaign_id) {
-    //     //     campaigns.push(campaign_id);
-    //     // });
-    //     return campaigns;
-    // }
-
 }
+
+
+// /**
+//  Get a list of all campaigns per the account
+//  @method getCampaignIDs
+//  @return {Array} campaigns
+//  **/
+// public getCampaignIDs() {
+//     let campaigns = [];
+//     // var aa = this.m_msdb.table_campaigns();
+//     // this.store.dispatch({type: 'MSDB', payload: this.databaseManager})
+//
+//     // setTimeout(()=>{
+//     //     this.store.dispatch({type: 'MSDB2', payload: this.databaseManager})
+//     // },1000)
+//
+//     // var a = this.databaseManager.table_campaigns().getAllPrimaryKeys();
+//     // var b = this.databaseManager.table_campaigns()
+//
+//     // var c = this.m_msdb.table_campaigns().m_fields[2].field
+//     // var d = this.m_msdb.table_campaigns().m_fields[0].isNullAble;
+//     // var e = this.m_msdb.table_campaigns().m_fields[1].field;
+//
+//
+//     // $(this.m_msdb.table_campaigns().getAllPrimaryKeys()).each(function (k, campaign_id) {$(this.m_msdb.table_campaigns().getAllPrimaryKeys()).each(function (k, campaign_id) {
+//     //     campaigns.push(campaign_id);
+//     // });
+//     return campaigns;
+// }

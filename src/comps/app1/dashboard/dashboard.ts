@@ -44,8 +44,8 @@ export class Dashboard extends Compbaser {
 
         setTimeout(()=>{
             this.store.dispatch({type:'UPD_TABLE_RESOURCES'})
+            this.store.dispatch({type:'ADD_CAMPAIGN'})
         },2000)
-
 
     }
 
