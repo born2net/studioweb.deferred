@@ -18,10 +18,6 @@
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
-    
-
-
-
     loaderManager.create('d25@ms.com', "123123", function (v) {
 
         var enums = '\nexport const TableNames = [\n';
@@ -44,6 +40,7 @@ export interface IBaseProto {
     ${functions}
 }
 `
+        // examples for debug to evaluate proto data
         var a = msdb.table_campaigns().getAllPrimaryKeys();
         var b = msdb.table_campaigns().m_name;
         var c = msdb.table_campaigns().m_fields[2].field
