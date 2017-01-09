@@ -22,7 +22,7 @@ import ICanvas = fabric.ICanvas;
 export class Dashboard extends Compbaser {
 
     private userModel$: Observable<UserModel>;
-    private fabricCanvas:ICanvas;
+    private fabricCanvas: ICanvas;
 
     @ViewChild('canvas')
     canvas;
@@ -31,13 +31,17 @@ export class Dashboard extends Compbaser {
         super();
         this.userModel$ = this.store.select(store => store.appDb.userModel);
 
-        // setTimeout(()=>{
-        //     this.store.select(store => store.storeData.msdb.m_selectedDataBase.m_tables.campaigns).subscribe((v) => {
-        //     // this.store.select(a => a.storeData.msdb).subscribe((v) => {
-        //     // this.store.select(store => store.storeData.msdb).subscribe((v) => {
-        //         console.log(v);
-        //     })
-        // },8000)
+        this.store.select(store => store.storeData.msdb.table_campaigns).subscribe((v) => {
+            console.log(v);
+        })
+
+        this.store.select(store => store.storeData.msdb.table_resources).subscribe((v) => {
+            console.log(v);
+        })
+
+        setTimeout(()=>{
+            this.store.dispatch({type:'UPD_TABLE_RESOURCES'})
+        },2000)
 
 
     }

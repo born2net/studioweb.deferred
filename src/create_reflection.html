@@ -34,6 +34,9 @@ http://127.0.0.1:8080/src/create_reflection.html
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
+
+
+
     loaderManager.create('d25@ms.com', "123123", function (v) {
 
         var allTables = '\nexport const TableNames = [\n';
@@ -64,6 +67,24 @@ export interface IBaseProto {
 export class ${storeName} extends StoreModel {  constructor(data: any = {}) {super(data);} }`;
             allStores = `${allStores} ${storeTemplate}`
         })
+
+
+        // build all redux StoreData
+        var allReduxStores = `
+export interface IStoreData {
+        `;
+        _.forEach(msdb.m_selectedDataBase.m_tableList, (k, v) => {
+            var storeName = capitalizeFirstLetter(S(k).camelize().s) + 'Modal';
+            var storeTemplate = `
+        table_${k}: List&lt;Modals.${storeName}&gt;;`;
+            allReduxStores = `${allReduxStores} ${storeTemplate}`
+        });
+        allReduxStores = `${allReduxStores}
+
+}`;
+
+
+
 
         // examples for debug to evaluate proto data
         var a = msdb.table_campaigns().getAllPrimaryKeys();
@@ -102,21 +123,28 @@ ${b2}
 
 
         buffer = `<pre>
+
 ${breakHr}
+
 //file: msdb.modals.ts
 
 ${allStores}
+
 ${breakHr}
-//file: imsdb.interfaces.ts
+
+//file: imsdb.interfaces_auto.ts
+
+import {List} from 'immutable';
+import * as Modals from "../models/msdb.modals";
+
+${allReduxStores}
+
 ${allTables}
 
-${breakHr}
 ${baseProto}
 
-${breakHr}
 ${tables}
 
-${breakHr}
 ${DataManager}
 
 </pre>`;

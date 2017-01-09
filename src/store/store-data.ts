@@ -1,12 +1,13 @@
-import {Map, List} from 'immutable';
+import {Map} from 'immutable';
 import {UserModel} from "../models/UserModel";
 import {AuthenticateFlags} from "./actions/app-db-actions";
+import {IStoreData} from "../libs/imsdb.interfaces_auto";
 
 export interface StoreData {
     participants: { [key: number]: any };
     threads: { [key: number]: any };
     messages: { [key: number]: any };
-    msdb: any;
+    msdb: IStoreData
 }
 
 export interface IAppDb {
@@ -25,7 +26,7 @@ export const INITIAL_STORE_DATA: StoreData = {
     threads: {},
     messages: {},
     participants: {},
-    msdb: {}
+    msdb: null
 };
 
 

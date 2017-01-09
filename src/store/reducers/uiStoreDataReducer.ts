@@ -2,11 +2,17 @@ import {StoreData} from "../store-data";
 import {Action} from "@ngrx/store";
 import {Map, List} from 'immutable';
 import {StoreModel} from "../model/StoreModel";
+import {ResourcesModal} from "../../models/msdb.modals_auto";
 
 export function storeData(state: StoreData, action: Action): StoreData {
     switch (action.type) {
         case 'MSDB':
             state.msdb = action.payload;
+            return state;
+
+        case 'UPD_TABLE_RESOURCES':
+            var r = new ResourcesModal({a:1})
+            state.msdb.table_resources = List([r]);
             return state;
 
 
