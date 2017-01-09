@@ -28,6 +28,7 @@ http://127.0.0.1:8080/src/create_reflection.html
     var loaderManager = new LoaderManager();
     var msdb = loaderManager.m_dataBaseManager;
     var buffer = ''
+    var breakHr = '\n//---------------------------------------------------------------------------------------------------------';
 
     function capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
@@ -99,12 +100,26 @@ ${b2}
 }
 `
 
+
+
         buffer = `<pre>
+${breakHr}
+//file: msdb.modals.ts
+
 ${allStores}
+${breakHr}
+//file: imsdb.interfaces.ts
 ${allTables}
+
+${breakHr}
 ${baseProto}
+
+${breakHr}
 ${tables}
+
+${breakHr}
 ${DataManager}
+
 </pre>`;
 
         $('body').append(buffer);
