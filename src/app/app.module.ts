@@ -47,6 +47,7 @@ import {InputEdit} from "../comps/inputedit/InputEdit";
 import {Twofactor} from "../comps/twofactor/Twofactor";
 import "hammerjs";
 import "fabric";
+import {MsdbEffects} from "../store/effects/msdb.effects";
 
 export var providing = [CommBroker, AUTH_PROVIDERS, RedPepperService, LocalStorage, StoreService, AppdbAction,
     {
@@ -75,7 +76,7 @@ var decelerations = [AppComponent, AutoLogin, LoginPanel, Logo, App1, Account, D
             appDb
         }), INITIAL_APPLICATION_STATE),
         EffectsModule.run(AppDbEffects),
-        //EffectsModule.run(AnotherEffectService),
+        EffectsModule.run(MsdbEffects),
         StoreDevtoolsModule.instrumentOnlyWithExtension(),
         ChartModule,
         ToastModule.forRoot({

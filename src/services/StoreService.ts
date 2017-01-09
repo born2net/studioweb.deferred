@@ -3,7 +3,7 @@ import {Store} from "@ngrx/store";
 import {ApplicationState} from "../store/application.state";
 import {AppdbAction} from "../store/actions/appdb.actions";
 import {RedPepperService} from "./redpepper.service";
-import {EFFECT_INIT_REDUXIFY_MSDB} from "../store/effects/appdb.effects";
+import {EFFECT_INIT_REDUXIFY_MSDB} from "../store/effects/msdb.effects";
 
 @Injectable()
 export class StoreService {

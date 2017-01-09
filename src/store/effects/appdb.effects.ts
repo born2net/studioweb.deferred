@@ -10,7 +10,7 @@ import {ApplicationState} from "../application.state";
 import {Actions, Effect} from "@ngrx/effects";
 import {Observable} from "rxjs";
 import {UserModel} from "../../models/UserModel";
-import {AuthenticateFlags, MSDB_INIT, ACTION_UPDATE_TABLE} from "../actions/appdb.actions";
+import {AuthenticateFlags, MSDB_INIT} from "../actions/appdb.actions";
 import {RedPepperService} from "../../services/redpepper.service";
 import {IPepperConnection} from "../../store/imsdb.interfaces";
 
@@ -21,8 +21,6 @@ export const EFFECT_AUTH_STATUS = 'EFFECT_AUTH_STATUS';
 export const EFFECT_TWO_FACTOR_AUTH = 'EFFECT_TWO_FACTOR_AUTH';
 export const EFFECT_TWO_FACTOR_UPDATING = 'EFFECT_TWO_FACTOR_UPDATING';
 export const EFFECT_TWO_FACTOR_UPDATED = 'EFFECT_TWO_FACTOR_UPDATED';
-export const EFFECT_INIT_REDUXIFY_MSDB = 'EFFECT_INIT_REDUXIFY_MSDB';
-export const EFFECT_CREATE_TABLE = 'EFFECT_CREATE_TABLE';
 
 @Injectable()
 export class AppDbEffects {
@@ -35,24 +33,6 @@ export class AppDbEffects {
                 private http: Http) {
         this.parseString = xml2js.parseString;
     }
-
-    @Effect() reduxifyMsdb$: Observable<Action> = this.actions$.ofType(EFFECT_INIT_REDUXIFY_MSDB)
-        .map(() => {
-            var db = this.redPepperService.reduxifyMsTable();
-            return {type: MSDB_INIT, payload: db}
-        })
-
-    @Effect() createTable: Observable<Action> = this.actions$.ofType(EFFECT_CREATE_TABLE)
-        .map(() => {
-            var table = this.redPepperService.createCampaign('foo_bar2');
-            return {
-                type: ACTION_UPDATE_TABLE,
-                payload: {
-                    table: table,
-                    tableName: 'table_campaigns'
-                }
-            }
-        })
 
     @Effect({dispatch: true}) authTwoFactor$: Observable<Action> = this.actions$.ofType(EFFECT_TWO_FACTOR_AUTH)
         .switchMap(action => this.authTwoFactor(action))

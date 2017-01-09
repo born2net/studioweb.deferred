@@ -8,7 +8,7 @@ import * as _ from 'lodash';
 import ICanvas = fabric.ICanvas;
 import {List} from 'immutable';
 import {ResourcesModal} from "../../../store/imsdb.interfaces_auto";
-import {EFFECT_CREATE_TABLE} from "../../../store/effects/appdb.effects";
+import {EFFECT_CREATE_TABLE} from "../../../store/effects/msdb.effects";
 
 @Component({
     selector: 'Dashboard',
@@ -35,7 +35,7 @@ export class Dashboard extends Compbaser {
         this.userModel$ = this.store.select(store => store.appDb.userModel);
 
         this.store.select(store => store.storeData.msdb.table_campaigns).subscribe((v) => {
-            console.log(v);
+            // console.log(v);
         })
 
         this.store.select(store => store.storeData.msdb.table_resources).subscribe((resourceModels: List<ResourcesModal>) => {

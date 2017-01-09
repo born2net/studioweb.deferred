@@ -1,6 +1,7 @@
 import {StoreData} from "../store.data";
 import {Action} from "@ngrx/store";
-import {MSDB_INIT, ACTION_UPDATE_TABLE} from "../actions/appdb.actions";
+import {MSDB_INIT} from "../actions/appdb.actions";
+import {ACTION_UPDATE_TABLE} from "../actions/msdb.actions";
 
 export function storeData(state: StoreData, action: Action): StoreData {
     switch (action.type) {
