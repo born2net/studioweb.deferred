@@ -10,7 +10,7 @@ import {ApplicationState} from "../application-state";
 import {Actions, Effect} from "@ngrx/effects";
 import {Observable} from "rxjs";
 import {UserModel} from "../../models/UserModel";
-import {AuthenticateFlags} from "../actions/app-db-actions";
+import {AuthenticateFlags, MSDB_INIT} from "../actions/appdb.actions";
 import {RedPepperService} from "../../services/redpepper.service";
 import {IPepperConnection} from "../../libs/imsdb.interfaces";
 
@@ -21,7 +21,7 @@ export const EFFECT_AUTH_STATUS = 'EFFECT_AUTH_STATUS';
 export const EFFECT_TWO_FACTOR_AUTH = 'EFFECT_TWO_FACTOR_AUTH';
 export const EFFECT_TWO_FACTOR_UPDATING = 'EFFECT_TWO_FACTOR_UPDATING';
 export const EFFECT_TWO_FACTOR_UPDATED = 'EFFECT_TWO_FACTOR_UPDATED';
-export const EFFECT_REDUXIFY_MSDB = 'EFFECT_REDUXIFY_MSDB';
+export const EFFECT_INIT_REDUXIFY_MSDB = 'EFFECT_INIT_REDUXIFY_MSDB';
 
 @Injectable()
 export class AppDbEffects {
@@ -35,15 +35,15 @@ export class AppDbEffects {
         this.parseString = xml2js.parseString;
     }
 
-    @Effect() reduxifyMsdb$: Observable<Action> = this.actions$.ofType(EFFECT_REDUXIFY_MSDB)
+    @Effect() reduxifyMsdb$: Observable<Action> = this.actions$.ofType(EFFECT_INIT_REDUXIFY_MSDB)
         .map(()=>{
             var db = this.redPepperService.reduxifyMsTable();
-            return {type: 'MSDB', payload: db}
+            return {type: MSDB_INIT, payload: db}
         })
 
     @Effect() addCampaign: Observable<Action> = this.actions$.ofType('ADD_CAMPAIGN')
         .map(()=>{
-            var db = this.redPepperService.addCampaign('foo');
+            var db = this.redPepperService.addCampaign('foo_bar');
             return {type: 'ADDED_CAMPAIGN', payload: db}
         })
 

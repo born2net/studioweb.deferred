@@ -1,6 +1,6 @@
 import {Map} from 'immutable';
 import {UserModel} from "../models/UserModel";
-import {AuthenticateFlags} from "./actions/app-db-actions";
+import {AuthenticateFlags} from "./actions/appdb.actions";
 import {IStoreData} from "../libs/imsdb.interfaces_auto";
 
 export interface StoreData {

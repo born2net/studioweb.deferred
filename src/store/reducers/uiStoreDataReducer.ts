@@ -3,10 +3,11 @@ import {Action} from "@ngrx/store";
 import {Map, List} from 'immutable';
 import {StoreModel} from "../model/StoreModel";
 import {ResourcesModal} from "../../models/msdb.modals_auto";
+import {MSDB_INIT} from "../actions/appdb.actions";
 
 export function storeData(state: StoreData, action: Action): StoreData {
     switch (action.type) {
-        case 'MSDB':
+        case MSDB_INIT:
             state.msdb = action.payload;
             return state;
 

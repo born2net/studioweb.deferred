@@ -1,10 +1,9 @@
 import {Injectable, Inject, forwardRef} from "@angular/core";
-import {CommBroker} from "./CommBroker";
 import {Store} from "@ngrx/store";
 import {ApplicationState} from "../store/application-state";
-import {AppdbAction} from "../store/actions/app-db-actions";
+import {AppdbAction} from "../store/actions/appdb.actions";
 import {RedPepperService} from "./redpepper.service";
-import {EFFECT_REDUXIFY_MSDB} from "../store/effects/app-db-effects";
+import {EFFECT_INIT_REDUXIFY_MSDB} from "../store/effects/appdb.effects";
 
 @Injectable()
 export class StoreService {
@@ -22,7 +21,7 @@ export class StoreService {
     public loadServices() {
         if (this.singleton) return;
         this.singleton = true;
-        this.store.dispatch({type: EFFECT_REDUXIFY_MSDB})
+        this.store.dispatch({type: EFFECT_INIT_REDUXIFY_MSDB})
         console.log('loaded network services...');
     }
 }

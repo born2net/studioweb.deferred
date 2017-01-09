@@ -1,8 +1,8 @@
 import {IAppDb} from "../store-data";
 import {Map} from "immutable";
 import {UserModel} from "../../models/UserModel";
-import * as StoreActions from "../actions/app-db-actions";
-import * as EffectActions from "../effects/app-db-effects";
+import * as StoreActions from "../actions/appdb.actions";
+import * as EffectActions from "../effects/appdb.effects";
 
 const baseUrl = 'https://galaxy.signage.me/WebService/ResellerService.ashx';
 export const appBaseUrlCloud = 'https://secure.digitalsignage.com';

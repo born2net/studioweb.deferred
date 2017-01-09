@@ -75,7 +75,6 @@ export class RedPepperService {
         var campaign = campaigns.createRecord();
         campaign.campaign_name = i_campaignName;
         campaigns.addRecord(campaign,undefined);
-        var id = campaign['campaign_id'];
         var db:any = this.reduxifyMsTable('campaigns')
         return db.table_campaigns;
 
@@ -87,13 +86,13 @@ export class RedPepperService {
         tablesNames.forEach((table, v) => {
             var tableName = 'table_' + table;
             var storeName = this.capitalizeFirstLetter(StringJS(table).camelize().s) + 'Modal';
-            var list: List<StoreModel> = List<StoreModel>();
+            var storeModelList: List<StoreModel> = List<StoreModel>();
             $(this.databaseManager[tableName]().getAllPrimaryKeys()).each((k, primary_id) => {
                 var record = this.databaseManager[tableName]().getRec(primary_id);
                 var newClass: StoreModel = new MsdbModels[storeName](record);
-                list = list.push(newClass);
+                storeModelList = storeModelList.push(newClass);
             });
-            db[tableName] = list;
+            db[tableName] = storeModelList;
             // console.log(`serialized ${tableName} total modals: ${list.size}`);
         });
         return db;

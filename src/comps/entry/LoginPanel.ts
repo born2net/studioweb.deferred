@@ -21,7 +21,7 @@ import {ToastsManager} from "ng2-toastr";
 import {ApplicationState} from "../../store/application-state";
 import {Store} from "@ngrx/store";
 import {UserModel} from "../../models/UserModel";
-import {AuthenticateFlags} from "../../store/actions/app-db-actions";
+import {AuthenticateFlags} from "../../store/actions/appdb.actions";
 
 @Injectable()
 @Component({

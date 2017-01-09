@@ -9,9 +9,9 @@ import {Ngmslib} from "ng-mslib";
 import * as _ from "lodash";
 import {Store} from "@ngrx/store";
 import {ApplicationState} from "../store/application-state";
-import {AuthenticateFlags} from "../store/actions/app-db-actions";
+import {AuthenticateFlags} from "../store/actions/appdb.actions";
 import {UserModel} from "../models/UserModel";
-import {EFFECT_AUTH_START, EFFECT_TWO_FACTOR_AUTH} from "../store/effects/app-db-effects";
+import {EFFECT_AUTH_START, EFFECT_TWO_FACTOR_AUTH} from "../store/effects/appdb.effects";
 
 @Injectable()
 export class AuthService {
