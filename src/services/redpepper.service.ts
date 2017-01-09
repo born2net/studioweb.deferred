@@ -78,8 +78,8 @@ export class RedPepperService {
             this.store.dispatch({type: 'MSDB2', payload: this.databaseManager})
         },1000)
 
-        // var a = this.m_msdb.table_campaigns().getAllPrimaryKeys();
-        // var b = this.m_msdb.table_campaigns().m_name;
+        var a = this.databaseManager.table_campaigns().getAllPrimaryKeys();
+        var b = this.databaseManager.table_campaigns().m_fields[0].field
         // var c = this.m_msdb.table_campaigns().m_fields[2].field
         // var d = this.m_msdb.table_campaigns().m_fields[0].isNullAble;
         // var e = this.m_msdb.table_campaigns().m_fields[1].field;

@@ -22,10 +22,17 @@
         var aa = msdb.table_campaigns();
         var tableProto = aa.__proto__.__proto__;
 
-        var functions = '   m_name:string;\n';
-        _.forEach(tableProto, (k,funcName)=>{
-            functions = functions + `   ${funcName}: () => any;\n`
+        var functions = 'm_name:string;\n';
+        functions = functions + '    fields:Array&lt;any&gt;\n';
+        _.forEach(tableProto, (k, funcName) => {
+            functions = functions + `    ${funcName}: () => any;\n`
         })
+
+        var baseProto = `
+export interface IBaseProto {
+    ${functions}
+}
+`
         var a = msdb.table_campaigns().getAllPrimaryKeys();
         var b = msdb.table_campaigns().m_name;
         var c = msdb.table_campaigns().m_fields[2].field
@@ -33,18 +40,18 @@
         var e = msdb.table_campaigns().m_fields[1].field;
 
 
-
         // build tables names
         var tables = '';
         _.forEach(msdb.__proto__, (tableFunc, table) => {
             var tableCap = capitalizeFirstLetter(table)
-            tables = tables + `export interface I${tableCap} {
-${functions}
+            if (msdb[table]()){
+                var fields = msdb[table]().m_fields;
+                var f = JSON.stringify(fields)
+            }
+            tables = tables + `export interface I${tableCap} extends IBaseProto {
+    m_fields: ${f}
 }\n`
         })
-        
-
-
 
 
         // build tables names
@@ -54,14 +61,13 @@ ${functions}
             b2 = `${b2}     ${table}:()=> I${tableCap}\n`
         })
         var DataManager = `
-export interface IDataManager {
-     m_businessData: {};
-     m_selectedDataBase: number;
+export interface IDataManager_proto {
 ${b2}
 }
 `
 
         buffer = `<pre>
+${baseProto}
 ${tables}
 ${DataManager}
 </pre>`;
