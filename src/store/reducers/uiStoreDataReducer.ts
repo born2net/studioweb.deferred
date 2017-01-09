@@ -1,9 +1,6 @@
 import {StoreData} from "../store.data";
 import {Action} from "@ngrx/store";
-import {Map, List} from 'immutable';
-import {StoreModel} from "../model/StoreModel";
-import {MSDB_INIT} from "../actions/appdb.actions";
-import {ResourcesModal} from "../../store/imsdb.interfaces_auto";
+import {MSDB_INIT, ACTION_UPDATE_TABLE} from "../actions/appdb.actions";
 
 export function storeData(state: StoreData, action: Action): StoreData {
     switch (action.type) {
@@ -11,13 +8,13 @@ export function storeData(state: StoreData, action: Action): StoreData {
             state.msdb = action.payload;
             return state;
 
-        case 'UPD_TABLE_RESOURCES':
-            var r = new ResourcesModal({a:1})
-            state.msdb.table_resources = state.msdb.table_resources.push(r);
-            return state;
+        // case 'UPD_TABLE_RESOURCES':
+        //     var r = new ResourcesModal({a: 1})
+        //     state.msdb.table_resources = state.msdb.table_resources.push(r);
+        //     return state;
 
-        case 'ADDED_CAMPAIGN':
-            state.msdb.table_campaigns = action.payload;
+        case ACTION_UPDATE_TABLE:
+            state.msdb[action.payload.tableName] = action.payload.table;
             return state;
 
 

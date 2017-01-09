@@ -8,6 +8,7 @@ import * as _ from 'lodash';
 import ICanvas = fabric.ICanvas;
 import {List} from 'immutable';
 import {ResourcesModal} from "../../../store/imsdb.interfaces_auto";
+import {EFFECT_CREATE_TABLE} from "../../../store/effects/appdb.effects";
 
 @Component({
     selector: 'Dashboard',
@@ -37,20 +38,16 @@ export class Dashboard extends Compbaser {
             console.log(v);
         })
 
-        this.store.select(store => store.storeData.msdb.table_resources).subscribe((resourceModels:List<ResourcesModal>) => {
+        this.store.select(store => store.storeData.msdb.table_resources).subscribe((resourceModels: List<ResourcesModal>) => {
             console.log(resourceModels.get(4).getResourceName());
             console.log(resourceModels.get(4).getResourceBytesTotal());
         })
-
-        setTimeout(()=>{
-            this.store.dispatch({type:'UPD_TABLE_RESOURCES'})
-            this.store.dispatch({type:'ADD_CAMPAIGN'})
-        },2000)
-
     }
 
     private setZoom() {
         this.fabricCanvas.setZoom(_.random(1, 1.5));
+        // this.store.dispatch({type:'UPD_TABLE_RESOURCES'})
+        this.store.dispatch({type: EFFECT_CREATE_TABLE})
     }
 
     ngOnInit() {

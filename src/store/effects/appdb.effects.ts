@@ -10,7 +10,7 @@ import {ApplicationState} from "../application.state";
 import {Actions, Effect} from "@ngrx/effects";
 import {Observable} from "rxjs";
 import {UserModel} from "../../models/UserModel";
-import {AuthenticateFlags, MSDB_INIT} from "../actions/appdb.actions";
+import {AuthenticateFlags, MSDB_INIT, ACTION_UPDATE_TABLE} from "../actions/appdb.actions";
 import {RedPepperService} from "../../services/redpepper.service";
 import {IPepperConnection} from "../../store/imsdb.interfaces";
 
@@ -22,6 +22,7 @@ export const EFFECT_TWO_FACTOR_AUTH = 'EFFECT_TWO_FACTOR_AUTH';
 export const EFFECT_TWO_FACTOR_UPDATING = 'EFFECT_TWO_FACTOR_UPDATING';
 export const EFFECT_TWO_FACTOR_UPDATED = 'EFFECT_TWO_FACTOR_UPDATED';
 export const EFFECT_INIT_REDUXIFY_MSDB = 'EFFECT_INIT_REDUXIFY_MSDB';
+export const EFFECT_CREATE_TABLE = 'EFFECT_CREATE_TABLE';
 
 @Injectable()
 export class AppDbEffects {
@@ -36,20 +37,27 @@ export class AppDbEffects {
     }
 
     @Effect() reduxifyMsdb$: Observable<Action> = this.actions$.ofType(EFFECT_INIT_REDUXIFY_MSDB)
-        .map(()=>{
+        .map(() => {
             var db = this.redPepperService.reduxifyMsTable();
             return {type: MSDB_INIT, payload: db}
         })
 
-    @Effect() addCampaign: Observable<Action> = this.actions$.ofType('ADD_CAMPAIGN')
-        .map(()=>{
-            var db = this.redPepperService.addCampaign('foo_bar');
-            return {type: 'ADDED_CAMPAIGN', payload: db}
+    @Effect() createTable: Observable<Action> = this.actions$.ofType(EFFECT_CREATE_TABLE)
+        .map(() => {
+            var table = this.redPepperService.addCampaign('foo_bar');
+            return {
+                type: ACTION_UPDATE_TABLE,
+                payload: {
+                    table: table,
+                    tableName: 'table_campaigns'
+                }
+            }
         })
 
     @Effect({dispatch: true}) authTwoFactor$: Observable<Action> = this.actions$.ofType(EFFECT_TWO_FACTOR_AUTH)
         .switchMap(action => this.authTwoFactor(action))
         .map(authStatus => ({type: EFFECT_AUTH_END, payload: authStatus}));
+
     private authTwoFactor(action: Action): Observable<any> {
         this.store.dispatch({type: EFFECT_AUTH_STATUS, payload: AuthenticateFlags.TWO_FACTOR_CHECK})
 
@@ -78,6 +86,7 @@ export class AppDbEffects {
     @Effect() updatedTwoFactor$: Observable<Action> = this.actions$.ofType(EFFECT_TWO_FACTOR_UPDATING)
         .switchMap(action => this.updatedTwoFactor(action))
         .map(authStatus => ({type: EFFECT_AUTH_END, payload: authStatus}));
+
     private updatedTwoFactor(action: Action): Observable<any> {
         return this.store.select(store => store.appDb.appBaseUrlCloud)
             .take(1)
@@ -111,6 +120,7 @@ export class AppDbEffects {
     @Effect() authUser$: Observable<Action> = this.actions$.ofType(EFFECT_AUTH_START)
         .switchMap(action => this.authUser(action))
         .map(authStatus => ({type: EFFECT_AUTH_END, payload: authStatus}));
+
     private authUser(action: Action): Observable<any> {
         let userModel: UserModel = action.payload;
         this.store.dispatch({type: EFFECT_UPDATE_USER_MODEL, payload: userModel});
