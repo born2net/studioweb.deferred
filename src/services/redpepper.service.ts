@@ -72,11 +72,11 @@ export class RedPepperService {
     public getCampaignIDs() {
         let campaigns = [];
         // var aa = this.m_msdb.table_campaigns();
-        this.store.dispatch({type: 'MSDB', payload: this.databaseManager})
+        // this.store.dispatch({type: 'MSDB', payload: this.databaseManager})
 
-        setTimeout(()=>{
-            this.store.dispatch({type: 'MSDB2', payload: this.databaseManager})
-        },1000)
+        // setTimeout(()=>{
+        //     this.store.dispatch({type: 'MSDB2', payload: this.databaseManager})
+        // },1000)
 
         var a = this.databaseManager.table_campaigns().getAllPrimaryKeys();
         var b = this.databaseManager.table_campaigns()
