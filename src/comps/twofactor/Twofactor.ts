@@ -5,7 +5,7 @@ import {LocalStorage} from "../../services/LocalStorage";
 import {Compbaser} from "../compbaser/Compbaser";
 import {Store} from "@ngrx/store";
 import {AppdbAction, AuthenticateFlags} from "../../store/actions/appdb.actions";
-import {ApplicationState} from "../../store/application-state";
+import {ApplicationState} from "../../store/application.state";
 import {UserModel} from "../../models/UserModel";
 import {Map} from "immutable";
 import {EFFECT_TWO_FACTOR_UPDATING} from "../../store/effects/appdb.effects";

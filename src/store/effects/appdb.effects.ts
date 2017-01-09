@@ -6,7 +6,7 @@ import "rxjs/add/operator/merge";
 import "rxjs/add/operator/debounceTime";
 import * as xml2js from "xml2js";
 import {Action, Store} from "@ngrx/store";
-import {ApplicationState} from "../application-state";
+import {ApplicationState} from "../application.state";
 import {Actions, Effect} from "@ngrx/effects";
 import {Observable} from "rxjs";
 import {UserModel} from "../../models/UserModel";

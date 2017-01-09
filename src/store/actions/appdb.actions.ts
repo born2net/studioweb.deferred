@@ -5,7 +5,7 @@ import "rxjs/add/operator/mergeMap";
 import "rxjs/add/operator/merge";
 import "rxjs/add/operator/debounceTime";
 import {Store} from "@ngrx/store";
-import {ApplicationState} from "../application-state";
+import {ApplicationState} from "../application.state";
 import {Observable} from "rxjs";
 
 export const APP_INIT = 'APP_INIT';

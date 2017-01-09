@@ -30,7 +30,7 @@ import {AutoLogin} from "../comps/entry/AutoLogin";
 import {Sliderpanel} from "../comps/sliderpanel/Sliderpanel";
 import {Slideritem} from "../comps/sliderpanel/Slideritem";
 import {StoreModule, combineReducers} from "@ngrx/store";
-import {INITIAL_APPLICATION_STATE} from "../store/application-state";
+import {INITIAL_APPLICATION_STATE} from "../store/application.state";
 import {EffectsModule} from "@ngrx/effects";
 import {StoreDevtoolsModule} from "@ngrx/store-devtools";
 import {appDb} from "../store/reducers/app-db-reducer";

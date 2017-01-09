@@ -1,6 +1,6 @@
 import {Component, ChangeDetectionStrategy, ElementRef, ViewChild} from "@angular/core";
 import {Compbaser} from "../../compbaser/Compbaser";
-import {ApplicationState} from "../../../store/application-state";
+import {ApplicationState} from "../../../store/application.state";
 import {Store} from "@ngrx/store";
 import {UserModel} from "../../../models/UserModel";
 import {Observable} from "rxjs";

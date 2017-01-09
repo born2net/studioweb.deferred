@@ -18,7 +18,7 @@ import {Map} from "immutable";
 import {Compbaser} from "../compbaser/Compbaser";
 import {Ngmslib} from "ng-mslib";
 import {ToastsManager} from "ng2-toastr";
-import {ApplicationState} from "../../store/application-state";
+import {ApplicationState} from "../../store/application.state";
 import {Store} from "@ngrx/store";
 import {UserModel} from "../../models/UserModel";
 import {AuthenticateFlags} from "../../store/actions/appdb.actions";

@@ -1,4 +1,4 @@
-import {StoreData, INITIAL_STORE_DATA, INITIAL_APP_DB, IAppDb} from "./store-data";
+import {StoreData, INITIAL_STORE_DATA, INITIAL_APP_DB, IAppDb} from "./store.data";
 
 export interface ApplicationState {
     storeData: StoreData

@@ -1,8 +1,3 @@
-
-//---------------------------------------------------------------------------------------------------------
-
-//file: imsdb.interfaces_auto.ts
-
 import {List} from 'immutable';
 import * as Modals from "../models/msdb.modals_auto";
 

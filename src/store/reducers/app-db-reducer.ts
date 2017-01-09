@@ -1,4 +1,4 @@
-import {IAppDb} from "../store-data";
+import {IAppDb} from "../store.data";
 import {Map} from "immutable";
 import {UserModel} from "../../models/UserModel";
 import * as StoreActions from "../actions/appdb.actions";

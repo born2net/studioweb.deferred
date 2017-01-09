@@ -8,7 +8,7 @@ import {Map} from "immutable";
 import {Ngmslib} from "ng-mslib";
 import * as _ from "lodash";
 import {Store} from "@ngrx/store";
-import {ApplicationState} from "../store/application-state";
+import {ApplicationState} from "../store/application.state";
 import {AuthenticateFlags} from "../store/actions/appdb.actions";
 import {UserModel} from "../models/UserModel";
 import {EFFECT_AUTH_START, EFFECT_TWO_FACTOR_AUTH} from "../store/effects/appdb.effects";

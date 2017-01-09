@@ -1,4 +1,4 @@
-import {StoreData} from "../store-data";
+import {StoreData} from "../store.data";
 import {Action} from "@ngrx/store";
 import {Map, List} from 'immutable';
 import {StoreModel} from "../model/StoreModel";

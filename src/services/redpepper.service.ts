@@ -1,6 +1,6 @@
 import {Injectable} from "@angular/core";
 import {Store} from "@ngrx/store";
-import {ApplicationState} from "../store/application-state";
+import {ApplicationState} from "../store/application.state";
 import {Observable} from "rxjs";
 import {IDataBaseManager, ILoadManager, IPepperConnection, IPepperAuthReply} from "../libs/imsdb.interfaces";
 import {TableNames} from "../libs/imsdb.interfaces_auto";
