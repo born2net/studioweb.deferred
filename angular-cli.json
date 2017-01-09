@@ -30,7 +30,7 @@
       "scripts": [
         "../node_modules/jquery/dist/jquery.min.js",
         "./libs/jquery.base64.js",
-        "./libs/signage_sdk.js",
+        "./store/signage_sdk.js",
         "../node_modules/fabric/dist/fabric.js",
         "../node_modules/bootstrap/dist/js/bootstrap.js",
         "../node_modules/bootbox/bootbox.js",

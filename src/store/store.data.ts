@@ -1,7 +1,7 @@
 import {Map} from 'immutable';
 import {UserModel} from "../models/UserModel";
 import {AuthenticateFlags} from "./actions/appdb.actions";
-import {IStoreData} from "../libs/imsdb.interfaces_auto";
+import {IStoreData} from "../store/imsdb.interfaces_auto";
 
 export interface StoreData {
     participants: { [key: number]: any };

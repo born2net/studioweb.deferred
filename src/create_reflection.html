@@ -78,7 +78,7 @@ export interface IStoreData {
         _.forEach(msdb.m_selectedDataBase.m_tableList, (k, v) => {
             var storeName = capitalizeFirstLetter(S(k).camelize().s) + 'Modal';
             var storeTemplate = `
-        table_${k}: List&lt;Modals.${storeName}&gt;;`;
+        table_${k}: List&lt;${storeName}&gt;;`;
             allReduxStores = `${allReduxStores} ${storeTemplate}`
         });
         allReduxStores = `${allReduxStores}
@@ -146,18 +146,13 @@ ${fieldNames}
 
         buffer = `<pre>
 
-${breakHr}
-
-//file: msdb.models_auto.ts
-
-${allStores}
-
-${breakHr}
 
 //file: imsdb.interfaces_auto.ts
 
 import {List} from 'immutable';
-import * as Modals from "../models/msdb.models_auto";
+
+${allStores}
+
 
 ${allReduxStores}
 

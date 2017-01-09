@@ -12,7 +12,7 @@ import {Observable} from "rxjs";
 import {UserModel} from "../../models/UserModel";
 import {AuthenticateFlags, MSDB_INIT} from "../actions/appdb.actions";
 import {RedPepperService} from "../../services/redpepper.service";
-import {IPepperConnection} from "../../libs/imsdb.interfaces";
+import {IPepperConnection} from "../../store/imsdb.interfaces";
 
 export const EFFECT_AUTH_START = 'EFFECT_AUTH_START';
 export const EFFECT_AUTH_END = 'EFFECT_AUTH_END';

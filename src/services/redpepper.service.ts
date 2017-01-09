@@ -2,9 +2,9 @@ import {Injectable} from "@angular/core";
 import {Store} from "@ngrx/store";
 import {ApplicationState} from "../store/application.state";
 import {Observable} from "rxjs";
-import {IDataBaseManager, ILoadManager, IPepperConnection, IPepperAuthReply} from "../libs/imsdb.interfaces";
-import {TableNames} from "../libs/imsdb.interfaces_auto";
-import * as MsdbModels from "../models/msdb.models_auto";
+import {IDataBaseManager, ILoadManager, IPepperConnection, IPepperAuthReply} from "../store/imsdb.interfaces";
+import {TableNames} from "../store/imsdb.interfaces_auto";
+import * as MsdbModels from "../store/imsdb.interfaces_auto";
 import {StoreModel} from "../store/model/StoreModel";
 import {List} from 'immutable';
 

@@ -6,8 +6,8 @@ import {UserModel} from "../../../models/UserModel";
 import {Observable} from "rxjs";
 import * as _ from 'lodash';
 import ICanvas = fabric.ICanvas;
-import {ResourcesModal} from "../../../models/msdb.models_auto";
 import {List} from 'immutable';
+import {ResourcesModal} from "../../../store/imsdb.interfaces_auto";
 
 @Component({
     selector: 'Dashboard',
