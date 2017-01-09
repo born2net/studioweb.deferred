@@ -12,7 +12,8 @@ import {Observable} from "rxjs";
 import * as _ from "lodash";
 import {UserModel} from "../../models/UserModel";
 import {AuthenticateFlags} from "../actions/app-db-actions";
-import {RedPepperService, IPepperConnection} from "../../services/redpepper.service";
+import {RedPepperService} from "../../services/redpepper.service";
+import {IPepperConnection} from "../../libs/Imsdb";
 
 export const EFFECT_AUTH_START = 'EFFECT_AUTH_START';
 export const EFFECT_AUTH_END = 'EFFECT_AUTH_END';
@@ -21,6 +22,7 @@ export const EFFECT_AUTH_STATUS = 'EFFECT_AUTH_STATUS';
 export const EFFECT_TWO_FACTOR_AUTH = 'EFFECT_TWO_FACTOR_AUTH';
 export const EFFECT_TWO_FACTOR_UPDATING = 'EFFECT_TWO_FACTOR_UPDATING';
 export const EFFECT_TWO_FACTOR_UPDATED = 'EFFECT_TWO_FACTOR_UPDATED';
+export const EFFECT_REDUXIFY_MSDB = 'EFFECT_REDUXIFY_MSDB';
 
 @Injectable()
 export class AppDbEffects {
@@ -34,10 +36,15 @@ export class AppDbEffects {
         this.parseString = xml2js.parseString;
     }
 
+    @Effect({dispatch: false}) reduxifyMsdb$: Observable<Action> = this.actions$.ofType(EFFECT_REDUXIFY_MSDB)
+        .do(()=>{
+            console.log(this.redPepperService.getCampaignIDs());
+
+        })
+
     @Effect({dispatch: true}) authTwoFactor$: Observable<Action> = this.actions$.ofType(EFFECT_TWO_FACTOR_AUTH)
         .switchMap(action => this.authTwoFactor(action))
         .map(authStatus => ({type: EFFECT_AUTH_END, payload: authStatus}));
-
     private authTwoFactor(action: Action): Observable<any> {
         this.store.dispatch({type: EFFECT_AUTH_STATUS, payload: AuthenticateFlags.TWO_FACTOR_CHECK})
 
@@ -66,7 +73,6 @@ export class AppDbEffects {
     @Effect() updatedTwoFactor$: Observable<Action> = this.actions$.ofType(EFFECT_TWO_FACTOR_UPDATING)
         .switchMap(action => this.updatedTwoFactor(action))
         .map(authStatus => ({type: EFFECT_AUTH_END, payload: authStatus}));
-
     private updatedTwoFactor(action: Action): Observable<any> {
         return this.store.select(store => store.appDb.appBaseUrlCloud)
             .take(1)
@@ -96,10 +102,10 @@ export class AppDbEffects {
             })
     }
 
+
     @Effect() authUser$: Observable<Action> = this.actions$.ofType(EFFECT_AUTH_START)
         .switchMap(action => this.authUser(action))
         .map(authStatus => ({type: EFFECT_AUTH_END, payload: authStatus}));
-
     private authUser(action: Action): Observable<any> {
         let userModel: UserModel = action.payload;
         this.store.dispatch({type: EFFECT_UPDATE_USER_MODEL, payload: userModel});
@@ -149,13 +155,16 @@ export class AppDbEffects {
                     type: EFFECT_AUTH_STATUS, payload: AuthenticateFlags.USER_ACCOUNT
                 });
 
-                //todo: currently if logging in with enterprise account, dbConnect will timeout, Alon needs to fix and we can dispatch code below
+                /////////////////////////////////////////////////////////////////////////////
+                // todo: currently if logging in with enterprise account, dbConnect will timeout,
+                // todo: Alon needs to fix and we can dispatch code below
                 // userModel = userModel.setAuthenticated(true);
                 // userModel = userModel.setAccountType(AuthenticateFlags.ENTERPRISE_ACCOUNT);
                 // this.store.dispatch({type: EFFECT_UPDATE_USER_MODEL, payload: userModel});
                 // this.store.dispatch({
                 //     type: EFFECT_AUTH_STATUS, payload: AuthenticateFlags.ENTERPRISE_ACCOUNT
                 // });
+                /////////////////////////////////////////////////////////////////////////////
             }
 
             // if passed check for two factor

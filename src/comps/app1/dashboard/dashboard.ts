@@ -30,6 +30,16 @@ export class Dashboard extends Compbaser {
     constructor(private store: Store<ApplicationState>) {
         super();
         this.userModel$ = this.store.select(store => store.appDb.userModel);
+
+        setTimeout(()=>{
+            this.store.select(store => store.storeData.msdb.m_selectedDataBase.m_tables.campaigns).subscribe((v) => {
+            // this.store.select(a => a.storeData.msdb).subscribe((v) => {
+            // this.store.select(store => store.storeData.msdb).subscribe((v) => {
+                console.log(v);
+            })
+        },8000)
+
+
     }
 
     private setZoom() {

@@ -6,6 +6,7 @@ export interface StoreData {
     participants: { [key: number]: any };
     threads: { [key: number]: any };
     messages: { [key: number]: any };
+    msdb: any;
 }
 
 export interface IAppDb {
@@ -23,7 +24,8 @@ export interface IAppDb {
 export const INITIAL_STORE_DATA: StoreData = {
     threads: {},
     messages: {},
-    participants: {}
+    participants: {},
+    msdb: {}
 };
 
 
