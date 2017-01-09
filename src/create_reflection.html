@@ -18,9 +18,20 @@
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
+    
+
+
+
     loaderManager.create('d25@ms.com', "123123", function (v) {
-        var aa = msdb.table_campaigns();
-        var tableProto = aa.__proto__.__proto__;
+
+        var enums = '\nexport const TableNames = [\n';
+        _.forEach(msdb.m_selectedDataBase.m_tableList, (k, v) => {
+            enums = `   ${enums} '${k}',\n`
+        })
+        enums = `${enums}\n]`
+
+        var campaigns = msdb.table_campaigns();
+        var tableProto = campaigns.__proto__.__proto__;
 
         var functions = 'm_name:string;\n';
         functions = functions + '    fields:Array&lt;any&gt;\n';
@@ -44,7 +55,7 @@ export interface IBaseProto {
         var tables = '';
         _.forEach(msdb.__proto__, (tableFunc, table) => {
             var tableCap = capitalizeFirstLetter(table)
-            if (msdb[table]()){
+            if (msdb[table]()) {
                 var fields = msdb[table]().m_fields;
                 var f = JSON.stringify(fields)
             }
@@ -67,6 +78,7 @@ ${b2}
 `
 
         buffer = `<pre>
+${enums}
 ${baseProto}
 ${tables}
 ${DataManager}

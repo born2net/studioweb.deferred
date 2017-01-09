@@ -79,7 +79,8 @@ export class RedPepperService {
         },1000)
 
         var a = this.databaseManager.table_campaigns().getAllPrimaryKeys();
-        var b = this.databaseManager.table_campaigns().m_fields[0].field
+        var b = this.databaseManager.table_campaigns()
+
         // var c = this.m_msdb.table_campaigns().m_fields[2].field
         // var d = this.m_msdb.table_campaigns().m_fields[0].isNullAble;
         // var e = this.m_msdb.table_campaigns().m_fields[1].field;
