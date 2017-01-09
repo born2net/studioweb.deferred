@@ -2,7 +2,7 @@ import {StoreData} from "../store.data";
 import {Action} from "@ngrx/store";
 import {Map, List} from 'immutable';
 import {StoreModel} from "../model/StoreModel";
-import {ResourcesModal} from "../../models/msdb.modals_auto";
+import {ResourcesModal} from "../../models/msdb.models_auto";
 import {MSDB_INIT} from "../actions/appdb.actions";
 
 export function storeData(state: StoreData, action: Action): StoreData {

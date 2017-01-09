@@ -1,5 +1,6 @@
+
 import {List} from 'immutable';
-import * as Modals from "../models/msdb.modals_auto";
+import * as Modals from "../models/msdb.models_auto";
 
 
 export interface IStoreData {

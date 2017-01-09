@@ -6,7 +6,7 @@ import {UserModel} from "../../../models/UserModel";
 import {Observable} from "rxjs";
 import * as _ from 'lodash';
 import ICanvas = fabric.ICanvas;
-import {ResourcesModal} from "../../../models/msdb.modals_auto";
+import {ResourcesModal} from "../../../models/msdb.models_auto";
 import {List} from 'immutable';
 
 @Component({

@@ -4,7 +4,7 @@ import {ApplicationState} from "../store/application.state";
 import {Observable} from "rxjs";
 import {IDataBaseManager, ILoadManager, IPepperConnection, IPepperAuthReply} from "../libs/imsdb.interfaces";
 import {TableNames} from "../libs/imsdb.interfaces_auto";
-import * as MsdbModels from "../models/msdb.modals_auto";
+import * as MsdbModels from "../models/msdb.models_auto";
 import {StoreModel} from "../store/model/StoreModel";
 import {List} from 'immutable';
 
