@@ -37,12 +37,12 @@ export class RedPepperService {
         var campaign = campaigns.createRecord();
         campaign.campaign_name = i_campaignName;
         campaigns.addRecord(campaign,undefined);
-        var db:any = this.reduxifyMsTable('campaigns')
+        var db:any = this.reduxifyMsdbTable('campaigns')
         return db.table_campaigns;
 
     }
 
-    public reduxifyMsTable(tableNameTarget?: string): { [tableName: string]: List<StoreModel> } {
+    public reduxifyMsdbTable(tableNameTarget?: string): { [tableName: string]: List<StoreModel> } {
         var db: { [tableName: string]: List<StoreModel> } = {};
         var tablesNames = tableNameTarget ? [tableNameTarget] : TableNames;
         tablesNames.forEach((table, v) => {

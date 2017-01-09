@@ -26,15 +26,17 @@ export class MsdbEffects {
                 private http: Http) {
     }
 
-    @Effect() reduxifyMsdb$: Observable<Action> = this.actions$.ofType(EFFECT_INIT_REDUXIFY_MSDB)
+    @Effect()
+    reduxifyMsdb$: Observable<Action> = this.actions$.ofType(EFFECT_INIT_REDUXIFY_MSDB)
         .map(() => {
-            var db = this.redPepperService.reduxifyMsTable();
+            var db = this.redPepperService.reduxifyMsdbTable();
             return {type: MSDB_INIT, payload: db}
         })
 
-    @Effect() createTable: Observable<Action> = this.actions$.ofType(EFFECT_CREATE_TABLE)
+    @Effect()
+    createTable: Observable<Action> = this.actions$.ofType(EFFECT_CREATE_TABLE)
         .map(() => {
-            var table = this.redPepperService.createCampaign('foo_bar2');
+            var table = this.redPepperService.createCampaign(Math.random());
             return {
                 type: ACTION_UPDATE_TABLE,
                 payload: {
