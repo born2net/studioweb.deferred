@@ -17,6 +17,7 @@ http://127.0.0.1:8080/src/create_reflection.html
 <script type="text/javascript" src="https://js.signage.me/SignageSDK_combined.js"></script>
 <script type="text/javascript" src="http://www.digitalsignage.com/js/jquery.base64.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/string.js/3.3.3/string.min.js"></script>
 <script>
     var protocol = 'https'
     window.g_protocol = protocol + "://";
@@ -34,11 +35,11 @@ http://127.0.0.1:8080/src/create_reflection.html
 
     loaderManager.create('d25@ms.com', "123123", function (v) {
 
-        var enums = '\nexport const TableNames = [\n';
+        var allTables = '\nexport const TableNames = [\n';
         _.forEach(msdb.m_selectedDataBase.m_tableList, (k, v) => {
-            enums = `   ${enums} '${k}',\n`
+            allTables = `   ${allTables} '${k}',\n`
         })
-        enums = `${enums}\n]`
+        allTables = `${allTables}\n]`
 
         var campaigns = msdb.table_campaigns();
         var tableProto = campaigns.__proto__.__proto__;
@@ -54,6 +55,16 @@ export interface IBaseProto {
     ${functions}
 }
 `
+        // build StoreModels
+        var allStores = 'import {StoreModel} from "../store/model/StoreModel";';
+        _.forEach(msdb.m_selectedDataBase.m_tableList, (k, v) => {
+            var storeName = S(k).camelize().s;
+            storeName = S(storeName).capitalize().s + 'Modal';
+            var storeTemplate = `
+export class ${storeName} extends StoreModel {  constructor(data: any = {}) {super(data);} }`;
+            allStores = `${allStores} ${storeTemplate}`
+        })
+
         // examples for debug to evaluate proto data
         var a = msdb.table_campaigns().getAllPrimaryKeys();
         var b = msdb.table_campaigns().m_name;
@@ -89,7 +100,8 @@ ${b2}
 `
 
         buffer = `<pre>
-${enums}
+${allStores}
+${allTables}
 ${baseProto}
 ${tables}
 ${DataManager}

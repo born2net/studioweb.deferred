@@ -1,5 +1,4 @@
 import {StoreModel} from "../models/StoreModel";
-import * as _ from 'lodash';
 export class UserModel extends StoreModel {
 
     constructor(data: {user: string, pass: string, authenticated: boolean, businessId: number, rememberMe: boolean, twoFactorRequired:boolean, accountType: number, authTime?: Date}) {

@@ -31,7 +31,7 @@ export class StoreModel {
     }
 
     public setData<T>(ClassName, data: any): T {
-        function ClassFactory(className: {new(data): T;}, data: any): T {
+        function ClassFactory(className: { new(data): T; }, data: any): T {
             var created: T = new className(Map<string, any>(data));
             return created;
         }
