@@ -6,6 +6,8 @@ import {UserModel} from "../../../models/UserModel";
 import {Observable} from "rxjs";
 import * as _ from 'lodash';
 import ICanvas = fabric.ICanvas;
+import {ResourcesModal} from "../../../models/msdb.modals_auto";
+import {List} from 'immutable';
 
 @Component({
     selector: 'Dashboard',
@@ -35,8 +37,9 @@ export class Dashboard extends Compbaser {
             console.log(v);
         })
 
-        this.store.select(store => store.storeData.msdb.table_resources).subscribe((v) => {
-            console.log(v);
+        this.store.select(store => store.storeData.msdb.table_resources).subscribe((resourceModels:List<ResourcesModal>) => {
+            var a = resourceModels.get(4).getResourceName();
+            var b = resourceModels.get(4).getResourceBytesTotal();
         })
 
         setTimeout(()=>{

@@ -12,7 +12,7 @@ export function storeData(state: StoreData, action: Action): StoreData {
 
         case 'UPD_TABLE_RESOURCES':
             var r = new ResourcesModal({a:1})
-            state.msdb.table_resources = List([r]);
+            state.msdb.table_resources = state.msdb.table_resources.push(r);
             return state;
 
 
