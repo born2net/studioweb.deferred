@@ -35,10 +35,10 @@ export class AppDbEffects {
         this.parseString = xml2js.parseString;
     }
 
-    @Effect({dispatch: false}) reduxifyMsdb$: Observable<Action> = this.actions$.ofType(EFFECT_REDUXIFY_MSDB)
-        .do(()=>{
-            console.log(this.redPepperService.reduxifyMsdb());
-
+    @Effect() reduxifyMsdb$: Observable<Action> = this.actions$.ofType(EFFECT_REDUXIFY_MSDB)
+        .map(()=>{
+            var db = this.redPepperService.reduxifyMsTable();
+            return {type: 'MSDB', payload: db}
         })
 
     @Effect({dispatch: true}) authTwoFactor$: Observable<Action> = this.actions$.ofType(EFFECT_TWO_FACTOR_AUTH)

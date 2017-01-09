@@ -1,9 +1,11 @@
 import {Injectable} from "@angular/core";
 import {Store} from "@ngrx/store";
 import {ApplicationState} from "../store/application-state";
-// import * as _ from 'lodash';
 import {Observable} from "rxjs";
 import {IDataBaseManager, ILoadManager, IPepperConnection, IPepperAuthReply, TableNames} from "../libs/imsdb.interfaces";
+import * as MsdbModels from "../models/msdb.modals";
+import {StoreModel} from "../store/model/StoreModel";
+import {List} from 'immutable';
 
 
 @Injectable()
@@ -63,42 +65,54 @@ export class RedPepperService {
 
     }
 
-    public reduxifyMsdb() {
-        function capitalizeFirstLetter(string) {
-            return string.charAt(0).toUpperCase() + string.slice(1);
-        }
-        TableNames.forEach((k, v) => {
-            var storeName = capitalizeFirstLetter(StringJS(k).camelize().s) + 'Modal';
-            console.log(storeName);
-        })
+    private capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
-    /**
-     Get a list of all campaigns per the account
-     @method getCampaignIDs
-     @return {Array} campaigns
-     **/
-    public getCampaignIDs() {
-        let campaigns = [];
-        // var aa = this.m_msdb.table_campaigns();
-        // this.store.dispatch({type: 'MSDB', payload: this.databaseManager})
-
-        // setTimeout(()=>{
-        //     this.store.dispatch({type: 'MSDB2', payload: this.databaseManager})
-        // },1000)
-
-        var a = this.databaseManager.table_campaigns().getAllPrimaryKeys();
-        var b = this.databaseManager.table_campaigns()
-
-        // var c = this.m_msdb.table_campaigns().m_fields[2].field
-        // var d = this.m_msdb.table_campaigns().m_fields[0].isNullAble;
-        // var e = this.m_msdb.table_campaigns().m_fields[1].field;
-
-
-        // $(this.m_msdb.table_campaigns().getAllPrimaryKeys()).each(function (k, campaign_id) {$(this.m_msdb.table_campaigns().getAllPrimaryKeys()).each(function (k, campaign_id) {
-        //     campaigns.push(campaign_id);
-        // });
-        return campaigns;
+    public reduxifyMsTable(tableNameTarget?:string):{[tableName: string]: List<StoreModel>} {
+        var db:{[tableName: string]: List<StoreModel>} = {};
+        var tablesNames = tableNameTarget ? [tableNameTarget] : TableNames;
+        tablesNames.forEach((table, v) => {
+            var tableName = 'table_' + table;
+            var storeName = this.capitalizeFirstLetter(StringJS(table).camelize().s) + 'Modal';
+            var list: List<StoreModel> = List<StoreModel>();
+            $(this.databaseManager[tableName]().getAllPrimaryKeys()).each((k, primary_id) => {
+                var record = this.databaseManager[tableName]().getRec(primary_id);
+                var newClass: StoreModel = new MsdbModels[storeName](record);
+                list = list.push(newClass);
+            });
+            db[tableName] = list;
+            // console.log(`serialized ${tableName} total modals: ${list.size}`);
+        });
+        return db;
     }
+
+    // /**
+    //  Get a list of all campaigns per the account
+    //  @method getCampaignIDs
+    //  @return {Array} campaigns
+    //  **/
+    // public getCampaignIDs() {
+    //     let campaigns = [];
+    //     // var aa = this.m_msdb.table_campaigns();
+    //     // this.store.dispatch({type: 'MSDB', payload: this.databaseManager})
+    //
+    //     // setTimeout(()=>{
+    //     //     this.store.dispatch({type: 'MSDB2', payload: this.databaseManager})
+    //     // },1000)
+    //
+    //     // var a = this.databaseManager.table_campaigns().getAllPrimaryKeys();
+    //     // var b = this.databaseManager.table_campaigns()
+    //
+    //     // var c = this.m_msdb.table_campaigns().m_fields[2].field
+    //     // var d = this.m_msdb.table_campaigns().m_fields[0].isNullAble;
+    //     // var e = this.m_msdb.table_campaigns().m_fields[1].field;
+    //
+    //
+    //     // $(this.m_msdb.table_campaigns().getAllPrimaryKeys()).each(function (k, campaign_id) {$(this.m_msdb.table_campaigns().getAllPrimaryKeys()).each(function (k, campaign_id) {
+    //     //     campaigns.push(campaign_id);
+    //     // });
+    //     return campaigns;
+    // }
 
 }

@@ -7,15 +7,6 @@ export function storeData(state: StoreData, action: Action): StoreData {
     switch (action.type) {
         case 'MSDB':
             state.msdb = action.payload;
-
-            var l = List<StoreModel>();
-            jQuery(state.msdb.table_player_data().getAllPrimaryKeys()).each(function (k, player_data_id) {
-                var recPlayerData = state.msdb.table_player_data().getRec(player_data_id);
-                var s = new StoreModel(recPlayerData);
-                l = l.push(s)
-            });
-
-            state.msdb = l;
             return state;
 
 
