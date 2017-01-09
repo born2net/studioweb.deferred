@@ -44,7 +44,7 @@ export class AppDbEffects {
 
     @Effect() createTable: Observable<Action> = this.actions$.ofType(EFFECT_CREATE_TABLE)
         .map(() => {
-            var table = this.redPepperService.addCampaign('foo_bar');
+            var table = this.redPepperService.createCampaign('foo_bar2');
             return {
                 type: ACTION_UPDATE_TABLE,
                 payload: {
@@ -137,9 +137,9 @@ export class AppDbEffects {
             } else {
 
                 if (pepperConnection.pepperAuthReply.warning == 'not a studioLite account') {
-                    console.log('pro account!!');
+                    // console.log('pro account!!');
                 } else {
-                    console.log('lite account');
+                    // console.log('lite account');
                 }
 
                 var resellerDataString = pepperConnection.loadManager.m_resellerInfo.children[0].innerHTML

@@ -39,8 +39,8 @@ export class Dashboard extends Compbaser {
         })
 
         this.store.select(store => store.storeData.msdb.table_resources).subscribe((resourceModels: List<ResourcesModal>) => {
-            console.log(resourceModels.get(4).getResourceName());
-            console.log(resourceModels.get(4).getResourceBytesTotal());
+            // console.log(resourceModels.get(4).getResourceName());
+            // console.log(resourceModels.get(4).getResourceBytesTotal());
         })
     }
 

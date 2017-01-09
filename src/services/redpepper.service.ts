@@ -32,7 +32,7 @@ export class RedPepperService {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
-    public addCampaign(i_campaignName): { [tableName: string]: List<StoreModel> } {
+    public createCampaign(i_campaignName): { [tableName: string]: List<StoreModel> } {
         var campaigns = this.databaseManager.table_campaigns();
         var campaign = campaigns.createRecord();
         campaign.campaign_name = i_campaignName;
@@ -49,7 +49,7 @@ export class RedPepperService {
             var tableName = 'table_' + table;
             var storeName = this.capitalizeFirstLetter(StringJS(table).camelize().s) + 'Modal';
             var storeModelList: List<StoreModel> = List<StoreModel>();
-            $(this.databaseManager[tableName]().getAllPrimaryKeys()).each((k, primary_id) => {
+            this.databaseManager[tableName]().getAllPrimaryKeys().forEach((k, primary_id) => {
                 var record = this.databaseManager[tableName]().getRec(primary_id);
                 var newClass: StoreModel = new MsdbModels[storeName](record);
                 storeModelList = storeModelList.push(newClass);

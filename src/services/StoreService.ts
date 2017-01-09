@@ -13,7 +13,6 @@ export class StoreService {
                 @Inject('OFFLINE_ENV') private offlineEnv) {
 
         this.store.dispatch(this.appdbAction.initAppDb());
-        console.log(this.redPepperService);
     }
 
     private singleton: boolean = false;
