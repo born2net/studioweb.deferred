@@ -9,11 +9,10 @@ import {Action, Store} from "@ngrx/store";
 import {ApplicationState} from "../application-state";
 import {Actions, Effect} from "@ngrx/effects";
 import {Observable} from "rxjs";
-import * as _ from "lodash";
 import {UserModel} from "../../models/UserModel";
 import {AuthenticateFlags} from "../actions/app-db-actions";
 import {RedPepperService} from "../../services/redpepper.service";
-import {IPepperConnection} from "../../libs/Imsdb";
+import {IPepperConnection} from "../../libs/imsdb.interfaces";
 
 export const EFFECT_AUTH_START = 'EFFECT_AUTH_START';
 export const EFFECT_AUTH_END = 'EFFECT_AUTH_END';
@@ -38,7 +37,7 @@ export class AppDbEffects {
 
     @Effect({dispatch: false}) reduxifyMsdb$: Observable<Action> = this.actions$.ofType(EFFECT_REDUXIFY_MSDB)
         .do(()=>{
-            console.log(this.redPepperService.getCampaignIDs());
+            console.log(this.redPepperService.reduxifyMsdb());
 
         })
 

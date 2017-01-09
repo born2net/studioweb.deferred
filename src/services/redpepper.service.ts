@@ -3,8 +3,7 @@ import {Store} from "@ngrx/store";
 import {ApplicationState} from "../store/application-state";
 // import * as _ from 'lodash';
 import {Observable} from "rxjs";
-import {IDataBaseManager, ILoadManager, IPepperConnection, IPepperAuthReply} from "../libs/Imsdb";
-
+import {IDataBaseManager, ILoadManager, IPepperConnection, IPepperAuthReply, TableNames} from "../libs/imsdb.interfaces";
 
 
 @Injectable()
@@ -62,6 +61,16 @@ export class RedPepperService {
         })
 
 
+    }
+
+    public reduxifyMsdb() {
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+        TableNames.forEach((k, v) => {
+            var storeName = capitalizeFirstLetter(StringJS(k).camelize().s) + 'Modal';
+            console.log(storeName);
+        })
     }
 
     /**

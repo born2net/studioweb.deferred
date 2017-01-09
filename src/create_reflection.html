@@ -59,8 +59,7 @@ export interface IBaseProto {
         // build StoreModels
         var allStores = 'import {StoreModel} from "../store/model/StoreModel";';
         _.forEach(msdb.m_selectedDataBase.m_tableList, (k, v) => {
-            var storeName = S(k).camelize().s;
-            storeName = S(storeName).capitalize().s + 'Modal';
+            var storeName = capitalizeFirstLetter(S(k).camelize().s) + 'Modal';
             var storeTemplate = `
 export class ${storeName} extends StoreModel {  constructor(data: any = {}) {super(data);} }`;
             allStores = `${allStores} ${storeTemplate}`

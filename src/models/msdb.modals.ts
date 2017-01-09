@@ -1,5 +1,5 @@
 import {StoreModel} from "../store/model/StoreModel";
-export class GlobalsettingsModal extends StoreModel {
+export class GlobalSettingsModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
@@ -9,42 +9,42 @@ export class ResourcesModal extends StoreModel {
         super(data);
     }
 }
-export class AdlocalpackagesModal extends StoreModel {
+export class AdLocalPackagesModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
 }
-export class AdlocalcontentsModal extends StoreModel {
+export class AdLocalContentsModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
 }
-export class CategoryvaluesModal extends StoreModel {
+export class CategoryValuesModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
 }
-export class CatalogitemsModal extends StoreModel {
+export class CatalogItemsModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
 }
-export class CatalogiteminfosModal extends StoreModel {
+export class CatalogItemInfosModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
 }
-export class CatalogitemresourcesModal extends StoreModel {
+export class CatalogItemResourcesModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
 }
-export class CatalogitemcategoriesModal extends StoreModel {
+export class CatalogItemCategoriesModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
 }
-export class PlayerdataModal extends StoreModel {
+export class PlayerDataModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
@@ -59,77 +59,77 @@ export class CampaignsModal extends StoreModel {
         super(data);
     }
 }
-export class CampaignchannelsModal extends StoreModel {
+export class CampaignChannelsModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
 }
-export class CampaignchannelplayersModal extends StoreModel {
+export class CampaignChannelPlayersModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
 }
-export class CampaigntimelinesModal extends StoreModel {
+export class CampaignTimelinesModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
 }
-export class CampaigneventsModal extends StoreModel {
+export class CampaignEventsModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
 }
-export class CampaignboardsModal extends StoreModel {
+export class CampaignBoardsModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
 }
-export class BoardtemplatesModal extends StoreModel {
+export class BoardTemplatesModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
 }
-export class BoardtemplateviewersModal extends StoreModel {
+export class BoardTemplateViewersModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
 }
-export class CampaigntimelinechanelsModal extends StoreModel {
+export class CampaignTimelineChanelsModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
 }
-export class CampaigntimelinechannelsModal extends StoreModel {
+export class CampaignTimelineChannelsModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
 }
-export class CampaigntimelineboardtemplatesModal extends StoreModel {
+export class CampaignTimelineBoardTemplatesModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
 }
-export class CampaigntimelineboardviewerchanelsModal extends StoreModel {
+export class CampaignTimelineBoardViewerChanelsModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
 }
-export class CampaigntimelineboardviewerchannelsModal extends StoreModel {
+export class CampaignTimelineBoardViewerChannelsModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
 }
-export class CampaigntimelinechanelplayersModal extends StoreModel {
+export class CampaignTimelineChanelPlayersModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
 }
-export class CampaigntimelineschedulesModal extends StoreModel {
+export class CampaignTimelineSchedulesModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
 }
-export class CampaigntimelinesequencesModal extends StoreModel {
+export class CampaignTimelineSequencesModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
@@ -139,62 +139,62 @@ export class ScriptsModal extends StoreModel {
         super(data);
     }
 }
-export class MusicchannelsModal extends StoreModel {
+export class MusicChannelsModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
 }
-export class MusicchannelsongsModal extends StoreModel {
+export class MusicChannelSongsModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
 }
-export class BranchstationsModal extends StoreModel {
+export class BranchStationsModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
 }
-export class AdratesModal extends StoreModel {
+export class AdRatesModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
 }
-export class StationadsModal extends StoreModel {
+export class StationAdsModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
 }
-export class AdoutpackagesModal extends StoreModel {
+export class AdOutPackagesModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
 }
-export class AdoutpackagecontentsModal extends StoreModel {
+export class AdOutPackageContentsModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
 }
-export class AdoutpackagestationsModal extends StoreModel {
+export class AdOutPackageStationsModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
 }
-export class AdindomainsModal extends StoreModel {
+export class AdInDomainsModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
 }
-export class AdindomainbusinessesModal extends StoreModel {
+export class AdInDomainBusinessesModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
 }
-export class AdindomainbusinesspackagesModal extends StoreModel {
+export class AdInDomainBusinessPackagesModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
 }
-export class AdindomainbusinesspackagestationsModal extends StoreModel {
+export class AdInDomainBusinessPackageStationsModal extends StoreModel {
     constructor(data: any = {}) {
         super(data);
     }
