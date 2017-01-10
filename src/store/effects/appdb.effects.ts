@@ -10,7 +10,7 @@ import {ApplicationState} from "../application.state";
 import {Actions, Effect} from "@ngrx/effects";
 import {Observable} from "rxjs";
 import {UserModel} from "../../models/UserModel";
-import {AuthenticateFlags, ACTION_UPDATE_ALL_TABLES} from "../actions/appdb.actions";
+import {AuthenticateFlags} from "../actions/appdb.actions";
 import {RedPepperService} from "../../services/redpepper.service";
 import {IPepperConnection} from "../../store/imsdb.interfaces";
 
