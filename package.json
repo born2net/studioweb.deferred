@@ -33,6 +33,7 @@
     "@ngrx/store": "^2.2.1",
     "@ngrx/store-devtools": "^3.2.2",
     "@types/bootbox": "^4.4.30",
+    "@types/fabric": "^1.5.20",
     "@types/lodash": "^4.14.41",
     "angular-pipes": "^5.4.0",
     "angular2-fontawesome": "~0.8.0",

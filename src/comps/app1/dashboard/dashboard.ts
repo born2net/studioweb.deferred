@@ -19,7 +19,6 @@ import {EFFECT_CREATE_TABLE} from "../../../store/effects/msdb.effects";
                <h4>account type: {{(userModel$ | async)?.getAccountType()}}</h4>
                <canvas #canvas width="300" height="300"></canvas>
                <button (click)="setZoom()">zoom</button>
-               
            `,
 })
 export class Dashboard extends Compbaser {
