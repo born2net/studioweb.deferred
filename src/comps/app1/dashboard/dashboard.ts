@@ -5,7 +5,6 @@ import {Store} from "@ngrx/store";
 import {UserModel} from "../../../models/UserModel";
 import {Observable} from "rxjs";
 import * as _ from 'lodash';
-import ICanvas = fabric.Canvas;
 import {List} from 'immutable';
 import {ResourcesModal} from "../../../store/imsdb.interfaces_auto";
 import {EFFECT_CREATE_TABLE} from "../../../store/effects/msdb.effects";
@@ -24,7 +23,7 @@ import {EFFECT_CREATE_TABLE} from "../../../store/effects/msdb.effects";
 export class Dashboard extends Compbaser {
 
     private userModel$: Observable<UserModel>;
-    private fabricCanvas;
+    private fabricCanvas:fabric.IStaticCanvas;
 
     @ViewChild('canvas')
     canvas;
