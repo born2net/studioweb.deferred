@@ -34,11 +34,11 @@ export class Dashboard extends Compbaser {
         super();
         this.userModel$ = this.store.select(store => store.appDb.userModel);
 
-        this.store.select(store => store.storeData.msdb.table_campaigns).subscribe((v) => {
+        this.store.select(store => store.msDatabase.msdb.table_campaigns).subscribe((v) => {
             // console.log(v);
         })
 
-        this.store.select(store => store.storeData.msdb.table_resources).subscribe((resourceModels: List<ResourcesModal>) => {
+        this.store.select(store => store.msDatabase.msdb.table_resources).subscribe((resourceModels: List<ResourcesModal>) => {
             // console.log(resourceModels.get(4).getResourceName());
             // console.log(resourceModels.get(4).getResourceBytesTotal());
         })

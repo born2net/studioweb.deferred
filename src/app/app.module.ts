@@ -34,7 +34,7 @@ import {INITIAL_APPLICATION_STATE} from "../store/application.state";
 import {EffectsModule} from "@ngrx/effects";
 import {StoreDevtoolsModule} from "@ngrx/store-devtools";
 import {appDb} from "../store/reducers/appdb.reducer";
-import {storeData} from "../store/reducers/msdb.reducer";
+import {msDatabase} from "../store/reducers/msdb.reducer";
 import {AppdbAction} from "../store/actions/appdb.actions";
 import {AppDbEffects} from "../store/effects/appdb.effects";
 import {Dashboard} from "../comps/app1/dashboard/dashboard";
@@ -72,7 +72,7 @@ var decelerations = [AppComponent, AutoLogin, LoginPanel, Logo, App1, Account, D
         Ng2Bs3ModalModule,
         HttpModule,
         StoreModule.provideStore(combineReducers({
-            storeData,
+            msDatabase,
             appDb
         }), INITIAL_APPLICATION_STATE),
         EffectsModule.run(AppDbEffects),
