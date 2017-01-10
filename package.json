@@ -20,13 +20,13 @@
     "disk-serve": "cd dist && live-server --port=4208 --host=localhost --entry-file=/index.html"
   },
   "dependencies": {
-    "@angular/common": "2.4.1",
-    "@angular/compiler": "2.4.1",
-    "@angular/core": "2.4.1",
-    "@angular/forms": "2.4.1",
-    "@angular/http": "2.4.1",
-    "@angular/platform-browser": "2.4.1",
-    "@angular/platform-browser-dynamic": "2.4.1",
+    "@angular/common": "2.4.2",
+    "@angular/compiler": "2.4.2",
+    "@angular/core": "2.4.2",
+    "@angular/forms": "2.4.2",
+    "@angular/http": "2.4.2",
+    "@angular/platform-browser": "2.4.2",
+    "@angular/platform-browser-dynamic": "2.4.2",
     "@angular/router": "3.2.1",
     "@ngrx/core": "^1.2.0",
     "@ngrx/effects": "^2.0.0",
@@ -70,8 +70,8 @@
     "zone.js": "^0.7.1"
   },
   "devDependencies": {
-    "@angular/language-service": "^2.4.1",
-    "@angular/compiler-cli": "2.4.1",
+    "@angular/language-service": "^2.4.2",
+    "@angular/compiler-cli": "2.4.2",
     "@angularclass/hmr": "^1.2.2",
     "@types/hammerjs": "^2.0.33",
     "@types/immutable": "^3.8.6",
