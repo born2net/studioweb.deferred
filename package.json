@@ -68,8 +68,8 @@
     "zone.js": "^0.7.1"
   },
   "devDependencies": {
-    "@angular/language-service": "^2.4.2",
     "@angular/compiler-cli": "2.4.2",
+    "@angular/language-service": "^2.4.2",
     "@angularclass/hmr": "^1.2.2",
     "@types/hammerjs": "^2.0.33",
     "@types/immutable": "^3.8.6",
@@ -77,6 +77,7 @@
     "@types/jquery": "^2.0.34",
     "@types/node": "^6.0.42",
     "angular-cli": "1.0.0-beta.21",
+    "autoprefixer": "^6.6.1",
     "codelyzer": "~1.0.0-beta.3",
     "gulp": "^3.9.1",
     "gulp-comment-swap": "0.0.10",
@@ -97,10 +98,10 @@
     "gulp-watch": "^4.2.4",
     "rsync": "^0.5.0",
     "run-sequence": "^1.2.2",
+    "sw-precache": "4.2.1",
     "ts-node": "1.2.1",
     "tslint": "3.13.0",
     "typescript": "~2.0.3",
-    "webdriver-manager": "10.2.5",
-    "sw-precache": "4.2.1"
+    "webdriver-manager": "10.2.5"
   }
 }
