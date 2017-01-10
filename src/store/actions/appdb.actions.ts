@@ -9,7 +9,8 @@ import {ApplicationState} from "../application.state";
 import {Observable} from "rxjs";
 
 export const APP_INIT = 'APP_INIT';
-export const MSDB_INIT = 'MSDB_INIT';
+export const ACTION_UPDATE_TABLE = 'ACTION_UPDATE_TABLE';
+export const ACTION_UPDATE_ALL_TABLES = 'ACTION_UPDATE_ALL_TABLES';
 export const ACTION_TWO_FACTOR_REMOVED = 'ACTION_TWO_FACTOR_REMOVED';
 
 

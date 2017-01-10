@@ -1,13 +1,12 @@
 import {Action} from "@ngrx/store";
-import {MSDB_INIT} from "../actions/appdb.actions";
-import {ACTION_UPDATE_TABLE} from "../actions/msdb.actions";
+import {ACTION_UPDATE_ALL_TABLES, ACTION_UPDATE_TABLE} from "../actions/appdb.actions";
 import {IMsDatabase} from "../store.data";
 import {redpepperSet} from "../../services/redpepper.service";
 import {ISDK} from "../imsdb.interfaces_auto";
 
 export function msDatabase(state: IMsDatabase, action: Action): IMsDatabase {
     switch (action.type) {
-        case MSDB_INIT:
+        case ACTION_UPDATE_ALL_TABLES:
             var redpepperSet:redpepperSet = action.payload;
             state.sdk = redpepperSet.tables;
             return state;
