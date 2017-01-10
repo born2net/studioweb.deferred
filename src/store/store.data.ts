@@ -3,7 +3,7 @@ import {UserModel} from "../models/UserModel";
 import {AuthenticateFlags} from "./actions/appdb.actions";
 import {IStoreData} from "../store/imsdb.interfaces_auto";
 
-export interface StoreData {
+export interface IMsDatabase {
     participants: { [key: number]: any };
     threads: { [key: number]: any };
     messages: { [key: number]: any };
@@ -22,7 +22,7 @@ export interface IAppDb {
     appBaseUrlCloud: string;
 }
 
-export const INITIAL_STORE_DATA: StoreData = {
+export const INITIAL_STORE_DATA: IMsDatabase = {
     threads: {},
     messages: {},
     participants: {},

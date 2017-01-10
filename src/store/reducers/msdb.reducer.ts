@@ -1,9 +1,9 @@
-import {StoreData} from "../store.data";
 import {Action} from "@ngrx/store";
 import {MSDB_INIT} from "../actions/appdb.actions";
 import {ACTION_UPDATE_TABLE} from "../actions/msdb.actions";
+import {IMsDatabase} from "../store.data";
 
-export function storeData(state: StoreData, action: Action): StoreData {
+export function storeData(state: IMsDatabase, action: Action): IMsDatabase {
     switch (action.type) {
         case MSDB_INIT:
             state.msdb = action.payload;
