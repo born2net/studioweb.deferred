@@ -8,6 +8,7 @@ import * as _ from 'lodash';
 import {List} from 'immutable';
 import {ResourcesModal} from "../../../store/imsdb.interfaces_auto";
 import {EFFECT_CREATE_TABLE} from "../../../store/effects/msdb.effects";
+import {RedPepperService} from "../../../services/redpepper.service";
 
 @Component({
     selector: 'Dashboard',
@@ -28,7 +29,7 @@ export class Dashboard extends Compbaser {
     @ViewChild('canvas')
     canvas;
 
-    constructor(private store: Store<ApplicationState>) {
+    constructor(private store: Store<ApplicationState>, private redPepperService:RedPepperService) {
         super();
         this.userModel$ = this.store.select(store => store.appDb.userModel);
 
@@ -37,15 +38,15 @@ export class Dashboard extends Compbaser {
         })
 
         this.store.select(store => store.msDatabase.sdk.table_resources).subscribe((resourceModels: List<ResourcesModal>) => {
-            console.log(resourceModels.get(4).getResourceName());
-            console.log(resourceModels.get(4).getResourceBytesTotal());
+            console.log(resourceModels.first().getResourceName());
+            console.log(resourceModels.first().getResourceBytesTotal());
         })
     }
 
     private setZoom() {
         this.fabricCanvas.setZoom(_.random(1, 1.5));
         // this.store.dispatch({type:'UPD_TABLE_RESOURCES'})
-        this.store.dispatch({type: EFFECT_CREATE_TABLE})
+        this.store.dispatch({type: EFFECT_CREATE_TABLE});
     }
 
     ngOnInit() {
@@ -58,6 +59,7 @@ export class Dashboard extends Compbaser {
             fill: 'red'
         });
         this.fabricCanvas.add(rect);
+        // this.createCampaign();
     }
 
     createCampaign() {
@@ -69,7 +71,7 @@ export class Dashboard extends Compbaser {
         //
         // var width = BB.comBroker.getService(BB.SERVICES['RESOLUTION_SELECTOR_VIEW']).getResolution().split('x')[0];
         // var height = BB.comBroker.getService(BB.SERVICES['RESOLUTION_SELECTOR_VIEW']).getResolution().split('x')[1];
-        // board_id = pepper.createBoard('board', width, height);
+        // var board_id = this.redPepperService.createBoard('board', 500,500);
         //
         // var newTemplateData = pepper.createNewTemplate(board_id, e.caller.screenTemplateData.screenProps);
         // var board_template_id = newTemplateData['board_template_id']

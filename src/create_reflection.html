@@ -78,7 +78,7 @@ export interface ISDK {
         _.forEach(msdb.m_selectedDataBase.m_tableList, (k, v) => {
             var storeName = capitalizeFirstLetter(S(k).camelize().s) + 'Modal';
             var storeTemplate = `
-        table_${k}: List&lt;${storeName}&gt;;`;
+        table_${k}?: List&lt;${storeName}&gt;;`;
             allReduxStores = `${allReduxStores} ${storeTemplate}`
         });
         allReduxStores = `${allReduxStores}

@@ -1,10 +1,16 @@
 import {Injectable} from "@angular/core";
 import {Observable} from "rxjs";
 import {IDataBaseManager, ILoadManager, IPepperConnection, IPepperAuthReply} from "../store/imsdb.interfaces";
-import {TableNames} from "../store/imsdb.interfaces_auto";
 import * as MsdbModels from "../store/imsdb.interfaces_auto";
+import {TableNames, ISDK} from "../store/imsdb.interfaces_auto";
 import {StoreModel} from "../store/model/StoreModel";
-import {List} from 'immutable';
+import {List} from "immutable";
+
+export type redpepperSet = {
+    tables: ISDK
+    tableNames: Array<string>;
+    data?: any;
+}
 
 @Injectable()
 export class RedPepperService {
@@ -32,38 +38,42 @@ export class RedPepperService {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
-    reduxifyMsdbTable(tableNameTarget?: string): { [tableName: string]: List<StoreModel> } {
-        var db: { [tableName: string]: List<StoreModel> } = {};
-        var tablesNames = tableNameTarget ? [tableNameTarget] : TableNames;
+    reduxifyMsdbTable(tableNameTarget?: string): redpepperSet {
+        var tablesNames: Array<string> = tableNameTarget ? [tableNameTarget] : TableNames;
+        var tableNamesTouched = {};
+        var redpepperSet: redpepperSet = {tables: null, tableNames: tablesNames};
+        var tables = {}
         tablesNames.forEach((table, v) => {
             var tableName = 'table_' + table;
             var storeName = this.capitalizeFirstLetter(StringJS(table).camelize().s) + 'Modal';
             var storeModelList: List<StoreModel> = List<StoreModel>();
+            tables[tableName] = storeModelList;
             this.databaseManager[tableName]().getAllPrimaryKeys().forEach((k, primary_id) => {
                 var record = this.databaseManager[tableName]().getRec(primary_id);
                 var newClass: StoreModel = new MsdbModels[storeName](record);
                 storeModelList = storeModelList.push(newClass);
+                tables[tableName] = storeModelList;
+                tableNamesTouched[tableName] = tableName;
             });
-            db[tableName] = storeModelList;
+            redpepperSet.tables = tables as any;
+            redpepperSet.tableNames = Object.keys(tableNamesTouched).map(function (key) { return tableNamesTouched[key]; });;
             // console.log(`serialized ${tableName} total modals: ${list.size}`);
         });
-        return db;
+        return redpepperSet;
     }
-    
+
     /**
      Create a new campaign in the local database
      @method createCampaign
      @param {Number} i_campaginName
      @return {Number} campaign id created
      **/
-    createCampaign(i_campaignName): { [tableName: string]: List<StoreModel> } {
+    createCampaign(i_campaignName): redpepperSet {
         var campaigns = this.databaseManager.table_campaigns();
         var campaign = campaigns.createRecord();
         campaign.campaign_name = i_campaignName;
         campaigns.addRecord(campaign, undefined);
-        var db: any = this.reduxifyMsdbTable('campaigns')
-        return db.table_campaigns;
-
+        return this.reduxifyMsdbTable('campaigns');
     }
 
     /**
@@ -74,15 +84,17 @@ export class RedPepperService {
      @param {Number} i_height of the board
      @return {Number} the board id
      **/
-    createBoard(i_boardName, i_width, i_height) {
-        var self = this;
-        var boards = self.databaseManager.table_boards();
+    createBoard(i_boardName, i_width, i_height): redpepperSet {
+        var boards = this.databaseManager.table_boards();
         var board = boards.createRecord();
         board.board_name = i_boardName;
         board.board_pixel_width = i_width;
         board.board_pixel_height = i_height;
-        boards.addRecord(board,undefined);
-        return board['board_id'];
+        boards.addRecord(board, undefined);
+        // return board['board_id'];
+        var redpepperSet:redpepperSet = this.reduxifyMsdbTable('boards')
+        redpepperSet.data = {board_id: board['board_id']};
+        return redpepperSet;
     }
 
     /**
@@ -104,7 +116,7 @@ export class RedPepperService {
         var boardTemplate = boardTemplates.createRecord();
         boardTemplate.template_name = "board template";
         boardTemplate.board_id = i_board_id; // bind screen template to board
-        boardTemplates.addRecord(boardTemplate,undefined);
+        boardTemplates.addRecord(boardTemplate, undefined);
 
         var board_template_id = boardTemplate['board_template_id'];
 
@@ -120,7 +132,7 @@ export class RedPepperService {
             viewer.pixel_x = i_screenProps[screenValues]['x'];
             viewer.pixel_y = i_screenProps[screenValues]['y'];
             viewer.board_template_id = boardTemplate.board_template_id; // bind screen division to screen template
-            viewers.addRecord(viewer,undefined);
+            viewers.addRecord(viewer, undefined);
             returnData['viewers'].push(viewer['board_template_viewer_id']);
         }
         returnData['board_template_id'] = board_template_id
@@ -157,7 +169,7 @@ export class RedPepperService {
         var campain_board = campaign_boards.createRecord();
         campain_board.campaign_id = i_campaign_id;
         campain_board.board_id = i_board_id;
-        campaign_boards.addRecord(campain_board,undefined);
+        campaign_boards.addRecord(campain_board, undefined);
         return campain_board['campaign_board_id'];
     }
 
@@ -173,7 +185,7 @@ export class RedPepperService {
         var timeline = timelines.createRecord();
         timeline.campaign_id = i_campaign_id;
         timeline.timeline_name = "Timeline";
-        timelines.addRecord(timeline,undefined);
+        timelines.addRecord(timeline, undefined);
         // pepper.fire(Pepper['NEW_TIMELINE_CREATED'], self, null, timeline['campaign_timeline_id']);
         return timeline['campaign_timeline_id'];
     }
@@ -208,7 +220,7 @@ export class RedPepperService {
             recCampaignTimelineSequence.sequence_count = 0;
             recCampaignTimelineSequence.campaign_timeline_id = i_campaign_timeline_id;
             recCampaignTimelineSequence.campaign_id = i_campaign_id;
-            table_campaign_timeline_sequences.addRecord(recCampaignTimelineSequence,undefined);
+            table_campaign_timeline_sequences.addRecord(recCampaignTimelineSequence, undefined);
         }
     }
 
@@ -228,7 +240,7 @@ export class RedPepperService {
             viewerChanel.campaign_timeline_board_template_id = i_campaign_timeline_board_template_id;
             viewerChanel.board_template_viewer_id = i_viewers[i];
             viewerChanel.campaign_timeline_chanel_id = i_channels.shift();
-            viewerChanels.addRecord(viewerChanel,undefined);
+            viewerChanels.addRecord(viewerChanel, undefined);
         }
     }
 
@@ -258,7 +270,7 @@ export class RedPepperService {
         recCampaignTimelineSchedules.priority = 1;
         recCampaignTimelineSchedules.start_date = dateStart;
         recCampaignTimelineSchedules.end_date = dateEnd;
-        table_campaign_timeline_schedules.addRecord(recCampaignTimelineSchedules,undefined);
+        table_campaign_timeline_schedules.addRecord(recCampaignTimelineSchedules, undefined);
     }
 
     /**

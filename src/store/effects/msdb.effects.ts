@@ -11,7 +11,7 @@ import {Actions, Effect} from "@ngrx/effects";
 import {Observable} from "rxjs";
 import {MSDB_INIT} from "../actions/appdb.actions";
 import {ACTION_UPDATE_TABLE} from "../actions/msdb.actions";
-import {RedPepperService} from "../../services/redpepper.service";
+import {RedPepperService, redpepperSet} from "../../services/redpepper.service";
 
 export const EFFECT_INIT_REDUXIFY_MSDB = 'EFFECT_INIT_REDUXIFY_MSDB';
 export const EFFECT_CREATE_TABLE = 'EFFECT_CREATE_TABLE';
@@ -29,18 +29,18 @@ export class MsdbEffects {
     @Effect()
     reduxifyMsdb$: Observable<Action> = this.actions$.ofType(EFFECT_INIT_REDUXIFY_MSDB)
         .map(() => {
-            var db = this.redPepperService.reduxifyMsdbTable();
-            return {type: MSDB_INIT, payload: db}
+            var redpepperSet:redpepperSet = this.redPepperService.reduxifyMsdbTable();
+            return {type: MSDB_INIT, payload: redpepperSet}
         })
 
     @Effect()
     createTable: Observable<Action> = this.actions$.ofType(EFFECT_CREATE_TABLE)
         .map(() => {
-            var table = this.redPepperService.createCampaign(Math.random());
+            var redpepperSet:redpepperSet = this.redPepperService.createCampaign(Math.random());
             return {
                 type: ACTION_UPDATE_TABLE,
                 payload: {
-                    table: table,
+                    tables: redpepperSet.tables,
                     tableName: 'table_campaigns'
                 }
             }

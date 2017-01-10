@@ -6,7 +6,8 @@ DigitalSignage.com StudioTouch
 
 ```
 git clone https://github.com/born2net/studiotouch.git
-cd studiotouch 
+cd studiotouch
+npm install angular-cli@1.0.0-beta.21 -g
 npm install --no-optional
 ```
 

@@ -2,11 +2,14 @@ import {Action} from "@ngrx/store";
 import {MSDB_INIT} from "../actions/appdb.actions";
 import {ACTION_UPDATE_TABLE} from "../actions/msdb.actions";
 import {IMsDatabase} from "../store.data";
+import {redpepperSet} from "../../services/redpepper.service";
+import {ISDK} from "../imsdb.interfaces_auto";
 
 export function msDatabase(state: IMsDatabase, action: Action): IMsDatabase {
     switch (action.type) {
         case MSDB_INIT:
-            state.sdk = action.payload;
+            var redpepperSet:redpepperSet = action.payload;
+            state.sdk = redpepperSet.tables;
             return state;
 
         // case 'UPD_TABLE_RESOURCES':
@@ -15,9 +18,10 @@ export function msDatabase(state: IMsDatabase, action: Action): IMsDatabase {
         //     return state;
 
         case ACTION_UPDATE_TABLE:
-            state.sdk[action.payload.tableName] = action.payload.table;
+            var redpepperSet:redpepperSet = action.payload;
+            var tableName = action.payload.tableName;
+            state.sdk[tableName] = redpepperSet.tables[tableName];
             return state;
-
 
         // case 'MSDB2': {
         //     state.sdk = action.payload;
