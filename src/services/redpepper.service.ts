@@ -57,7 +57,6 @@ export class RedPepperService {
             });
             redpepperSet.tables = tables as any;
             redpepperSet.tableNames = Object.keys(tableNamesTouched).map(function (key) { return tableNamesTouched[key]; });;
-            // console.log(`serialized ${tableName} total modals: ${list.size}`);
         });
         return redpepperSet;
     }

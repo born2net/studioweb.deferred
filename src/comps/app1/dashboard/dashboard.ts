@@ -7,7 +7,7 @@ import {Observable} from "rxjs";
 import * as _ from 'lodash';
 import {List} from 'immutable';
 import {ResourcesModal} from "../../../store/imsdb.interfaces_auto";
-import {EFFECT_CREATE_TABLE} from "../../../store/effects/msdb.effects";
+import {EFFECT_CREATE_TABLE_CAMPAIGN, EFFECT_CREATE_TABLE_BOARD} from "../../../store/effects/msdb.effects";
 import {RedPepperService} from "../../../services/redpepper.service";
 
 @Component({
@@ -18,7 +18,8 @@ import {RedPepperService} from "../../../services/redpepper.service";
                <h4>user name: {{(userModel$ | async)?.getUser() }}</h4>
                <h4>account type: {{(userModel$ | async)?.getAccountType()}}</h4>
                <canvas #canvas width="300" height="300"></canvas>
-               <button (click)="setZoom()">zoom</button>
+               <button (click)="createCampaign()">createCampaign</button>
+               <button (click)="createBoard()">createBoard</button>
            `,
 })
 export class Dashboard extends Compbaser {
@@ -43,10 +44,10 @@ export class Dashboard extends Compbaser {
         })
     }
 
-    private setZoom() {
+    private createCampaign() {
         this.fabricCanvas.setZoom(_.random(1, 1.5));
         // this.store.dispatch({type:'UPD_TABLE_RESOURCES'})
-        this.store.dispatch({type: EFFECT_CREATE_TABLE});
+        this.store.dispatch({type: EFFECT_CREATE_TABLE_CAMPAIGN});
     }
 
     ngOnInit() {
@@ -59,10 +60,9 @@ export class Dashboard extends Compbaser {
             fill: 'red'
         });
         this.fabricCanvas.add(rect);
-        // this.createCampaign();
     }
 
-    createCampaign() {
+    private createBoard() {
 
 
         // ////////////////////////////////////////////////
@@ -71,7 +71,10 @@ export class Dashboard extends Compbaser {
         //
         // var width = BB.comBroker.getService(BB.SERVICES['RESOLUTION_SELECTOR_VIEW']).getResolution().split('x')[0];
         // var height = BB.comBroker.getService(BB.SERVICES['RESOLUTION_SELECTOR_VIEW']).getResolution().split('x')[1];
-        // var board_id = this.redPepperService.createBoard('board', 500,500);
+        // var board_id = this.redPepperService.createBoard('my board', 500,500).data.board_id;
+
+        this.store.dispatch({type: EFFECT_CREATE_TABLE_BOARD});
+
         //
         // var newTemplateData = pepper.createNewTemplate(board_id, e.caller.screenTemplateData.screenProps);
         // var board_template_id = newTemplateData['board_template_id']

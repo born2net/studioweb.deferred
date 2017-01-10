@@ -14,7 +14,8 @@ import {ACTION_UPDATE_TABLE} from "../actions/msdb.actions";
 import {RedPepperService, redpepperSet} from "../../services/redpepper.service";
 
 export const EFFECT_INIT_REDUXIFY_MSDB = 'EFFECT_INIT_REDUXIFY_MSDB';
-export const EFFECT_CREATE_TABLE = 'EFFECT_CREATE_TABLE';
+export const EFFECT_CREATE_TABLE_CAMPAIGN = 'EFFECT_CREATE_TABLE_CAMPAIGN';
+export const EFFECT_CREATE_TABLE_BOARD = 'EFFECT_CREATE_TABLE_BOARD';
 
 @Injectable()
 export class MsdbEffects {
@@ -34,7 +35,7 @@ export class MsdbEffects {
         })
 
     @Effect()
-    createTable: Observable<Action> = this.actions$.ofType(EFFECT_CREATE_TABLE)
+    createTable: Observable<Action> = this.actions$.ofType(EFFECT_CREATE_TABLE_CAMPAIGN)
         .map(() => {
             var redpepperSet:redpepperSet = this.redPepperService.createCampaign(Math.random());
             return {
@@ -46,6 +47,19 @@ export class MsdbEffects {
             }
         })
 
+    @Effect()
+    createTable2: Observable<Action> = this.actions$.ofType(EFFECT_CREATE_TABLE_BOARD)
+        .map(() => {
+            var redpepperSet:redpepperSet = this.redPepperService.createBoard('my board', 500,500);
+            var board_id = redpepperSet.data.board_id;
+            return {
+                type: ACTION_UPDATE_TABLE,
+                payload: {
+                    tables: redpepperSet.tables,
+                    tableName: 'table_boards'
+                }
+            }
+        })
 
 }
 
