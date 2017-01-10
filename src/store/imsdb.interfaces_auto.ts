@@ -1,6 +1,6 @@
 
 
-//file: imsdb.interfaces_auto.ts
+// >>>> paste into: store/imsdb.interfaces_auto.ts
 
 import {List} from 'immutable';
 
