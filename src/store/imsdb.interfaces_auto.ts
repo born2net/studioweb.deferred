@@ -1581,7 +1581,7 @@ export class AdInDomainBusinessPackageStationsModal extends StoreModel {
 
 
 
-export interface IStoreData {
+export interface ISDK {
 
     table_global_settings: List<GlobalSettingsModal>;
     table_resources: List<ResourcesModal>;

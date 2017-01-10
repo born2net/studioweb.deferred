@@ -2,7 +2,7 @@
 
 Usage:
 
-to run this script and generate interface for msdb:
+to run this script and generate interface sdkmsdb:
 
 run live-server inside /cygdrive/c/msweb/studiotouch
 
@@ -73,7 +73,7 @@ export interface IBaseProto {
 
         // build all redux StoreData
         var allReduxStores = `
-export interface IStoreData {
+export interface ISDK {
         `;
         _.forEach(msdb.m_selectedDataBase.m_tableList, (k, v) => {
             var storeName = capitalizeFirstLetter(S(k).camelize().s) + 'Modal';

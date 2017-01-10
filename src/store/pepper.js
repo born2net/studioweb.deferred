@@ -2,12 +2,12 @@
  Pepper SDK is a collection of files that provide a wrapper for the Soap API used to communicate with MediaSignage servers.
  The SDK makes programming easier by abstracting some of the tedious tasks such as enumeration.
 
- The msdb internal Database is the magic sauce as it maps against the actual mediaSERVER remote database via
+ The sdk internal Database is the magic sauce as it maps against the actual mediaSERVER remote database via
  local generated handles (a.k.a IDs). Once a user saves the local configuration, the local Database is serialized
  and pushed onto the a remote mediaSERVER. This allows for the user to work offline without the need for constant network
  communication until a save is initiated.
 
- The internal database is referenced as msdb in both code and documentation.
+ The internal database is referenced as sdk in both code and documentation.
 
  Library requirements:
  composition: x2js, jQuery
@@ -239,7 +239,7 @@ Pepper.prototype = {
     },
 
     /**
-     Serialize the local msdb and push to remote server
+     Serialize the local sdk and push to remote server
      @method save
      @return none
      **/
@@ -250,7 +250,7 @@ Pepper.prototype = {
     },
 
     /**
-     Sync internal msdb to remote mediaSERVER account
+     Sync internal sdk to remote mediaSERVER account
      @method requestData
      @param {Function} i_callback
      **/
@@ -1309,7 +1309,7 @@ Pepper.prototype = {
      Create a new global template (screen and viewers) and assign the new template to the given global board_id
      @method createNewTemplate
      @param {Number} i_board_id
-     @param {Object} i_screenProps json object with all the viewers and attributes to create in msdb
+     @param {Object} i_screenProps json object with all the viewers and attributes to create in sdk
      @return {Object} returnData encapsulates the board_template_id and board_template_viewer_ids created
      **/
     createNewTemplate: function (i_board_id, i_screenProps) {
@@ -1912,7 +1912,7 @@ Pepper.prototype = {
     },
 
     /**
-     Remove all boards in msdb
+     Remove all boards in sdk
      @method removeAllBoards
      @return none
      **/
@@ -2348,7 +2348,7 @@ Pepper.prototype = {
     },
 
     /**
-     Get station name from msdb (no remote server async)
+     Get station name from sdk (no remote server async)
      @method getStationNameSync
      @param {Number} i_stationID
      @return {String} stationName
@@ -2367,7 +2367,7 @@ Pepper.prototype = {
     },
 
     /**
-     Get station name from msdb (no remote server async)
+     Get station name from sdk (no remote server async)
      @method getAdPackContNames
      @param {Number} i_ad_local_content_id
      @return {Object}
@@ -2447,7 +2447,7 @@ Pepper.prototype = {
     },
 
     /**
-     Set a station record via object arg into msdb table_branch_stations
+     Set a station record via object arg into sdk table_branch_stations
      @method getStationRecord
      @param {Number} i_native_station_id
      @param {Object} record
@@ -2506,7 +2506,7 @@ Pepper.prototype = {
     },
 
     /**
-     Remove station, delete it from internal msdb and push to server on save
+     Remove station, delete it from internal sdk and push to server on save
      @method removeStation
      @param {Number} i_station
      **/
@@ -2741,7 +2741,7 @@ Pepper.prototype = {
     },
 
     /**
-     Get a player_id record from msdb by player_id primary key.
+     Get a player_id record from sdk by player_id primary key.
      @method getCampaignTimelineChannelPlayerRecord
      @param {Number} i_player_id
      @return {Object} player record
@@ -2752,7 +2752,7 @@ Pepper.prototype = {
     },
 
     /**
-     Set a player_id record in msdb on key with value
+     Set a player_id record in sdk on key with value
      The method uses generic key / value fields so it can set any part of the record.
      @method setCampaignTimelineChannelPlayerRecord
      @param {Number} i_player_id
@@ -2768,7 +2768,7 @@ Pepper.prototype = {
     },
 
     /**
-     Get a channel_id record from table channels msdb by channel_id
+     Get a channel_id record from table channels sdk by channel_id
      @method getCampaignTimelineChannelRecord
      @param {Number} i_channel_id
      @return {Object} channel record
@@ -2795,7 +2795,7 @@ Pepper.prototype = {
     },
 
     /**
-     Get a timeline record from msdb using i_campaign_timeline_id primary key.
+     Get a timeline record from sdk using i_campaign_timeline_id primary key.
      @method getCampaignTimelineRecord
      @param {Number} i_campaign_timeline_id
      @return {Object} player record
@@ -2869,7 +2869,7 @@ Pepper.prototype = {
     },
 
     /**
-     Set a timeline records in msdb using i_campaign_timeline_id primary key.
+     Set a timeline records in sdk using i_campaign_timeline_id primary key.
      The method uses generic key / value fields so it can set any part of the record.
      @method setCampaignTimelineRecord
      @param {number} i_player_id
