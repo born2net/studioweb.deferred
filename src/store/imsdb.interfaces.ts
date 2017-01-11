@@ -1,4 +1,3 @@
-
 import {IDataManager_proto} from "./imsdb.interfaces_auto";
 
 export interface IDataBaseManager extends IDataManager_proto {
@@ -28,6 +27,8 @@ export interface DataBaseModueBase {
 
 export interface ILoadManager {
     create: (user: string, pass: string, func: (result: any) => void) => void;
+    save: (func: (result: any) => void) => void;
+    requestData: (func: (result: any) => void) => void;
     m_resellerInfo: XMLDocument;
     m_businessId: number;
     m_domain: string;

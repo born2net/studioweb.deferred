@@ -5,7 +5,6 @@ import * as MsdbModels from "../store/imsdb.interfaces_auto";
 import {TableNames, ISDK} from "../store/imsdb.interfaces_auto";
 import {StoreModel} from "../store/model/StoreModel";
 import {List} from "immutable";
-import {reduce} from "rxjs/operator/reduce";
 import {ACTION_REDUXIFY_MSDB} from "../store/actions/appdb.actions";
 
 export type redpepperTables = {
@@ -49,7 +48,7 @@ export class RedPepperService {
      * return dispatchable action to sync entire sdk into redux
      * @returns {{type: string, payload: [redpepperTables]}}
      */
-    syncToReduxEntireSdk():redpepperTablesAction {
+    syncToReduxEntireSdk(): redpepperTablesAction {
         var redpepperSet: redpepperTables = this.reduxifyMsdbTable();
         return {type: 'ACTION_REDUXIFY_MSDB', payload: [redpepperSet]}
     }
@@ -380,6 +379,25 @@ export class RedPepperService {
         var recCampaignTimeline = this.databaseManager.table_campaign_timelines().getRec(i_campaign_timeline_id);
         recCampaignTimeline['timeline_duration'] = i_totalDuration;
         return this.reduxifyMsdbTable(['table_campaign_timelines']);
+    }
+
+    /**
+     Save to server
+     @method save
+     @return none
+     **/
+    save(i_callback) {
+        this.m_loaderManager.save(i_callback);
+    }
+
+    /**
+     Sync internal sdk to remote mediaSERVER account
+     @method requestData
+     @param {Function} i_callback
+     **/
+    sync(i_callBack) {
+        var self = this;
+        self.m_loaderManager.requestData(i_callBack);
     }
 
 

@@ -20,17 +20,18 @@ import {RedPepperService} from "../../../services/redpepper.service";
                <canvas #canvas width="300" height="300"></canvas>
                <button (click)="renameCampaign()">renameCampaign</button>
                <button (click)="createBoard()">createBoard</button>
+               <button (click)="save()">save</button>
            `,
 })
 export class Dashboard extends Compbaser {
 
     private userModel$: Observable<UserModel>;
-    private fabricCanvas:fabric.IStaticCanvas;
+    private fabricCanvas: fabric.IStaticCanvas;
 
     @ViewChild('canvas')
     canvas;
 
-    constructor(private store: Store<ApplicationState>, private redPepperService:RedPepperService) {
+    constructor(private store: Store<ApplicationState>, private redPepperService: RedPepperService) {
         super();
         this.userModel$ = this.store.select(store => store.appDb.userModel);
 
@@ -61,8 +62,17 @@ export class Dashboard extends Compbaser {
         this.fabricCanvas.add(rect);
     }
 
+    private save() {
+        console.log('saving...');
+        this.redPepperService.save((result) => {
+            alert('saved');
+            console.log(result);
+        });
+    }
+
     private createBoard() {
-        this.store.dispatch({type: EFFECT_CREATE_TABLE_BOARD});    }
+        this.store.dispatch({type: EFFECT_CREATE_TABLE_BOARD});
+    }
 
     destroy() {
     }
