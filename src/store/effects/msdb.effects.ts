@@ -29,8 +29,7 @@ export class MsdbEffects {
     @Effect()
     reduxifyMsdb$: Observable<Action> = this.actions$.ofType(EFFECT_INIT_REDUXIFY_MSDB)
         .map(() => {
-            var redpepperSet: redpepperTables = this.redPepperService.reduxifyMsdbTable();
-            return {type: ACTION_REDUXIFY_MSDB, payload: [redpepperSet]}
+            return this.redPepperService.syncToReduxEntireSdk();
         })
 
     @Effect()

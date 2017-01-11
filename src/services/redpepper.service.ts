@@ -45,13 +45,17 @@ export class RedPepperService {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
+    /**
+     * return dispatchable action to sync entire sdk into redux
+     * @returns {{type: string, payload: [redpepperTables]}}
+     */
     syncToReduxEntireSdk():redpepperTablesAction {
         var redpepperSet: redpepperTables = this.reduxifyMsdbTable();
         return {type: 'ACTION_REDUXIFY_MSDB', payload: [redpepperSet]}
     }
 
     /**
-     * Convert a given table or tables into a an immutable List<Map> of type redpepperSet
+     * Convert the argument tables into a an immutable List<Map> of type redpepperSet
      * so we can inject these table(s) into redux store
      * @param tableNameTargets
      * @returns {redpepperTables}
