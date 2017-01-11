@@ -2,6 +2,7 @@
  Pepper SDK is a collection of files that provide a wrapper for the Soap API used to communicate with MediaSignage servers.
  The SDK makes programming easier by abstracting some of the tedious tasks such as enumeration.
 
+ 
  The sdk internal Database is the magic sauce as it maps against the actual mediaSERVER remote database via
  local generated handles (a.k.a IDs). Once a user saves the local configuration, the local Database is serialized
  and pushed onto the a remote mediaSERVER. This allows for the user to work offline without the need for constant network

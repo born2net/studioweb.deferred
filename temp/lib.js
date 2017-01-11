@@ -10,7 +10,6 @@ define(['jquery', 'backbone', 'platform'], function ($, Backbone, platform) {
     };
 
     _.extend(Lib.prototype, {
-
         /**
          Output formatted string to console and omit error on old browsers...
          @method log

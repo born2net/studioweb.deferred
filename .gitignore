@@ -42,3 +42,4 @@ Thumbs.db
 !service-worker.js
 !signageSDK.js
 !src/store/*.js
+!/temp/*.js
