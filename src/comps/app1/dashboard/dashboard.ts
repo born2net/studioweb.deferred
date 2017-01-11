@@ -46,7 +46,6 @@ export class Dashboard extends Compbaser {
 
     private createCampaign() {
         this.fabricCanvas.setZoom(_.random(1, 1.5));
-        // this.store.dispatch({type:'UPD_TABLE_RESOURCES'})
         this.store.dispatch({type: EFFECT_CREATE_TABLE_CAMPAIGN});
     }
 

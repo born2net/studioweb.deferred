@@ -38,8 +38,8 @@ export class RedPepperService {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
-    reduxifyMsdbTable(tableNameTarget?: string): redpepperSet {
-        var tablesNames: Array<string> = tableNameTarget ? [tableNameTarget] : TableNames;
+    reduxifyMsdbTable(tableNameTargets?: Array<string>): redpepperSet {
+        var tablesNames: Array<string> = tableNameTargets ? tableNameTargets : TableNames;
         var tableNamesTouched = {};
         var redpepperSet: redpepperSet = {tables: null, tableNames: tablesNames};
         var tables = {}
@@ -72,7 +72,7 @@ export class RedPepperService {
         var campaign = campaigns.createRecord();
         campaign.campaign_name = i_campaignName;
         campaigns.addRecord(campaign, undefined);
-        return this.reduxifyMsdbTable('campaigns');
+        return this.reduxifyMsdbTable(['campaigns']);
     }
 
     /**
@@ -91,7 +91,7 @@ export class RedPepperService {
         board.board_pixel_height = i_height;
         boards.addRecord(board, undefined);
         // return board['board_id'];
-        var redpepperSet:redpepperSet = this.reduxifyMsdbTable('boards')
+        var redpepperSet:redpepperSet = this.reduxifyMsdbTable(['boards','campaigns']);
         redpepperSet.data = {board_id: board['board_id']};
         return redpepperSet;
     }

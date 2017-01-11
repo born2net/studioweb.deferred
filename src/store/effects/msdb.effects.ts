@@ -93,8 +93,8 @@ export class MsdbEffects {
             // BB.comBroker.getService(BB.SERVICES['SEQUENCER_VIEW']).reSequenceTimelines();
 
 
-            var redpepperSet: redpepperSet = this.redPepperService.reduxifyMsdbTable();
-            this.store.dispatch({type: ACTION_REDUXIFY_MSDB, payload: redpepperSet});
+            // var redpepperSet: redpepperSet = this.redPepperService.reduxifyMsdbTable();
+            // this.store.dispatch({type: ACTION_REDUXIFY_MSDB, payload: redpepperSet});
 
             var redpepperSet: redpepperSet = this.redPepperService.createBoard('my board', 500, 500);
             this.store.dispatch({type: ACTION_REDUXIFY_MSDB, payload: redpepperSet});
