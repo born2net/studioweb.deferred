@@ -96,22 +96,22 @@ export class MsdbEffects {
             var newTemplateData = table_templates.data;
             var board_template_id = newTemplateData['board_template_id']
             var viewers = newTemplateData['viewers'];
-            var table_campaigns = this.redPepperService.createCampaign('campaign');
+            var table_campaigns:redpepperTables = this.redPepperService.createCampaign('campaign');
             var m_selected_campaign_id = table_campaigns.data;
-            var table_campaign_boards = this.redPepperService.assignCampaignToBoard(m_selected_campaign_id, board_id);
+            var table_campaign_boards:redpepperTables = this.redPepperService.assignCampaignToBoard(m_selected_campaign_id, board_id);
             var campaign_board_id = table_campaign_boards.data;
-            var campaignName = 'foo campaign';
-            var table_campaigns = this.redPepperService.setCampaignRecord(m_selected_campaign_id, 'campaign_name', campaignName);
-            var table_campaign_timelines = this.redPepperService.createNewTimeline(m_selected_campaign_id);
+            var campaignName = 'foo campaign ' + Math.random();
+            var table_campaigns:redpepperTables = this.redPepperService.setCampaignRecord(m_selected_campaign_id, 'campaign_name', campaignName);
+            var table_campaign_timelines:redpepperTables = this.redPepperService.createNewTimeline(m_selected_campaign_id);
             var campaign_timeline_id = table_campaign_timelines.data;
-            var table_campaign_timeline_sequences = this.redPepperService.setCampaignTimelineSequencerIndex(m_selected_campaign_id, campaign_timeline_id, 0);
-            var table_campaign_timelines = this.redPepperService.setTimelineTotalDuration(campaign_timeline_id, '0');
-            var table_campaign_timeline_schedules = this.redPepperService.createCampaignTimelineScheduler(m_selected_campaign_id, campaign_timeline_id);
-            var table_campaign_timeline_board_templates = this.redPepperService.assignTemplateToTimeline(campaign_timeline_id, board_template_id, campaign_board_id);
+            var table_campaign_timeline_sequences:redpepperTables = this.redPepperService.setCampaignTimelineSequencerIndex(m_selected_campaign_id, campaign_timeline_id, 0);
+            var table_campaign_timelines:redpepperTables = this.redPepperService.setTimelineTotalDuration(campaign_timeline_id, '0');
+            var table_campaign_timeline_schedules:redpepperTables = this.redPepperService.createCampaignTimelineScheduler(m_selected_campaign_id, campaign_timeline_id);
+            var table_campaign_timeline_board_templates:redpepperTables = this.redPepperService.assignTemplateToTimeline(campaign_timeline_id, board_template_id, campaign_board_id);
             var campaign_timeline_board_template_id = table_campaign_timeline_board_templates.data;
-            var table_campaign_timeline_chanels = this.redPepperService.createTimelineChannels(campaign_timeline_id, viewers);
+            var table_campaign_timeline_chanels:redpepperTables = this.redPepperService.createTimelineChannels(campaign_timeline_id, viewers);
             var channels = table_campaign_timeline_chanels.data;
-            var table_campaign_timeline_board_viewer_chanels = this.redPepperService.assignViewersToTimelineChannels(campaign_timeline_board_template_id, viewers, channels);
+            var table_campaign_timeline_board_viewer_chanels:redpepperTables = this.redPepperService.assignViewersToTimelineChannels(campaign_timeline_board_template_id, viewers, channels);
 
             // self.m_timelines[campaign_timeline_id] = new Timeline({campaignTimelineID: campaign_timeline_id});
 
