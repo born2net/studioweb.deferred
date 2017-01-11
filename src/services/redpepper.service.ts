@@ -6,6 +6,7 @@ import {TableNames, ISDK} from "../store/imsdb.interfaces_auto";
 import {StoreModel} from "../store/model/StoreModel";
 import {List} from "immutable";
 import {ACTION_REDUXIFY_MSDB} from "../store/actions/appdb.actions";
+import {forEach} from "@angular/router/src/utils/collection";
 
 export type redpepperTables = {
     tables: ISDK
@@ -318,6 +319,19 @@ export class RedPepperService {
         recCampaignTimelineSchedules.end_date = dateEnd;
         table_campaign_timeline_schedules.addRecord(recCampaignTimelineSchedules, undefined);
         return this.reduxifyMsdbTable(['table_campaign_timeline_schedules']);
+    }
+
+    /**
+     Get a list of all campaigns per the account
+     @method getCampaignIDs
+     @return {Array} campaigns
+     **/
+    getCampaignIDs(): Array<number> {
+        var campaignsIds = [];
+        this.databaseManager.table_campaigns().getAllPrimaryKeys().forEach((k, campaign_id) => {
+            campaignsIds.push(campaign_id);
+        });
+        return campaignsIds;
     }
 
     /**
