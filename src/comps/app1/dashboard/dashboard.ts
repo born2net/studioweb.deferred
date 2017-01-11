@@ -7,7 +7,7 @@ import {Observable} from "rxjs";
 import * as _ from 'lodash';
 import {List} from 'immutable';
 import {ResourcesModal} from "../../../store/imsdb.interfaces_auto";
-import {EFFECT_CREATE_TABLE_CAMPAIGN, EFFECT_CREATE_TABLE_BOARD} from "../../../store/effects/msdb.effects";
+import {EFFECT_RENAME_CAMPAIGN, EFFECT_CREATE_TABLE_BOARD} from "../../../store/effects/msdb.effects";
 import {RedPepperService} from "../../../services/redpepper.service";
 
 @Component({
@@ -18,7 +18,7 @@ import {RedPepperService} from "../../../services/redpepper.service";
                <h4>user name: {{(userModel$ | async)?.getUser() }}</h4>
                <h4>account type: {{(userModel$ | async)?.getAccountType()}}</h4>
                <canvas #canvas width="300" height="300"></canvas>
-               <button (click)="createCampaign()">createCampaign</button>
+               <button (click)="renameCampaign()">renameCampaign</button>
                <button (click)="createBoard()">createBoard</button>
            `,
 })
@@ -44,9 +44,9 @@ export class Dashboard extends Compbaser {
         })
     }
 
-    private createCampaign() {
+    private renameCampaign() {
         this.fabricCanvas.setZoom(_.random(1, 1.5));
-        this.store.dispatch({type: EFFECT_CREATE_TABLE_CAMPAIGN});
+        this.store.dispatch({type: EFFECT_RENAME_CAMPAIGN});
     }
 
     ngOnInit() {

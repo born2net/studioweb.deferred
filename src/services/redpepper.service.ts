@@ -75,6 +75,13 @@ export class RedPepperService {
         return this.reduxifyMsdbTable(['campaigns']);
     }
 
+    renameCampaign(i_campaignName): redpepperSet {
+        this.databaseManager.table_campaigns().openForEdit(0);
+        var recCampaign = this.databaseManager.table_campaigns().getRec(0);
+        recCampaign['campaign_name'] = i_campaignName;
+        return this.reduxifyMsdbTable(['campaigns']);
+    }
+
     /**
      Create a new board, also known as Screen (screen divisions reside inside the board as viewers)
      @method createBoard

@@ -13,7 +13,7 @@ import {ACTION_REDUXIFY_MSDB} from "../actions/appdb.actions";
 import {RedPepperService, redpepperSet} from "../../services/redpepper.service";
 
 export const EFFECT_INIT_REDUXIFY_MSDB = 'EFFECT_INIT_REDUXIFY_MSDB';
-export const EFFECT_CREATE_TABLE_CAMPAIGN = 'EFFECT_CREATE_TABLE_CAMPAIGN';
+export const EFFECT_RENAME_CAMPAIGN = 'EFFECT_RENAME_CAMPAIGN';
 export const EFFECT_CREATE_TABLE_BOARD = 'EFFECT_CREATE_TABLE_BOARD';
 
 @Injectable()
@@ -34,9 +34,9 @@ export class MsdbEffects {
         })
 
     @Effect()
-    createCampaign: Observable<Action> = this.actions$.ofType(EFFECT_CREATE_TABLE_CAMPAIGN)
+    renameCampaign: Observable<Action> = this.actions$.ofType(EFFECT_RENAME_CAMPAIGN)
         .map(() => {
-            var redpepperSet: redpepperSet = this.redPepperService.createCampaign(Math.random());
+            var redpepperSet: redpepperSet = this.redPepperService.renameCampaign(Math.random());
             return {type: ACTION_REDUXIFY_MSDB, payload: redpepperSet}
         })
 
