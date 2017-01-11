@@ -7,7 +7,7 @@ import {Observable} from "rxjs";
 import * as _ from 'lodash';
 import {List} from 'immutable';
 import {ResourcesModal, CampaignsModal} from "../../../store/imsdb.interfaces_auto";
-import {EFFECT_RENAME_CAMPAIGN, EFFECT_CREATE_TABLE_BOARD} from "../../../store/effects/msdb.effects";
+import {EFFECT_RENAME_CAMPAIGN, EFFECT_CREATE_CAMPAIGN_BOARD} from "../../../store/effects/msdb.effects";
 import {RedPepperService} from "../../../services/redpepper.service";
 
 @Component({
@@ -96,8 +96,8 @@ export class Dashboard extends Compbaser {
         });
     }
 
-    private createBoard() {
-        this.store.dispatch({type: EFFECT_CREATE_TABLE_BOARD});
+    private createCampaign() {
+        this.store.dispatch({type: EFFECT_CREATE_CAMPAIGN_BOARD});
     }
 
     destroy() {
