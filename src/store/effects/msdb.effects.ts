@@ -132,7 +132,6 @@ export class MsdbEffects {
             // dispatch.payload.push(board1)
             // dispatch.payload.push(board2)
             // this.store.dispatch({type: ACTION_REDUXIFY_MSDB, payload: [tables]});
-            // var board_id = tables.data.board_id;
         })
 }
 
