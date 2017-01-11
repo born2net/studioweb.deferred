@@ -6,6 +6,7 @@ import {TableNames, ISDK} from "../store/imsdb.interfaces_auto";
 import {StoreModel} from "../store/model/StoreModel";
 import {List} from "immutable";
 import {reduce} from "rxjs/operator/reduce";
+import {ACTION_REDUXIFY_MSDB} from "../store/actions/appdb.actions";
 
 export type redpepperTables = {
     tables: ISDK
@@ -44,10 +45,21 @@ export class RedPepperService {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
+    syncToReduxEntireSdk():redpepperTablesAction {
+        var redpepperSet: redpepperTables = this.reduxifyMsdbTable();
+        return {type: 'ACTION_REDUXIFY_MSDB', payload: [redpepperSet]}
+    }
+
+    /**
+     * Convert a given table or tables into a an immutable List<Map> of type redpepperSet
+     * so we can inject these table(s) into redux store
+     * @param tableNameTargets
+     * @returns {redpepperTables}
+     */
     reduxifyMsdbTable(tableNameTargets?: Array<string>): redpepperTables {
         var tablesNames: Array<string> = tableNameTargets ? tableNameTargets : TableNames;
         tablesNames = tablesNames.map(tableName => {
-            if (tableName.indexOf('table_') > -1)
+            if (tableName.indexOf('table_') > -1)  // protection against appending table_
                 return tableName.replace(/table_/, '');
             return tableName;
 
@@ -343,7 +355,7 @@ export class RedPepperService {
             var chanel = chanels.createRecord();
             chanel.chanel_name = "CH" + x;
             chanel.campaign_timeline_id = i_campaign_timeline_id;
-            chanels.addRecord(chanel,undefined);
+            chanels.addRecord(chanel, undefined);
             createdChanels.push(chanel['campaign_timeline_chanel_id']);
         }
         // pepper.fire(Pepper['NEW_CHANNEL_CREATED'], self, null, createdChanels);

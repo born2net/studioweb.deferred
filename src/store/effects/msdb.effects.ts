@@ -117,12 +117,17 @@ export class MsdbEffects {
             // self.m_timelines[campaign_timeline_id] = new Timeline({campaignTimelineID: campaign_timeline_id});
 
 
+            // option: 1 to dispatch
             dispatch.payload = [table_boards, table_templates, table_campaigns,
                 table_campaign_boards, table_campaign_timelines, table_campaign_timeline_sequences, table_campaign_timeline_board_viewer_chanels,
                 table_campaign_timelines, table_campaign_timeline_schedules, table_campaign_timeline_board_templates, table_campaign_timeline_chanels]
 
             return dispatch;
 
+            // option: 2 to dispatch
+            // return this.redPepperService.syncToReduxEntireSdk();
+
+            // option: 3 to dispatch
             // var board1: redpepperTables = this.redPepperService.createBoard('my board1', 500, 500);
             // var board2: redpepperTables = this.redPepperService.createBoard('my board2', 500, 500);
             // dispatch.payload.push(board1)
