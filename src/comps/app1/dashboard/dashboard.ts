@@ -18,7 +18,7 @@ import {RedPepperService} from "../../../services/redpepper.service";
                <h4>user name: {{(userModel$ | async)?.getUser() }}</h4>
                <h4>account type: {{(userModel$ | async)?.getAccountType()}}</h4>
                <li *ngFor="let campaign of campaigns$ | async">
-                    {{campaign.getCampaignName()}}
+                    {{campaign?.getCampaignName()}}
                 </li>
                <canvas #canvas width="300" height="300"></canvas>
                <button (click)="createCampaign()">createCampaign</button>
