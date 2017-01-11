@@ -4,17 +4,17 @@ import "rxjs/add/operator/map";
 import "rxjs/add/operator/mergeMap";
 import "rxjs/add/operator/merge";
 import "rxjs/add/operator/debounceTime";
-import * as xml2js from "xml2js";
 import {Action, Store} from "@ngrx/store";
 import {ApplicationState} from "../application.state";
 import {Actions, Effect} from "@ngrx/effects";
 import {Observable} from "rxjs";
 import {ACTION_REDUXIFY_MSDB} from "../actions/appdb.actions";
-import {RedPepperService, redpepperSet} from "../../services/redpepper.service";
+import {RedPepperService, redpepperTables, redpepperTablesAction} from "../../services/redpepper.service";
 
 export const EFFECT_INIT_REDUXIFY_MSDB = 'EFFECT_INIT_REDUXIFY_MSDB';
 export const EFFECT_RENAME_CAMPAIGN = 'EFFECT_RENAME_CAMPAIGN';
 export const EFFECT_CREATE_TABLE_BOARD = 'EFFECT_CREATE_TABLE_BOARD';
+
 
 @Injectable()
 export class MsdbEffects {
@@ -29,15 +29,28 @@ export class MsdbEffects {
     @Effect()
     reduxifyMsdb$: Observable<Action> = this.actions$.ofType(EFFECT_INIT_REDUXIFY_MSDB)
         .map(() => {
-            var redpepperSet: redpepperSet = this.redPepperService.reduxifyMsdbTable();
-            return {type: ACTION_REDUXIFY_MSDB, payload: redpepperSet}
+            var redpepperSet: redpepperTables = this.redPepperService.reduxifyMsdbTable();
+            return {type: ACTION_REDUXIFY_MSDB, payload: [redpepperSet]}
         })
 
     @Effect()
     renameCampaign: Observable<Action> = this.actions$.ofType(EFFECT_RENAME_CAMPAIGN)
         .map(() => {
-            var redpepperSet: redpepperSet = this.redPepperService.renameCampaign(Math.random());
-            return {type: ACTION_REDUXIFY_MSDB, payload: redpepperSet}
+
+            var dispatch: redpepperTablesAction = {type: 'ACTION_REDUXIFY_MSDB', payload: []};
+
+            // var redpepperSet = this.redPepperService.createBoard('my board', 500, 500);
+            // this.store.dispatch({type: ACTION_REDUXIFY_MSDB, payload: redpepperTables});
+
+            // var dispatch: redpepperTablesAction = {type: ACTION_REDUXIFY_MSDB, payload: []};
+
+            dispatch.payload.push(this.redPepperService.createBoard('my board', 500, 500));
+            dispatch.payload.push(this.redPepperService.renameCampaign('A1'));
+            dispatch.payload.push(this.redPepperService.renameCampaign('A2'));
+            dispatch.payload.push(this.redPepperService.renameCampaign('A3'));
+            dispatch.payload.push(this.redPepperService.renameCampaign('A4'));
+            dispatch.payload.push(this.redPepperService.renameCampaign('A5'));
+            return dispatch;
         })
 
     @Effect()
@@ -77,8 +90,8 @@ export class MsdbEffects {
              h: 360
              }
              }
-             var redpepperSet: redpepperSet = this.redPepperService.createBoard('my board', 500, 500);
-             var board_id = redpepperSet.data.board_id;
+             var redpepperTables: redpepperTables = this.redPepperService.createBoard('my board', 500, 500);
+             var board_id = redpepperTables.data.board_id;
              var newTemplateData = this.redPepperService.createNewTemplate(board_id, screenProps);
              var board_template_id = newTemplateData['board_template_id']
              var viewers = newTemplateData['viewers'];
@@ -99,8 +112,6 @@ export class MsdbEffects {
 
             // BB.comBroker.fire(BB.EVENTS.CAMPAIGN_TIMELINE_SELECTED, this, null, campaign_timeline_id);
             // BB.comBroker.getService(BB.SERVICES['SEQUENCER_VIEW']).reSequenceTimelines();
-
-
 
 
             ////// var newTemplateData = pepper.createNewTemplate(board_id, e.caller.screenTemplateData.screenProps);
@@ -142,11 +153,17 @@ export class MsdbEffects {
             // BB.comBroker.getService(BB.SERVICES['SEQUENCER_VIEW']).reSequenceTimelines();
 
 
-            var redpepperSet: redpepperSet = this.redPepperService.createBoard('my board', 500, 500);
-            this.store.dispatch({type: ACTION_REDUXIFY_MSDB, payload: redpepperSet});
+            var dispatch: redpepperTablesAction = {type: 'ACTION_REDUXIFY_MSDB', payload: []};
 
-            var board_id = redpepperSet.data.board_id;
-            return {type: ACTION_REDUXIFY_MSDB, payload: redpepperSet};
+            var board1: redpepperTables = this.redPepperService.createBoard('my board1', 500, 500);
+            var board2: redpepperTables = this.redPepperService.createBoard('my board2', 500, 500);
+
+            dispatch.payload.push(board1)
+            dispatch.payload.push(board2)
+            // this.store.dispatch({type: ACTION_REDUXIFY_MSDB, payload: [tables]});
+
+            // var board_id = tables.data.board_id;
+            return dispatch;
 
 
         })

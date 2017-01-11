@@ -6,10 +6,15 @@ import {TableNames, ISDK} from "../store/imsdb.interfaces_auto";
 import {StoreModel} from "../store/model/StoreModel";
 import {List} from "immutable";
 
-export type redpepperSet = {
+export type redpepperTables = {
     tables: ISDK
     tableNames: Array<string>;
     data?: any;
+}
+
+export type redpepperTablesAction =  {
+    type: 'ACTION_REDUXIFY_MSDB';
+    payload: Array<redpepperTables>
 }
 
 @Injectable()
@@ -38,10 +43,10 @@ export class RedPepperService {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
-    reduxifyMsdbTable(tableNameTargets?: Array<string>): redpepperSet {
+    reduxifyMsdbTable(tableNameTargets?: Array<string>): redpepperTables {
         var tablesNames: Array<string> = tableNameTargets ? tableNameTargets : TableNames;
         var tableNamesTouched = {};
-        var redpepperSet: redpepperSet = {tables: null, tableNames: tablesNames};
+        var redpepperSet: redpepperTables = {tables: null, tableNames: tablesNames};
         var tables = {}
         tablesNames.forEach((table, v) => {
             var tableName = 'table_' + table;
@@ -67,7 +72,7 @@ export class RedPepperService {
      @param {Number} i_campaginName
      @return {Number} campaign id created
      **/
-    createCampaign(i_campaignName): redpepperSet {
+    createCampaign(i_campaignName): redpepperTables {
         var campaigns = this.databaseManager.table_campaigns();
         var campaign = campaigns.createRecord();
         campaign.campaign_name = i_campaignName;
@@ -75,7 +80,7 @@ export class RedPepperService {
         return this.reduxifyMsdbTable(['campaigns']);
     }
 
-    renameCampaign(i_campaignName): redpepperSet {
+    renameCampaign(i_campaignName): redpepperTables {
         this.databaseManager.table_campaigns().openForEdit(0);
         var recCampaign = this.databaseManager.table_campaigns().getRec(0);
         recCampaign['campaign_name'] = i_campaignName;
@@ -90,7 +95,7 @@ export class RedPepperService {
      @param {Number} i_height of the board
      @return {Number} the board id
      **/
-    createBoard(i_boardName, i_width, i_height): redpepperSet {
+    createBoard(i_boardName, i_width, i_height): redpepperTables {
         var boards = this.databaseManager.table_boards();
         var board = boards.createRecord();
         board.board_name = i_boardName;
@@ -98,7 +103,7 @@ export class RedPepperService {
         board.board_pixel_height = i_height;
         boards.addRecord(board, undefined);
         // return board['board_id'];
-        var redpepperSet:redpepperSet = this.reduxifyMsdbTable(['boards','campaigns']);
+        var redpepperSet:redpepperTables = this.reduxifyMsdbTable(['boards','campaigns']);
         redpepperSet.data = {board_id: board['board_id']};
         return redpepperSet;
     }

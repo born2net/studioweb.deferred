@@ -12,7 +12,6 @@ export const APP_INIT = 'APP_INIT';
 export const ACTION_REDUXIFY_MSDB = 'ACTION_REDUXIFY_MSDB';
 export const ACTION_TWO_FACTOR_REMOVED = 'ACTION_TWO_FACTOR_REMOVED';
 
-
 export enum AuthenticateFlags {
     NONE,
     USER_ACCOUNT,
