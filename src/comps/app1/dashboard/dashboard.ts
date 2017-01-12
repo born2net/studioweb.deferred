@@ -45,7 +45,7 @@ export class Dashboard extends Compbaser {
         this.userModel$ = this.store.select(store => store.appDb.userModel);
         this.campaigns$ = this.store.select(store => store.msDatabase.sdk.table_campaigns).map((list: List<CampaignsModal>) => {
             return list.filter((campaignModel: CampaignsModal) => {
-                if (campaignModel.getCampaignName().indexOf('0.4') > -1 || campaignModel.getCampaignName().indexOf('0.3') > -1)
+                if (campaignModel.getChangeType() != "3" && campaignModel.getCampaignName().indexOf('0.3') > -1)
                     return true
                 return false;
             })
