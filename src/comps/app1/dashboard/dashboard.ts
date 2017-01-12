@@ -17,15 +17,18 @@ import {RedPepperService} from "../../../services/redpepper.service";
                <h2>Dashboard</h2>
                <h4>user name: {{(userModel$ | async)?.getUser() }}</h4>
                <h4>account type: {{(userModel$ | async)?.getAccountType()}}</h4>
-               <li *ngFor="let campaign of campaigns$ | async">
-                    {{campaign?.getCampaignName()}}
-                </li>
+               
                <canvas #canvas width="300" height="300"></canvas>
                <button (click)="createCampaign()">createCampaign</button>
                <br/>
                <button (click)="renameCampaign()">renameCampaign</button>
                <br/>
                <button (click)="save()">save</button>
+               
+               <li *ngFor="let campaign of campaigns$ | async">
+                    {{campaign?.getCampaignName()}}
+                </li>
+                
            `,
 })
 export class Dashboard extends Compbaser {

@@ -78,6 +78,10 @@ export class RedPepperService {
             tables[tableName] = storeModelList;
             this.databaseManager[tableName]().getAllPrimaryKeys().forEach((k, primary_id) => {
                 var record = this.databaseManager[tableName]().getRec(primary_id);
+                record.self = null;
+                record.proto = null;
+                record._proto_ = null;
+                record.__proto__ = null;
                 var newClass: StoreModel = new MsdbModels[storeName](record);
                 storeModelList = storeModelList.push(newClass);
                 tables[tableName] = storeModelList;
