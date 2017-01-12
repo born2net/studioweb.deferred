@@ -5,8 +5,7 @@ import * as MsdbModels from "../store/imsdb.interfaces_auto";
 import {TableNames, ISDK} from "../store/imsdb.interfaces_auto";
 import {StoreModel} from "../store/model/StoreModel";
 import {List} from "immutable";
-import {ACTION_REDUXIFY_MSDB} from "../store/actions/appdb.actions";
-import {forEach} from "@angular/router/src/utils/collection";
+import {ACTION_REDUXIFY_NOW} from "../store/actions/appdb.actions";
 import {Store} from "@ngrx/store";
 import {ApplicationState} from "../store/application.state";
 
@@ -17,7 +16,7 @@ export type redpepperTables = {
 }
 
 export type redpepperTablesAction =  {
-    type: 'ACTION_REDUXIFY_MSDB';
+    type: 'ACTION_REDUXIFY_NOW';
     payload: Array<redpepperTables>
 }
 
@@ -27,6 +26,8 @@ export class RedPepperService {
     constructor(private store: Store<ApplicationState>) {
 
     }
+
+    private m_tablesPendingToProcess: Array<any> = [];
     private m_loaderManager: ILoadManager;
     private databaseManager: IDataBaseManager;
 
@@ -51,24 +52,25 @@ export class RedPepperService {
     }
 
     /**
-     * return dispatchable action to sync entire sdk into redux
-     * @returns {{type: string, payload: [redpepperTables]}}
-     */
-    syncToReduxEntireSdk(): redpepperTablesAction {
-        var redpepperSet: redpepperTables = this.reduxifyMsdbTable();
-        return {type: 'ACTION_REDUXIFY_MSDB', payload: [redpepperSet]}
-    }
-
-    /**
-     * Convert the argument tables into a an immutable List<Map> of type redpepperSet
-     * so we can inject these table(s) into redux store
-     * we also take this opportunity to sanitize the data before importing to redux
+     * reduxify (the process of synching SDK mslib into redux as readonly values)
+     * if passed in table names, process it
+     * if not, try and see if any pending pendingTableSync exist, if so process it
+     * if not, process all tables
      * @param tableNameTargets
      * @returns {redpepperTables}
      */
-    reduxifyMsdbTable(tableNameTargets?: Array<string>): redpepperTables {
-        var t0 = performance.now();
-        var tablesNames: Array<string> = tableNameTargets ? tableNameTargets : TableNames;
+    reduxSubmit(tableNameTargets?: Array<string>): redpepperTables {
+        var tablesNames: Array<string> = [];
+        if (tableNameTargets) {
+            tablesNames = tableNameTargets;
+        } else {
+            // we didn't get any table names, so check if any pending to process
+            if (this.m_tablesPendingToProcess.length > 0) {
+                tablesNames = this.m_tablesPendingToProcess;
+            } else {
+                tablesNames = TableNames;
+            }
+        }
         tablesNames = tablesNames.map(tableName => {
             if (tableName.indexOf('table_') > -1)  // protection against appending table_
                 return tableName.replace(/table_/, '');
@@ -103,8 +105,8 @@ export class RedPepperService {
                 return tableNamesTouched[key];
             });
         });
-        var t1 = performance.now();
-        console.log("Call " + tablesNames.length + (t1 - t0) + " milliseconds.")
+        this.m_tablesPendingToProcess = [];
+        this.store.dispatch({type: ACTION_REDUXIFY_NOW, payload: [redpepperSet]})
         return redpepperSet;
     }
 
@@ -114,21 +116,20 @@ export class RedPepperService {
      @param {Number} i_campaginName
      @return {Number} campaign id created
      **/
-    createCampaign(i_campaignName): redpepperTables {
+    createCampaign(i_campaignName): number {
         var campaigns = this.databaseManager.table_campaigns();
         var campaign = campaigns.createRecord();
         campaign.campaign_name = i_campaignName;
         campaigns.addRecord(campaign, undefined);
-        var redpepperSet: redpepperTables = this.reduxifyMsdbTable(['campaigns']);
-        redpepperSet.data = campaign.campaign_id;
-        return redpepperSet;
+        this.m_tablesPendingToProcess.push('campaigns')
+        return campaign.campaign_id;
     }
 
-    renameCampaign(i_campaignName): redpepperTables {
+    renameCampaign(i_campaignName): void {
         this.databaseManager.table_campaigns().openForEdit(0);
         var recCampaign = this.databaseManager.table_campaigns().getRec(0);
         recCampaign['campaign_name'] = i_campaignName;
-        return this.reduxifyMsdbTable(['campaigns']);
+        this.m_tablesPendingToProcess.push('campaigns');
     }
 
     /**
@@ -139,17 +140,15 @@ export class RedPepperService {
      @param {Number} i_height of the board
      @return {Number} the board id
      **/
-    createBoard(i_boardName, i_width, i_height): redpepperTables {
+    createBoard(i_boardName, i_width, i_height): number {
         var boards = this.databaseManager.table_boards();
         var board = boards.createRecord();
         board.board_name = i_boardName;
         board.board_pixel_width = i_width;
         board.board_pixel_height = i_height;
         boards.addRecord(board, undefined);
-        // return board['board_id'];
-        var redpepperSet: redpepperTables = this.reduxifyMsdbTable(['table_boards']);
-        redpepperSet.data = {board_id: board['board_id']};
-        return redpepperSet;
+        this.m_tablesPendingToProcess.push('table_boards')
+        return board['board_id'];
     }
 
     /**
@@ -159,7 +158,7 @@ export class RedPepperService {
      @param {Object} i_screenProps json object with all the viewers and attributes to create in msdb
      @return {Object} returnData encapsulates the board_template_id and board_template_viewer_ids created
      **/
-    createNewTemplate(i_board_id, i_screenProps): redpepperTables {
+    createNewTemplate(i_board_id, i_screenProps) {
 
 
         var returnData = {
@@ -191,10 +190,9 @@ export class RedPepperService {
             returnData['viewers'].push(viewer['board_template_viewer_id']);
         }
         returnData['board_template_id'] = board_template_id
-        // this.fire(this['NEW_TEMPLATE_CREATED'], this, null, returnData);
-        var redpepperSet: redpepperTables = this.reduxifyMsdbTable(['table_board_templates', 'table_board_template_viewers']);
-        redpepperSet.data = returnData;
-        return redpepperSet;
+        this.m_tablesPendingToProcess.push('table_board_templates')
+        this.m_tablesPendingToProcess.push('table_board_template_viewers')
+        return returnData;
     }
 
     /**
@@ -206,12 +204,11 @@ export class RedPepperService {
      @param {String} i_value
      @return {Object} foundCampaignRecord
      **/
-    setCampaignRecord(i_campaign_id, i_key, i_value): redpepperTables {
-
+    setCampaignRecord(i_campaign_id, i_key, i_value): void {
         this.databaseManager.table_campaigns().openForEdit(i_campaign_id);
         var recCampaign = this.databaseManager.table_campaigns().getRec(i_campaign_id);
         recCampaign[i_key] = i_value;
-        return this.reduxifyMsdbTable(['table_campaigns']);
+        this.m_tablesPendingToProcess.push('table_campaigns')
     }
 
     /**
@@ -221,16 +218,14 @@ export class RedPepperService {
      @param {Number} i_board_id the board id to assign to campaign
      @return {Number} campain_board_id
      **/
-    assignCampaignToBoard(i_campaign_id, i_board_id): redpepperTables {
-
+    assignCampaignToBoard(i_campaign_id, i_board_id): number {
         var campaign_boards = this.databaseManager.table_campaign_boards();
         var campain_board = campaign_boards.createRecord();
         campain_board.campaign_id = i_campaign_id;
         campain_board.board_id = i_board_id;
         campaign_boards.addRecord(campain_board, undefined);
-        var redpepperSet: redpepperTables = this.reduxifyMsdbTable(['table_campaign_boards']);
-        redpepperSet.data = campain_board['campaign_board_id']
-        return redpepperSet;
+        this.m_tablesPendingToProcess.push('table_campaign_boards')
+        return campain_board['campaign_board_id']
     }
 
     /**
@@ -239,16 +234,14 @@ export class RedPepperService {
      @param {Number} i_campaign_id
      @return {Number} campaign_timeline_id the timeline id created
      **/
-    createNewTimeline(i_campaign_id): redpepperTables {
+    createNewTimeline(i_campaign_id): number {
         var timelines = this.databaseManager.table_campaign_timelines();
         var timeline = timelines.createRecord();
         timeline.campaign_id = i_campaign_id;
         timeline.timeline_name = "Timeline";
         timelines.addRecord(timeline, undefined);
-        // this.fire(this['NEW_TIMELINE_CREATED'], this, null, timeline['campaign_timeline_id']);
-        var redpepperSet: redpepperTables = this.reduxifyMsdbTable(['table_campaign_timelines']);
-        redpepperSet.data = timeline['campaign_timeline_id'];
-        return redpepperSet;
+        this.m_tablesPendingToProcess.push('table_campaign_timelines')
+        return timeline['campaign_timeline_id'];
     }
 
     /**
@@ -259,10 +252,9 @@ export class RedPepperService {
      @param {Number} i_sequenceIndex is the index to use for the timeline so we can playback the timeline in the specified index order
      @return none
      **/
-    setCampaignTimelineSequencerIndex(i_campaign_id, i_campaign_timeline_id, i_sequenceIndex): redpepperTables {
-
+    setCampaignTimelineSequencerIndex(i_campaign_id, i_campaign_timeline_id, i_sequenceIndex): void {
         var updatedSequence = false;
-        $(this.databaseManager.table_campaign_timeline_sequences().getAllPrimaryKeys()).each(function (k, campaign_timeline_sequence_id) {
+        this.databaseManager.table_campaign_timeline_sequences().getAllPrimaryKeys().forEach((k, campaign_timeline_sequence_id) => {
             var recCampaignTimelineSequence = this.databaseManager.table_campaign_timeline_sequences().getRec(campaign_timeline_sequence_id);
             if (recCampaignTimelineSequence.campaign_timeline_id == i_campaign_timeline_id) {
                 this.databaseManager.table_campaign_timeline_sequences().openForEdit(campaign_timeline_sequence_id);
@@ -283,7 +275,7 @@ export class RedPepperService {
             recCampaignTimelineSequence.campaign_id = i_campaign_id;
             table_campaign_timeline_sequences.addRecord(recCampaignTimelineSequence, undefined);
         }
-        return this.reduxifyMsdbTable(['table_campaign_timeline_sequences']);
+        this.m_tablesPendingToProcess.push('table_campaign_timeline_sequences')
     }
 
     /**
@@ -294,7 +286,7 @@ export class RedPepperService {
      @param {Array} i_channels a json object with all channels
      @return none
      **/
-    assignViewersToTimelineChannels(i_campaign_timeline_board_template_id, i_viewers, i_channels): redpepperTables {
+    assignViewersToTimelineChannels(i_campaign_timeline_board_template_id, i_viewers, i_channels): void {
 
         var viewerChanels = this.databaseManager.table_campaign_timeline_board_viewer_chanels();
         for (var i in i_viewers) {
@@ -304,7 +296,7 @@ export class RedPepperService {
             viewerChanel.campaign_timeline_chanel_id = i_channels.shift();
             viewerChanels.addRecord(viewerChanel, undefined);
         }
-        return this.reduxifyMsdbTable(['table_campaign_timeline_board_viewer_chanels']);
+        this.m_tablesPendingToProcess.push('table_campaign_timeline_board_viewer_chanels')
     }
 
     /**
@@ -314,7 +306,7 @@ export class RedPepperService {
      @param {Number} i_campaign_timeline_id
      @return none
      **/
-    createCampaignTimelineScheduler(i_campaign_id, i_campaign_timeline_id): redpepperTables {
+    createCampaignTimelineScheduler(i_campaign_id, i_campaign_timeline_id): void {
 
         var startDate = new Date();
         var endDate = new Date();
@@ -334,7 +326,7 @@ export class RedPepperService {
         recCampaignTimelineSchedules.start_date = dateStart;
         recCampaignTimelineSchedules.end_date = dateEnd;
         table_campaign_timeline_schedules.addRecord(recCampaignTimelineSchedules, undefined);
-        return this.reduxifyMsdbTable(['table_campaign_timeline_schedules']);
+        this.m_tablesPendingToProcess.push('table_campaign_timeline_schedules')
     }
 
     /**
@@ -360,16 +352,15 @@ export class RedPepperService {
      @param {Number} i_campaign_board_id is the campaign specific board id that will be bound to the template
      @return {Number} campaign_timeline_board_template_id
      **/
-    assignTemplateToTimeline(i_campaign_timeline_id, i_board_template_id, i_campaign_board_id): redpepperTables {
+    assignTemplateToTimeline(i_campaign_timeline_id, i_board_template_id, i_campaign_board_id): number {
         var timelineTemplate = this.databaseManager.table_campaign_timeline_board_templates();
         var timelineScreen = timelineTemplate.createRecord();
         timelineScreen.campaign_timeline_id = i_campaign_timeline_id;
         timelineScreen.board_template_id = i_board_template_id;
         timelineScreen.campaign_board_id = i_campaign_board_id;
         timelineTemplate.addRecord(timelineScreen, undefined);
-        var redpepperSet: redpepperTables = this.reduxifyMsdbTable(['table_campaign_timeline_board_templates']);
-        redpepperSet.data = timelineScreen['campaign_timeline_board_template_id'];
-        return redpepperSet;
+        this.m_tablesPendingToProcess.push('table_campaign_timeline_board_templates')
+        return timelineScreen['campaign_timeline_board_template_id'];
     }
 
     /**
@@ -379,7 +370,7 @@ export class RedPepperService {
      @param {Object} i_viewers we use viewer as a reference count to know how many channels to create (i.e.: one per channel)
      @return {Array} createdChanels array of channel ids created
      **/
-    createTimelineChannels(i_campaign_timeline_id, i_viewers): redpepperTables {
+    createTimelineChannels(i_campaign_timeline_id, i_viewers): Array<any> {
         var createdChanels = [];
         var x = 0;
         for (var i in i_viewers) {
@@ -391,11 +382,8 @@ export class RedPepperService {
             chanels.addRecord(chanel, undefined);
             createdChanels.push(chanel['campaign_timeline_chanel_id']);
         }
-        // this.fire(this['NEW_CHANNEL_CREATED'], this, null, createdChanels);
-        var redpepperSet: redpepperTables = this.reduxifyMsdbTable(['table_campaign_timeline_chanels']);
-        redpepperSet.data = createdChanels;
-        return redpepperSet;
-
+        this.m_tablesPendingToProcess.push('table_campaign_timeline_chanels')
+        return createdChanels;
     }
 
     /**
@@ -404,13 +392,12 @@ export class RedPepperService {
      @param {Number} i_campaign_timeline_id
      @param {Number} i_totalDuration
      **/
-    setTimelineTotalDuration(i_campaign_timeline_id, i_totalDuration): redpepperTables {
+    setTimelineTotalDuration(i_campaign_timeline_id, i_totalDuration): void {
         this.databaseManager.table_campaign_timelines().openForEdit(i_campaign_timeline_id);
         var recCampaignTimeline = this.databaseManager.table_campaign_timelines().getRec(i_campaign_timeline_id);
         recCampaignTimeline['timeline_duration'] = i_totalDuration;
-        return this.reduxifyMsdbTable(['table_campaign_timelines']);
+        this.m_tablesPendingToProcess.push('table_campaign_timelines')
     }
-
 
     /**
      Save to server
@@ -430,24 +417,6 @@ export class RedPepperService {
 
         this.m_loaderManager.requestData(i_callBack);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     removeCampaignEntirely(i_campaign_id) {
@@ -494,7 +463,7 @@ export class RedPepperService {
      **/
     removeCampaign(i_campaign_id) {
         this.databaseManager.table_campaigns().openForDelete(i_campaign_id);
-        return this.reduxifyMsdbTable(['table_campaigns']);
+        this.m_tablesPendingToProcess.push('table_campaigns');
     }
 
     /**

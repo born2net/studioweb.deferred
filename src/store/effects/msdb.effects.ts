@@ -8,7 +8,7 @@ import {Action, Store} from "@ngrx/store";
 import {ApplicationState} from "../application.state";
 import {Actions, Effect} from "@ngrx/effects";
 import {Observable} from "rxjs";
-import {ACTION_REDUXIFY_MSDB} from "../actions/appdb.actions";
+import {ACTION_REDUXIFY_NOW} from "../actions/appdb.actions";
 import {RedPepperService, redpepperTables, redpepperTablesAction} from "../../services/redpepper.service";
 import {CampaignsModal} from "../imsdb.interfaces_auto";
 
@@ -27,29 +27,29 @@ export class MsdbEffects {
                 private http: Http) {
     }
 
-    @Effect()
+    @Effect({dispatch: false})
     reduxifyMsdb$: Observable<Action> = this.actions$.ofType(EFFECT_INIT_REDUXIFY_MSDB)
-        .map(() => {
-            return this.redPepperService.syncToReduxEntireSdk();
+        .do(() => {
+            this.redPepperService.reduxSubmit();
         })
 
     @Effect()
     renameCampaign: Observable<Action> = this.actions$.ofType(EFFECT_RENAME_CAMPAIGN)
         .map(() => {
 
-            var dispatch: redpepperTablesAction = {type: 'ACTION_REDUXIFY_MSDB', payload: []};
+            var dispatch: redpepperTablesAction = {type: 'ACTION_REDUXIFY_NOW', payload: []};
 
             // var redpepperSet = this.redPepperService.createBoard('my board', 500, 500);
-            // this.store.dispatch({type: ACTION_REDUXIFY_MSDB, payload: redpepperTables});
+            // this.store.dispatch({type: ACTION_REDUXIFY_NOW, payload: redpepperTables});
 
-            // var dispatch: redpepperTablesAction = {type: ACTION_REDUXIFY_MSDB, payload: []};
+            // var dispatch: redpepperTablesAction = {type: ACTION_REDUXIFY_NOW, payload: []};
 
-            dispatch.payload.push(this.redPepperService.createBoard('my board', 500, 500));
-            dispatch.payload.push(this.redPepperService.renameCampaign('A1'));
-            dispatch.payload.push(this.redPepperService.renameCampaign('A2'));
-            dispatch.payload.push(this.redPepperService.renameCampaign('A3'));
-            dispatch.payload.push(this.redPepperService.renameCampaign('A4'));
-            dispatch.payload.push(this.redPepperService.renameCampaign('A5 ' + Math.random()));
+            this.redPepperService.createBoard('my board', 500, 500);
+            this.redPepperService.renameCampaign('A1');
+            this.redPepperService.renameCampaign('A2');
+            this.redPepperService.renameCampaign('A3');
+            this.redPepperService.renameCampaign('A4')
+            this.redPepperService.renameCampaign('A5 ' + Math.random());
             return dispatch;
         })
 
@@ -58,7 +58,7 @@ export class MsdbEffects {
         .map((action: Action) => {
             var campaignId: CampaignsModal = (action.payload as CampaignsModal).getCampaignId();
             return {
-                type: 'ACTION_REDUXIFY_MSDB',
+                type: 'ACTION_REDUXIFY_NOW',
                 payload: [this.redPepperService.removeCampaign(campaignId)]
             }
         })
@@ -67,7 +67,7 @@ export class MsdbEffects {
         //     debugger;
         //     var campaignId: CampaignsModal = (payload as CampaignsModal).getCampaignId();
         //     return {
-        //         type: 'ACTION_REDUXIFY_MSDB',
+        //         type: 'ACTION_REDUXIFY_NOW',
         //         payload: [this.redPepperService.removeCampaignEntirely(campaignId)]
         //     }
         // })
@@ -108,38 +108,32 @@ export class MsdbEffects {
                     h: 360
                 }
             }
-            var dispatch: redpepperTablesAction = {type: 'ACTION_REDUXIFY_MSDB', payload: []};
+            var dispatch: redpepperTablesAction = {type: 'ACTION_REDUXIFY_NOW', payload: []};
 
-            var table_boards: redpepperTables = this.redPepperService.createBoard('my board', 500, 500);
-            var board_id = table_boards.data.board_id;
-            var table_templates: redpepperTables = this.redPepperService.createNewTemplate(board_id, screenProps);
-            var newTemplateData = table_templates.data;
+            var board_id = this.redPepperService.createBoard('my board', 500, 500);
+            var newTemplateData = this.redPepperService.createNewTemplate(board_id, screenProps);
             var board_template_id = newTemplateData['board_template_id']
             var viewers = newTemplateData['viewers'];
-            var table_campaigns: redpepperTables = this.redPepperService.createCampaign('campaign');
-            var m_selected_campaign_id = table_campaigns.data;
-            var table_campaign_boards: redpepperTables = this.redPepperService.assignCampaignToBoard(m_selected_campaign_id, board_id);
-            var campaign_board_id = table_campaign_boards.data;
+            var m_selected_campaign_id = this.redPepperService.createCampaign('campaign');
+            var campaign_board_id = this.redPepperService.assignCampaignToBoard(m_selected_campaign_id, board_id);
             var campaignName = 'foo campaign ' + Math.random();
-            var table_campaigns: redpepperTables = this.redPepperService.setCampaignRecord(m_selected_campaign_id, 'campaign_name', campaignName);
-            var table_campaign_timelines: redpepperTables = this.redPepperService.createNewTimeline(m_selected_campaign_id);
-            var campaign_timeline_id = table_campaign_timelines.data;
-            var table_campaign_timeline_sequences: redpepperTables = this.redPepperService.setCampaignTimelineSequencerIndex(m_selected_campaign_id, campaign_timeline_id, 0);
-            var table_campaign_timelines: redpepperTables = this.redPepperService.setTimelineTotalDuration(campaign_timeline_id, '0');
-            var table_campaign_timeline_schedules: redpepperTables = this.redPepperService.createCampaignTimelineScheduler(m_selected_campaign_id, campaign_timeline_id);
-            var table_campaign_timeline_board_templates: redpepperTables = this.redPepperService.assignTemplateToTimeline(campaign_timeline_id, board_template_id, campaign_board_id);
-            var campaign_timeline_board_template_id = table_campaign_timeline_board_templates.data;
-            var table_campaign_timeline_chanels: redpepperTables = this.redPepperService.createTimelineChannels(campaign_timeline_id, viewers);
-            var channels = table_campaign_timeline_chanels.data;
-            var table_campaign_timeline_board_viewer_chanels: redpepperTables = this.redPepperService.assignViewersToTimelineChannels(campaign_timeline_board_template_id, viewers, channels);
+            this.redPepperService.setCampaignRecord(m_selected_campaign_id, 'campaign_name', campaignName);
+            var campaign_timeline_id = this.redPepperService.createNewTimeline(m_selected_campaign_id);
+            this.redPepperService.setCampaignTimelineSequencerIndex(m_selected_campaign_id, campaign_timeline_id, 0);
+            this.redPepperService.setTimelineTotalDuration(campaign_timeline_id, '0');
+            this.redPepperService.createCampaignTimelineScheduler(m_selected_campaign_id, campaign_timeline_id);
+            var campaign_timeline_board_template_id = this.redPepperService.assignTemplateToTimeline(campaign_timeline_id, board_template_id, campaign_board_id);
+            var channels = this.redPepperService.createTimelineChannels(campaign_timeline_id, viewers);
+            this.redPepperService.assignViewersToTimelineChannels(campaign_timeline_board_template_id, viewers, channels);
+            this.redPepperService.reduxSubmit();
 
             // self.m_timelines[campaign_timeline_id] = new Timeline({campaignTimelineID: campaign_timeline_id});
 
 
             // option: 1 to dispatch
-            dispatch.payload = [table_boards, table_templates, table_campaigns,
-                table_campaign_boards, table_campaign_timelines, table_campaign_timeline_sequences, table_campaign_timeline_board_viewer_chanels,
-                table_campaign_timelines, table_campaign_timeline_schedules, table_campaign_timeline_board_templates, table_campaign_timeline_chanels]
+            // dispatch.payload = [table_boards, table_templates, table_campaigns,
+            //     table_campaign_boards, table_campaign_timelines, table_campaign_timeline_sequences, table_campaign_timeline_board_viewer_chanels,
+            //     table_campaign_timelines, table_campaign_timeline_schedules, table_campaign_timeline_board_templates, table_campaign_timeline_chanels]
 
             return dispatch;
 
@@ -151,7 +145,7 @@ export class MsdbEffects {
             // var board2: redpepperTables = this.redPepperService.createBoard('my board2', 500, 500);
             // dispatch.payload.push(board1)
             // dispatch.payload.push(board2)
-            // this.store.dispatch({type: ACTION_REDUXIFY_MSDB, payload: [tables]});
+            // this.store.dispatch({type: ACTION_REDUXIFY_NOW, payload: [tables]});
         })
 }
 

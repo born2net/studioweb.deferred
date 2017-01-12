@@ -1,4 +1,4 @@
-import {Map} from 'immutable';
+import {Map, List} from 'immutable';
 import {UserModel} from "../models/UserModel";
 import {AuthenticateFlags} from "./actions/appdb.actions";
 import {ISDK} from "../store/imsdb.interfaces_auto";
@@ -6,7 +6,6 @@ import {ISDK} from "../store/imsdb.interfaces_auto";
 export interface IMsDatabase {
     participants: { [key: number]: any };
     threads: { [key: number]: any };
-    messages: { [key: number]: any };
     sdk: ISDK
 }
 
@@ -24,7 +23,6 @@ export interface IAppDb {
 
 export const INITIAL_STORE_DATA: IMsDatabase = {
     threads: {},
-    messages: {},
     participants: {},
     sdk: null
 };
