@@ -77,7 +77,10 @@ var decelerations = [AppComponent, AutoLogin, LoginPanel, Logo, App1, Account, D
         }), INITIAL_APPLICATION_STATE),
         EffectsModule.run(AppDbEffects),
         EffectsModule.run(MsdbEffects),
-        StoreDevtoolsModule.instrumentOnlyWithExtension(),
+        StoreDevtoolsModule.instrumentStore({
+            maxAge: 2,
+        }),
+        // StoreDevtoolsModule.instrumentOnlyWithExtension(),
         ChartModule,
         ToastModule.forRoot({
             animate: 'flyRight',
