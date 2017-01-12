@@ -10,9 +10,11 @@ import {Actions, Effect} from "@ngrx/effects";
 import {Observable} from "rxjs";
 import {ACTION_REDUXIFY_MSDB} from "../actions/appdb.actions";
 import {RedPepperService, redpepperTables, redpepperTablesAction} from "../../services/redpepper.service";
+import {CampaignsModal} from "../imsdb.interfaces_auto";
 
 export const EFFECT_INIT_REDUXIFY_MSDB = 'EFFECT_INIT_REDUXIFY_MSDB';
 export const EFFECT_CREATE_CAMPAIGN_BOARD = 'EFFECT_CREATE_CAMPAIGN_BOARD';
+export const EFFECT_REMOVE_CAMPAIGN = 'EFFECT_REMOVE_CAMPAIGN';
 export const EFFECT_RENAME_CAMPAIGN = 'EFFECT_RENAME_CAMPAIGN';
 
 @Injectable()
@@ -50,6 +52,25 @@ export class MsdbEffects {
             dispatch.payload.push(this.redPepperService.renameCampaign('A5 ' + Math.random()));
             return dispatch;
         })
+
+    @Effect()
+    removeCampaign: Observable<Action> = this.actions$.ofType(EFFECT_REMOVE_CAMPAIGN)
+        .map((action: Action) => {
+            var campaignId: CampaignsModal = (action.payload as CampaignsModal).getCampaignId();
+            return {
+                type: 'ACTION_REDUXIFY_MSDB',
+                payload: [this.redPepperService.removeCampaign(campaignId)]
+            }
+        })
+
+        // .map(toPayload,(payload)=>{
+        //     debugger;
+        //     var campaignId: CampaignsModal = (payload as CampaignsModal).getCampaignId();
+        //     return {
+        //         type: 'ACTION_REDUXIFY_MSDB',
+        //         payload: [this.redPepperService.removeCampaignEntirely(campaignId)]
+        //     }
+        // })
 
     @Effect()
     createCampaign: Observable<Action> = this.actions$.ofType(EFFECT_CREATE_CAMPAIGN_BOARD)
@@ -95,22 +116,22 @@ export class MsdbEffects {
             var newTemplateData = table_templates.data;
             var board_template_id = newTemplateData['board_template_id']
             var viewers = newTemplateData['viewers'];
-            var table_campaigns:redpepperTables = this.redPepperService.createCampaign('campaign');
+            var table_campaigns: redpepperTables = this.redPepperService.createCampaign('campaign');
             var m_selected_campaign_id = table_campaigns.data;
-            var table_campaign_boards:redpepperTables = this.redPepperService.assignCampaignToBoard(m_selected_campaign_id, board_id);
+            var table_campaign_boards: redpepperTables = this.redPepperService.assignCampaignToBoard(m_selected_campaign_id, board_id);
             var campaign_board_id = table_campaign_boards.data;
             var campaignName = 'foo campaign ' + Math.random();
-            var table_campaigns:redpepperTables = this.redPepperService.setCampaignRecord(m_selected_campaign_id, 'campaign_name', campaignName);
-            var table_campaign_timelines:redpepperTables = this.redPepperService.createNewTimeline(m_selected_campaign_id);
+            var table_campaigns: redpepperTables = this.redPepperService.setCampaignRecord(m_selected_campaign_id, 'campaign_name', campaignName);
+            var table_campaign_timelines: redpepperTables = this.redPepperService.createNewTimeline(m_selected_campaign_id);
             var campaign_timeline_id = table_campaign_timelines.data;
-            var table_campaign_timeline_sequences:redpepperTables = this.redPepperService.setCampaignTimelineSequencerIndex(m_selected_campaign_id, campaign_timeline_id, 0);
-            var table_campaign_timelines:redpepperTables = this.redPepperService.setTimelineTotalDuration(campaign_timeline_id, '0');
-            var table_campaign_timeline_schedules:redpepperTables = this.redPepperService.createCampaignTimelineScheduler(m_selected_campaign_id, campaign_timeline_id);
-            var table_campaign_timeline_board_templates:redpepperTables = this.redPepperService.assignTemplateToTimeline(campaign_timeline_id, board_template_id, campaign_board_id);
+            var table_campaign_timeline_sequences: redpepperTables = this.redPepperService.setCampaignTimelineSequencerIndex(m_selected_campaign_id, campaign_timeline_id, 0);
+            var table_campaign_timelines: redpepperTables = this.redPepperService.setTimelineTotalDuration(campaign_timeline_id, '0');
+            var table_campaign_timeline_schedules: redpepperTables = this.redPepperService.createCampaignTimelineScheduler(m_selected_campaign_id, campaign_timeline_id);
+            var table_campaign_timeline_board_templates: redpepperTables = this.redPepperService.assignTemplateToTimeline(campaign_timeline_id, board_template_id, campaign_board_id);
             var campaign_timeline_board_template_id = table_campaign_timeline_board_templates.data;
-            var table_campaign_timeline_chanels:redpepperTables = this.redPepperService.createTimelineChannels(campaign_timeline_id, viewers);
+            var table_campaign_timeline_chanels: redpepperTables = this.redPepperService.createTimelineChannels(campaign_timeline_id, viewers);
             var channels = table_campaign_timeline_chanels.data;
-            var table_campaign_timeline_board_viewer_chanels:redpepperTables = this.redPepperService.assignViewersToTimelineChannels(campaign_timeline_board_template_id, viewers, channels);
+            var table_campaign_timeline_board_viewer_chanels: redpepperTables = this.redPepperService.assignViewersToTimelineChannels(campaign_timeline_board_template_id, viewers, channels);
 
             // self.m_timelines[campaign_timeline_id] = new Timeline({campaignTimelineID: campaign_timeline_id});
 

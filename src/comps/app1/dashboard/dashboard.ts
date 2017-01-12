@@ -7,7 +7,7 @@ import {Observable} from "rxjs";
 import * as _ from 'lodash';
 import {List} from 'immutable';
 import {ResourcesModal, CampaignsModal} from "../../../store/imsdb.interfaces_auto";
-import {EFFECT_RENAME_CAMPAIGN, EFFECT_CREATE_CAMPAIGN_BOARD} from "../../../store/effects/msdb.effects";
+import {EFFECT_RENAME_CAMPAIGN, EFFECT_CREATE_CAMPAIGN_BOARD, EFFECT_REMOVE_CAMPAIGN} from "../../../store/effects/msdb.effects";
 import {RedPepperService} from "../../../services/redpepper.service";
 
 @Component({
@@ -26,7 +26,8 @@ import {RedPepperService} from "../../../services/redpepper.service";
                <button (click)="save()">save</button>
                
                <li *ngFor="let campaign of campaigns$ | async">
-                    {{campaign?.getCampaignName()}}
+                    <input value="{{campaign?.getCampaignName()}}">
+                    <button (click)="removeCampaign(campaign)" class="fa fa-remove"></button>
                 </li>
                 
            `,
@@ -45,16 +46,19 @@ export class Dashboard extends Compbaser {
         this.userModel$ = this.store.select(store => store.appDb.userModel);
         this.campaigns$ = this.store.select(store => store.msDatabase.sdk.table_campaigns).map((list: List<CampaignsModal>) => {
             return list.filter((campaignModel: CampaignsModal) => {
-                // if (campaignModel.getChangeType() != "3" && campaignModel.getCampaignName().indexOf('0.1') > -1)
-                if (campaignModel.getChangeType() != "3")
-                    return true
-                return false;
+                 if (campaignModel.getCampaignName().indexOf('bla_bla') > -1)
+                    return false
+                return true;  
             })
         });
         this.store.select(store => store.msDatabase.sdk.table_resources).subscribe((resourceModels: List<ResourcesModal>) => {
-            console.log(resourceModels.first().getResourceName());
-            console.log(resourceModels.first().getResourceBytesTotal());
+            // console.log(resourceModels.first().getResourceName());
+            // console.log(resourceModels.first().getResourceBytesTotal());
         })
+    }
+
+    private removeCampaign(campaign:CampaignsModal){
+        this.store.dispatch({type: EFFECT_REMOVE_CAMPAIGN, payload: campaign})
     }
 
     /**
