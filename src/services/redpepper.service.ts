@@ -77,6 +77,7 @@ export class RedPepperService {
             var storeModelList: List<StoreModel> = List<StoreModel>();
             tables[tableName] = storeModelList;
             this.databaseManager[tableName]().getAllPrimaryKeys().forEach((k, primary_id) => {
+                //todo: don't insert anything deleted with change id of 3
                 var record = this.databaseManager[tableName]().getRec(primary_id);
                 record.self = null;
                 record.proto = null;
