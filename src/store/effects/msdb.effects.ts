@@ -47,7 +47,7 @@ export class MsdbEffects {
             dispatch.payload.push(this.redPepperService.renameCampaign('A2'));
             dispatch.payload.push(this.redPepperService.renameCampaign('A3'));
             dispatch.payload.push(this.redPepperService.renameCampaign('A4'));
-            dispatch.payload.push(this.redPepperService.renameCampaign('A5'));
+            dispatch.payload.push(this.redPepperService.renameCampaign('A5 ' + Math.random()));
             return dispatch;
         })
 
