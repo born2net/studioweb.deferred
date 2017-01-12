@@ -43,7 +43,13 @@ export class Dashboard extends Compbaser {
     constructor(private store: Store<ApplicationState>, private redPepperService: RedPepperService) {
         super();
         this.userModel$ = this.store.select(store => store.appDb.userModel);
-        this.campaigns$ = this.store.select(store => store.msDatabase.sdk.table_campaigns);
+        this.campaigns$ = this.store.select(store => store.msDatabase.sdk.table_campaigns).map((list: List<CampaignsModal>) => {
+            return list.filter((campaignModel: CampaignsModal) => {
+                if (campaignModel.getCampaignName().indexOf('0.4') > -1 || campaignModel.getCampaignName().indexOf('0.3') > -1)
+                    return true
+                return false;
+            })
+        });
         this.store.select(store => store.msDatabase.sdk.table_resources).subscribe((resourceModels: List<ResourcesModal>) => {
             console.log(resourceModels.first().getResourceName());
             console.log(resourceModels.first().getResourceBytesTotal());
