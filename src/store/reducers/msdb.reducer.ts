@@ -1,5 +1,5 @@
 import {Action} from "@ngrx/store";
-import {ACTION_REDUXIFY_NOW} from "../actions/appdb.actions";
+import {ACTION_INJECT_SDK} from "../actions/appdb.actions";
 import {IMsDatabase} from "../store.data";
 import {redpepperTables} from "../../services/redpepper.service";
 import {List} from "immutable";
@@ -14,7 +14,7 @@ export function msDatabase(state: IMsDatabase, action: Action): IMsDatabase {
          * are given, the last one (i.e.: has the freshest data) wins and gets injected into the state.sdk
          *
          */
-        case ACTION_REDUXIFY_NOW:
+        case ACTION_INJECT_SDK:
             if (!state.sdk) {
                 var redpepperList: Array<redpepperTables> = action.payload;
                 state.sdk = redpepperList[0].tables;

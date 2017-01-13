@@ -5,14 +5,13 @@ import * as MsdbModels from "../store/imsdb.interfaces_auto";
 import {TableNames, ISDK} from "../store/imsdb.interfaces_auto";
 import {StoreModel} from "../store/model/StoreModel";
 import {List} from "immutable";
-import {ACTION_REDUXIFY_NOW} from "../store/actions/appdb.actions";
+import {ACTION_INJECT_SDK} from "../store/actions/appdb.actions";
 import {Store} from "@ngrx/store";
 import {ApplicationState} from "../store/application.state";
 
 export type redpepperTables = {
     tables: ISDK
     tableNames: Array<string>;
-    data?: any;
 }
 
 @Injectable()
@@ -133,7 +132,7 @@ export class RedPepperService {
             });
         });
         this.resetPendingTables();
-        this.store.dispatch({type: ACTION_REDUXIFY_NOW, payload: [redpepperSet]})
+        this.store.dispatch({type: ACTION_INJECT_SDK, payload: [redpepperSet]})
         return redpepperSet;
     }
 

@@ -53,7 +53,7 @@ export class MsdbEffects {
     //     debugger;
     //     var campaignId: CampaignsModal = (payload as CampaignsModal).getCampaignId();
     //     return {
-    //         type: 'ACTION_REDUXIFY_NOW',
+    //         type: 'ACTION_INJECT_SDK',
     //         payload: [this.redPepperService.removeCampaignEntirely(campaignId)]
     //     }
     // })
@@ -129,7 +129,7 @@ export class MsdbEffects {
             // var board2: redpepperTables = this.redPepperService.createBoard('my board2', 500, 500);
             // dispatch.payload.push(board1)
             // dispatch.payload.push(board2)
-            // this.store.dispatch({type: ACTION_REDUXIFY_NOW, payload: [tables]});
+            // this.store.dispatch({type: ACTION_INJECT_SDK, payload: [tables]});
         })
 }
 

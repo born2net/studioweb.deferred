@@ -9,7 +9,7 @@ import {ApplicationState} from "../application.state";
 import {Observable} from "rxjs";
 
 export const APP_INIT = 'APP_INIT';
-export const ACTION_REDUXIFY_NOW = 'ACTION_REDUXIFY_NOW';
+export const ACTION_INJECT_SDK = 'ACTION_INJECT_SDK';
 export const ACTION_TWO_FACTOR_REMOVED = 'ACTION_TWO_FACTOR_REMOVED';
 
 export enum AuthenticateFlags {
