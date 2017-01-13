@@ -23,7 +23,6 @@ import {RedPepperService} from "../../../services/redpepper.service";
                <h2>Dashboard</h2>
                <h4>user name: {{(userModel$ | async)?.getUser() }}</h4>
                <h4>account type: {{(userModel$ | async)?.getAccountType()}}</h4>
-               
                <canvas #canvas width="300" height="300"></canvas>
                <h2>selected: {{selectedCampaign?.getCampaignName()}}</h2>
                <button class="btn btn-primary" (click)="createCampaign()">create campaign</button>
@@ -35,7 +34,6 @@ import {RedPepperService} from "../../../services/redpepper.service";
                         <button (click)="removeCampaign(campaign)" class="fa fa-remove"></button>
                     </li>
                 </ul>
-                
            `,
 })
 export class Dashboard extends Compbaser {
@@ -59,8 +57,8 @@ export class Dashboard extends Compbaser {
             })
         });
         this.store.select(store => store.msDatabase.sdk.table_resources).subscribe((resourceModels: List<ResourcesModal>) => {
-            // console.log(resourceModels.first().getResourceName());
-            // console.log(resourceModels.first().getResourceBytesTotal());
+            console.log(resourceModels.first().getResourceName());
+            console.log(resourceModels.first().getResourceBytesTotal());
         })
     }
 
@@ -71,30 +69,6 @@ export class Dashboard extends Compbaser {
     private renameCampaign(campaign, newName) {
         this.fabricCanvas.setZoom(_.random(1, 1.5));
         this.store.dispatch({type: EFFECT_RENAME_CAMPAIGN, payload: {campaign: campaign, newName: newName}})
-    }
-
-    /**
-     Populate the LI with all available campaigns from msdb
-     @method _loadCampaignList
-     @return none
-     **/
-    loadCampaignList() {
-        // var campaignIDs = this.redPepperService.getCampaignIDs();
-
-        // for (var i = 0; i < campaignIDs.length; i++) {
-        //     var campaignID = campaignIDs[i];
-        //     var recCampaign = this..getCampaignRecord(campaignID);
-        //     var playListMode = recCampaign['campaign_playlist_mode'] == 0 ? 'sequencer' : 'scheduler';
-        //
-        //     var snippet = '<a href="#" class="' + BB.lib.unclass(Elements.CLASS_CAMPIGN_LIST_ITEM) + ' list-group-item" data-campaignid="' + campaignID + '">' +
-        //         '<h4>' + recCampaign['campaign_name'] + '</h4>' +
-        //         '<p class="list-group-item-text">play list mode:' + playListMode + '</p>' +
-        //         '<div class="openProps">' +
-        //         '<button type="button" class="' + BB.lib.unclass(Elements.CLASS_OPEN_PROPS_BUTTON) + ' btn btn-default btn-sm"><i style="font-size: 1.5em" class="fa fa-gear"></i></button>' +
-        //         '</div>' +
-        //         '</a>';
-        //     $(Elements.CAMPAIGN_SELECTOR_LIST).append($(snippet));
-
     }
 
 

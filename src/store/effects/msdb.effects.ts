@@ -29,7 +29,7 @@ export class MsdbEffects {
     @Effect({dispatch: false})
     reduxifyMsdb$: Observable<Action> = this.actions$.ofType(EFFECT_INIT_REDUXIFY_MSDB)
         .do(() => {
-            this.redPepperService.reduxSubmit();
+            this.redPepperService.reduxCommit();
         })
 
     @Effect({dispatch: false})
@@ -38,7 +38,7 @@ export class MsdbEffects {
             var campaignId: CampaignsModal = (action.payload.campaign as CampaignsModal).getCampaignId();
             var newName: string = action.payload.newName;
             this.redPepperService.renameCampaign(campaignId, newName);
-            this.redPepperService.reduxSubmit();
+            this.redPepperService.reduxCommit();
         })
 
     @Effect({dispatch: false})
@@ -46,7 +46,7 @@ export class MsdbEffects {
         .do((action: Action) => {
             var campaignId: CampaignsModal = (action.payload as CampaignsModal).getCampaignId();
             this.redPepperService.removeCampaignEntirely(campaignId);
-            this.redPepperService.reduxSubmit();
+            this.redPepperService.reduxCommit();
         })
 
     // .map(toPayload,(payload)=>{
@@ -110,7 +110,7 @@ export class MsdbEffects {
             var campaign_timeline_board_template_id = this.redPepperService.assignTemplateToTimeline(campaign_timeline_id, board_template_id, campaign_board_id);
             var channels = this.redPepperService.createTimelineChannels(campaign_timeline_id, viewers);
             this.redPepperService.assignViewersToTimelineChannels(campaign_timeline_board_template_id, viewers, channels);
-            this.redPepperService.reduxSubmit();
+            this.redPepperService.reduxCommit();
 
             // self.m_timelines[campaign_timeline_id] = new Timeline({campaignTimelineID: campaign_timeline_id});
 

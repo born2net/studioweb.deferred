@@ -15,11 +15,6 @@ export type redpepperTables = {
     data?: any;
 }
 
-export type redpepperTablesAction =  {
-    type: 'ACTION_REDUXIFY_NOW';
-    payload: Array<redpepperTables>
-}
-
 @Injectable()
 export class RedPepperService {
 
@@ -80,14 +75,14 @@ export class RedPepperService {
     }
 
     /**
-     * reduxSubmit
-     * if passed in table names, process it
-     * if not, try and see if any pending pendingTableSync exist, if so process it
+     * reduxCommit
+     * if passed in table names, use them to sync to redux
+     * if not, try and see if any pending pendingTableSync exist, if so sync to redux
      * if not, process all tables
      * @param tableNameTargets
      * @returns {redpepperTables}
      */
-    reduxSubmit(tableNameTargets?: Array<string>): redpepperTables {
+    reduxCommit(tableNameTargets?: Array<string>): redpepperTables {
         var tablesNames: Array<string> = [];
         if (tableNameTargets) {
             tablesNames = tableNameTargets;
@@ -132,8 +127,6 @@ export class RedPepperService {
                     tableNamesTouched[tableName] = tableName;
                 });
             }
-
-
             redpepperSet.tables = tables as any;
             redpepperSet.tableNames = Object.keys(tableNamesTouched).map(function (key) {
                 return tableNamesTouched[key];
@@ -143,7 +136,6 @@ export class RedPepperService {
         this.store.dispatch({type: ACTION_REDUXIFY_NOW, payload: [redpepperSet]})
         return redpepperSet;
     }
-
 
     /**
      Create a new campaign in the local database
