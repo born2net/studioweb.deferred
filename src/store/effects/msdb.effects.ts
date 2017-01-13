@@ -45,14 +45,12 @@ export class MsdbEffects {
             this.redPepperService.reduxSubmit();
         })
 
-    @Effect()
+    @Effect({dispatch: false})
     removeCampaign: Observable<Action> = this.actions$.ofType(EFFECT_REMOVE_CAMPAIGN)
-        .map((action: Action) => {
+        .do((action: Action) => {
             var campaignId: CampaignsModal = (action.payload as CampaignsModal).getCampaignId();
-            return {
-                type: 'ACTION_REDUXIFY_NOW',
-                payload: [this.redPepperService.removeCampaign(campaignId)]
-            }
+            this.redPepperService.removeCampaignEntirely(campaignId);
+            this.redPepperService.reduxSubmit();
         })
 
         // .map(toPayload,(payload)=>{
