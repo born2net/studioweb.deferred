@@ -170,6 +170,12 @@ export class AppDbEffects {
                 this.twoFactorCheck()
                     .take(1)
                     .subscribe((twoFactorResult) => {
+                        if (window['offlineDevMode']) {
+                            return this.store.dispatch({
+                                type: EFFECT_AUTH_STATUS,
+                                payload: AuthenticateFlags.AUTH_PASS_NO_TWO_FACTOR
+                            });
+                        }
                         userModel = userModel.setBusinessId(twoFactorResult.businessId);
                         userModel = userModel.setTwoFactorRequired(twoFactorResult.enabled);
                         this.store.dispatch({type: EFFECT_UPDATE_USER_MODEL, payload: userModel});
@@ -201,6 +207,9 @@ export class AppDbEffects {
         return this.store.select(store => store.appDb.appBaseUrlCloud)
             .take(1)
             .mergeMap(appBaseUrlCloud => {
+                if (window['offlineDevMode']) {
+                    return Observable.of({});
+                }
                 var url = appBaseUrlCloud.replace('END_POINT', 'twoFactorCheck');
                 return this.http.get(url)
                     .catch((err: any) => {
