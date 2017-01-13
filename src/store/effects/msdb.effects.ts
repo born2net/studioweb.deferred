@@ -8,8 +8,7 @@ import {Action, Store} from "@ngrx/store";
 import {ApplicationState} from "../application.state";
 import {Actions, Effect} from "@ngrx/effects";
 import {Observable} from "rxjs";
-import {ACTION_REDUXIFY_NOW} from "../actions/appdb.actions";
-import {RedPepperService, redpepperTables, redpepperTablesAction} from "../../services/redpepper.service";
+import {RedPepperService} from "../../services/redpepper.service";
 import {CampaignsModal} from "../imsdb.interfaces_auto";
 
 export const EFFECT_INIT_REDUXIFY_MSDB = 'EFFECT_INIT_REDUXIFY_MSDB';
@@ -35,13 +34,10 @@ export class MsdbEffects {
 
     @Effect({dispatch: false})
     renameCampaign: Observable<Action> = this.actions$.ofType(EFFECT_RENAME_CAMPAIGN)
-        .do(() => {
-            // this.redPepperService.createBoard('my board', 500, 500);
-            this.redPepperService.renameCampaign('A1');
-            this.redPepperService.renameCampaign('A2');
-            this.redPepperService.renameCampaign('A3');
-            this.redPepperService.renameCampaign('A4')
-            this.redPepperService.renameCampaign('A5 ' + Math.random());
+        .do((action: Action) => {
+            var campaignId: CampaignsModal = (action.payload.campaign as CampaignsModal).getCampaignId();
+            var newName: string = action.payload.newName;
+            this.redPepperService.renameCampaign(campaignId, newName);
             this.redPepperService.reduxSubmit();
         })
 
@@ -53,14 +49,14 @@ export class MsdbEffects {
             this.redPepperService.reduxSubmit();
         })
 
-        // .map(toPayload,(payload)=>{
-        //     debugger;
-        //     var campaignId: CampaignsModal = (payload as CampaignsModal).getCampaignId();
-        //     return {
-        //         type: 'ACTION_REDUXIFY_NOW',
-        //         payload: [this.redPepperService.removeCampaignEntirely(campaignId)]
-        //     }
-        // })
+    // .map(toPayload,(payload)=>{
+    //     debugger;
+    //     var campaignId: CampaignsModal = (payload as CampaignsModal).getCampaignId();
+    //     return {
+    //         type: 'ACTION_REDUXIFY_NOW',
+    //         payload: [this.redPepperService.removeCampaignEntirely(campaignId)]
+    //     }
+    // })
 
     @Effect({dispatch: false})
     createCampaign: Observable<Action> = this.actions$.ofType(EFFECT_CREATE_CAMPAIGN_BOARD)

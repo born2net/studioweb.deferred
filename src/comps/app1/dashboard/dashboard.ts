@@ -24,9 +24,9 @@ import {RedPepperService} from "../../../services/redpepper.service";
                <button (click)="renameCampaign()">renameCampaign</button>
                <br/>
                <button (click)="save()">save</button>
-               
+               {{selectedCampaign?.getCampaignName()}} 
                <li *ngFor="let campaign of campaigns$ | async">
-                    <input value="{{campaign?.getCampaignName()}}">
+                    <input #ren (blur)="renameCampaign(campaign,ren.value)" value="{{campaign?.getCampaignName()}}">
                     <button (click)="removeCampaign(campaign)" class="fa fa-remove"></button>
                 </li>
                 
@@ -37,6 +37,7 @@ export class Dashboard extends Compbaser {
     private campaigns$: Observable<any>;
     private userModel$: Observable<UserModel>;
     private fabricCanvas: fabric.IStaticCanvas;
+    private selectedCampaign: CampaignsModal;
 
     @ViewChild('canvas')
     canvas;
@@ -46,9 +47,9 @@ export class Dashboard extends Compbaser {
         this.userModel$ = this.store.select(store => store.appDb.userModel);
         this.campaigns$ = this.store.select(store => store.msDatabase.sdk.table_campaigns).map((list: List<CampaignsModal>) => {
             return list.filter((campaignModel: CampaignsModal) => {
-                 if (campaignModel.getCampaignName().indexOf('bla_bla') > -1)
+                if (campaignModel.getCampaignName().indexOf('bla_bla') > -1)
                     return false
-                return true;  
+                return true;
             })
         });
         this.store.select(store => store.msDatabase.sdk.table_resources).subscribe((resourceModels: List<ResourcesModal>) => {
@@ -57,8 +58,14 @@ export class Dashboard extends Compbaser {
         })
     }
 
-    private removeCampaign(campaign:CampaignsModal){
+    private removeCampaign(campaign: CampaignsModal) {
         this.store.dispatch({type: EFFECT_REMOVE_CAMPAIGN, payload: campaign})
+    }
+
+    private renameCampaign(campaign, newName) {
+        this.fabricCanvas.setZoom(_.random(1, 1.5));
+        this.selectedCampaign = campaign;
+        this.store.dispatch({type: EFFECT_RENAME_CAMPAIGN, payload: {campaign: campaign, newName: newName}})
     }
 
     /**
@@ -85,10 +92,6 @@ export class Dashboard extends Compbaser {
 
     }
 
-    private renameCampaign() {
-        this.fabricCanvas.setZoom(_.random(1, 1.5));
-        this.store.dispatch({type: EFFECT_RENAME_CAMPAIGN});
-    }
 
     ngOnInit() {
         this.fabricCanvas = new fabric.Canvas(this.canvas.nativeElement);

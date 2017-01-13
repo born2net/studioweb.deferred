@@ -112,7 +112,6 @@ export class RedPepperService {
             var storeName = this.capitalizeFirstLetter(StringJS(table).camelize().s) + 'Modal';
             var storeModelList: List<StoreModel> = List<StoreModel>();
             tables[tableName] = storeModelList;
-
             var totalKeys = 0
             $(this.databaseManager[tableName]().getAllPrimaryKeys()).each((k, primary_id) => {
                 totalKeys++;
@@ -123,22 +122,15 @@ export class RedPepperService {
             } else {
                 $(this.databaseManager[tableName]().getAllPrimaryKeys()).each((k, primary_id) => {
                     var record = this.databaseManager[tableName]().getRec(primary_id);
-                    // if (record == null)
-                    //     return;
-                    // if (record.change_type == 3)
-                    //     return;
-                    // record.this = null;
-                    // record.proto = null;
-                    // record._proto_ = null;
-                    // record.__proto__ = null;
+                    if (record.change_type == 3)
+                        return;
+                    record.self = null;
+                    record.__proto__ = null;
                     var newClass: StoreModel = new MsdbModels[storeName](record);
                     storeModelList = storeModelList.push(newClass);
                     tables[tableName] = storeModelList;
                     tableNamesTouched[tableName] = tableName;
                 });
-                // this.databaseManager[tableName]().getAllPrimaryKeys().forEach((k, primary_id) => {
-                //
-                // });
             }
 
 
@@ -168,10 +160,8 @@ export class RedPepperService {
         return campaign.campaign_id;
     }
 
-    renameCampaign(i_campaignName): void {
-        this.databaseManager.table_campaigns().openForEdit(0);
-        var recCampaign = this.databaseManager.table_campaigns().getRec(0);
-        recCampaign['campaign_name'] = i_campaignName;
+    renameCampaign(i_campaignId, i_newCampaignName): void {
+        this.setCampaignRecord(i_campaignId,'campaign_name',i_newCampaignName)
         this.addPendingTables(['campaigns']);
     }
 
