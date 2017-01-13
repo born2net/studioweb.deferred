@@ -112,21 +112,36 @@ export class RedPepperService {
             var storeName = this.capitalizeFirstLetter(StringJS(table).camelize().s) + 'Modal';
             var storeModelList: List<StoreModel> = List<StoreModel>();
             tables[tableName] = storeModelList;
-            this.databaseManager[tableName]().getAllPrimaryKeys().forEach((k, primary_id) => {
-                var record = this.databaseManager[tableName]().getRec(primary_id);
-                if (record == null)
-                    return;
-                if (record.change_type == 3)
-                    return;
-                record.this = null;
-                record.proto = null;
-                record._proto_ = null;
-                record.__proto__ = null;
-                var newClass: StoreModel = new MsdbModels[storeName](record);
-                storeModelList = storeModelList.push(newClass);
+
+            var totalKeys = 0
+            $(this.databaseManager[tableName]().getAllPrimaryKeys()).each((k, primary_id) => {
+                totalKeys++;
+            })
+            if (totalKeys == 0) {
                 tables[tableName] = storeModelList;
                 tableNamesTouched[tableName] = tableName;
-            });
+            } else {
+                $(this.databaseManager[tableName]().getAllPrimaryKeys()).each((k, primary_id) => {
+                    var record = this.databaseManager[tableName]().getRec(primary_id);
+                    // if (record == null)
+                    //     return;
+                    // if (record.change_type == 3)
+                    //     return;
+                    // record.this = null;
+                    // record.proto = null;
+                    // record._proto_ = null;
+                    // record.__proto__ = null;
+                    var newClass: StoreModel = new MsdbModels[storeName](record);
+                    storeModelList = storeModelList.push(newClass);
+                    tables[tableName] = storeModelList;
+                    tableNamesTouched[tableName] = tableName;
+                });
+                // this.databaseManager[tableName]().getAllPrimaryKeys().forEach((k, primary_id) => {
+                //
+                // });
+            }
+
+
             redpepperSet.tables = tables as any;
             redpepperSet.tableNames = Object.keys(tableNamesTouched).map(function (key) {
                 return tableNamesTouched[key];
@@ -136,6 +151,7 @@ export class RedPepperService {
         this.store.dispatch({type: ACTION_REDUXIFY_NOW, payload: [redpepperSet]})
         return redpepperSet;
     }
+
 
     /**
      Create a new campaign in the local database
@@ -278,7 +294,7 @@ export class RedPepperService {
      **/
     setCampaignTimelineSequencerIndex(i_campaign_id, i_campaign_timeline_id, i_sequenceIndex): void {
         var updatedSequence = false;
-        this.databaseManager.table_campaign_timeline_sequences().getAllPrimaryKeys().forEach((k, campaign_timeline_sequence_id) => {
+        $(this.databaseManager.table_campaign_timeline_sequences().getAllPrimaryKeys()).each((k, campaign_timeline_sequence_id) => {
             var recCampaignTimelineSequence = this.databaseManager.table_campaign_timeline_sequences().getRec(campaign_timeline_sequence_id);
             if (recCampaignTimelineSequence.campaign_timeline_id == i_campaign_timeline_id) {
                 this.databaseManager.table_campaign_timeline_sequences().openForEdit(campaign_timeline_sequence_id);
@@ -358,7 +374,7 @@ export class RedPepperService {
      **/
     getCampaignIDs(): Array<number> {
         var campaignsIds = [];
-        this.databaseManager.table_campaigns().getAllPrimaryKeys().forEach((k, campaign_id) => {
+        $(this.databaseManager.table_campaigns().getAllPrimaryKeys()).each((k, campaign_id) => {
             campaignsIds.push(campaign_id);
         });
         return campaignsIds;
@@ -453,8 +469,6 @@ export class RedPepperService {
         var campaignIDs = this.getCampaignIDs();
         if (campaignIDs.length == 0)
             this.removeAllBoards();
-        // this.m_selectedCampaignID = -1;
-        // this.m_propertiesPanel.selectView(Elements.DASHBOARD_PROPERTIES);
     }
 
     /**
@@ -476,7 +490,7 @@ export class RedPepperService {
      **/
     getCampaignTimelines(i_campaign_id): Array<number> {
         var timelineIDs = [];
-        this.databaseManager.table_campaign_timelines().getAllPrimaryKeys().forEach((k, campaign_timeline_id) => {
+        $(this.databaseManager.table_campaign_timelines().getAllPrimaryKeys()).each((k, campaign_timeline_id) => {
             var recCampaignTimeline = this.databaseManager.table_campaign_timelines().getRec(campaign_timeline_id);
             if (recCampaignTimeline['campaign_id'] == i_campaign_id) {
                 timelineIDs.push(campaign_timeline_id);
@@ -494,7 +508,7 @@ export class RedPepperService {
      **/
     getGlobalTemplateIdOfTimeline(i_campaign_timeline_id): number {
         var found = [];
-        this.databaseManager.table_campaign_timeline_board_templates().getAllPrimaryKeys().forEach((k, table_campaign_timeline_board_template_id) => {
+        $(this.databaseManager.table_campaign_timeline_board_templates().getAllPrimaryKeys()).each((k, table_campaign_timeline_board_template_id) => {
             var recCampaignTimelineBoardTemplate = this.databaseManager.table_campaign_timeline_board_templates().getRec(table_campaign_timeline_board_template_id);
             if (recCampaignTimelineBoardTemplate['campaign_timeline_id'] == i_campaign_timeline_id) {
                 found.push(recCampaignTimelineBoardTemplate['board_template_id']);
@@ -535,7 +549,7 @@ export class RedPepperService {
      @return none
      **/
     removeTimelineBoardViewerChannels(i_campaign_timeline_board_template_id) {
-        this.databaseManager.table_campaign_timeline_board_viewer_chanels().getAllPrimaryKeys().forEach((k, campaign_timeline_board_viewer_chanel_id) => {
+        $(this.databaseManager.table_campaign_timeline_board_viewer_chanels().getAllPrimaryKeys()).each((k, campaign_timeline_board_viewer_chanel_id) => {
             var recCampaignTimelineViewerChanels = this.databaseManager.table_campaign_timeline_board_viewer_chanels().getRec(campaign_timeline_board_viewer_chanel_id);
             if (recCampaignTimelineViewerChanels['campaign_timeline_board_template_id'] == i_campaign_timeline_board_template_id) {
                 this.databaseManager.table_campaign_timeline_board_viewer_chanels().openForDelete(campaign_timeline_board_viewer_chanel_id);
@@ -563,7 +577,7 @@ export class RedPepperService {
      **/
     removeBoardTemplateViewers(i_board_template_id): Array<number> {
         var boardTemplateViewerIDs = [];
-        this.databaseManager.table_board_template_viewers().getAllPrimaryKeys().forEach((k, board_template_viewer_id) => {
+        $(this.databaseManager.table_board_template_viewers().getAllPrimaryKeys()).each((k, board_template_viewer_id) => {
             var recBoardTemplateViewers = this.databaseManager.table_board_template_viewers().getRec(board_template_viewer_id);
             if (recBoardTemplateViewers['board_template_id'] == i_board_template_id) {
                 var a = this.databaseManager.table_board_template_viewers().openForDelete(board_template_viewer_id);
@@ -581,7 +595,7 @@ export class RedPepperService {
      @return none
      **/
     removeTimelineFromSequences(i_campaign_timeline_id): void {
-        this.databaseManager.table_campaign_timeline_sequences().getAllPrimaryKeys().forEach((k, campaign_timeline_sequence_id) => {
+        $(this.databaseManager.table_campaign_timeline_sequences().getAllPrimaryKeys()).each((k, campaign_timeline_sequence_id) => {
             var recCampaignTimelineSequence = this.databaseManager.table_campaign_timeline_sequences().getRec(campaign_timeline_sequence_id);
             if (recCampaignTimelineSequence['campaign_timeline_id'] == i_campaign_timeline_id) {
                 this.databaseManager.table_campaign_timeline_sequences().openForDelete(campaign_timeline_sequence_id);
@@ -597,7 +611,7 @@ export class RedPepperService {
      @return none
      **/
     removeSchedulerFromTime(i_campaign_timeline_id): void {
-        this.databaseManager.table_campaign_timeline_schedules().getAllPrimaryKeys().forEach((k, campaign_timeline_schedule_id) => {
+        $(this.databaseManager.table_campaign_timeline_schedules().getAllPrimaryKeys()).each((k, campaign_timeline_schedule_id) => {
             var recCampaignTimelineSchedule = this.databaseManager.table_campaign_timeline_schedules().getRec(campaign_timeline_schedule_id);
             if (recCampaignTimelineSchedule.campaign_timeline_id == i_campaign_timeline_id) {
                 this.databaseManager.table_campaign_timeline_schedules().openForDelete(campaign_timeline_schedule_id);
@@ -614,7 +628,7 @@ export class RedPepperService {
      **/
     getChannelsOfTimeline(i_campaign_timeline_id): Array<number> {
         var foundChannelsIDs = [];
-        this.databaseManager.table_campaign_timeline_chanels().getAllPrimaryKeys().forEach((k, campaign_timeline_chanel_id) => {
+        $(this.databaseManager.table_campaign_timeline_chanels().getAllPrimaryKeys()).each((k, campaign_timeline_chanel_id) => {
             var recCampaignTimelineChannel = this.databaseManager.table_campaign_timeline_chanels().getRec(campaign_timeline_chanel_id);
             if (i_campaign_timeline_id == recCampaignTimelineChannel['campaign_timeline_id']) {
                 foundChannelsIDs.push(campaign_timeline_chanel_id);
@@ -644,7 +658,7 @@ export class RedPepperService {
      **/
     getChannelBlocks(i_campaign_timeline_chanel_id): Array<number> {
         var foundBlocks = [];
-        this.databaseManager.table_campaign_timeline_chanel_players().getAllPrimaryKeys().forEach((k, campaign_timeline_chanel_player_id) => {
+        $(this.databaseManager.table_campaign_timeline_chanel_players().getAllPrimaryKeys()).each((k, campaign_timeline_chanel_player_id) => {
             var recCampaignTimelineChannelPlayer = this.databaseManager.table_campaign_timeline_chanel_players().getRec(campaign_timeline_chanel_player_id);
             if (i_campaign_timeline_chanel_id == recCampaignTimelineChannelPlayer['campaign_timeline_chanel_id']) {
                 foundBlocks.push(campaign_timeline_chanel_player_id);
@@ -672,7 +686,7 @@ export class RedPepperService {
      @return none
      **/
     removeCampaignBoard(i_campaign_id): void {
-        this.databaseManager.table_campaign_boards().getAllPrimaryKeys().forEach( (k, campaign_board_id) => {
+        $(this.databaseManager.table_campaign_boards().getAllPrimaryKeys()).each((k, campaign_board_id) => {
             var recCampaignBoard = this.databaseManager.table_campaign_boards().getRec(campaign_board_id);
             if (recCampaignBoard['campaign_id'] == i_campaign_id) {
                 this.databaseManager.table_campaign_boards().openForDelete(campaign_board_id);
@@ -687,7 +701,7 @@ export class RedPepperService {
      @return none
      **/
     removeAllBoards(): void {
-        this.databaseManager.table_boards().getAllPrimaryKeys().forEach((k, board_id) => {
+        $(this.databaseManager.table_boards().getAllPrimaryKeys()).each((k, board_id) => {
             this.databaseManager.table_boards().openForDelete(board_id);
         });
         this.addPendingTables(['table_boards']);
@@ -701,7 +715,7 @@ export class RedPepperService {
      **/
     getTemplatesOfTimeline(i_campaign_timeline_id): Array<number> {
         var foundTemplatesIDs = [];
-        this.databaseManager.table_campaign_timeline_board_templates().getAllPrimaryKeys().forEach((k, table_campaign_timeline_board_template_id) => {
+        $(this.databaseManager.table_campaign_timeline_board_templates().getAllPrimaryKeys()).each((k, table_campaign_timeline_board_template_id) => {
             var recCampaignTimelineBoardTemplate = this.databaseManager.table_campaign_timeline_board_templates().getRec(table_campaign_timeline_board_template_id);
             if (recCampaignTimelineBoardTemplate['campaign_timeline_id'] == i_campaign_timeline_id) {
                 foundTemplatesIDs.push(table_campaign_timeline_board_template_id);
