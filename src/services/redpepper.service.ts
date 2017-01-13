@@ -10,9 +10,6 @@ import {Store} from "@ngrx/store";
 import {ApplicationState} from "../store/application.state";
 import * as _ from "lodash";
 
-window['g_protocol'] = 'https://';
-window['g_masterDomain'] = 'galaxy.signage.me';
-
 export type redpepperTables = {
     tables: ISDK
     tableNames: Array<string>;

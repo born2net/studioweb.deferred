@@ -1212,7 +1212,7 @@ LoaderManager.prototype.importScene = function (i_businessId, i_playerDataId, i_
 
     $.getJSON(url,
         function (data1) {
-            debugger
+            // debugger
             var srcDB = self.m_dataBaseManager.getDataModule(data1.domain, i_businessId);
             if (srcDB == null) {
                 self.m_dataBaseManager.createDataBase(data1.domain, i_businessId);
@@ -1221,7 +1221,7 @@ LoaderManager.prototype.importScene = function (i_businessId, i_playerDataId, i_
                 var url = window.g_protocol + data1.domain + '/WebService/RequestData.ashx?businessId=' + i_businessId + '&mode=playerData&callback=?';
                 $.getJSON(url,
                     function (data2) {
-                        debugger
+                        // debugger
                         var str = $.base64.decode(data2.ret);
                         var xml = $.parseXML(str);
                         self.m_dataBaseManager.loadTables(xml);
@@ -1429,7 +1429,7 @@ LoaderManager.prototype.save = function (i_saveCallback) {
     var url1 = window.g_protocol + sv.m_domain + '/WebService/SubmitData.ashx?command=Begin&userpass=' + sv.m_userpass64 + '&appVersion=4.12&appType=StudioLite' + '&callback=?';
 
     $.getJSON(url1, function (d1) {
-        debugger
+        // debugger
         uploadNextFile(d1.ret);
     });
 
@@ -1461,7 +1461,7 @@ LoaderManager.prototype.save = function (i_saveCallback) {
                 var url = window.g_protocol + sv.m_domain + '/WebService/UploadResource.ashx?cookie=' + i_cookie + '&fileName=' + filePack.fileName + '&url=' + filePack.url + '&callback=?';
                 $.getJSON(url,
                     function (data2) {
-                        debugger
+                        // debugger
                         if (data2.success) {
                             uploadNextFile(i_cookie);
                         }
@@ -1549,7 +1549,7 @@ LoaderManager.prototype.save = function (i_saveCallback) {
         $.getJSON(url2,
             {prm: d1},
             function (data) {
-                debugger
+                // debugger
                 if (i == j) {
                     //alert(data.ret);
                     if (data != null && data.ret != "") {
@@ -1619,7 +1619,7 @@ LoaderManager.prototype.requestAdsReport = function (i_callback, i_year, i_month
     var url = window.g_protocol + this.m_domain + '/WebService/requestAdsReport.ashx?i_userpass=' + self.m_userpass64 + '&i_year=' + i_year + '&i_month=' + i_month + '&callback=?';
     $.getJSON(url,
         function (data) {
-            debugger
+            // debugger
             var s64 = data.ret;
             var str = $.base64.decode(s64);
             var xml = $.parseXML(str);
