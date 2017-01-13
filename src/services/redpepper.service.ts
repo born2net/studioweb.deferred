@@ -47,6 +47,17 @@ export class RedPepperService {
         })
     }
 
+    private addPendingTables(tables: Array<any>) {
+        tables.forEach(table => {
+            if (this.m_tablesPendingToProcess.indexOf(table) == -1)
+                this.m_tablesPendingToProcess.push(table);
+        });
+    }
+
+    private resetPendingTables(){
+        this.m_tablesPendingToProcess = [];
+    }
+
     private capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
@@ -105,7 +116,7 @@ export class RedPepperService {
                 return tableNamesTouched[key];
             });
         });
-        this.m_tablesPendingToProcess = [];
+        this.resetPendingTables();
         this.store.dispatch({type: ACTION_REDUXIFY_NOW, payload: [redpepperSet]})
         return redpepperSet;
     }
@@ -121,7 +132,7 @@ export class RedPepperService {
         var campaign = campaigns.createRecord();
         campaign.campaign_name = i_campaignName;
         campaigns.addRecord(campaign, undefined);
-        this.m_tablesPendingToProcess.push('campaigns')
+        this.addPendingTables(['campaigns']);
         return campaign.campaign_id;
     }
 
@@ -129,7 +140,7 @@ export class RedPepperService {
         this.databaseManager.table_campaigns().openForEdit(0);
         var recCampaign = this.databaseManager.table_campaigns().getRec(0);
         recCampaign['campaign_name'] = i_campaignName;
-        this.m_tablesPendingToProcess.push('campaigns');
+        this.addPendingTables(['campaigns']);
     }
 
     /**
@@ -147,7 +158,7 @@ export class RedPepperService {
         board.board_pixel_width = i_width;
         board.board_pixel_height = i_height;
         boards.addRecord(board, undefined);
-        this.m_tablesPendingToProcess.push('table_boards')
+        this.addPendingTables(['table_boards']);
         return board['board_id'];
     }
 
@@ -190,8 +201,7 @@ export class RedPepperService {
             returnData['viewers'].push(viewer['board_template_viewer_id']);
         }
         returnData['board_template_id'] = board_template_id
-        this.m_tablesPendingToProcess.push('table_board_templates')
-        this.m_tablesPendingToProcess.push('table_board_template_viewers')
+        this.addPendingTables(['table_board_templates', 'table_board_template_viewers']);
         return returnData;
     }
 
@@ -208,7 +218,7 @@ export class RedPepperService {
         this.databaseManager.table_campaigns().openForEdit(i_campaign_id);
         var recCampaign = this.databaseManager.table_campaigns().getRec(i_campaign_id);
         recCampaign[i_key] = i_value;
-        this.m_tablesPendingToProcess.push('table_campaigns')
+        this.addPendingTables(['table_campaigns']);
     }
 
     /**
@@ -224,7 +234,7 @@ export class RedPepperService {
         campain_board.campaign_id = i_campaign_id;
         campain_board.board_id = i_board_id;
         campaign_boards.addRecord(campain_board, undefined);
-        this.m_tablesPendingToProcess.push('table_campaign_boards')
+        this.addPendingTables(['table_campaign_boards']);
         return campain_board['campaign_board_id']
     }
 
@@ -240,7 +250,7 @@ export class RedPepperService {
         timeline.campaign_id = i_campaign_id;
         timeline.timeline_name = "Timeline";
         timelines.addRecord(timeline, undefined);
-        this.m_tablesPendingToProcess.push('table_campaign_timelines')
+        this.addPendingTables(['table_campaign_timelines']);
         return timeline['campaign_timeline_id'];
     }
 
@@ -275,7 +285,7 @@ export class RedPepperService {
             recCampaignTimelineSequence.campaign_id = i_campaign_id;
             table_campaign_timeline_sequences.addRecord(recCampaignTimelineSequence, undefined);
         }
-        this.m_tablesPendingToProcess.push('table_campaign_timeline_sequences')
+        this.addPendingTables(['table_campaign_timeline_sequences']);
     }
 
     /**
@@ -296,7 +306,7 @@ export class RedPepperService {
             viewerChanel.campaign_timeline_chanel_id = i_channels.shift();
             viewerChanels.addRecord(viewerChanel, undefined);
         }
-        this.m_tablesPendingToProcess.push('table_campaign_timeline_board_viewer_chanels')
+        this.addPendingTables(['table_campaign_timeline_board_viewer_chanels']);
     }
 
     /**
@@ -326,7 +336,7 @@ export class RedPepperService {
         recCampaignTimelineSchedules.start_date = dateStart;
         recCampaignTimelineSchedules.end_date = dateEnd;
         table_campaign_timeline_schedules.addRecord(recCampaignTimelineSchedules, undefined);
-        this.m_tablesPendingToProcess.push('table_campaign_timeline_schedules')
+        this.addPendingTables(['table_campaign_timeline_schedules']);
     }
 
     /**
@@ -359,7 +369,7 @@ export class RedPepperService {
         timelineScreen.board_template_id = i_board_template_id;
         timelineScreen.campaign_board_id = i_campaign_board_id;
         timelineTemplate.addRecord(timelineScreen, undefined);
-        this.m_tablesPendingToProcess.push('table_campaign_timeline_board_templates')
+        this.addPendingTables(['table_campaign_timeline_board_templates']);
         return timelineScreen['campaign_timeline_board_template_id'];
     }
 
@@ -382,7 +392,7 @@ export class RedPepperService {
             chanels.addRecord(chanel, undefined);
             createdChanels.push(chanel['campaign_timeline_chanel_id']);
         }
-        this.m_tablesPendingToProcess.push('table_campaign_timeline_chanels')
+        this.addPendingTables(['table_campaign_timeline_chanels']);
         return createdChanels;
     }
 
@@ -396,7 +406,7 @@ export class RedPepperService {
         this.databaseManager.table_campaign_timelines().openForEdit(i_campaign_timeline_id);
         var recCampaignTimeline = this.databaseManager.table_campaign_timelines().getRec(i_campaign_timeline_id);
         recCampaignTimeline['timeline_duration'] = i_totalDuration;
-        this.m_tablesPendingToProcess.push('table_campaign_timelines')
+        this.addPendingTables(['table_campaign_timelines']);
     }
 
     /**
@@ -463,7 +473,7 @@ export class RedPepperService {
      **/
     removeCampaign(i_campaign_id) {
         this.databaseManager.table_campaigns().openForDelete(i_campaign_id);
-        this.m_tablesPendingToProcess.push('table_campaigns');
+        this.addPendingTables(['table_campaigns']);
     }
 
     /**

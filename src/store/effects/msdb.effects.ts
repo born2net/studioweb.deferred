@@ -33,24 +33,16 @@ export class MsdbEffects {
             this.redPepperService.reduxSubmit();
         })
 
-    @Effect()
+    @Effect({dispatch: false})
     renameCampaign: Observable<Action> = this.actions$.ofType(EFFECT_RENAME_CAMPAIGN)
-        .map(() => {
-
-            var dispatch: redpepperTablesAction = {type: 'ACTION_REDUXIFY_NOW', payload: []};
-
-            // var redpepperSet = this.redPepperService.createBoard('my board', 500, 500);
-            // this.store.dispatch({type: ACTION_REDUXIFY_NOW, payload: redpepperTables});
-
-            // var dispatch: redpepperTablesAction = {type: ACTION_REDUXIFY_NOW, payload: []};
-
-            this.redPepperService.createBoard('my board', 500, 500);
+        .do(() => {
+            // this.redPepperService.createBoard('my board', 500, 500);
             this.redPepperService.renameCampaign('A1');
             this.redPepperService.renameCampaign('A2');
             this.redPepperService.renameCampaign('A3');
             this.redPepperService.renameCampaign('A4')
             this.redPepperService.renameCampaign('A5 ' + Math.random());
-            return dispatch;
+            this.redPepperService.reduxSubmit();
         })
 
     @Effect()
@@ -72,9 +64,9 @@ export class MsdbEffects {
         //     }
         // })
 
-    @Effect()
+    @Effect({dispatch: false})
     createCampaign: Observable<Action> = this.actions$.ofType(EFFECT_CREATE_CAMPAIGN_BOARD)
-        .map(() => {
+        .do(() => {
 
             // ////////////////////////////////////////////////
             // // Created a brand new campaign and a new board
@@ -108,7 +100,6 @@ export class MsdbEffects {
                     h: 360
                 }
             }
-            var dispatch: redpepperTablesAction = {type: 'ACTION_REDUXIFY_NOW', payload: []};
 
             var board_id = this.redPepperService.createBoard('my board', 500, 500);
             var newTemplateData = this.redPepperService.createNewTemplate(board_id, screenProps);
@@ -135,7 +126,6 @@ export class MsdbEffects {
             //     table_campaign_boards, table_campaign_timelines, table_campaign_timeline_sequences, table_campaign_timeline_board_viewer_chanels,
             //     table_campaign_timelines, table_campaign_timeline_schedules, table_campaign_timeline_board_templates, table_campaign_timeline_chanels]
 
-            return dispatch;
 
             // option: 2 to dispatch
             // return this.redPepperService.syncToReduxEntireSdk();
