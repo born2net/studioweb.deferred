@@ -24,7 +24,6 @@ export type redpepperTablesAction =  {
 export class RedPepperService {
 
     constructor(private store: Store<ApplicationState>) {
-
     }
 
     private m_tablesPendingToProcess: Array<any> = [];
@@ -47,6 +46,24 @@ export class RedPepperService {
         })
     }
 
+    /**
+     Save to server
+     @method save
+     @return none
+     **/
+    save(i_callback) {
+        this.m_loaderManager.save(i_callback);
+    }
+
+    /**
+     Sync internal sdk to remote mediaSERVER account
+     @method requestData
+     @param {Function} i_callback
+     **/
+    sync(i_callBack) {
+        this.m_loaderManager.requestData(i_callBack);
+    }
+
     private addPendingTables(tables: Array<any>) {
         tables.forEach(table => {
             if (this.m_tablesPendingToProcess.indexOf(table) == -1)
@@ -54,7 +71,7 @@ export class RedPepperService {
         });
     }
 
-    private resetPendingTables(){
+    private resetPendingTables() {
         this.m_tablesPendingToProcess = [];
     }
 
@@ -63,7 +80,7 @@ export class RedPepperService {
     }
 
     /**
-     * reduxify (the process of synching SDK mslib into redux as readonly values)
+     * reduxSubmit
      * if passed in table names, process it
      * if not, try and see if any pending pendingTableSync exist, if so process it
      * if not, process all tables
@@ -75,7 +92,6 @@ export class RedPepperService {
         if (tableNameTargets) {
             tablesNames = tableNameTargets;
         } else {
-            // we didn't get any table names, so check if any pending to process
             if (this.m_tablesPendingToProcess.length > 0) {
                 tablesNames = this.m_tablesPendingToProcess;
             } else {
@@ -169,9 +185,7 @@ export class RedPepperService {
      @param {Object} i_screenProps json object with all the viewers and attributes to create in msdb
      @return {Object} returnData encapsulates the board_template_id and board_template_viewer_ids created
      **/
-    createNewTemplate(i_board_id, i_screenProps) {
-
-
+    createNewTemplate(i_board_id, i_screenProps): any {
         var returnData = {
             board_template_id: -1,
             viewers: []
@@ -297,7 +311,6 @@ export class RedPepperService {
      @return none
      **/
     assignViewersToTimelineChannels(i_campaign_timeline_board_template_id, i_viewers, i_channels): void {
-
         var viewerChanels = this.databaseManager.table_campaign_timeline_board_viewer_chanels();
         for (var i in i_viewers) {
             var viewerChanel = viewerChanels.createRecord();
@@ -317,7 +330,6 @@ export class RedPepperService {
      @return none
      **/
     createCampaignTimelineScheduler(i_campaign_id, i_campaign_timeline_id): void {
-
         var startDate = new Date();
         var endDate = new Date();
         endDate.setDate(endDate.getDate() + 30);
@@ -409,27 +421,7 @@ export class RedPepperService {
         this.addPendingTables(['table_campaign_timelines']);
     }
 
-    /**
-     Save to server
-     @method save
-     @return none
-     **/
-    save(i_callback) {
-        this.m_loaderManager.save(i_callback);
-    }
-
-    /**
-     Sync internal sdk to remote mediaSERVER account
-     @method requestData
-     @param {Function} i_callback
-     **/
-    sync(i_callBack) {
-
-        this.m_loaderManager.requestData(i_callBack);
-    }
-
-
-    removeCampaignEntirely(i_campaign_id) {
+    removeCampaignEntirely(i_campaign_id): void {
         var timelineIDs = this.getCampaignTimelines(i_campaign_id);
         for (var i = 0; i < timelineIDs.length; i++) {
             var timelineID = timelineIDs[i];
@@ -482,8 +474,7 @@ export class RedPepperService {
      @param {Number} i_campaign_id
      @return {Array} timeline ids
      **/
-    getCampaignTimelines(i_campaign_id) {
-
+    getCampaignTimelines(i_campaign_id): Array<number> {
         var timelineIDs = [];
         this.databaseManager.table_campaign_timelines().getAllPrimaryKeys().forEach((k, campaign_timeline_id) => {
             var recCampaignTimeline = this.databaseManager.table_campaign_timelines().getRec(campaign_timeline_id);
@@ -491,6 +482,7 @@ export class RedPepperService {
                 timelineIDs.push(campaign_timeline_id);
             }
         });
+        this.addPendingTables(['table_campaign_timelines']);
         return timelineIDs;
     }
 
@@ -500,8 +492,7 @@ export class RedPepperService {
      @param {Number} i_campaign_timeline_id
      @return {Array} foundGlobalBoardTemplatesIDs global board template ids
      **/
-    getGlobalTemplateIdOfTimeline(i_campaign_timeline_id) {
-
+    getGlobalTemplateIdOfTimeline(i_campaign_timeline_id): number {
         var found = [];
         $(this.databaseManager.table_campaign_timeline_board_templates().getAllPrimaryKeys()).each(function (k, table_campaign_timeline_board_template_id) {
             var recCampaignTimelineBoardTemplate = this.databaseManager.table_campaign_timeline_board_templates().getRec(table_campaign_timeline_board_template_id);
@@ -509,6 +500,7 @@ export class RedPepperService {
                 found.push(recCampaignTimelineBoardTemplate['board_template_id']);
             }
         });
+        this.addPendingTables(['table_campaign_timeline_board_templates']);
         return found[0];
     }
 
@@ -518,10 +510,9 @@ export class RedPepperService {
      @param {Number} i_campaign_timeline_id
      @return none
      **/
-    removeTimelineFromCampaign(i_campaign_timeline_id) {
-
+    removeTimelineFromCampaign(i_campaign_timeline_id): void {
         this.databaseManager.table_campaign_timelines().openForDelete(i_campaign_timeline_id);
-        // this.fire(this['TIMELINE_DELETED'], this, null, i_campaign_timeline_id);
+        this.addPendingTables(['table_campaign_timelines']);
     }
 
     /**
@@ -530,10 +521,10 @@ export class RedPepperService {
      @param {Number} i_timeline_id
      @return {Number} campaign_timeline_board_template_id
      **/
-    removeBoardTemplateFromTimeline(i_timeline_id) {
-
+    removeBoardTemplateFromTimeline(i_timeline_id): number {
         var campaign_timeline_board_template_id = this.getTemplatesOfTimeline(i_timeline_id)[0];
         this.databaseManager.table_campaign_timeline_board_templates().openForDelete(campaign_timeline_board_template_id);
+        this.addPendingTables(['table_campaign_timeline_board_templates']);
         return campaign_timeline_board_template_id;
     }
 
@@ -544,14 +535,13 @@ export class RedPepperService {
      @return none
      **/
     removeTimelineBoardViewerChannels(i_campaign_timeline_board_template_id) {
-
-
         $(this.databaseManager.table_campaign_timeline_board_viewer_chanels().getAllPrimaryKeys()).each(function (k, campaign_timeline_board_viewer_chanel_id) {
             var recCampaignTimelineViewerChanels = this.databaseManager.table_campaign_timeline_board_viewer_chanels().getRec(campaign_timeline_board_viewer_chanel_id);
             if (recCampaignTimelineViewerChanels['campaign_timeline_board_template_id'] == i_campaign_timeline_board_template_id) {
                 this.databaseManager.table_campaign_timeline_board_viewer_chanels().openForDelete(campaign_timeline_board_viewer_chanel_id);
             }
         });
+        this.addPendingTables(['table_campaign_timeline_board_viewer_chanels']);
     }
 
     /**
@@ -559,9 +549,9 @@ export class RedPepperService {
      @method removeBoardTemplate
      @param {Number} i_campaign_timeline_board_template_id
      **/
-    removeBoardTemplate(i_board_template_id) {
-
+    removeBoardTemplate(i_board_template_id): number {
         this.databaseManager.table_board_templates().openForDelete(i_board_template_id);
+        this.addPendingTables(['table_board_templates']);
         return i_board_template_id;
     }
 
@@ -571,10 +561,8 @@ export class RedPepperService {
      @param {Number} i_board_template_id
      @return {Array} boardTemplateViewerIDs
      **/
-    removeBoardTemplateViewers(i_board_template_id) {
-
+    removeBoardTemplateViewers(i_board_template_id): Array<number> {
         var boardTemplateViewerIDs = [];
-
         $(this.databaseManager.table_board_template_viewers().getAllPrimaryKeys()).each(function (k, board_template_viewer_id) {
             var recBoardTemplateViewers = this.databaseManager.table_board_template_viewers().getRec(board_template_viewer_id);
             if (recBoardTemplateViewers['board_template_id'] == i_board_template_id) {
@@ -582,6 +570,7 @@ export class RedPepperService {
                 boardTemplateViewerIDs.push(board_template_viewer_id);
             }
         });
+        this.addPendingTables(['table_board_template_viewers']);
         return boardTemplateViewerIDs;
     }
 
@@ -591,14 +580,14 @@ export class RedPepperService {
      @param {Number} i_timeline_id
      @return none
      **/
-    removeTimelineFromSequences(i_campaign_timeline_id) {
-
+    removeTimelineFromSequences(i_campaign_timeline_id): void {
         $(this.databaseManager.table_campaign_timeline_sequences().getAllPrimaryKeys()).each(function (k, campaign_timeline_sequence_id) {
             var recCampaignTimelineSequence = this.databaseManager.table_campaign_timeline_sequences().getRec(campaign_timeline_sequence_id);
             if (recCampaignTimelineSequence['campaign_timeline_id'] == i_campaign_timeline_id) {
                 this.databaseManager.table_campaign_timeline_sequences().openForDelete(campaign_timeline_sequence_id);
             }
         });
+        this.addPendingTables(['table_campaign_timeline_sequences']);
     }
 
     /**
@@ -607,15 +596,14 @@ export class RedPepperService {
      @param {Number} i_campaign_timeline_id
      @return none
      **/
-    removeSchedulerFromTime(i_campaign_timeline_id) {
-
+    removeSchedulerFromTime(i_campaign_timeline_id): void {
         $(this.databaseManager.table_campaign_timeline_schedules().getAllPrimaryKeys()).each(function (k, campaign_timeline_schedule_id) {
             var recCampaignTimelineSchedule = this.databaseManager.table_campaign_timeline_schedules().getRec(campaign_timeline_schedule_id);
             if (recCampaignTimelineSchedule.campaign_timeline_id == i_campaign_timeline_id) {
                 this.databaseManager.table_campaign_timeline_schedules().openForDelete(campaign_timeline_schedule_id);
-                // this.fire(Pepper['TIMELINE_SCHEDULE_DELETED'], this, null, i_campaign_timeline_id);
             }
         });
+        this.addPendingTables(['table_campaign_timeline_schedules']);
     }
 
     /**
@@ -624,16 +612,15 @@ export class RedPepperService {
      @param {Number} i_campaign_timeline_id
      @return {Array} channel ids
      **/
-    getChannelsOfTimeline(i_campaign_timeline_id) {
-
+    getChannelsOfTimeline(i_campaign_timeline_id):Array<number> {
         var foundChannelsIDs = [];
-
         $(this.databaseManager.table_campaign_timeline_chanels().getAllPrimaryKeys()).each(function (k, campaign_timeline_chanel_id) {
             var recCampaignTimelineChannel = this.databaseManager.table_campaign_timeline_chanels().getRec(campaign_timeline_chanel_id);
             if (i_campaign_timeline_id == recCampaignTimelineChannel['campaign_timeline_id']) {
                 foundChannelsIDs.push(campaign_timeline_chanel_id);
             }
         });
+        this.addPendingTables(['table_campaign_timeline_chanels']);
         return foundChannelsIDs;
     }
 
@@ -643,8 +630,8 @@ export class RedPepperService {
      @param {Number} i_channel_id
      @return {Boolean} status
      **/
-    removeChannelFromTimeline(i_channel_id) {
-
+    removeChannelFromTimeline(i_channel_id):number {
+        this.addPendingTables(['table_campaign_timeline_chanels']);
         return this.databaseManager.table_campaign_timeline_chanels().openForDelete(i_channel_id);
     }
 
@@ -655,8 +642,7 @@ export class RedPepperService {
      @param {Number} i_campaign_timeline_chanel_id
      @return {Array} foundBlocks
      **/
-    getChannelBlocks(i_campaign_timeline_chanel_id) {
-
+    getChannelBlocks(i_campaign_timeline_chanel_id):Array<number> {
         var foundBlocks = [];
         $(this.databaseManager.table_campaign_timeline_chanel_players().getAllPrimaryKeys()).each(function (k, campaign_timeline_chanel_player_id) {
             var recCampaignTimelineChannelPlayer = this.databaseManager.table_campaign_timeline_chanel_players().getRec(campaign_timeline_chanel_player_id);
@@ -664,6 +650,7 @@ export class RedPepperService {
                 foundBlocks.push(campaign_timeline_chanel_player_id);
             }
         });
+        this.addPendingTables(['table_campaign_timeline_chanel_players']);
         return foundBlocks;
     }
 
@@ -673,9 +660,9 @@ export class RedPepperService {
      @param {Number} i_block_id
      @return none
      **/
-    removeBlockFromTimelineChannel(i_block_id) {
+    removeBlockFromTimelineChannel(i_block_id):void {
         var status = this.databaseManager.table_campaign_timeline_chanel_players().openForDelete(i_block_id);
-        // this.fire(Pepper['REMOVE_TIMELINE_CHANNEL_BLOCK'], this, null, i_block_id);
+        this.addPendingTables(['table_campaign_timeline_chanel_players']);
     }
 
     /**
@@ -684,14 +671,14 @@ export class RedPepperService {
      @param {Number} i_campaign_id
      @return none
      **/
-    removeCampaignBoard(i_campaign_id) {
-
+    removeCampaignBoard(i_campaign_id):void {
         $(this.databaseManager.table_campaign_boards().getAllPrimaryKeys()).each(function (k, campaign_board_id) {
             var recCampaignBoard = this.databaseManager.table_campaign_boards().getRec(campaign_board_id);
             if (recCampaignBoard['campaign_id'] == i_campaign_id) {
                 this.databaseManager.table_campaign_boards().openForDelete(campaign_board_id);
             }
         });
+        this.addPendingTables(['table_campaign_boards']);
     }
 
     /**
@@ -699,12 +686,11 @@ export class RedPepperService {
      @method removeAllBoards
      @return none
      **/
-    removeAllBoards() {
-
-
+    removeAllBoards():void {
         $(this.databaseManager.table_boards().getAllPrimaryKeys()).each(function (k, board_id) {
             this.databaseManager.table_boards().openForDelete(board_id);
         });
+        this.addPendingTables(['table_boards']);
     }
 
     /**
@@ -713,7 +699,7 @@ export class RedPepperService {
      @param {Number} i_campaign_timeline_id
      @return {Array} template ids
      **/
-    getTemplatesOfTimeline(i_campaign_timeline_id) {
+    getTemplatesOfTimeline(i_campaign_timeline_id):Array<number> {
         var foundTemplatesIDs = [];
         $(this.databaseManager.table_campaign_timeline_board_templates().getAllPrimaryKeys()).each(function (k, table_campaign_timeline_board_template_id) {
             var recCampaignTimelineBoardTemplate = this.databaseManager.table_campaign_timeline_board_templates().getRec(table_campaign_timeline_board_template_id);
@@ -721,6 +707,7 @@ export class RedPepperService {
                 foundTemplatesIDs.push(table_campaign_timeline_board_template_id);
             }
         });
+        this.addPendingTables(['table_campaign_timeline_board_templates']);
         return foundTemplatesIDs;
     }
 }
