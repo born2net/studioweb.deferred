@@ -13,22 +13,28 @@ import {RedPepperService} from "../../../services/redpepper.service";
 @Component({
     selector: 'Dashboard',
     changeDetection: ChangeDetectionStrategy.OnPush,
+    styles: [`
+        button {
+            width: 200px;
+            margin: 5px;
+        }
+    `],
     template: `
                <h2>Dashboard</h2>
                <h4>user name: {{(userModel$ | async)?.getUser() }}</h4>
                <h4>account type: {{(userModel$ | async)?.getAccountType()}}</h4>
                
                <canvas #canvas width="300" height="300"></canvas>
-               <button (click)="createCampaign()">createCampaign</button>
+               <h2>selected: {{selectedCampaign?.getCampaignName()}}</h2>
+               <button class="btn btn-primary" (click)="createCampaign()">create campaign</button>
                <br/>
-               <button (click)="renameCampaign()">renameCampaign</button>
-               <br/>
-               <button (click)="save()">save</button>
-               {{selectedCampaign?.getCampaignName()}} 
-               <li *ngFor="let campaign of campaigns$ | async">
-                    <input #ren (blur)="renameCampaign(campaign,ren.value)" value="{{campaign?.getCampaignName()}}">
-                    <button (click)="removeCampaign(campaign)" class="fa fa-remove"></button>
-                </li>
+               <button class="btn btn-primary" (click)="save()">save to server</button>
+                <ul class="list-group">
+                   <li  class="list-group-item" *ngFor="let campaign of campaigns$ | async">
+                        <input #ren (focus)="selectedCampaign=campaign" (blur)="selectedCampaign=campaign ; renameCampaign(campaign,ren.value)" value="{{campaign?.getCampaignName()}}">
+                        <button (click)="removeCampaign(campaign)" class="fa fa-remove"></button>
+                    </li>
+                </ul>
                 
            `,
 })
@@ -64,7 +70,6 @@ export class Dashboard extends Compbaser {
 
     private renameCampaign(campaign, newName) {
         this.fabricCanvas.setZoom(_.random(1, 1.5));
-        this.selectedCampaign = campaign;
         this.store.dispatch({type: EFFECT_RENAME_CAMPAIGN, payload: {campaign: campaign, newName: newName}})
     }
 
