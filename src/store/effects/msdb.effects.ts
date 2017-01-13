@@ -45,7 +45,7 @@ export class MsdbEffects {
     removeCampaign: Observable<Action> = this.actions$.ofType(EFFECT_REMOVE_CAMPAIGN)
         .do((action: Action) => {
             var campaignId: CampaignsModal = (action.payload as CampaignsModal).getCampaignId();
-            this.redPepperService.removeCampaignEntirely(campaignId);
+            this.redPepperService.removeCampaignKeepBoards(campaignId);
             this.redPepperService.reduxCommit();
         })
 

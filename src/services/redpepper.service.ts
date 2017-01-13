@@ -443,6 +443,11 @@ export class RedPepperService {
         this.addPendingTables(['table_campaign_timelines']);
     }
 
+    /**
+     Remove the enitre campaigns and it's related boards
+     @method removeCampaignEntirely
+     @param {Number} i_campaign_id
+     **/
     removeCampaignEntirely(i_campaign_id): void {
         var timelineIDs = this.getCampaignTimelines(i_campaign_id);
         for (var i = 0; i < timelineIDs.length; i++) {
@@ -475,6 +480,35 @@ export class RedPepperService {
         var campaignIDs = this.getCampaignIDs();
         if (campaignIDs.length == 0)
             this.removeAllBoards();
+    }
+
+    /**
+     Remove the entire campaign, but keep the board that was created with it as we can still use it in other campaign setups
+     @method removeCampaignKeepBoards
+     @param {Number} i_campaign_id
+     **/
+    removeCampaignKeepBoards(i_campaign_id): void {
+        var timelineIDs = this.getCampaignTimelines(i_campaign_id);
+        for (var i = 0; i < timelineIDs.length; i++) {
+            var timelineID = timelineIDs[i];
+            this.removeTimelineFromCampaign(timelineID);
+            var campaignTimelineBoardTemplateID = this.removeBoardTemplateFromTimeline(timelineID);
+            this.removeTimelineBoardViewerChannels(campaignTimelineBoardTemplateID);
+            this.removeTimelineFromSequences(timelineID);
+            this.removeSchedulerFromTime(timelineID);
+            var channelsIDs = this.getChannelsOfTimeline(timelineID);
+            for (var n = 0; n < channelsIDs.length; n++) {
+                var channelID = channelsIDs[n];
+                this.removeChannelFromTimeline(channelID);
+                var blockIDs = this.getChannelBlocks(channelID);
+                for (var x = 0; x < blockIDs.length; x++) {
+                    var blockID = blockIDs[x];
+                    this.removeBlockFromTimelineChannel(blockID);
+                }
+            }
+        }
+        this.removeCampaign(i_campaign_id);
+        this.removeCampaignBoard(i_campaign_id);
     }
 
     /**
