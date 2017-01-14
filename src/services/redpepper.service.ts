@@ -127,12 +127,8 @@ export class RedPepperService {
             var tableName = 'table_' + table;
             var storeName = this.capitalizeFirstLetter(StringJS(table).camelize().s) + 'Modal';
             var storeModelList: List<StoreModel> = List<StoreModel>();
-            tables[tableName] = storeModelList;
-            var totalKeys = 0
-            $(this.databaseManager[tableName]().getAllPrimaryKeys()).each((k, primary_id) => {
-                totalKeys++;
-            })
-            if (totalKeys == 0) {
+            tables[tableName] = storeModelList;            
+            if (this.databaseManager[tableName]().getAllPrimaryKeys().length == 0) {
                 tables[tableName] = storeModelList;
                 tableNamesTouched[tableName] = tableName;
             } else {
