@@ -2,14 +2,13 @@ import {BrowserModule} from "@angular/platform-browser";
 import {NgModule} from "@angular/core";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {HttpModule, JsonpModule} from "@angular/http";
-import {AlertModule, ModalModule} from "ng2-bootstrap/ng2-bootstrap";
 import {Ng2Bs3ModalModule} from "ng2-bs3-modal/ng2-bs3-modal";
 import {AppComponent} from "./app.component";
 import {LocalStorage} from "../services/LocalStorage";
 import {RedPepperService} from "../services/redpepper.service";
 import {MsLibModule} from "ng-mslib/dist/mslib.module";
 import {ToastModule} from "ng2-toastr";
-import {DropdownModule, AccordionModule} from "ng2-bootstrap";
+import {DropdownModule, AccordionModule, AlertModule, ModalModule} from "ng2-bootstrap";
 import {TreeModule, InputTextModule, SelectButtonModule, DropdownModule as DropdownModulePrime} from "primeng/primeng";
 import {NgStringPipesModule} from "angular-pipes";
 import {routing} from "../App.routes";
@@ -93,11 +92,11 @@ var decelerations = [AppComponent, AutoLogin, LoginPanel, Logo, App1, Account, D
             titleClass: ""
         }),
         MsLibModule.forRoot(),
+        AlertModule.forRoot(),
+        ModalModule.forRoot(),
+        DropdownModule.forRoot(),
+        AccordionModule.forRoot(),
         JsonpModule,
-        AlertModule,
-        ModalModule,
-        DropdownModule,
-        AccordionModule,
         TreeModule,
         NgStringPipesModule,
         InputTextModule,
