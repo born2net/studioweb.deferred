@@ -118,7 +118,6 @@ export class RedPepperService {
             if (tableName.indexOf('table_') > -1)  // protection against appending table_
                 return tableName.replace(/table_/, '');
             return tableName;
-
         });
         var tableNamesTouched = {};
         var redpepperSet: redpepperTables = {tables: null, tableNames: tablesNames};
