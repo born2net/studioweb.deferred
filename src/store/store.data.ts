@@ -4,7 +4,13 @@ import {AuthenticateFlags} from "./actions/appdb.actions";
 import {ISDK} from "../store/imsdb.interfaces_auto";
 
 export interface IMsDatabase {
-    participants: { [key: number]: any };
+    participants: [
+        {
+            a: {
+                c: any;
+            }
+        }
+        ],
     threads: { [key: number]: any };
     sdk: ISDK
 }
@@ -23,9 +29,16 @@ export interface IAppDb {
 
 export const INITIAL_STORE_DATA: IMsDatabase = {
     threads: {},
-    participants: {},
+    participants: [
+        {
+            a: {
+                c: 1
+            }
+        }
+
+    ],
     sdk: null
-};
+}
 
 
 export const INITIAL_APP_DB: IAppDb = {

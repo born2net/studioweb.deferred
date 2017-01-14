@@ -8,6 +8,10 @@ import * as _ from "lodash";
 export function msDatabase(state: IMsDatabase, action: Action): IMsDatabase {
     switch (action.type) {
 
+        case 'AAA': {
+            state.participants["0"].a.c = _.random(1,100);
+            return state;
+        }
         /**
          * this special reducer can receive a single or array of redpepperTables and reduce it into the new store state
          * if multiple redpepperTables are given, we reduce it in such a way that if duplicate tables of the same type

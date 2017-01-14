@@ -48,6 +48,16 @@ export class Dashboard extends Compbaser {
 
     constructor(private store: Store<ApplicationState>, private redPepperService: RedPepperService) {
         super();
+
+
+        this.store.select(store => store.msDatabase.participants[0].a.c).map((v)=>{
+            console.log(v);
+        }).subscribe((v) => {
+
+        });
+        setTimeout(()=>{
+            this.store.dispatch(({type: 'AAA'}))
+        },500)
         this.userModel$ = this.store.select(store => store.appDb.userModel);
         this.campaigns$ = this.store.select(store => store.msDatabase.sdk.table_campaigns).map((list: List<CampaignsModal>) => {
             return list.filter((campaignModel: CampaignsModal) => {
