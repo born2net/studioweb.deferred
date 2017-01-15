@@ -1,5 +1,5 @@
 import {Component, ChangeDetectionStrategy} from "@angular/core";
-import {Compbaser} from "../compbaser/Compbaser";
+import {Compbaser} from "ng-mslib";
 
 @Component({
     selector: 'AutoLogin',

@@ -1,5 +1,4 @@
 import {Component, ChangeDetectionStrategy, ElementRef, ViewChild} from "@angular/core";
-import {Compbaser} from "../../compbaser/Compbaser";
 import {ApplicationState} from "../../../store/application.state";
 import {Store} from "@ngrx/store";
 import {UserModel} from "../../../models/UserModel";
@@ -9,6 +8,7 @@ import {List} from 'immutable';
 import {ResourcesModal, CampaignsModal} from "../../../store/imsdb.interfaces_auto";
 import {EFFECT_RENAME_CAMPAIGN, EFFECT_CREATE_CAMPAIGN_BOARD, EFFECT_REMOVE_CAMPAIGN} from "../../../store/effects/msdb.effects";
 import {RedPepperService} from "../../../services/redpepper.service";
+import {Compbaser} from "ng-mslib";
 
 @Component({
     selector: 'Dashboard',

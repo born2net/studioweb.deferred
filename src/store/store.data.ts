@@ -2,6 +2,17 @@ import {Map, List} from 'immutable';
 import {UserModel} from "../models/UserModel";
 import {AuthenticateFlags} from "./actions/appdb.actions";
 import {ISDK} from "../store/imsdb.interfaces_auto";
+import {appDb} from "../store/reducers/appdb.reducer";
+import {msDatabase} from "../store/reducers/msdb.reducer";
+import {storeFreeze} from "ngrx-store-freeze";
+import {ActionReducer, combineReducers} from "@ngrx/store";
+import {ApplicationState} from "./application.state";
+import {compose} from "@ngrx/core";
+
+const reducers = {msDatabase, appDb};
+export const developmentReducer: ActionReducer<ApplicationState> = compose(storeFreeze, combineReducers)(reducers);
+export const productionReducer: ActionReducer<ApplicationState> = combineReducers(reducers);
+
 
 export interface IMsDatabase {
     participants: [
