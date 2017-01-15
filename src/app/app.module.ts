@@ -78,8 +78,8 @@ export function appReducer(state: any = INITIAL_APPLICATION_STATE, action: any) 
         StoreModule.provideStore(appReducer),
         EffectsModule.run(AppDbEffects),
         EffectsModule.run(MsdbEffects),
-        // StoreDevtoolsModule.instrumentStore({maxAge: 3}),
-        StoreDevtoolsModule.instrumentOnlyWithExtension(),
+        StoreDevtoolsModule.instrumentStore({maxAge: 2}),
+        // StoreDevtoolsModule.instrumentOnlyWithExtension(),
         ChartModule,
         ToastModule.forRoot({
             animate: 'flyRight',
