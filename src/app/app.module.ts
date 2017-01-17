@@ -88,7 +88,7 @@ export function appReducer(state: any = INITIAL_APPLICATION_STATE, action: any) 
         EffectsModule.run(MsdbEffects),
         // StoreDevtoolsModule.instrumentStore({maxAge: 2}),
         StoreDevtoolsModule.instrumentOnlyWithExtension(),
-        ChartModule,
+        ChartModule,     
         ToastModule.forRoot({
             animate: 'flyRight',
             positionClass: 'toast-bottom-right',
