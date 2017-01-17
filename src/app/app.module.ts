@@ -28,6 +28,7 @@ import {AutoLogin} from "../comps/entry/AutoLogin";
 import {Sliderpanel} from "../comps/sliderpanel/Sliderpanel";
 import {Slideritem} from "../comps/sliderpanel/Slideritem";
 import {StoreModule, combineReducers} from "@ngrx/store";
+import {STORE_DEVTOOLS_CONFIG} from '@ngrx/store-devtools/src/config';
 import {INITIAL_APPLICATION_STATE} from "../store/application.state";
 import {EffectsModule} from "@ngrx/effects";
 import {StoreDevtoolsModule} from "@ngrx/store-devtools";
@@ -48,10 +49,17 @@ import "hammerjs";
 import "fabric";
 import {NgmslibService} from "ng-mslib";
 
+export function noMonitor() {
+    return null;
+}
+
 export var providing = [CommBroker, AUTH_PROVIDERS, RedPepperService, LocalStorage, StoreService, AppdbAction,
     {
+        provide: STORE_DEVTOOLS_CONFIG, useValue: {maxAge: 2, monitor: noMonitor}
+    },
+    {
         provide: "OFFLINE_ENV",
-        useValue:  window['offlineDevMode']
+        useValue: window['offlineDevMode']
     }
 ];
 
@@ -78,8 +86,8 @@ export function appReducer(state: any = INITIAL_APPLICATION_STATE, action: any) 
         StoreModule.provideStore(appReducer),
         EffectsModule.run(AppDbEffects),
         EffectsModule.run(MsdbEffects),
-        StoreDevtoolsModule.instrumentStore({maxAge: 2}),
-        // StoreDevtoolsModule.instrumentOnlyWithExtension(),
+        // StoreDevtoolsModule.instrumentStore({maxAge: 2}),
+        StoreDevtoolsModule.instrumentOnlyWithExtension(),
         ChartModule,
         ToastModule.forRoot({
             animate: 'flyRight',
