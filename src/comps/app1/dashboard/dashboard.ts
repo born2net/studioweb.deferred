@@ -97,7 +97,7 @@ export class Dashboard extends Compbaser {
             left: 100,
             width: 60,
             height: 70,
-            fill: 'red'
+            fill: 'blue'
         });
         this.fabricCanvas1.add(rect);
 
