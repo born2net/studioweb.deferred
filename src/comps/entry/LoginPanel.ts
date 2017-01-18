@@ -102,13 +102,13 @@ import {Compbaser, NgmslibService} from "ng-mslib";
                `
 })
 export class LoginPanel extends Compbaser {
-    private m_user: string = 'lite90@ms.com';
-    private m_pass: string = '123123';
-    private m_twoFactor: string;
-    private m_showTwoFactor: boolean = false;
-    private m_rememberMe: any;
-    private loginState: string = '';
-    private userModel: UserModel;
+    public m_user: string = 'lite90@ms.com';
+    public m_pass: string = '123123';
+    public m_twoFactor: string;
+    public m_showTwoFactor: boolean = false;
+    public m_rememberMe: any;
+    public loginState: string = '';
+    public userModel: UserModel;
 
     constructor(private ngmslibService:NgmslibService, private store: Store<ApplicationState>,
                 private renderer: Renderer,

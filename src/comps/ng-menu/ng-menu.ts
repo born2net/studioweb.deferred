@@ -68,8 +68,8 @@ export class NgMenu extends Compbaser {
     @Input() fileMenuMode: boolean = true;
     @Input() routePrefix: string = '';
 
-    private items: Array<NgMenuItem> = [];
-    private m_hidden: boolean = true;
+    public items: Array<NgMenuItem> = [];
+    public m_hidden: boolean = true;
 
     private listenWinResize() {
         this.commBroker.onEvent(Consts.Events().WIN_SIZED).subscribe((e: IMessage) => {

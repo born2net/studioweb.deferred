@@ -41,11 +41,11 @@ import {Compbaser} from "ng-mslib";
 })
 export class Dashboard extends Compbaser {
 
-    private campaigns$: Observable<any>;
-    private userModel$: Observable<UserModel>;
-    private fabricCanvas1: fabric.IStaticCanvas;
-    private fabricCanvas2: fabric.IStaticCanvas;
-    private selectedCampaign: CampaignsModal;
+    public campaigns$: Observable<any>;
+    public userModel$: Observable<UserModel>;
+    public fabricCanvas1: fabric.IStaticCanvas;
+    public fabricCanvas2: fabric.IStaticCanvas;
+    public selectedCampaign: CampaignsModal;
 
     @ViewChild('canvas1')
     canvas1;

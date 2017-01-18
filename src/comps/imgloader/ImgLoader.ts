@@ -21,7 +21,7 @@ export class ImgLoader {
     }
 
     @Input('style')
-    _style:Object = {};
+    _style:any = {};
 
     @Input()
     defaultImage:string = '';

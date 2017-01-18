@@ -16,9 +16,9 @@ import {LocalStorage} from "../services/LocalStorage";
     templateUrl: './app.component.html'
 })
 export class AppComponent {
-    public version: string;
-    private ngVersion: string;
-    private offlineDevMode:string = window['offlineDevMode'];
+    version: string;
+    ngVersion: string;
+    offlineDevMode: string = window['offlineDevMode'];
 
     constructor(private router: Router,
                 private localStorage: LocalStorage,

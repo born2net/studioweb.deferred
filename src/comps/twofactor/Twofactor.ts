@@ -22,7 +22,6 @@ import {Compbaser} from "ng-mslib";
                                     <small class="release">target properties
                                         <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
                                     </small>
-                                <small *ngIf="inDevMode" class="debug">{{me}}</small>
                                 </div>
                                 <ul class="list-group">
                                     <li *ngIf="twoFactorStatus" class="list-group-item">
@@ -75,9 +74,9 @@ export class Twofactor extends Compbaser {
     @ViewChild('activate')
     activateToken;
 
-    private twoFactorStatus: boolean;
-    private contGroup: FormGroup;
-    private formInputs = {};
+    twoFactorStatus: boolean;
+    contGroup: FormGroup;
+    formInputs = {};
 
     private listenEvents() {
         this.cancelOnDestroy(
