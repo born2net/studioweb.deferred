@@ -15,5 +15,5 @@ export const LAZY_ROUTES = [
     imports: [DropdownModulePrime, SharedModule, CommonModule, RouterModule.forChild(LAZY_ROUTES)],
     declarations: [CampaignsView]
 })
-export class CampaignsModule {
+export class CampaignsLazyModule {
 }

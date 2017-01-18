@@ -88,7 +88,7 @@ export function appReducer(state: any = INITIAL_APPLICATION_STATE, action: any) 
         EffectsModule.run(MsdbEffects),
         // StoreDevtoolsModule.instrumentStore({maxAge: 2}),
         StoreDevtoolsModule.instrumentOnlyWithExtension(),
-        SharedModule,
+        SharedModule.forRoot(),
         ChartModule,     
         ToastModule.forRoot({
             animate: 'flyRight',

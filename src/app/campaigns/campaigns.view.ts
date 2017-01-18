@@ -39,7 +39,6 @@ export class CampaignsView extends Compbaser {
         this.cities.push({label: 'Paris', value: {id: 5, name: 'Paris', code: 'PRS'}});
 
         this.userModel$ = this.store.select(store => store.appDb.userModel);
-
     }
 
     public userModel$: Observable<UserModel>;

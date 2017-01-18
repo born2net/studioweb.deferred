@@ -1,5 +1,6 @@
 import {Component, trigger, transition, animate, state, style} from "@angular/core";
 import {SelectItem} from 'primeng/primeng';
+import {RedPepperService} from "../../../services/redpepper.service";
 
 export class MyModel {
 
@@ -63,8 +64,8 @@ export class MyModel {
 export class Privileges {
     cities: SelectItem[];
     selectedCity: string;
-    lastLogin = '123';
-    constructor() {
+    lastLogin = '222';
+    constructor(private red:RedPepperService) {
         this.cities = [];
         this.cities.push({label: 'Select City', value: null});
         this.cities.push({label: 'New York', value: {id: 1, name: 'New York', code: 'NY'}});

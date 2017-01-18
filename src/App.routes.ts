@@ -22,7 +22,7 @@ const routes: Routes = [
         path: 'App1', component: App1,
         children: [
             {path: '', component: App1, canActivate: [AuthService]},
-            {path: 'Campaigns', loadChildren: '../app/campaigns/index#CampaignsModule', canActivate: [AuthService]},
+            {path: 'Campaigns', loadChildren: '../app/campaigns/index#CampaignsLazyModule', canActivate: [AuthService]},
             {path: 'Dashboard', component: Dashboard, data: {title: 'Dashboard'}, canActivate: [AuthService]},
             {path: 'Orders', component: Orders, data: {title: 'Orders'}, canActivate: [AuthService]},
             {path: 'Privileges', component: Privileges, data: {title: 'Privileges'}, canActivate: [AuthService]},
