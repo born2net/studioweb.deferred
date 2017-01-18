@@ -43,6 +43,8 @@ export class MyModel {
              <p-dropdown [options]="cities" [(ngModel)]="selectedCity"></p-dropdown>
         </div>
         <hr/>
+        <Infobox [value1]="lastLogin" value2="in seconds" value3="time since last login" icon="fa-clock-o"></Infobox>
+        <hr/>
         <h4>ng-bootstrap dropdown</h4>
         <div class="btn-group" dropdown (click)="$event.preventDefault()">
           <button id="single-button" type="button" class="btn btn-primary" dropdownToggle>
@@ -61,6 +63,7 @@ export class MyModel {
 export class Privileges {
     cities: SelectItem[];
     selectedCity: string;
+    lastLogin = '123';
     constructor() {
         this.cities = [];
         this.cities.push({label: 'Select City', value: null});

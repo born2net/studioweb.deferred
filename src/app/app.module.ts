@@ -47,6 +47,7 @@ import {productionReducer} from "../store/store.data";
 import "hammerjs";
 import "fabric";
 import {NgmslibService} from "ng-mslib";
+import {SharedModule} from "../modules/shared.module";
 
 export function noMonitor() {
     return null;
@@ -87,6 +88,7 @@ export function appReducer(state: any = INITIAL_APPLICATION_STATE, action: any) 
         EffectsModule.run(MsdbEffects),
         // StoreDevtoolsModule.instrumentStore({maxAge: 2}),
         StoreDevtoolsModule.instrumentOnlyWithExtension(),
+        SharedModule,
         ChartModule,     
         ToastModule.forRoot({
             animate: 'flyRight',

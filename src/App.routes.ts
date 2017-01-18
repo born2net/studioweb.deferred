@@ -33,6 +33,6 @@ const routes: Routes = [
     }
 ];
 
-export const routing = RouterModule.forRoot(routes, {enableTracing: true});
+export const routing = RouterModule.forRoot(routes, {enableTracing: false});
 
 
