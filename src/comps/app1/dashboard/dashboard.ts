@@ -59,8 +59,7 @@ export class Dashboard extends Compbaser {
 
         this.store.select(store => store.msDatabase.participants[0].a.c).map((v)=>{
             console.log(v);
-        }).subscribe((v) => {
-
+        }).subscribe((e) => {
         });
         setTimeout(()=>{
             this.store.dispatch(({type: 'AAA'}))
