@@ -17,12 +17,12 @@ const routes: Routes = [
     {path: 'UserLogin/:twoFactor', data: {title: 'Login'}, component: LoginPanel},
     {path: 'UserLogin/:twoFactor/:user/:pass', data: {title: 'Login'}, component: LoginPanel},
     {path: 'Logout', component: Logout},
-    {path: '', pathMatch: 'full', redirectTo: '/App1/campaigns'},
+    {path: '', pathMatch: 'full', redirectTo: '/App1/Campaigns'},
     {
         path: 'App1', component: App1,
         children: [
             {path: '', component: App1, canActivate: [AuthService]},
-            {path: 'campaigns', loadChildren: '../app/campaigns/index#CampaignsModule', canActivate: [AuthService]},
+            {path: 'Campaigns', loadChildren: '../app/campaigns/index#CampaignsModule', canActivate: [AuthService]},
             {path: 'Dashboard', component: Dashboard, data: {title: 'Dashboard'}, canActivate: [AuthService]},
             {path: 'Orders', component: Orders, data: {title: 'Orders'}, canActivate: [AuthService]},
             {path: 'Privileges', component: Privileges, data: {title: 'Privileges'}, canActivate: [AuthService]},

@@ -9,6 +9,7 @@ import {ResourcesModal, CampaignsModal} from "../../../store/imsdb.interfaces_au
 import {EFFECT_RENAME_CAMPAIGN, EFFECT_CREATE_CAMPAIGN_BOARD, EFFECT_REMOVE_CAMPAIGN} from "../../../store/effects/msdb.effects";
 import {RedPepperService} from "../../../services/redpepper.service";
 import {Compbaser} from "ng-mslib";
+import {Router} from "@angular/router";
 
 @Component({
     selector: 'Dashboard',
@@ -21,6 +22,7 @@ import {Compbaser} from "ng-mslib";
     `],
     template: `
                <h2>StudioWeb</h2>
+               <button (click)="onRoute()">load</button>
                <h4>user name: {{(userModel$ | async)?.getUser() }}</h4>
                <h4>account type: {{(userModel$ | async)?.getAccountType()}}</h4>
                <div style="display: flex" >
@@ -53,7 +55,7 @@ export class Dashboard extends Compbaser {
     @ViewChild('canvas2')
     canvas2;
 
-    constructor(private store: Store<ApplicationState>, private redPepperService: RedPepperService) {
+    constructor(private store: Store<ApplicationState>, private redPepperService: RedPepperService, private router: Router) {
         super();
 
 
@@ -76,6 +78,10 @@ export class Dashboard extends Compbaser {
             console.log(resourceModels.first().getResourceName());
             console.log(resourceModels.first().getResourceBytesTotal());
         })
+    }
+
+    onRoute(){
+        this.router.navigate(['/App1/Campaigns'])
     }
 
     private removeCampaign(campaign: CampaignsModal) {

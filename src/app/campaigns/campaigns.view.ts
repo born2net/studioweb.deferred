@@ -15,7 +15,6 @@ export class CampaignsView extends Compbaser {
 
     constructor() {
         super();
-        alert('1')
     }
 
     ngOnInit() {
