@@ -1,5 +1,6 @@
 import {Component, ChangeDetectionStrategy} from "@angular/core";
 import {Compbaser} from "ng-mslib";
+import {RedPepperService} from "../../services/redpepper.service";
 
 @Component({
     selector: 'CampaignsView',
@@ -13,7 +14,7 @@ import {Compbaser} from "ng-mslib";
 })
 export class CampaignsView extends Compbaser {
 
-    constructor() {
+    constructor(private redPepperService:RedPepperService) {
         super();
     }
 
