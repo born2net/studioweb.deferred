@@ -20,7 +20,7 @@ import {Compbaser} from "ng-mslib";
         }
     `],
     template: `
-               <h2>Dashboard</h2>
+               <h2>StudioWeb</h2>
                <h4>user name: {{(userModel$ | async)?.getUser() }}</h4>
                <h4>account type: {{(userModel$ | async)?.getAccountType()}}</h4>
                <div style="display: flex" >
