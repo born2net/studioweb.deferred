@@ -1,5 +1,5 @@
 import {Injectable, Inject, forwardRef} from "@angular/core";
-import {Router, ActivatedRouteSnapshot, RouterStateSnapshot, ActivatedRoute} from "@angular/router";
+import {Router, ActivatedRouteSnapshot, RouterStateSnapshot, ActivatedRoute, NavigationEnd, NavigationStart} from "@angular/router";
 import {LocalStorage} from "./LocalStorage";
 import {StoreService} from "./StoreService";
 import "rxjs/add/observable/fromPromise";
@@ -15,8 +15,6 @@ import {NgmslibService} from "ng-mslib";
 
 @Injectable()
 export class AuthService {
-    private userModel: UserModel;
-
     constructor(private ngmslibService: NgmslibService, private router: Router,
                 @Inject(forwardRef(() => Store)) private store: Store<ApplicationState>,
                 @Inject(forwardRef(() => LocalStorage)) private localStorage: LocalStorage,
@@ -28,6 +26,9 @@ export class AuthService {
         })
         this.listenEvents();
     }
+
+    private userModel: UserModel;
+    private requestedRoute: string;
 
     private listenEvents() {
         this.store.select(store => store.appDb.appAuthStatus).subscribe((i_authStatus: Map<string,AuthenticateFlags>) => {
@@ -60,12 +61,19 @@ export class AuthService {
                 }
             }
         })
+
+        this.router.events.filter(event => event instanceof NavigationStart).take(1).subscribe(event => {
+            this.requestedRoute = event.url;
+            // this.requestedRoute = event.url == '/' ? '/App1/campaigns' : event.url;
+        });
+
     }
 
     private enterApplication() {
         setTimeout(() => {
             // console.log('enter app');
-            this.router.navigate(['/App1/Dashboard']);
+            // this.router.navigate(['/App1/Dashboard']);
+            this.router.navigate([this.requestedRoute]);
             this.storeService.loadServices();
         }, 10)
     }
