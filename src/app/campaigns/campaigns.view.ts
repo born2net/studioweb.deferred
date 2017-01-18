@@ -29,6 +29,7 @@ export class CampaignsView extends Compbaser {
 
     constructor(private store: Store<ApplicationState>, private redPepperService: RedPepperService) {
         super();
+        console.log(22);
         this.totalCampaigns = redPepperService.getCampaignIDs().length;
         this.cities = [];
         this.cities.push({label: 'Select City', value: null});
