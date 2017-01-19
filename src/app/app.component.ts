@@ -55,14 +55,14 @@ export class AppComponent {
     private checkPlatform() {
         switch (platform.name.toLowerCase()) {
             case 'microsoft edge': {
-                alert(`${platform.name} browser not supported at this time, please use Google Chrome`);
+                // alert(`${platform.name} browser not supported at this time, please use Google Chrome`);
                 break;
             }
             case 'chrome': {
                 break;
             }
             default: {
-                alert('for best performance please use Google Chrome');
+                // alert('for best performance please use Google Chrome');
                 break;
             }
         }
