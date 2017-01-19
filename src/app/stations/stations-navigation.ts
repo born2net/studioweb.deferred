@@ -1,14 +1,13 @@
 import {Component, ChangeDetectionStrategy, trigger, transition, animate, state, style} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {RedPepperService} from "../../services/redpepper.service";
-import {SelectItem} from 'primeng/primeng';
+import {SelectItem} from "primeng/primeng";
 import {Observable} from "rxjs";
 import {UserModel} from "../../models/UserModel";
 import {Store} from "@ngrx/store";
 import {ApplicationState} from "../../store/application.state";
 
 @Component({
-    selector: 'StudioProNavigation',
     changeDetection: ChangeDetectionStrategy.OnPush,
     host: {
         '[@routeAnimation]': 'true',
@@ -25,7 +24,7 @@ import {ApplicationState} from "../../store/application.state";
         ])
     ],
     template: `
-               <small class="release">studiopro
+               <small class="release">stations
                    <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
                </small>
                
@@ -39,7 +38,7 @@ import {ApplicationState} from "../../store/application.state";
                <Infobox [value1]="lastLogin" value2="in seconds" value3="time since last login" icon="fa-clock-o"></Infobox>
            `,
 })
-export class StudioProNavigation extends Compbaser {
+export class StationsNavigation extends Compbaser {
 
     constructor(private store: Store<ApplicationState>, private redPepperService: RedPepperService) {
         super();

@@ -2,7 +2,6 @@ import {Component, ChangeDetectionStrategy, ViewChild, trigger, transition, anim
 import {ApplicationState} from "../../store/application.state";
 import {Store} from "@ngrx/store";
 import {Observable} from "rxjs";
-import * as _ from "lodash";
 import {List} from "immutable";
 import {Compbaser} from "ng-mslib";
 import {Router} from "@angular/router";
@@ -12,7 +11,6 @@ import {CampaignsModal, ResourcesModal} from "../../store/imsdb.interfaces_auto"
 import {RedPepperService} from "../../services/redpepper.service";
 
 @Component({
-    selector: 'CampaignsNavigation',
     changeDetection: ChangeDetectionStrategy.OnPush,
     host: {
         '[@routeAnimation]': 'true',

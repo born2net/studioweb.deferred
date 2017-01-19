@@ -6,7 +6,6 @@ import {Router} from "@angular/router";
 import {RedPepperService} from "../../services/redpepper.service";
 
 @Component({
-    selector: 'ScenesNavigation',
     changeDetection: ChangeDetectionStrategy.OnPush,
     host: {
         '[@routeAnimation]': 'true',

@@ -8,7 +8,6 @@ import {Store} from "@ngrx/store";
 import {ApplicationState} from "../../store/application.state";
 
 @Component({
-    selector: 'StationsNavigation',
     changeDetection: ChangeDetectionStrategy.OnPush,
     host: {
         '[@routeAnimation]': 'true',
@@ -25,13 +24,13 @@ import {ApplicationState} from "../../store/application.state";
         ])
     ],
     template: `
-               <small class="release">stations
+               <small class="release">Fasterq
                    <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
                </small>
                
                <h4>user name: {{(userModel$ | async)?.getUser() }}</h4>
                <h4>account type: {{(userModel$ | async)?.getAccountType()}}</h4>
-               <h4>total campaigns {{totalCampaigns}}</h4>
+               <h4>total Fasterq {{totalFasterq}}</h4>
                <hr/>
                <small class="debug">{{me}}</small>
                <p-dropdown [options]="cities" ></p-dropdown>
@@ -39,11 +38,11 @@ import {ApplicationState} from "../../store/application.state";
                <Infobox [value1]="lastLogin" value2="in seconds" value3="time since last login" icon="fa-clock-o"></Infobox>
            `,
 })
-export class StationsNavigation extends Compbaser {
+export class FasterqNavigation extends Compbaser {
 
     constructor(private store: Store<ApplicationState>, private redPepperService: RedPepperService) {
         super();
-        this.totalCampaigns = redPepperService.getCampaignIDs().length;
+        this.totalFasterq = redPepperService.getCampaignIDs().length;
         this.cities = [];
         this.cities.push({label: 'Select City', value: null});
         this.cities.push({label: 'New York', value: {id: 1, name: 'New York', code: 'NY'}});
@@ -57,7 +56,7 @@ export class StationsNavigation extends Compbaser {
 
     public userModel$: Observable<UserModel>;
 
-    totalCampaigns = 0;
+    totalFasterq = 0;
     cities: SelectItem[];
     selectedCity: string;
     lastLogin = 'v9';

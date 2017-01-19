@@ -1,14 +1,13 @@
 import {Component, ChangeDetectionStrategy, trigger, transition, animate, state, style} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {RedPepperService} from "../../services/redpepper.service";
-import {SelectItem} from "primeng/primeng";
+import {SelectItem} from 'primeng/primeng';
 import {Observable} from "rxjs";
 import {UserModel} from "../../models/UserModel";
 import {Store} from "@ngrx/store";
 import {ApplicationState} from "../../store/application.state";
 
 @Component({
-    selector: 'FasterqNavigation',
     changeDetection: ChangeDetectionStrategy.OnPush,
     host: {
         '[@routeAnimation]': 'true',
@@ -25,13 +24,13 @@ import {ApplicationState} from "../../store/application.state";
         ])
     ],
     template: `
-               <small class="release">Fasterq
+               <small class="release">studiopro
                    <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
                </small>
                
                <h4>user name: {{(userModel$ | async)?.getUser() }}</h4>
                <h4>account type: {{(userModel$ | async)?.getAccountType()}}</h4>
-               <h4>total Fasterq {{totalFasterq}}</h4>
+               <h4>total campaigns {{totalCampaigns}}</h4>
                <hr/>
                <small class="debug">{{me}}</small>
                <p-dropdown [options]="cities" ></p-dropdown>
@@ -39,11 +38,11 @@ import {ApplicationState} from "../../store/application.state";
                <Infobox [value1]="lastLogin" value2="in seconds" value3="time since last login" icon="fa-clock-o"></Infobox>
            `,
 })
-export class FasterqNavigation extends Compbaser {
+export class StudioProNavigation extends Compbaser {
 
     constructor(private store: Store<ApplicationState>, private redPepperService: RedPepperService) {
         super();
-        this.totalFasterq = redPepperService.getCampaignIDs().length;
+        this.totalCampaigns = redPepperService.getCampaignIDs().length;
         this.cities = [];
         this.cities.push({label: 'Select City', value: null});
         this.cities.push({label: 'New York', value: {id: 1, name: 'New York', code: 'NY'}});
@@ -57,7 +56,7 @@ export class FasterqNavigation extends Compbaser {
 
     public userModel$: Observable<UserModel>;
 
-    totalFasterq = 0;
+    totalCampaigns = 0;
     cities: SelectItem[];
     selectedCity: string;
     lastLogin = 'v9';
