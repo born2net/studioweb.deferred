@@ -61,12 +61,10 @@ export class AuthService {
                 }
             }
         })
-
         this.router.events.filter(event => event instanceof NavigationStart).take(1).subscribe(event => {
             this.requestedRoute = event.url;
             // this.requestedRoute = event.url == '/' ? '/App1/Campaigns' : event.url;
         });
-
     }
 
     private enterApplication() {
