@@ -23,6 +23,20 @@ import {ApplicationState} from "../../store/application.state";
                <p-dropdown [options]="cities" ></p-dropdown>
                <hr/>
                <Infobox [value1]="lastLogin" value2="in seconds" value3="time since last login" icon="fa-clock-o"></Infobox>
+               <hr/>
+               <h4>ng-bootstrap dropdown</h4>
+                <div class="btn-group" dropdown (click)="$event.preventDefault()">
+                  <button id="single-button" type="button" class="btn btn-primary" dropdownToggle>
+                    Button dropdown <span class="caret"></span>
+                  </button>
+                  <ul dropdownMenu role="menu" aria-labelledby="single-button">
+                    <li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>
+                    <li role="menuitem"><a class="dropdown-item" href="#">Another action</a></li>
+                    <li role="menuitem"><a class="dropdown-item" href="#">Something else here</a></li>
+                    <li class="divider dropdown-divider"></li>
+                    <li role="menuitem"><a class="dropdown-item" href="#">Separated link</a></li>
+                  </ul>
+                </div>
            `,
 })
 export class CampaignsNavigation extends Compbaser {

@@ -2,7 +2,6 @@ import {Routes, RouterModule} from "@angular/router";
 import {App1} from "./comps/app1/App1";
 import {LoginPanel} from "./comps/entry/LoginPanel";
 import {Logout} from "./comps/logout/Logout";
-import {Privileges} from "./comps/app1/privileges/Privileges";
 import {AuthService} from "./services/AuthService";
 import {AutoLogin} from "./comps/entry/AutoLogin";
 import {Dashboard} from "./comps/app1/dashboard/dashboard";
@@ -23,12 +22,12 @@ const routes: Routes = [
             {path: '', component: App1, canActivate: [AuthService]},
             {path: 'Campaigns', loadChildren: '../app/campaigns/index#CampaignsLazyModule', canActivate: [AuthService]},
             {path: 'Fasterq', loadChildren: '../app/fasterq/index#FasterqLazyModule', canActivate: [AuthService]},
+            {path: 'Scenes', loadChildren: '../app/scenes/index#ScenesLazyModule', canActivate: [AuthService]},
             {path: 'Resources', loadChildren: '../app/resources/index#ResourcesLazyModule', canActivate: [AuthService]},
             {path: 'Settings', loadChildren: '../app/settings/index#SettingsLazyModule', canActivate: [AuthService]},
             {path: 'Stations', loadChildren: '../app/stations/index#StationsLazyModule', canActivate: [AuthService]},
-            {path: 'StudioPro', loadChildren: '../app/studiopro/index#StudioProLazyModule', canActivate: [AuthService]},
+            {path: 'Studiopro', loadChildren: '../app/studiopro/index#StudioProLazyModule', canActivate: [AuthService]},
             {path: 'Dashboard', component: Dashboard, data: {title: 'Dashboard'}, canActivate: [AuthService]},
-            {path: 'Privileges', component: Privileges, data: {title: 'Privileges'}, canActivate: [AuthService]},
             {path: 'Logout', component: Logout, data: {title: 'Logout'}, canActivate: [AuthService]},
             {path: '**', redirectTo: 'Dashboard'}
         ]
