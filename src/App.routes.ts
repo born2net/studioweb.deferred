@@ -1,10 +1,10 @@
 import {Routes, RouterModule} from "@angular/router";
-import {App1} from "./comps/app1/App1";
 import {LoginPanel} from "./comps/entry/LoginPanel";
 import {Logout} from "./comps/logout/Logout";
 import {AuthService} from "./services/AuthService";
 import {AutoLogin} from "./comps/entry/AutoLogin";
 import {Dashboard} from "./app/dashboard/dashboard";
+import {Appwrap} from "./app/appwrap";
 
 
 const routes: Routes = [
@@ -17,9 +17,9 @@ const routes: Routes = [
     {path: '', pathMatch: 'full', redirectTo: '/App1/Dashboard'},
     {path: 'studioweb', pathMatch: 'full', redirectTo: '/App1/Dashboard'},  // IE/FF compatibility
     {
-        path: 'App1', component: App1,
+        path: 'App1', component: Appwrap,
         children: [
-            {path: '', component: App1, canActivate: [AuthService]},
+            {path: '', component: Appwrap, canActivate: [AuthService]},
             {path: 'Dashboard', component: Dashboard, data: {title: 'Dashboard'}, canActivate: [AuthService]},
             {path: 'Campaigns', loadChildren: '../app/campaigns/index#CampaignsLazyModule', data: {title: 'Campaigns'}, canActivate: [AuthService]},
             {path: 'Fasterq', loadChildren: '../app/fasterq/index#FasterqLazyModule', data: {title: 'Fasterq'}, canActivate: [AuthService]},

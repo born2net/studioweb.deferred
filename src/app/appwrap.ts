@@ -1,12 +1,9 @@
 import {Component} from "@angular/core";
 import {Router} from "@angular/router";
-import {
-    CommBroker,
-    IMessage
-} from "../../services/CommBroker";
-import {Consts} from "../../../src/Conts";
+import {Compbaser} from "ng-mslib";
 
 @Component({
+    selector: 'Appwrap',
     template: `
         <div class="row" style="margin-left: 0; margin-right: 0;">
         <ng-menu [routePrefix]="'App1'" [fileMenuMode]="true">
@@ -26,28 +23,23 @@ import {Consts} from "../../../src/Conts";
         </div>
     `
 })
-export class App1 {
-    private routerActive: boolean;
+export class Appwrap extends Compbaser {
 
-    constructor(private commBroker: CommBroker, private router: Router) {
+    constructor(private router: Router) {
+        super();
         jQuery(".navbar-header .navbar-toggle").trigger("click");
         jQuery('.navbar-nav').css({
             display: 'block'
         });
-        this.listenMenuChanges();
+        // this.listenMenuChanges();
     }
 
-    ngOnInit() {
-        this.routerActive = true;
-    }
-
-    public listenMenuChanges() {
-        var self = this;
-        var unsub = self.commBroker.onEvent(Consts.Events().MENU_SELECTION).subscribe((e: IMessage) => {
-            if (!self.routerActive)
-                return;
-            let screen = (e.message);
-            self.router.navigate([`/App1/${screen}`]);
-        });
-    }
+    // public listenMenuChanges() {
+    // var unsub = self.commBroker.onEvent(Consts.Events().MENU_SELECTION).subscribe((e: IMessage) => {
+    //     if (!this.routerActive)
+    //         return;
+    //     let screen = (e.message);
+    //     self.router.navigate([`/App1/${screen}`]);
+    // });
+    // }
 }
