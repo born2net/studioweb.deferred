@@ -34,10 +34,8 @@ import {AppDbEffects} from "../store/effects/appdb.effects";
 import {Dashboard} from "../comps/app1/dashboard/dashboard";
 import {App1} from "../comps/app1/App1";
 import {Privileges} from "../comps/app1/privileges/Privileges";
-import {Account} from "../comps/app1/account/Account";
 import {Tab} from "../comps/tabs/tab";
 import {Tabs} from "../comps/tabs/tabs";
-import {Twofactor} from "../comps/twofactor/Twofactor";
 import {MsdbEffects} from "../store/effects/msdb.effects";
 import {environment} from "../environments/environment";
 import {productionReducer} from "../store/store.data";
@@ -61,7 +59,7 @@ export var providing = [CommBroker, AUTH_PROVIDERS, RedPepperService, LocalStora
 ];
 
 
-var decelerations = [AppComponent, AutoLogin, LoginPanel, Logo, App1, Account, Dashboard, Privileges, Tabs, Tab, Logout, Twofactor, NgMenu, NgMenuItem, ImgLoader, BlurForwarder,];
+var decelerations = [AppComponent, AutoLogin, LoginPanel, Logo, App1, Dashboard, Privileges, Tabs, Tab, Logout, NgMenu, NgMenuItem, ImgLoader, BlurForwarder,];
 
 export function appReducer(state: any = INITIAL_APPLICATION_STATE, action: any) {
     if (environment.production) {

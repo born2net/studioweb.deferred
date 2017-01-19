@@ -3,7 +3,6 @@ import {App1} from "./comps/app1/App1";
 import {LoginPanel} from "./comps/entry/LoginPanel";
 import {Logout} from "./comps/logout/Logout";
 import {Privileges} from "./comps/app1/privileges/Privileges";
-import {Account} from "./comps/app1/account/Account";
 import {AuthService} from "./services/AuthService";
 import {AutoLogin} from "./comps/entry/AutoLogin";
 import {Dashboard} from "./comps/app1/dashboard/dashboard";
@@ -30,7 +29,6 @@ const routes: Routes = [
             {path: 'StudioPro', loadChildren: '../app/studiopro/index#StudioProLazyModule', canActivate: [AuthService]},
             {path: 'Dashboard', component: Dashboard, data: {title: 'Dashboard'}, canActivate: [AuthService]},
             {path: 'Privileges', component: Privileges, data: {title: 'Privileges'}, canActivate: [AuthService]},
-            {path: 'Account', component: Account, data: {title: 'Account'}, canActivate: [AuthService]},
             {path: 'Logout', component: Logout, data: {title: 'Logout'}, canActivate: [AuthService]},
             {path: '**', redirectTo: 'Dashboard'}
         ]

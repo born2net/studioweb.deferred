@@ -4,6 +4,7 @@ import {RouterModule} from "@angular/router";
 import {SettingsNavigation} from "./settings.navigation";
 import {DropdownModule as DropdownModulePrime} from "primeng/primeng";
 import {SharedModule} from "../../modules/shared.module";
+import {Twofactor} from "./twofactor";
 
 export const LAZY_ROUTES = [
     {path: ':folder', component: SettingsNavigation},
@@ -13,7 +14,7 @@ export const LAZY_ROUTES = [
 
 @NgModule({
     imports: [DropdownModulePrime, SharedModule, CommonModule, RouterModule.forChild(LAZY_ROUTES)],
-    declarations: [SettingsNavigation]
+    declarations: [SettingsNavigation, Twofactor]
 })
 export class SettingsLazyModule {
 }
