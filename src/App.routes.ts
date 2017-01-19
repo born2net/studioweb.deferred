@@ -14,20 +14,20 @@ const routes: Routes = [
     {path: 'UserLogin/:twoFactor', data: {title: 'Login'}, component: LoginPanel},
     {path: 'UserLogin/:twoFactor/:user/:pass', data: {title: 'Login'}, component: LoginPanel},
     {path: 'Logout', component: Logout},
-    {path: '', pathMatch: 'full', redirectTo: '/App1/Campaigns'},
-    {path: 'studioweb', pathMatch: 'full', redirectTo: '/App1/Campaigns'},  // IE/FF compatibility
+    {path: '', pathMatch: 'full', redirectTo: '/App1/Dashboard'},
+    {path: 'studioweb', pathMatch: 'full', redirectTo: '/App1/Dashboard'},  // IE/FF compatibility
     {
         path: 'App1', component: App1,
         children: [
             {path: '', component: App1, canActivate: [AuthService]},
-            {path: 'Campaigns', loadChildren: '../app/campaigns/index#CampaignsLazyModule', canActivate: [AuthService]},
-            {path: 'Fasterq', loadChildren: '../app/fasterq/index#FasterqLazyModule', canActivate: [AuthService]},
-            {path: 'Scenes', loadChildren: '../app/scenes/index#ScenesLazyModule', canActivate: [AuthService]},
-            {path: 'Resources', loadChildren: '../app/resources/index#ResourcesLazyModule', canActivate: [AuthService]},
-            {path: 'Settings', loadChildren: '../app/settings/index#SettingsLazyModule', canActivate: [AuthService]},
-            {path: 'Stations', loadChildren: '../app/stations/index#StationsLazyModule', canActivate: [AuthService]},
-            {path: 'Studiopro', loadChildren: '../app/studiopro/index#StudioProLazyModule', canActivate: [AuthService]},
             {path: 'Dashboard', component: Dashboard, data: {title: 'Dashboard'}, canActivate: [AuthService]},
+            {path: 'Campaigns', loadChildren: '../app/campaigns/index#CampaignsLazyModule', data: {title: 'Campaigns'}, canActivate: [AuthService]},
+            {path: 'Fasterq', loadChildren: '../app/fasterq/index#FasterqLazyModule', data: {title: 'Fasterq'}, canActivate: [AuthService]},
+            {path: 'Scenes', loadChildren: '../app/scenes/index#ScenesLazyModule', data: {title: 'Scenes'}, canActivate: [AuthService]},
+            {path: 'Resources', loadChildren: '../app/resources/index#ResourcesLazyModule', data: {title: 'Resources'}, canActivate: [AuthService]},
+            {path: 'Settings', loadChildren: '../app/settings/index#SettingsLazyModule', data: {title: 'Settings'}, canActivate: [AuthService]},
+            {path: 'Stations', loadChildren: '../app/stations/index#StationsLazyModule', data: {title: 'Stations'}, canActivate: [AuthService]},
+            {path: 'Studiopro', loadChildren: '../app/studiopro/index#StudioProLazyModule', data: {title: 'Studiopro'}, canActivate: [AuthService]},
             {path: 'Logout', component: Logout, data: {title: 'Logout'}, canActivate: [AuthService]},
             {path: '**', redirectTo: 'Dashboard'}
         ]
