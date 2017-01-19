@@ -1,10 +1,10 @@
-import {Component, ChangeDetectionStrategy, ElementRef, ViewChild} from "@angular/core";
+import {Component, ChangeDetectionStrategy, ViewChild, trigger, transition, animate, state, style} from "@angular/core";
 import {ApplicationState} from "../../../store/application.state";
 import {Store} from "@ngrx/store";
 import {UserModel} from "../../../models/UserModel";
 import {Observable} from "rxjs";
-import * as _ from 'lodash';
-import {List} from 'immutable';
+import * as _ from "lodash";
+import {List} from "immutable";
 import {ResourcesModal, CampaignsModal} from "../../../store/imsdb.interfaces_auto";
 import {EFFECT_RENAME_CAMPAIGN, EFFECT_CREATE_CAMPAIGN_BOARD, EFFECT_REMOVE_CAMPAIGN} from "../../../store/effects/msdb.effects";
 import {RedPepperService} from "../../../services/redpepper.service";
@@ -14,6 +14,20 @@ import {Router} from "@angular/router";
 @Component({
     selector: 'Dashboard',
     changeDetection: ChangeDetectionStrategy.OnPush,
+    host: {
+        '[@routeAnimation]': 'true',
+        '[style.display]': "'block'"
+    },
+    animations: [
+        trigger('routeAnimation', [
+            state('*', style({opacity: 1})),
+            transition('void => *', [
+                style({opacity: 0}),
+                animate(333)
+            ]),
+            transition('* => void', animate(333, style({opacity: 0})))
+        ])
+    ],
     styles: [`
         button {
             width: 200px;
@@ -64,13 +78,13 @@ export class Dashboard extends Compbaser {
         super();
 
 
-        this.store.select(store => store.msDatabase.participants[0].a.c).map((v)=>{
+        this.store.select(store => store.msDatabase.participants[0].a.c).map((v) => {
             console.log(v);
         }).subscribe((e) => {
         });
-        setTimeout(()=>{
+        setTimeout(() => {
             this.store.dispatch(({type: 'AAA'}))
-        },500)
+        }, 500)
         this.userModel$ = this.store.select(store => store.appDb.userModel);
         this.campaigns$ = this.store.select(store => store.msDatabase.sdk.table_campaigns).map((list: List<CampaignsModal>) => {
             return list.filter((campaignModel: CampaignsModal) => {
@@ -85,27 +99,27 @@ export class Dashboard extends Compbaser {
         })
     }
 
-    onRoute1(){
+    onRoute1() {
         this.router.navigate(['/App1/Campaigns'])
     }
 
-    onRoute2(){
+    onRoute2() {
         this.router.navigate(['/App1/Fasterq'])
     }
 
-    onRoute3(){
+    onRoute3() {
         this.router.navigate(['/App1/Resources'])
     }
 
-    onRoute4(){
+    onRoute4() {
         this.router.navigate(['/App1/Settings'])
     }
 
-    onRoute5(){
+    onRoute5() {
         this.router.navigate(['/App1/Stations'])
     }
 
-    onRoute6(){
+    onRoute6() {
         this.router.navigate(['/App1/StudioPro'])
     }
 
