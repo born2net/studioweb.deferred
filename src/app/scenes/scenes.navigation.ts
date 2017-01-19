@@ -1,8 +1,9 @@
-import {Component, ChangeDetectionStrategy, trigger, transition, animate, state, style} from "@angular/core";
-import {Compbaser} from "ng-mslib";
-import {RedPepperService} from "../../services/redpepper.service";
-import {Store} from "@ngrx/store";
+import {Component, ChangeDetectionStrategy, ViewChild, trigger, transition, animate, state, style} from "@angular/core";
 import {ApplicationState} from "../../store/application.state";
+import {Store} from "@ngrx/store";
+import {Compbaser} from "ng-mslib";
+import {Router} from "@angular/router";
+import {RedPepperService} from "../../services/redpepper.service";
 
 @Component({
     selector: 'ScenesNavigation',
@@ -21,18 +22,57 @@ import {ApplicationState} from "../../store/application.state";
             transition('* => void', animate(333, style({opacity: 0})))
         ])
     ],
+    styles: [`
+        button {
+            width: 200px;
+            margin: 5px;
+        }
+    `],
     template: `
-               <small class="release">scenes
-                   <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
-               </small>
+               <h2>Scenes</h2>
+               <div style="display: flex" >
+                   <canvas #canvas1 width="300" height="300"></canvas>
+                   <canvas #canvas2 width="300" height="300"></canvas>
+                </div>
            `,
 })
 export class ScenesNavigation extends Compbaser {
 
-    constructor(private store: Store<ApplicationState>, private redPepperService: RedPepperService) {
+    public fabricCanvas1: fabric.IStaticCanvas;
+    public fabricCanvas2: fabric.IStaticCanvas;
+
+    @ViewChild('canvas1')
+    canvas1;
+
+    @ViewChild('canvas2')
+    canvas2;
+
+    constructor(private store: Store<ApplicationState>, private redPepperService: RedPepperService, private router: Router) {
         super();
     }
+
+    ngOnInit() {
+        this.fabricCanvas1 = new fabric.Canvas(this.canvas1.nativeElement);
+        var rect = new fabric.Rect({
+            top: 100,
+            left: 100,
+            width: 60,
+            height: 70,
+            fill: 'blue'
+        });
+        this.fabricCanvas1.add(rect);
+
+        this.fabricCanvas2 = new fabric.Canvas(this.canvas2.nativeElement);
+        var circle = new fabric.Circle({
+            radius: 30,
+            stroke: 'green',
+            fill: 'green'
+        });
+        this.fabricCanvas2.add(circle);
+    }
+
 
     destroy() {
     }
 }
+

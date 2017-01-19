@@ -44,10 +44,6 @@ import {RedPepperService} from "../../services/redpepper.service";
                <button (click)="onRoute6()">pro</button>
                <h4>user name: {{(userModel$ | async)?.getUser() }}</h4>
                <h4>account type: {{(userModel$ | async)?.getAccountType()}}</h4>
-               <div style="display: flex" >
-                   <canvas #canvas1 width="300" height="300"></canvas>
-                   <canvas #canvas2 width="300" height="300"></canvas>
-                </div>
                <h2>selected: {{selectedCampaign?.getCampaignName()}}</h2>
                <button class="btn btn-primary" (click)="createCampaign()">create campaign</button>
                <br/>
@@ -58,21 +54,26 @@ import {RedPepperService} from "../../services/redpepper.service";
                         <button (click)="removeCampaign(campaign)" class="fa fa-remove"></button>
                     </li>
                 </ul>
+                <hr/>
+                <h4>ng-bootstrap dropdown</h4>
+                <div class="btn-group" dropdown (click)="$event.preventDefault()">
+                  <button id="single-button" type="button" class="btn btn-primary" dropdownToggle>
+                    Button dropdown <span class="caret"></span>
+                  </button>
+                  <ul dropdownMenu role="menu" aria-labelledby="single-button">
+                    <li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>
+                    <li role="menuitem"><a class="dropdown-item" href="#">Another action</a></li>
+                    <li role="menuitem"><a class="dropdown-item" href="#">Something else here</a></li>
+                    <li class="divider dropdown-divider"></li>
+                    <li role="menuitem"><a class="dropdown-item" href="#">Separated link</a></li>
+                  </ul>
+                </div>
            `,
 })
 export class CampaignsNavigation extends Compbaser {
 
     public campaigns$: Observable<any>;
     public userModel$: Observable<UserModel>;
-    public fabricCanvas1: fabric.IStaticCanvas;
-    public fabricCanvas2: fabric.IStaticCanvas;
-    public selectedCampaign: CampaignsModal;
-
-    @ViewChild('canvas1')
-    canvas1;
-
-    @ViewChild('canvas2')
-    canvas2;
 
     constructor(private store: Store<ApplicationState>, private redPepperService: RedPepperService, private router: Router) {
         super();
@@ -123,36 +124,12 @@ export class CampaignsNavigation extends Compbaser {
         this.router.navigate(['/App1/StudioPro'])
     }
 
-
     private removeCampaign(campaign: CampaignsModal) {
         this.store.dispatch({type: EFFECT_REMOVE_CAMPAIGN, payload: campaign})
     }
 
     private renameCampaign(campaign, newName) {
-        this.fabricCanvas1.setZoom(_.random(1, 1.5));
-        this.fabricCanvas2.setZoom(_.random(1, 1.1));
         this.store.dispatch({type: EFFECT_RENAME_CAMPAIGN, payload: {campaign: campaign, newName: newName}})
-    }
-
-
-    ngOnInit() {
-        this.fabricCanvas1 = new fabric.Canvas(this.canvas1.nativeElement);
-        var rect = new fabric.Rect({
-            top: 100,
-            left: 100,
-            width: 60,
-            height: 70,
-            fill: 'blue'
-        });
-        this.fabricCanvas1.add(rect);
-
-        this.fabricCanvas2 = new fabric.Canvas(this.canvas2.nativeElement);
-        var circle = new fabric.Circle({
-            radius: 30,
-            stroke: 'green',
-            fill: 'green'
-        });
-        this.fabricCanvas2.add(circle);
     }
 
     private save() {
