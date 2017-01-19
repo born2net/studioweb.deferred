@@ -18,7 +18,7 @@ const routes: Routes = [
     {path: 'UserLogin/:twoFactor/:user/:pass', data: {title: 'Login'}, component: LoginPanel},
     {path: 'Logout', component: Logout},
     {path: '', pathMatch: 'full', redirectTo: '/App1/Campaigns'},
-    {path: 'studioweb', pathMatch: 'full', redirectTo: '/App1/Campaigns'},
+    {path: 'studioweb', pathMatch: 'full', redirectTo: '/App1/Campaigns'},  // IE/FF compatibility
     {
         path: 'App1', component: App1,
         children: [

@@ -900,8 +900,8 @@ DataModuleBase.prototype.getChangelist = function () {
     }
     reverseList.reverse();
 
-    var doc = $.parseXML("<Changelist/>");
-    // var xmlChangelist =  $.parseXML("<Changelist/>").firstChild;
+    var doc = jQuery.parseXML("<Changelist/>");
+    // var xmlChangelist =  jQuery.parseXML("<Changelist/>").firstChild;
 
     var table;
     for (var iTable in this.m_tableList) {
@@ -952,7 +952,7 @@ DataModuleBase.prototype.createFieldHandles = function (i_table, i_field) {
         try {
             var data = record[i_field];
             if (data != null && data != "") {
-                var doc = $.parseXML(data);
+                var doc = jQuery.parseXML(data);
                 var xmlField = doc.documentElement;
                 self3.convertToHandels(xmlField);
                 record[i_field] = new XMLSerializer().serializeToString(xmlField);
@@ -1076,7 +1076,7 @@ function LoaderManager() {
 LoaderManager.prototype.create = function (i_user, i_password, i_requestCallback) {
     var me = this;
     var userPass = i_user + "," + i_password;
-    var param = $.base64.encode(userPass);
+    var param = jQuery.base64.encode(userPass);
     param = param.replace(/=/g, ".");
     param = param.replace(/[+]/g, "_");
     this.m_userpass64 = param.replace(/[/]/g, "-");
@@ -1099,9 +1099,9 @@ LoaderManager.prototype.create = function (i_user, i_password, i_requestCallback
         me.m_studioLite = data.studioLite;
 
         var s64 = data.resellerInfo;
-        var str = $.base64.decode(s64);
+        var str = jQuery.base64.decode(s64);
 
-        var xml = $.parseXML(str);
+        var xml = jQuery.parseXML(str);
         me.m_resellerInfo = xml;
         me.m_dataBaseManager.createDataBase(me.m_domain, me.m_businessId);
         me.m_dataBaseManager.selectDomainBusiness(me.m_domain, me.m_businessId);
@@ -1118,7 +1118,8 @@ LoaderManager.prototype.create = function (i_user, i_password, i_requestCallback
         );
     } else {
 
-        $.getJSON(url,
+        //todo: Alon replace all $ with jQuery
+        jQuery.getJSON(url,
             function (data) {
                 // to update latest offline grab 'data' and paste onto the top var: offlineDataUser
                 if (data.businessId == -1) {
@@ -1131,8 +1132,8 @@ LoaderManager.prototype.create = function (i_user, i_password, i_requestCallback
                 me.m_studioLite = data.studioLite;
                 // debugger
                 var s64 = data.resellerInfo;
-                var str = $.base64.decode(s64);
-                var xml = $.parseXML(str);
+                var str = jQuery.base64.decode(s64);
+                var xml = jQuery.parseXML(str);
                 me.m_resellerInfo = xml;
 
 
@@ -1166,8 +1167,8 @@ LoaderManager.prototype.requestData = function (i_requestCallback) {
         // ;debugger; //offline
         var data = JSON.parse(offlineDataAccount);
         var s64 = data.ret;
-        var str = $.base64.decode(s64);
-        var xml = $.parseXML(str);
+        var str = jQuery.base64.decode(s64);
+        var xml = jQuery.parseXML(str);
         self.m_dataBaseManager.loadTables(xml);
 
         self.requestCallback();
@@ -1180,13 +1181,13 @@ LoaderManager.prototype.requestData = function (i_requestCallback) {
          */
     } else {
         var url = window.g_protocol + self.m_domain + '/WebService/RequestData.ashx?businessId=' + this.m_businessId + '&callback=?';
-        $.getJSON(url,
+        jQuery.getJSON(url,
             function (data) {
                 // ;debugger;
                 // to update latest offline grab 'data' and paste onto the top var: offlineDataAccount
                 var s64 = data.ret;
-                var str = $.base64.decode(s64);
-                var xml = $.parseXML(str);
+                var str = jQuery.base64.decode(s64);
+                var xml = jQuery.parseXML(str);
                 self.m_dataBaseManager.loadTables(xml);
 
                 self.requestCallback();
@@ -1211,7 +1212,7 @@ LoaderManager.prototype.importScene = function (i_businessId, i_playerDataId, i_
     var url = window.g_protocol + 'galaxy.signage.me' + '/WebService/getBusinessDomain.ashx?businessId=' + i_businessId + '&callback=?';
     //alert(url);
 
-    $.getJSON(url,
+    jQuery.getJSON(url,
         function (data1) {
             // debugger
             var srcDB = self.m_dataBaseManager.getDataModule(data1.domain, i_businessId);
@@ -1220,11 +1221,11 @@ LoaderManager.prototype.importScene = function (i_businessId, i_playerDataId, i_
                 self.m_dataBaseManager.selectDomainBusiness(data1.domain, i_businessId);
 
                 var url = window.g_protocol + data1.domain + '/WebService/RequestData.ashx?businessId=' + i_businessId + '&mode=playerData&callback=?';
-                $.getJSON(url,
+                jQuery.getJSON(url,
                     function (data2) {
                         // debugger
-                        var str = $.base64.decode(data2.ret);
-                        var xml = $.parseXML(str);
+                        var str = jQuery.base64.decode(data2.ret);
+                        var xml = jQuery.parseXML(str);
                         self.m_dataBaseManager.loadTables(xml);
 
                         var hPlayerData = self.copyScene(data1.domain, i_businessId, i_playerDataId)
@@ -1285,11 +1286,11 @@ LoaderManager.prototype.copyScene = function (i_srcBusinessDomain, i_srcBusiness
     var playerDataValue = srcRecPlayerData.player_data_value;
 
 
-    var xml = $.parseXML(playerDataValue);
+    var xml = jQuery.parseXML(playerDataValue);
 
 
-    $(xml).find('Resource').each(function () {
-        var hSrcResource = $(this).attr('hResource');
+    jQuery(xml).find('Resource').each(function () {
+        var hSrcResource = jQuery(this).attr('hResource');
         var srcRecResource = srcResourceTable.getRec(hSrcResource);
 
         var hDstResource = -1;
@@ -1315,8 +1316,8 @@ LoaderManager.prototype.copyScene = function (i_srcBusinessDomain, i_srcBusiness
             filePack.fileName = dstRecResource.resource_id + "." + dstRecResource.resource_type;
             self.filesToUpload.push(filePack);
         }
-        $(this).attr('hResource', hDstResource);
-        $(this).removeAttr('resource');
+        jQuery(this).attr('hResource', hDstResource);
+        jQuery(this).removeAttr('resource');
     });
 
     dstRecPlayerData.player_data_value = (new XMLSerializer()).serializeToString(xml);
@@ -1429,7 +1430,7 @@ LoaderManager.prototype.save = function (i_saveCallback) {
     var sv = this;
     var url1 = window.g_protocol + sv.m_domain + '/WebService/SubmitData.ashx?command=Begin&userpass=' + sv.m_userpass64 + '&appVersion=4.12&appType=StudioLite' + '&callback=?';
 
-    $.getJSON(url1, function (d1) {
+    jQuery.getJSON(url1, function (d1) {
         // debugger
         uploadNextFile(d1.ret);
     });
@@ -1460,7 +1461,7 @@ LoaderManager.prototype.save = function (i_saveCallback) {
             }
             else if (filePack.type == "url") {
                 var url = window.g_protocol + sv.m_domain + '/WebService/UploadResource.ashx?cookie=' + i_cookie + '&fileName=' + filePack.fileName + '&url=' + filePack.url + '&callback=?';
-                $.getJSON(url,
+                jQuery.getJSON(url,
                     function (data2) {
                         // debugger
                         if (data2.success) {
@@ -1532,7 +1533,7 @@ LoaderManager.prototype.save = function (i_saveCallback) {
     function uploadTables(i_cookie) {
         //alert('up1');
         var changelist = sv.m_dataBaseManager.getChangelist();
-        var s64 = $.base64.encode(changelist);
+        var s64 = jQuery.base64.encode(changelist);
         s64 = s64.replace(/=/g, ".");
         s64 = s64.replace(/[+]/g, "_");
         s64 = s64.replace(/[/]/g, "-");
@@ -1547,7 +1548,7 @@ LoaderManager.prototype.save = function (i_saveCallback) {
         var d1 = i_data.substring(i, j);
         //alert(d1);
 
-        $.getJSON(url2,
+        jQuery.getJSON(url2,
             {prm: d1},
             function (data) {
                 // debugger
@@ -1555,8 +1556,8 @@ LoaderManager.prototype.save = function (i_saveCallback) {
                     //alert(data.ret);
                     if (data != null && data.ret != "") {
                         var s64 = data.ret;
-                        var str = $.base64.decode(s64);
-                        var xml = $.parseXML(str);
+                        var str = jQuery.base64.decode(s64);
+                        var xml = jQuery.parseXML(str);
                         onSubmitData(xml.documentElement)
 
                         if (i_saveCallback != null) {
@@ -1618,12 +1619,12 @@ LoaderManager.prototype.requestAdsReport = function (i_callback, i_year, i_month
     var self = this;
 
     var url = window.g_protocol + this.m_domain + '/WebService/requestAdsReport.ashx?i_userpass=' + self.m_userpass64 + '&i_year=' + i_year + '&i_month=' + i_month + '&callback=?';
-    $.getJSON(url,
+    jQuery.getJSON(url,
         function (data) {
             // debugger
             var s64 = data.ret;
-            var str = $.base64.decode(s64);
-            var xml = $.parseXML(str);
+            var str = jQuery.base64.decode(s64);
+            var xml = jQuery.parseXML(str);
             i_callback({report: xml});
         }
     );
@@ -2786,7 +2787,7 @@ Table.prototype.appendDeletedChangelist = function (i_doc) {
 
 
 Table.prototype.getPlayerDataIds = function (i_playerData) {
-    var doc = $.parseXML(i_playerData);
+    var doc = jQuery.parseXML(i_playerData);
     this.convertToIds(doc);
     return doc.documentElement;
 }
