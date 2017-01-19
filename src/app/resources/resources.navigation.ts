@@ -7,15 +7,6 @@ import {ApplicationState} from "../../store/application.state";
 @Component({
     selector: 'ResourcesNavigation',
     changeDetection: ChangeDetectionStrategy.OnPush,
-
-
-    // animations: [routerTransition()],
-    // host: {
-    //     '[@routerTransition]': '',
-    //     '[style.display]': "'block'"
-    // },
-
-
     host: {
         '[@routeAnimation]': 'true',
         '[style.display]': "'block'"
@@ -34,7 +25,6 @@ import {ApplicationState} from "../../store/application.state";
                <small class="release">resources
                    <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
                </small>
-               
                <orders></orders>
            `,
 })

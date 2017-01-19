@@ -24,6 +24,14 @@ import {ApplicationState} from "../../store/application.state";
             transition('* => void', animate(333, style({opacity: 0})))
         ])
     ],
+
+    // //todo: waiting for issue fix to enable: https://github.com/angular/angular/issues/14015
+    // animations: [routerTransition()],
+    // host: {
+    //     '[@routerTransition]': '',
+    //     '[style.display]': "'block'"
+    // },
+
     template: `
                <small class="release">campaigns
                    <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
