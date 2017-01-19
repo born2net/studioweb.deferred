@@ -11,7 +11,7 @@ import {ToastModule} from "ng2-toastr";
 import {DropdownModule, AccordionModule, AlertModule, ModalModule} from "ng2-bootstrap";
 import {TreeModule, InputTextModule, SelectButtonModule, DropdownModule as DropdownModulePrime} from "primeng/primeng";
 import {NgStringPipesModule} from "angular-pipes";
-import {routing} from "../App.routes";
+import {routing} from "../app.routes";
 import {LoginPanel} from "../comps/entry/LoginPanel";
 import {Logout} from "../comps/logout/Logout";
 import {Logo} from "../comps/logo/Logo";
@@ -36,12 +36,12 @@ import {Tabs} from "../comps/tabs/tabs";
 import {MsdbEffects} from "../store/effects/msdb.effects";
 import {environment} from "../environments/environment";
 import {productionReducer} from "../store/store.data";
-import "hammerjs";
-import "fabric";
 import {NgmslibService} from "ng-mslib";
 import {SharedModule} from "../modules/shared.module";
-import {Dashboard} from "./dashboard/dashboard";
+import {Dashboard} from "./dashboard/dashboard-navigation";
 import {Appwrap} from "./appwrap";
+import "hammerjs";
+import "fabric";
 
 export function noMonitor() {
     return null;

@@ -3,7 +3,6 @@ import {Router} from "@angular/router";
 import {Compbaser} from "ng-mslib";
 
 @Component({
-    selector: 'Appwrap',
     template: `
         <div class="row" style="margin-left: 0; margin-right: 0;">
         <ng-menu [routePrefix]="'App1'" [fileMenuMode]="true">
