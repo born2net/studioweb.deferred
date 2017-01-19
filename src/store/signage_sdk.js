@@ -1082,8 +1082,14 @@ LoaderManager.prototype.create = function (i_user, i_password, i_requestCallback
     param = param.replace(/[+]/g, "_");
     this.m_userpass64 = param.replace(/[/]/g, "-");
 
-
     var url = window.g_protocol + g_masterDomain + '/WebService/getUserDomain.ashx?i_userpass=' + this.m_userpass64 + '&callback=?';
+    // url = 'https://galaxy.signage.me/WebService/getUserDomain.ashx?i_userpass=bGl0ZTkwQG1zLmNvbSwxMjMxMjM.&callback=?'
+
+    console.log('1 ' + url);
+
+
+    // //todo: Alon add this replace of double .. for IE compatibility
+    // url = url.replace(/\.\.&callback/,'\.&callback')
 
     //todo: Alon add this logic for offline
     if (window['offlineDevMode']) {
@@ -1100,6 +1106,7 @@ LoaderManager.prototype.create = function (i_user, i_password, i_requestCallback
 
         var s64 = data.resellerInfo;
         var str = $.base64.decode(s64);
+
         var xml = $.parseXML(str);
         me.m_resellerInfo = xml;
         me.m_dataBaseManager.createDataBase(me.m_domain, me.m_businessId);
@@ -1116,9 +1123,15 @@ LoaderManager.prototype.create = function (i_user, i_password, i_requestCallback
             }
         );
     } else {
+        console.log('2 ' + url);
+        // url = 'https://galaxy.signage.me/WebService/getUserDomain.ashx?i_userpass=bGl0ZTkwQG1zLmNvbSwxMjMxMjM.&callback=?';
+
+        // //todo: Alon add this replace of double .. for IE compatibility
+        // url = url.replace(/\.\.&callback/,'\.&callback')
+
+
         $.getJSON(url,
             function (data) {
-                // ;debugger;
                 // to update latest offline grab 'data' and paste onto the top var: offlineDataUser
                 if (data.businessId == -1) {
                     i_requestCallback({status: false, error: 'login fail'});
@@ -1128,7 +1141,7 @@ LoaderManager.prototype.create = function (i_user, i_password, i_requestCallback
                 me.m_businessId = data.businessId;
                 me.m_eri = data.eri;
                 me.m_studioLite = data.studioLite;
-
+                // debugger
                 var s64 = data.resellerInfo;
                 var str = $.base64.decode(s64);
                 var xml = $.parseXML(str);
