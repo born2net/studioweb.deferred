@@ -1,9 +1,5 @@
 import {Component, ChangeDetectionStrategy, trigger, transition, animate, state, style} from "@angular/core";
-import {ApplicationState} from "../../../store/application.state";
-import {Store} from "@ngrx/store";
-import {RedPepperService} from "../../../services/redpepper.service";
 import {Compbaser} from "ng-mslib";
-import {Router} from "@angular/router";
 
 @Component({
     selector: 'Dashboard',
@@ -22,13 +18,23 @@ import {Router} from "@angular/router";
             transition('* => void', animate(333, style({opacity: 0})))
         ])
     ],
-    template: `<h2>StudioWeb</h2>`,
+    template: `
+                <h2>Account Dashboard</h2>
+                <chart [options]="options"></chart>
+    `,
 })
 export class Dashboard extends Compbaser {
 
-    constructor(private store: Store<ApplicationState>, private redPepperService: RedPepperService, private router: Router) {
+    constructor() {
         super();
+        this.options = {
+            title : { text : 'simple chart' },
+            series: [{
+                data: [29.9, 71.5, 106.4, 129.2],
+            }]
+        };
     }
+    options: Object;
 
     destroy() {
     }

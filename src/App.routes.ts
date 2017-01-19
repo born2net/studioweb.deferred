@@ -4,7 +4,7 @@ import {LoginPanel} from "./comps/entry/LoginPanel";
 import {Logout} from "./comps/logout/Logout";
 import {AuthService} from "./services/AuthService";
 import {AutoLogin} from "./comps/entry/AutoLogin";
-import {Dashboard} from "./comps/app1/dashboard/dashboard";
+import {Dashboard} from "./app/dashboard/dashboard";
 
 
 const routes: Routes = [

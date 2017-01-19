@@ -24,14 +24,13 @@ import {StoreService} from "../services/StoreService";
 import {NgMenu} from "../comps/ng-menu/ng-menu";
 import {NgMenuItem} from "../comps/ng-menu/ng-menu-item";
 import {AutoLogin} from "../comps/entry/AutoLogin";
-import {StoreModule, combineReducers} from "@ngrx/store";
-import {STORE_DEVTOOLS_CONFIG} from '@ngrx/store-devtools/src/config';
+import {StoreModule} from "@ngrx/store";
+import {STORE_DEVTOOLS_CONFIG} from "@ngrx/store-devtools/src/config";
 import {INITIAL_APPLICATION_STATE} from "../store/application.state";
 import {EffectsModule} from "@ngrx/effects";
 import {StoreDevtoolsModule} from "@ngrx/store-devtools";
 import {AppdbAction} from "../store/actions/appdb.actions";
 import {AppDbEffects} from "../store/effects/appdb.effects";
-import {Dashboard} from "../comps/app1/dashboard/dashboard";
 import {App1} from "../comps/app1/App1";
 import {Tab} from "../comps/tabs/tab";
 import {Tabs} from "../comps/tabs/tabs";
@@ -42,6 +41,7 @@ import "hammerjs";
 import "fabric";
 import {NgmslibService} from "ng-mslib";
 import {SharedModule} from "../modules/shared.module";
+import {Dashboard} from "./dashboard/dashboard";
 
 export function noMonitor() {
     return null;
@@ -77,13 +77,13 @@ export function appReducer(state: any = INITIAL_APPLICATION_STATE, action: any) 
         ReactiveFormsModule,
         Ng2Bs3ModalModule,
         HttpModule,
+        ChartModule,
         StoreModule.provideStore(appReducer),
         EffectsModule.run(AppDbEffects),
         EffectsModule.run(MsdbEffects),
         // StoreDevtoolsModule.instrumentStore({maxAge: 2}),
         StoreDevtoolsModule.instrumentOnlyWithExtension(),
         SharedModule.forRoot(),
-        ChartModule,     
         ToastModule.forRoot({
             animate: 'flyRight',
             positionClass: 'toast-bottom-right',

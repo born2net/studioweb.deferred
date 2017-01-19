@@ -11,13 +11,13 @@ import {Consts} from "../../../src/Conts";
         <div class="row" style="margin-left: 0; margin-right: 0;">
         <ng-menu [routePrefix]="'App1'" [fileMenuMode]="true">
             <ng-menu-item [fontawesome]="'fa-dashboard'" [title]="'Dashboard'"></ng-menu-item>
-            <ng-menu-item [fontawesome]="'fa-lock'" [title]="'Campaigns'"></ng-menu-item>
-            <ng-menu-item [fontawesome]="'fa-lock'" [title]="'Resources'"></ng-menu-item>
-            <ng-menu-item [fontawesome]="'fa-lock'" [title]="'Scenes'"></ng-menu-item>
-            <ng-menu-item [fontawesome]="'fa-lock'" [title]="'Stations'"></ng-menu-item>
-            <ng-menu-item [fontawesome]="'fa-lock'" [title]="'Fasterq'"></ng-menu-item>
+            <ng-menu-item [fontawesome]="'fa-navicon'" [title]="'Campaigns'"></ng-menu-item>
+            <ng-menu-item [fontawesome]="'fa-certificate'" [title]="'Resources'"></ng-menu-item>
+            <ng-menu-item [fontawesome]="'fa-edit'" [title]="'Scenes'"></ng-menu-item>
+            <ng-menu-item [fontawesome]="'fa-laptop'" [title]="'Stations'"></ng-menu-item>
+            <ng-menu-item [fontawesome]="'fa-group'" [title]="'Fasterq'"></ng-menu-item>
             <ng-menu-item [fontawesome]="'fa-cog'" [title]="'Settings'"></ng-menu-item>
-            <ng-menu-item [fontawesome]="'fa-shopping-cart'" [title]="'Studiopro'"></ng-menu-item>
+            <ng-menu-item [fontawesome]="'fa-cloud-upload'" [title]="'Studiopro'"></ng-menu-item>
             <ng-menu-item [fontawesome]="'fa-power-off'" [title]="'Logout'"></ng-menu-item>
         </ng-menu>
           <div id="mainPanelWrapWasp" style="padding-left: 60px" class="mainContent col-xs-12 col-sm-12 col-md-12 col-lg-11">
