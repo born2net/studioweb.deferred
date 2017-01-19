@@ -24,6 +24,7 @@ const routes: Routes = [
         children: [
             {path: '', component: App1, canActivate: [AuthService]},
             {path: 'Campaigns', loadChildren: '../app/campaigns/index#CampaignsLazyModule', canActivate: [AuthService]},
+            {path: 'Fasterq', loadChildren: '../app/fasterq/index#FasterqLazyModule', canActivate: [AuthService]},
             {path: 'Dashboard', component: Dashboard, data: {title: 'Dashboard'}, canActivate: [AuthService]},
             {path: 'Orders', component: Orders, data: {title: 'Orders'}, canActivate: [AuthService]},
             {path: 'Privileges', component: Privileges, data: {title: 'Privileges'}, canActivate: [AuthService]},

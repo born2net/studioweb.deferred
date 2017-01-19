@@ -1125,8 +1125,8 @@ LoaderManager.prototype.create = function (i_user, i_password, i_requestCallback
     } else {
 
         //todo: Alon replace all $ with jQuery
-        console.log('url 1 ' + url);
-        debugger;
+        // console.log('url 1 ' + url);
+        // debugger;
         jQuery.getJSON(url,
             function (data) {
                 // to update latest offline grab 'data' and paste onto the top var: offlineDataUser
@@ -1189,7 +1189,7 @@ LoaderManager.prototype.requestData = function (i_requestCallback) {
          */
     } else {
         var url = window.g_protocol + self.m_domain + '/WebService/RequestData.ashx?businessId=' + this.m_businessId + '&callback=?';
-        console.log('url 2 ' + url);
+        // console.log('url 2 ' + url);
         // debugger;
         jQuery.getJSON(url,
             function (data) {

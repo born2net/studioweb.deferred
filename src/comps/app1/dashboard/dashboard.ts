@@ -22,7 +22,8 @@ import {Router} from "@angular/router";
     `],
     template: `
                <h2>StudioWeb</h2>
-               <button (click)="onRoute()">load</button>
+               <button (click)="onRoute1()">camp</button>
+               <button (click)="onRoute2()">fq</button>
                <h4>user name: {{(userModel$ | async)?.getUser() }}</h4>
                <h4>account type: {{(userModel$ | async)?.getAccountType()}}</h4>
                <div style="display: flex" >
@@ -80,8 +81,12 @@ export class Dashboard extends Compbaser {
         })
     }
 
-    onRoute(){
+    onRoute1(){
         this.router.navigate(['/App1/Campaigns'])
+    }
+
+    onRoute2(){
+        this.router.navigate(['/App1/Fasterq'])
     }
 
     private removeCampaign(campaign: CampaignsModal) {

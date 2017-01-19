@@ -1,10 +1,13 @@
 {
   "name": "studioweb",
-  "version": "0.1.44",
+  "version": "0.1.45",
   "license": "Modified GPL (see readme.md)",
   "angular-cli": {},
   "scripts": {
     "postinstall": "npm run dev",
+    "x_disk-build": "ng build && npm run sw",
+    "x_disk-serve": "cd dist && live-server --port=4208 --host=localhost --entry-file=/index.html",
+    "x_reg_release": "rm -r -f ./dist && npm run x_bump && npm run x_prod && npm run x_rsync",
     "x_start": "ng serve",
     "x_lint": "tslint \"src/**/*.ts\"",
     "x_prod": "ng build --target=production --base-href ./",
@@ -14,10 +17,7 @@
     "cp module": "cp ./node_modules/ng-mslib/src/myng-component.ts ./node_modules/ng-mslib/dist/",
     "hmr": "ng serve --port 4208 --aot false --hmr -e=hmr",
     "dev": "ng serve --port 4208 --aot false",
-    "reg_release": "rm -r -f ./dist && npm run x_bump && npm run x_prod && npm run x_rsync",
-    "pwa_release": "rm -r -f ./dist && npm run x_bump && npm run x_prod && npm run x_sw && npm run x_rsync",
-    "disk-build": "ng build && npm run sw",
-    "disk-serve": "cd dist && live-server --port=4208 --host=localhost --entry-file=/index.html"
+    "release": "rm -r -f ./dist && npm run x_bump && npm run x_prod && npm run x_sw && npm run x_rsync"
   },
   "dependencies": {
     "@angular/common": "2.4.3",

@@ -8,7 +8,7 @@ import {Store} from "@ngrx/store";
 import {ApplicationState} from "../../store/application.state";
 
 @Component({
-    selector: 'CampaignsView',
+    selector: 'CampaignsNavigation',
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
                <small class="release">campaigns
@@ -25,7 +25,7 @@ import {ApplicationState} from "../../store/application.state";
                <Infobox [value1]="lastLogin" value2="in seconds" value3="time since last login" icon="fa-clock-o"></Infobox>
            `,
 })
-export class CampaignsView extends Compbaser {
+export class CampaignsNavigation extends Compbaser {
 
     constructor(private store: Store<ApplicationState>, private redPepperService: RedPepperService) {
         super();
