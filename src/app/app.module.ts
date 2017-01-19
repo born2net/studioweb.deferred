@@ -25,7 +25,6 @@ import {NgMenu} from "../comps/ng-menu/ng-menu";
 import {NgMenuItem} from "../comps/ng-menu/ng-menu-item";
 import {AutoLogin} from "../comps/entry/AutoLogin";
 import {StoreModule} from "@ngrx/store";
-import {STORE_DEVTOOLS_CONFIG} from "@ngrx/store-devtools/src/config";
 import {INITIAL_APPLICATION_STATE} from "../store/application.state";
 import {EffectsModule} from "@ngrx/effects";
 import {StoreDevtoolsModule} from "@ngrx/store-devtools";
@@ -43,20 +42,12 @@ import {Appwrap} from "./appwrap";
 import "hammerjs";
 import "fabric";
 
-export function noMonitor() {
-    return null;
-}
-
 export var providing = [CommBroker, AUTH_PROVIDERS, RedPepperService, LocalStorage, StoreService, AppdbAction,
-    {
-        provide: STORE_DEVTOOLS_CONFIG, useValue: {maxAge: 2, monitor: noMonitor}
-    },
     {
         provide: "OFFLINE_ENV",
         useValue: window['offlineDevMode']
     }
 ];
-
 
 var decelerations = [AppComponent, AutoLogin, LoginPanel, Logo, Appwrap, Dashboard, Tabs, Tab, Logout, NgMenu, NgMenuItem, ImgLoader, BlurForwarder,];
 
@@ -81,8 +72,8 @@ export function appReducer(state: any = INITIAL_APPLICATION_STATE, action: any) 
         StoreModule.provideStore(appReducer),
         EffectsModule.run(AppDbEffects),
         EffectsModule.run(MsdbEffects),
-        // StoreDevtoolsModule.instrumentStore({maxAge: 2}),
-        StoreDevtoolsModule.instrumentOnlyWithExtension(),
+        StoreDevtoolsModule.instrumentStore({maxAge: 2}),
+        // StoreDevtoolsModule.instrumentOnlyWithExtension(),
         SharedModule.forRoot(),
         ToastModule.forRoot({
             animate: 'flyRight',
@@ -121,3 +112,11 @@ export class AppModule {
         console.log(StringJS('app-loaded-and-ready').humanize().s);
     }
 }
+
+// import {STORE_DEVTOOLS_CONFIG} from "@ngrx/store-devtools/src/config";
+// {
+//     provide: STORE_DEVTOOLS_CONFIG, useValue: {maxAge: 2, monitor: noMonitor}
+// },
+// export function noMonitor() {
+//     return null;
+// }
