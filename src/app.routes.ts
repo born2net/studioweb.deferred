@@ -3,7 +3,7 @@ import {LoginPanel} from "./comps/entry/LoginPanel";
 import {Logout} from "./comps/logout/Logout";
 import {AuthService} from "./services/AuthService";
 import {AutoLogin} from "./comps/entry/AutoLogin";
-import {Dashboard} from "./app/dashboard/dashboard-navigation";
+import {Dashboard} from "./app/dashboard/dashboard.navigation";
 import {Appwrap} from "./app/appwrap";
 
 

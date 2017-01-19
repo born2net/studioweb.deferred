@@ -1,7 +1,7 @@
 import {NgModule} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {RouterModule} from "@angular/router";
-import {CampaignsNavigation} from "./campaigns-navigation";
+import {CampaignsNavigation} from "./campaigns.navigation";
 import {DropdownModule as DropdownModulePrime} from "primeng/primeng";
 import {SharedModule} from "../../modules/shared.module";
 import {DropdownModule} from "ng2-bootstrap";
