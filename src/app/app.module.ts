@@ -14,7 +14,6 @@ import {NgStringPipesModule} from "angular-pipes";
 import {routing} from "../App.routes";
 import {LoginPanel} from "../comps/entry/LoginPanel";
 import {Logout} from "../comps/logout/Logout";
-import {Orders} from "../comps/app1/orders/Orders";
 import {Logo} from "../comps/logo/Logo";
 import {BlurForwarder} from "../comps/blurforwarder/BlurForwarder";
 import {ImgLoader} from "../comps/imgloader/ImgLoader";
@@ -25,8 +24,6 @@ import {StoreService} from "../services/StoreService";
 import {NgMenu} from "../comps/ng-menu/ng-menu";
 import {NgMenuItem} from "../comps/ng-menu/ng-menu-item";
 import {AutoLogin} from "../comps/entry/AutoLogin";
-import {Sliderpanel} from "../comps/sliderpanel/Sliderpanel";
-import {Slideritem} from "../comps/sliderpanel/Slideritem";
 import {StoreModule, combineReducers} from "@ngrx/store";
 import {STORE_DEVTOOLS_CONFIG} from '@ngrx/store-devtools/src/config';
 import {INITIAL_APPLICATION_STATE} from "../store/application.state";
@@ -64,7 +61,7 @@ export var providing = [CommBroker, AUTH_PROVIDERS, RedPepperService, LocalStora
 ];
 
 
-var decelerations = [AppComponent, AutoLogin, LoginPanel, Logo, App1, Account, Dashboard, Privileges, Tabs, Tab, Sliderpanel, Slideritem, Orders, Logout, Twofactor, NgMenu, NgMenuItem, ImgLoader, BlurForwarder,];
+var decelerations = [AppComponent, AutoLogin, LoginPanel, Logo, App1, Account, Dashboard, Privileges, Tabs, Tab, Logout, Twofactor, NgMenu, NgMenuItem, ImgLoader, BlurForwarder,];
 
 export function appReducer(state: any = INITIAL_APPLICATION_STATE, action: any) {
     if (environment.production) {

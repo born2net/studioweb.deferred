@@ -13,7 +13,7 @@ import {Consts} from "../../../src/Conts";
             <ng-menu-item [fontawesome]="'fa-dashboard'" [title]="'Dashboard'"></ng-menu-item>
             <ng-menu-item [fontawesome]="'fa-lock'" [title]="'Privileges'"></ng-menu-item>
             <ng-menu-item [fontawesome]="'fa-cog'" [title]="'Account'"></ng-menu-item>
-            <ng-menu-item [fontawesome]="'fa-shopping-cart'" [title]="'Orders'"></ng-menu-item>
+            <ng-menu-item [fontawesome]="'fa-shopping-cart'" [title]="'Resources'"></ng-menu-item>
             <ng-menu-item [fontawesome]="'fa-power-off'" [title]="'Logout'"></ng-menu-item>
         </ng-menu>
           <div id="mainPanelWrapWasp" style="padding-left: 60px" class="mainContent col-xs-12 col-sm-12 col-md-12 col-lg-11">
