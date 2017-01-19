@@ -29,7 +29,6 @@ export class CampaignsView extends Compbaser {
 
     constructor(private store: Store<ApplicationState>, private redPepperService: RedPepperService) {
         super();
-        console.log(22);
         this.totalCampaigns = redPepperService.getCampaignIDs().length;
         this.cities = [];
         this.cities.push({label: 'Select City', value: null});
@@ -47,7 +46,7 @@ export class CampaignsView extends Compbaser {
     totalCampaigns = 0;
     cities: SelectItem[];
     selectedCity: string;
-    lastLogin = 'abc';
+    lastLogin = 'v9';
 
     ngOnInit() {
     }
