@@ -1075,7 +1075,6 @@ function LoaderManager() {
 
 LoaderManager.prototype.create = function (i_user, i_password, i_requestCallback) {
     var me = this;
-
     var userPass = i_user + "," + i_password;
     var param = $.base64.encode(userPass);
     param = param.replace(/=/g, ".");
@@ -1084,11 +1083,6 @@ LoaderManager.prototype.create = function (i_user, i_password, i_requestCallback
 
     var url = window.g_protocol + g_masterDomain + '/WebService/getUserDomain.ashx?i_userpass=' + this.m_userpass64 + '&callback=?';
     // url = 'https://galaxy.signage.me/WebService/getUserDomain.ashx?i_userpass=bGl0ZTkwQG1zLmNvbSwxMjMxMjM.&callback=?'
-
-    console.log('1 ' + url);
-
-
-    // //todo: Alon add this replace of double .. for IE compatibility
     // url = url.replace(/\.\.&callback/,'\.&callback')
 
     //todo: Alon add this logic for offline
@@ -1123,12 +1117,6 @@ LoaderManager.prototype.create = function (i_user, i_password, i_requestCallback
             }
         );
     } else {
-        console.log('2 ' + url);
-        // url = 'https://galaxy.signage.me/WebService/getUserDomain.ashx?i_userpass=bGl0ZTkwQG1zLmNvbSwxMjMxMjM.&callback=?';
-
-        // //todo: Alon add this replace of double .. for IE compatibility
-        // url = url.replace(/\.\.&callback/,'\.&callback')
-
 
         $.getJSON(url,
             function (data) {
