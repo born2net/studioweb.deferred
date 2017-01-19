@@ -24,6 +24,10 @@ import {Router} from "@angular/router";
                <h2>StudioWeb</h2>
                <button (click)="onRoute1()">camp</button>
                <button (click)="onRoute2()">fq</button>
+               <button (click)="onRoute3()">res</button>
+               <button (click)="onRoute4()">sett</button>
+               <button (click)="onRoute5()">stations</button>
+               <button (click)="onRoute6()">pro</button>
                <h4>user name: {{(userModel$ | async)?.getUser() }}</h4>
                <h4>account type: {{(userModel$ | async)?.getAccountType()}}</h4>
                <div style="display: flex" >
@@ -88,6 +92,23 @@ export class Dashboard extends Compbaser {
     onRoute2(){
         this.router.navigate(['/App1/Fasterq'])
     }
+
+    onRoute3(){
+        this.router.navigate(['/App1/Resources'])
+    }
+
+    onRoute4(){
+        this.router.navigate(['/App1/Settings'])
+    }
+
+    onRoute5(){
+        this.router.navigate(['/App1/Stations'])
+    }
+
+    onRoute6(){
+        this.router.navigate(['/App1/StudioPro'])
+    }
+
 
     private removeCampaign(campaign: CampaignsModal) {
         this.store.dispatch({type: EFFECT_REMOVE_CAMPAIGN, payload: campaign})

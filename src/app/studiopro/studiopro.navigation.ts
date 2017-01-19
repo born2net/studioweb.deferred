@@ -8,10 +8,10 @@ import {Store} from "@ngrx/store";
 import {ApplicationState} from "../../store/application.state";
 
 @Component({
-    selector: 'ResourcesNavigation',
+    selector: 'StudioProNavigation',
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-               <small class="release">resources
+               <small class="release">studiopro
                    <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
                </small>
                
@@ -25,7 +25,7 @@ import {ApplicationState} from "../../store/application.state";
                <Infobox [value1]="lastLogin" value2="in seconds" value3="time since last login" icon="fa-clock-o"></Infobox>
            `,
 })
-export class ResourcesNavigation extends Compbaser {
+export class StudioProNavigation extends Compbaser {
 
     constructor(private store: Store<ApplicationState>, private redPepperService: RedPepperService) {
         super();
