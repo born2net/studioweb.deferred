@@ -62,12 +62,10 @@ export class PanelSplitSide {
         }, 2000)
         this.showSidePanel = !this.showSidePanel;
         this.onToggle.emit(this.showSidePanel);
-
         if (this.showSidePanel) {
             jQuery(this.el.nativeElement).find('.propPanelWrap').addClass('col-md-3 col-lg-3')
             jQuery(this.el.nativeElement).find('.propPanelWrap').fadeIn('50')
         } else {
-            // jQuery(this.el.nativeElement).find('.propPanelWrap').toggleClass('shrink')
             jQuery(this.el.nativeElement).find('.propPanelWrap').fadeOut(0)
             jQuery(this.el.nativeElement).find('.propPanelWrap').removeClass('col-md-3 col-lg-3')
 
