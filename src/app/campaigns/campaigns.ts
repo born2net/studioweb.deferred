@@ -14,41 +14,39 @@ import {RedPepperService} from "../../services/redpepper.service";
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'campaigns',
     template: `
- <div style="background-color: red" class="col-xs-12 col-sm-12 col-md-9 col-lg-9 mainPanelWrap">
-        <h2>StudioWeb</h2>
-        <button (click)="onRoute1()">camp</button>
-        <button (click)="onRoute2()">fq</button>
-        <button (click)="onRoute3()">res</button>
-        <button (click)="onRoute4()">sett</button>
-        <button (click)="onRoute5()">stations</button>
-        <button (click)="onRoute6()">pro</button>
-        <h4>user name: {{(userModel$ | async)?.getUser() }}</h4>
-        <h4>account type: {{(userModel$ | async)?.getAccountType()}}</h4>
-        <!--<h2>selected: {{selectedCampaign?.getCampaignName()}}</h2>-->
-        <button class="btn btn-primary" (click)="createCampaign()">create campaign</button>
-        <br/>
-        <button class="btn btn-primary" (click)="save()">save to server</button>
-        <ul class="list-group">
-            <li class="list-group-item" *ngFor="let campaign of campaigns$ | async">
-                <input #ren (focus)="selectedCampaign=campaign" (blur)="selectedCampaign=campaign ; renameCampaign(campaign,ren.value)" value="{{campaign?.getCampaignName()}}">
-                <button (click)="removeCampaign(campaign)" class="fa fa-remove"></button>
-            </li>
-        </ul>
-        <hr/>
-        <h4>ng-bootstrap dropdown</h4>
-        <div class="btn-group" dropdown (click)="$event.preventDefault()">
-            <button id="single-button" type="button" class="btn btn-primary" dropdownToggle>
-                Button dropdown <span class="caret"></span>
-            </button>
-            <ul dropdownMenu role="menu" aria-labelledby="single-button">
-                <li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>
-                <li role="menuitem"><a class="dropdown-item" href="#">Another action</a></li>
-                <li role="menuitem"><a class="dropdown-item" href="#">Something else here</a></li>
-                <li class="divider dropdown-divider"></li>
-                <li role="menuitem"><a class="dropdown-item" href="#">Separated link</a></li>
-            </ul>
-        </div>
-    </div>
+                    <h2>Campaigns</h2>
+                    <button (click)="onRoute1()">camp</button>
+                    <button (click)="onRoute2()">fq</button>
+                    <button (click)="onRoute3()">res</button>
+                    <button (click)="onRoute4()">sett</button>
+                    <button (click)="onRoute5()">stations</button>
+                    <button (click)="onRoute6()">pro</button>
+                    <h4>user name: {{(userModel$ | async)?.getUser() }}</h4>
+                    <h4>account type: {{(userModel$ | async)?.getAccountType()}}</h4>
+                    <!--<h2>selected: {{selectedCampaign?.getCampaignName()}}</h2>-->
+                    <button class="btn btn-primary" (click)="createCampaign()">create campaign</button>
+                    <br/>
+                    <button class="btn btn-primary" (click)="save()">save to server</button>
+                    <ul class="list-group">
+                        <li class="list-group-item" *ngFor="let campaign of campaigns$ | async">
+                            <input #ren (focus)="selectedCampaign=campaign" (blur)="selectedCampaign=campaign ; renameCampaign(campaign,ren.value)" value="{{campaign?.getCampaignName()}}">
+                            <button (click)="removeCampaign(campaign)" class="fa fa-remove"></button>
+                        </li>
+                    </ul>
+                    <hr/>
+                    <h4>ng-bootstrap dropdown</h4>
+                    <div class="btn-group" dropdown (click)="$event.preventDefault()">
+                        <button id="single-button" type="button" class="btn btn-primary" dropdownToggle>
+                            Button dropdown <span class="caret"></span>
+                        </button>
+                        <ul dropdownMenu role="menu" aria-labelledby="single-button">
+                            <li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>
+                            <li role="menuitem"><a class="dropdown-item" href="#">Another action</a></li>
+                            <li role="menuitem"><a class="dropdown-item" href="#">Something else here</a></li>
+                            <li class="divider dropdown-divider"></li>
+                            <li role="menuitem"><a class="dropdown-item" href="#">Separated link</a></li>
+                        </ul>
+                    </div>
     `
 })
 export class Campaigns extends Compbaser {

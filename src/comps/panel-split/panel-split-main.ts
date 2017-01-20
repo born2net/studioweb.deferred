@@ -24,7 +24,7 @@ import {Component, ChangeDetectionStrategy, ElementRef, Output, EventEmitter} fr
         }
     `],
     template: `
-            <div style="background-color: red" class="col-xs-12 col-sm-12 col-md-9 col-lg-9 mainPanelWrap">            
+            <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 mainPanelWrap">            
                 <ng-content></ng-content>
             </div>
 

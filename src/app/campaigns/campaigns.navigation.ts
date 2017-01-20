@@ -40,18 +40,7 @@ import {RedPepperService} from "../../services/redpepper.service";
             width: 200px;
             margin: 5px;
         }
-        .mainPanelWrap {
-            padding: 0;
-            margin: 0;
-        }
-        .propPanelWrap {
-            background-color: green;
-            padding: 0;
-            margin: 0;
-            z-index: 200;
-            border-left: 2px #bdbdbd solid;
-            }
-}
+       
     `],
     templateUrl: './campaigns.navigation.html'
 })
