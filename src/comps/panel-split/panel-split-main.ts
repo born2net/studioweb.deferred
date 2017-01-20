@@ -7,9 +7,6 @@ import {Component, ChangeDetectionStrategy, ElementRef, Output, EventEmitter} fr
         '[style.display]': "'block'"
     },
     styles: [`
-    div {
-        transition: all 0.1s; //replace 200ms with time of your choice
-    }
         .mainPanelWrap {
              border-left: 1px #808080 solid; 
             -webkit-transition: width 0.1s ease, margin 0.1s ease;

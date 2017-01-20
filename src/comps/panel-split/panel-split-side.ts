@@ -1,4 +1,4 @@
-import {Component, ChangeDetectionStrategy, ElementRef, Output, EventEmitter} from "@angular/core";
+import {Component, ChangeDetectionStrategy, ElementRef, Output, EventEmitter, ChangeDetectorRef, HostListener, HostBinding} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 
 @Component({
@@ -8,18 +8,27 @@ import {Compbaser} from "ng-mslib";
 
 
         .propPanelWrap {
+        position: fixed;
+        min-height: 100%;
+        max-height: 100%;
+        right: 0;
+        height: 100%;
+            overflow: hidden;
             -webkit-transition: width 0.1s ease, margin 0.1s ease;
             -moz-transition: width 0.1s ease, margin 0.1s ease;
             -o-transition: width 0.1s ease, margin 0.1s ease;
             transition: width 0.1s ease, margin 0.1s ease;
             background-color: #4c4c4c;
+            padding: 0;
+            margin: 0;
             z-index: 200;
-            height: 100%;
+            /*height: 100%;*/
             border-left: 2px #bdbdbd solid;
-            min-height: 100% !important;
-            overflow: hidden;
-            padding-bottom: 100%;
-            margin-bottom: -100%;        
+            /*min-height: 100% !important;*/
+            /*overflow: hidden;*/
+            /*padding-bottom: 100%;*/
+            /*margin-bottom: -100%;        */
+            
         }
         
 
@@ -43,7 +52,19 @@ import {Compbaser} from "ng-mslib";
 })
 export class PanelSplitSide {
 
-    constructor(private el: ElementRef) {
+    constructor(private el: ElementRef, private cd:ChangeDetectorRef) {
+    }
+
+    ngAfterViewInit(){
+        // var h = jQuery('#appNavigatorWasp').innerHeight();
+        // jQuery(this.el.nativeElement).find('.propPanelWrap').height(h-100);
+    }
+
+    @HostBinding('style.height.px')
+    boxHeight: number = 5000;
+
+    @HostListener('window:resize')
+    onResize() {
     }
 
     @Output()

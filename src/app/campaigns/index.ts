@@ -5,6 +5,7 @@ import {CampaignsNavigation} from "./campaigns.navigation";
 import {DropdownModule as DropdownModulePrime} from "primeng/primeng";
 import {SharedModule} from "../../modules/shared.module";
 import {DropdownModule} from "ng2-bootstrap";
+import {Campaigns} from "./campaigns";
 
 export const LAZY_ROUTES = [
     {path: ':folder', component: CampaignsNavigation},
@@ -14,7 +15,7 @@ export const LAZY_ROUTES = [
 
 @NgModule({
     imports: [DropdownModulePrime, SharedModule, CommonModule, DropdownModule,RouterModule.forChild(LAZY_ROUTES)],
-    declarations: [CampaignsNavigation]
+    declarations: [CampaignsNavigation, Campaigns]
 })
 export class CampaignsLazyModule {
 }
