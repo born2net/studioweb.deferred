@@ -23,8 +23,8 @@ import {Component, ChangeDetectionStrategy, ElementRef, Output, EventEmitter, Ch
         }
     `],
     template: `
-            <div class="hidden-xs hidden-sm col-md-3 col-lg-3 propPanelWrap">
-                <button class="btn fa fa-plus" (click)="_toggle()"></button>
+            <div class="hidden-xs hidden-sm col-md-2 col-lg-2 propPanelWrap">
+                <button class="btn fa fa-arrow-circle-right" (click)="_toggle()"></button>
                 <ng-content></ng-content>
             </div>
     `
@@ -50,11 +50,11 @@ export class PanelSplitSide {
         this.showSidePanel = !this.showSidePanel;
         this.onToggle.emit(this.showSidePanel);
         if (this.showSidePanel) {
-            jQuery(this.el.nativeElement).find('.propPanelWrap').addClass('col-md-3 col-lg-3')
+            jQuery(this.el.nativeElement).find('.propPanelWrap').addClass('col-md-2 col-lg-2')
             jQuery(this.el.nativeElement).find('.propPanelWrap').fadeIn('50')
         } else {
             jQuery(this.el.nativeElement).find('.propPanelWrap').fadeOut(0)
-            jQuery(this.el.nativeElement).find('.propPanelWrap').removeClass('col-md-3 col-lg-3')
+            jQuery(this.el.nativeElement).find('.propPanelWrap').removeClass('col-md-2 col-lg-2')
 
         }
 

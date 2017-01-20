@@ -22,10 +22,9 @@ import {Component, ChangeDetectionStrategy, ElementRef, Output, EventEmitter} fr
         }
     `],
     template: `
-            <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 mainPanelWrap">            
+            <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 mainPanelWrap">            
                 <ng-content></ng-content>
             </div>
-
     `
 })
 export class PanelSplitMain {
@@ -36,10 +35,10 @@ export class PanelSplitMain {
 
     setFullScreen(value) {
         if (!value) {
-            jQuery(this.el.nativeElement).find('.mainPanelWrap').removeClass('col-md-9 col-lg-9')
+            jQuery(this.el.nativeElement).find('.mainPanelWrap').removeClass('col-md-10 col-lg-10')
             jQuery(this.el.nativeElement).find('.mainPanelWrap').addClass('col-md-12 col-lg-12')
         } else {
-            jQuery(this.el.nativeElement).find('.mainPanelWrap').addClass('col-md-9 col-lg-9')
+            jQuery(this.el.nativeElement).find('.mainPanelWrap').addClass('col-md-10 col-lg-10')
             jQuery(this.el.nativeElement).find('.mainPanelWrap').removeClass('col-md-12 col-lg-12')
         }
 
