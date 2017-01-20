@@ -24,24 +24,16 @@ import {Component, ChangeDetectionStrategy, ElementRef, Output, EventEmitter, Ch
     `],
     template: `
             <div class="hidden-xs hidden-sm col-md-3 col-lg-3 propPanelWrap">
-                <button class="btn fa fa-plus" (click)="_toggle()">x</button>
+                <button class="btn fa fa-plus" (click)="_toggle()"></button>
                 <ng-content></ng-content>
             </div>
     `
 })
 export class PanelSplitSide {
 
-    constructor(private el: ElementRef, private cd:ChangeDetectorRef) {
+    constructor(private el: ElementRef) {
     }
 
-    // ngAfterViewInit(){
-    //     // var h = jQuery('#appNavigatorWasp').innerHeight();
-    //     // jQuery(this.el.nativeElement).find('.propPanelWrap').height(h-100);
-    // }
-    //
-    // @HostBinding('style.height.px')
-    // boxHeight: number = 5000;
-    //
     // @HostListener('window:resize')
     // onResize() {
     // }
