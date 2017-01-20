@@ -1,4 +1,4 @@
-import {Component, ChangeDetectionStrategy, ViewChild, trigger, transition, animate, state, style} from "@angular/core";
+import {Component, ChangeDetectionStrategy, ViewChild, trigger, transition, animate, state, style, ElementRef} from "@angular/core";
 import {ApplicationState} from "../../store/application.state";
 import {Store} from "@ngrx/store";
 import {Observable} from "rxjs";
@@ -17,6 +17,16 @@ import {RedPepperService} from "../../services/redpepper.service";
         '[style.display]': "'block'"
     },
     animations: [
+        trigger('slideInOut', [
+            state('in', style({
+                transform: 'translate3d(0, 0, 0)'
+            })),
+            state('out', style({
+                transform: 'translate3d(100%, 0, 0)'
+            })),
+            transition('in => out', animate('400ms ease-in-out')),
+            transition('out => in', animate('400ms ease-in-out'))
+        ]),
         trigger('routeAnimation', [
             state('*', style({opacity: 1})),
             transition('void => *', [
@@ -27,53 +37,39 @@ import {RedPepperService} from "../../services/redpepper.service";
         ])
     ],
     styles: [`
+        .propPanel, .mainPanelWrap {
+             border-left: 1px #808080 solid; 
+            -webkit-transition: width 0.1s ease, margin 0.1s ease;
+            -moz-transition: width 0.1s ease, margin 0.1s ease;
+            -o-transition: width 0.1s ease, margin 0.1s ease;
+            transition: width 0.1s ease, margin 0.1s ease;
+        
+        }
         button {
             width: 200px;
             margin: 5px;
         }
+        .mainPanelWrap {
+            padding: 0;
+            margin: 0;
+        }
+        .propPanelWrap {
+            background-color: green;
+            padding: 0;
+            margin: 0;
+            z-index: 200;
+            border-left: 2px #bdbdbd solid;
+            }
+}
     `],
-    template: `
-               <h2>StudioWeb</h2>
-               <button (click)="onRoute1()">camp</button>
-               <button (click)="onRoute2()">fq</button>
-               <button (click)="onRoute3()">res</button>
-               <button (click)="onRoute4()">sett</button>
-               <button (click)="onRoute5()">stations</button>
-               <button (click)="onRoute6()">pro</button>
-               <h4>user name: {{(userModel$ | async)?.getUser() }}</h4>
-               <h4>account type: {{(userModel$ | async)?.getAccountType()}}</h4>
-               <h2>selected: {{selectedCampaign?.getCampaignName()}}</h2>
-               <button class="btn btn-primary" (click)="createCampaign()">create campaign</button>
-               <br/>
-               <button class="btn btn-primary" (click)="save()">save to server</button>
-                <ul class="list-group">
-                   <li  class="list-group-item" *ngFor="let campaign of campaigns$ | async">
-                        <input #ren (focus)="selectedCampaign=campaign" (blur)="selectedCampaign=campaign ; renameCampaign(campaign,ren.value)" value="{{campaign?.getCampaignName()}}">
-                        <button (click)="removeCampaign(campaign)" class="fa fa-remove"></button>
-                    </li>
-                </ul>
-                <hr/>
-                <h4>ng-bootstrap dropdown</h4>
-                <div class="btn-group" dropdown (click)="$event.preventDefault()">
-                  <button id="single-button" type="button" class="btn btn-primary" dropdownToggle>
-                    Button dropdown <span class="caret"></span>
-                  </button>
-                  <ul dropdownMenu role="menu" aria-labelledby="single-button">
-                    <li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>
-                    <li role="menuitem"><a class="dropdown-item" href="#">Another action</a></li>
-                    <li role="menuitem"><a class="dropdown-item" href="#">Something else here</a></li>
-                    <li class="divider dropdown-divider"></li>
-                    <li role="menuitem"><a class="dropdown-item" href="#">Separated link</a></li>
-                  </ul>
-                </div>
-           `,
+    templateUrl: './campaigns.navigation.html'
 })
 export class CampaignsNavigation extends Compbaser {
 
     public campaigns$: Observable<any>;
     public userModel$: Observable<UserModel>;
 
-    constructor(private store: Store<ApplicationState>, private redPepperService: RedPepperService, private router: Router) {
+    constructor(private el:ElementRef, private store: Store<ApplicationState>, private redPepperService: RedPepperService, private router: Router) {
         super();
 
 
@@ -96,6 +92,18 @@ export class CampaignsNavigation extends Compbaser {
             console.log(resourceModels.first().getResourceName());
             console.log(resourceModels.first().getResourceBytesTotal());
         })
+    }
+
+    toggle(){
+        jQuery(this.el.nativeElement).find('.mainPanelWrap').removeClass('col-md-9 col-lg-9')
+        jQuery(this.el.nativeElement).find('.mainPanelWrap').addClass('col-md-12 col-lg-12')
+        jQuery(this.el.nativeElement).find('.propPanelWrap').removeClass('col-md-3 col-lg-3')
+
+        setTimeout(()=>{
+            jQuery(this.el.nativeElement).find('.mainPanelWrap').addClass('col-md-9 col-lg-9')
+            jQuery(this.el.nativeElement).find('.mainPanelWrap').removeClass('col-md-12 col-lg-12')
+            jQuery(this.el.nativeElement).find('.propPanelWrap').addClass('col-md-3 col-lg-3')
+        },3000)
     }
 
     onRoute1() {
@@ -137,6 +145,7 @@ export class CampaignsNavigation extends Compbaser {
             console.log(result);
         });
     }
+
     private createCampaign() {
         this.store.dispatch({type: EFFECT_CREATE_CAMPAIGN_BOARD});
     }

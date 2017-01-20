@@ -5,20 +5,20 @@ import {Compbaser} from "ng-mslib";
 @Component({
     template: `
         <div class="row" style="margin-left: 0; margin-right: 0;">
-        <ng-menu [routePrefix]="'App1'" [fileMenuMode]="true">
-            <ng-menu-item [fontawesome]="'fa-dashboard'" [title]="'Dashboard'"></ng-menu-item>
-            <ng-menu-item [fontawesome]="'fa-navicon'" [title]="'Campaigns'"></ng-menu-item>
-            <ng-menu-item [fontawesome]="'fa-certificate'" [title]="'Resources'"></ng-menu-item>
-            <ng-menu-item [fontawesome]="'fa-edit'" [title]="'Scenes'"></ng-menu-item>
-            <ng-menu-item [fontawesome]="'fa-laptop'" [title]="'Stations'"></ng-menu-item>
-            <ng-menu-item [fontawesome]="'fa-group'" [title]="'Fasterq'"></ng-menu-item>
-            <ng-menu-item [fontawesome]="'fa-cog'" [title]="'Settings'"></ng-menu-item>
-            <ng-menu-item [fontawesome]="'fa-cloud-upload'" [title]="'Studiopro'"></ng-menu-item>
-            <ng-menu-item [fontawesome]="'fa-power-off'" [title]="'Logout'"></ng-menu-item>
-        </ng-menu>
-          <div id="mainPanelWrapWasp" style="padding-left: 60px" class="mainContent col-xs-12 col-sm-12 col-md-12 col-lg-11">
-            <router-outlet></router-outlet>
-          </div>
+            <ng-menu class="col-md-1" [routePrefix]="'App1'" [fileMenuMode]="true">
+                <ng-menu-item [fontawesome]="'fa-dashboard'" [title]="'Dashboard'"></ng-menu-item>
+                <ng-menu-item [fontawesome]="'fa-navicon'" [title]="'Campaigns'"></ng-menu-item>
+                <ng-menu-item [fontawesome]="'fa-certificate'" [title]="'Resources'"></ng-menu-item>
+                <ng-menu-item [fontawesome]="'fa-edit'" [title]="'Scenes'"></ng-menu-item>
+                <ng-menu-item [fontawesome]="'fa-laptop'" [title]="'Stations'"></ng-menu-item>
+                <ng-menu-item [fontawesome]="'fa-group'" [title]="'Fasterq'"></ng-menu-item>
+                <ng-menu-item [fontawesome]="'fa-cog'" [title]="'Settings'"></ng-menu-item>
+                <ng-menu-item [fontawesome]="'fa-cloud-upload'" [title]="'Studiopro'"></ng-menu-item>
+                <ng-menu-item [fontawesome]="'fa-power-off'" [title]="'Logout'"></ng-menu-item>
+            </ng-menu>
+            <div class="col-md-11" id="mainPanelWrapWasp" >
+                <router-outlet></router-outlet>
+            </div>
         </div>
     `
 })

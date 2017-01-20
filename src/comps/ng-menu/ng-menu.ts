@@ -10,12 +10,15 @@ import {Compbaser} from "ng-mslib";
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
             <ng-container *ngIf="fileMenuMode">
-                <section id="appNavigatorWasp" class="appMenu fill hidden-xs hidden-sm hidden-md col-lg-1">
-                     <li *ngFor="let item of items" (click)="listenMenuSelected(item.getTitle, $event)" data-ripple-color="white" class="btn btn-default list-group-item navicons">
-                        <i *ngIf="!m_hidden" (click)="listenMenuSelected(item.getTitle, $event)" class="iconSize fa {{item.getFontAwesome}}"></i>
-                        <span (click)="listenMenuSelected(item.getTitle, $event)">{{item.getTitle}}</span>
-                      </li>
-                  </section>
+                <div class="row">
+                    <section id="appNavigatorWasp" class="appMenu fill hidden-xs hidden-sm hidden-md col-lg-1">
+                         <li *ngFor="let item of items" (click)="listenMenuSelected(item.getTitle, $event)" data-ripple-color="white" class="btn btn-default list-group-item navicons">
+                            <i *ngIf="!m_hidden" (click)="listenMenuSelected(item.getTitle, $event)" class="iconSize fa {{item.getFontAwesome}}"></i>
+                            <span (click)="listenMenuSelected(item.getTitle, $event)">{{item.getTitle}}</span>
+                          </li>
+                      </section>
+                </div>
+                
             </ng-container>
             <ng-container *ngIf="!fileMenuMode">
                  <div>

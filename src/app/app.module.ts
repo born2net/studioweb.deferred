@@ -113,10 +113,3 @@ export class AppModule {
     }
 }
 
-// import {STORE_DEVTOOLS_CONFIG} from "@ngrx/store-devtools/src/config";
-// {
-//     provide: STORE_DEVTOOLS_CONFIG, useValue: {maxAge: 2, monitor: noMonitor}
-// },
-// export function noMonitor() {
-//     return null;
-// }
