@@ -21,10 +21,24 @@ import {Component, ChangeDetectionStrategy, ElementRef, Output, EventEmitter, Ch
             z-index: 200;
             border-left: 2px #bdbdbd solid;
         }
+        
+        .restorePanel {
+            position: absolute;
+            right: 0;
+            top: 10px;
+        }
+        
+        .fa-arrow-circle-right {
+            padding-top: 18px;
+        }
     `],
     template: `
+            <div class="hidden-xs hidden-sm restorePanel" *ngIf="!showSidePanel">
+                <a style="font-size: 1.5em ; color: #313335" href="#" class="btn fa fa-arrow-circle-left" (click)="_toggle($event)"></a>
+            </div>
+            
             <div class="hidden-xs hidden-sm col-md-2 col-lg-2 propPanelWrap">
-                <button class="btn fa fa-arrow-circle-right" (click)="_toggle()"></button>
+                <a style="font-size: 1.5em ; color: white" href="#" class="btn fa fa-arrow-circle-right" (click)="_toggle($event)"></a>
                 <ng-content></ng-content>
             </div>
     `
@@ -43,10 +57,8 @@ export class PanelSplitSide {
 
     private showSidePanel: boolean = true;
 
-    _toggle() {
-        setTimeout(() => {
-            this._toggle();
-        }, 2000)
+    _toggle(event:MouseEvent) {
+        event.preventDefault();
         this.showSidePanel = !this.showSidePanel;
         this.onToggle.emit(this.showSidePanel);
         if (this.showSidePanel) {
@@ -55,10 +67,7 @@ export class PanelSplitSide {
         } else {
             jQuery(this.el.nativeElement).find('.propPanelWrap').fadeOut(0)
             jQuery(this.el.nativeElement).find('.propPanelWrap').removeClass('col-md-2 col-lg-2')
-
         }
-
-
     }
 }
 
