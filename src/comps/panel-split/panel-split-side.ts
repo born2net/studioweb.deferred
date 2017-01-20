@@ -21,15 +21,10 @@ import {Component, ChangeDetectionStrategy, ElementRef, Output, EventEmitter, Ch
             z-index: 200;
             border-left: 2px #bdbdbd solid;
         }
-        
-        button {
-            width: 100px;
-            margin: 5px;
-        }
     `],
     template: `
             <div class="hidden-xs hidden-sm col-md-3 col-lg-3 propPanelWrap">
-                <button (click)="_toggle()">x</button>
+                <button class="btn fa fa-plus" (click)="_toggle()">x</button>
                 <ng-content></ng-content>
             </div>
     `

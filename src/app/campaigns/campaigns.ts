@@ -79,17 +79,6 @@ export class Campaigns extends Compbaser {
         })
     }
 
-    toggle(){
-        jQuery(this.el.nativeElement).find('.mainPanelWrap').removeClass('col-md-9 col-lg-9')
-        jQuery(this.el.nativeElement).find('.mainPanelWrap').addClass('col-md-12 col-lg-12')
-        jQuery(this.el.nativeElement).find('.propPanelWrap').removeClass('col-md-3 col-lg-3')
-
-        setTimeout(()=>{
-            jQuery(this.el.nativeElement).find('.mainPanelWrap').addClass('col-md-9 col-lg-9')
-            jQuery(this.el.nativeElement).find('.mainPanelWrap').removeClass('col-md-12 col-lg-12')
-            jQuery(this.el.nativeElement).find('.propPanelWrap').addClass('col-md-3 col-lg-3')
-        },3000)
-    }
 
     onRoute1() {
         this.router.navigate(['/App1/Campaigns'])

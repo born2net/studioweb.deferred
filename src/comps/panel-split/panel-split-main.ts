@@ -3,6 +3,7 @@ import {Component, ChangeDetectionStrategy, ElementRef, Output, EventEmitter} fr
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'panel-split-main',
+
     styles: [`
         .mainPanelWrap {
              border-left: 1px #808080 solid; 
