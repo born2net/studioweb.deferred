@@ -5,8 +5,11 @@ import {HttpModule, JsonpModule} from "@angular/http";
 import {Infobox} from "../comps/infobox/Infobox";
 import {Sliderpanel} from "../comps/sliderpanel/Sliderpanel";
 import {Slideritem} from "../comps/sliderpanel/Slideritem";
+import {PanelSplitMain} from "../comps/panel-split/panel-split-main";
+import {PanelSplitSide} from "../comps/panel-split/panel-split-side";
+import {PanelSplitContainer} from "../comps/panel-split/panel-split-container";
 
-var sharedComponents = [Infobox, Sliderpanel, Slideritem];
+var sharedComponents = [Infobox, Sliderpanel, Slideritem, PanelSplitMain, PanelSplitSide, PanelSplitContainer];
 
 @NgModule({
     imports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule],
