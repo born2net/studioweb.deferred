@@ -71,13 +71,6 @@ export class PanelSplitMain implements AfterContentInit {
     @timeout(500)
     private enableScroller(){
         jQuery('.ng-content-wrapper', this.el.nativeElement).css('overflow-y', 'scroll');
-
-        //     jQuery('.ng-content-wrapper', this.el.nativeElement)
-        //         .delay(500)
-        //         .queue(function (next) {
-        //             $(this).css('overflow-y', 'scroll');
-        //             next();
-        //         });
     }
 
     // @HostBinding('style.overflow')
@@ -100,3 +93,10 @@ export class PanelSplitMain implements AfterContentInit {
     }
 }
 
+
+//     jQuery('.ng-content-wrapper', this.el.nativeElement)
+//         .delay(500)
+//         .queue(function (next) {
+//             $(this).css('overflow-y', 'scroll');
+//             next();
+//         });
