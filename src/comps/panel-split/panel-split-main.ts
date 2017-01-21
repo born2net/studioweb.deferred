@@ -78,7 +78,7 @@ export class PanelSplitMain {
 
     @HostListener('window:resize')
     onResize() {
-        this.m_divHeight = jQuery('body').height() - 100;
+        this.m_divHeight = jQuery('body').height() - 10;
     }
 
     setFullScreen(value) {
