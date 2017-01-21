@@ -8,8 +8,9 @@ import {Slideritem} from "../comps/sliderpanel/Slideritem";
 import {PanelSplitMain} from "../comps/panel-split/panel-split-main";
 import {PanelSplitSide} from "../comps/panel-split/panel-split-side";
 import {PanelSplitContainer} from "../comps/panel-split/panel-split-container";
+import {ListToArrayPipe} from "../pipes/list-to-array-pipe";
 
-var sharedComponents = [Infobox, Sliderpanel, Slideritem, PanelSplitMain, PanelSplitSide, PanelSplitContainer];
+var sharedComponents = [Infobox, Sliderpanel, Slideritem, PanelSplitMain, PanelSplitSide, PanelSplitContainer, ListToArrayPipe];
 
 @NgModule({
     imports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule],

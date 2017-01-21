@@ -18,13 +18,11 @@ import {Compbaser} from "ng-mslib";
             transition('* => void', animate(333, style({opacity: 0})))
         ])
     ],
-    template: `
-                <h2>Account Dashboard</h2>
-                <chart [options]="options"></chart>
+    template: `<h2>Account Dashboard</h2>
+               <chart [options]="options"></chart>
     `,
 })
 export class Dashboard extends Compbaser {
-
     constructor() {
         super();
         this.options = {
@@ -36,6 +34,7 @@ export class Dashboard extends Compbaser {
     }
     options: Object;
 
+    
     destroy() {
     }
 }

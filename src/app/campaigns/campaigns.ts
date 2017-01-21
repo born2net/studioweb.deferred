@@ -13,6 +13,14 @@ import {RedPepperService} from "../../services/redpepper.service";
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'campaigns',
+    styles: [`
+        .ui-orderlist {
+            width: 400px;
+        }
+        .ui-orderlist-list {
+            width: 400px;
+        }
+    `],
     template: `
                     <h2>Campaigns</h2>
                     <button (click)="onRoute1()">camp</button>
@@ -47,13 +55,43 @@ import {RedPepperService} from "../../services/redpepper.service";
                             <li role="menuitem"><a class="dropdown-item" href="#">Separated link</a></li>
                         </ul>
                     </div>
+                    
+                    <!--<p-orderList [responsive]="true" [value]="campaigns$ | async">-->
+                        <!--<template let-car pTemplate="item">-->
+                            <!--<div class="ui-helper-clearfix">-->
+                                <!--&lt;!&ndash;<img src="showcase/resources/demo/images/car/{{car.brand}}.gif" style="display:inline-block;margin:2px 0 2px 2px"/>&ndash;&gt;-->
+                                <!--<div style="font-size:14px;float:right;margin:15px 5px 0 0">{{car.getCampaignName()}}</div>-->
+                            <!--</div>-->
+                        <!--</template>-->
+                    <!--</p-orderList>-->
+                    
+                    <p-orderList [responsive]="true" [value]="campaigns$ | async | ListToArrayPipe ">
+                        <template let-car pTemplate="item">
+                            <div class="ui-helper-clearfix">
+                                <!--<img src="showcase/resources/demo/images/car/{{car.brand}}.gif" style="display:inline-block;margin:2px 0 2px 2px"/>-->
+                                <div style="font-size:14px;float:left;margin:15px 5px 0 0">{{car.getCampaignName()}}</div>
+                            </div>
+                        </template>
+                    </p-orderList>
+                    
+                    <hr/>
+                    
+                    <!--<p-orderList [responsive]="true" [value]="cars">-->
+                        <!--<template let-car pTemplate="item">-->
+                            <!--<div class="ui-helper-clearfix">-->
+                                <!--&lt;!&ndash;<img src="showcase/resources/demo/images/car/{{car.brand}}.gif" style="display:inline-block;margin:2px 0 2px 2px"/>&ndash;&gt;-->
+                                <!--<div style="font-size:14px;float:right;margin:15px 5px 0 0">{{car.getCampaignName()}}</div>-->
+                            <!--</div>-->
+                        <!--</template>-->
+                    <!--</p-orderList>-->
+                    
     `
 })
 export class Campaigns extends Compbaser {
 
     public campaigns$: Observable<any>;
     public userModel$: Observable<UserModel>;
-
+    cars;
     constructor(private el:ElementRef, private store: Store<ApplicationState>, private redPepperService: RedPepperService, private router: Router) {
         super();
 
@@ -67,6 +105,8 @@ export class Campaigns extends Compbaser {
         }, 500)
         this.userModel$ = this.store.select(store => store.appDb.userModel);
         this.campaigns$ = this.store.select(store => store.msDatabase.sdk.table_campaigns).map((list: List<CampaignsModal>) => {
+            this.cars = list;//.toArray();
+            console.log(this.cars.length);
             return list.filter((campaignModel: CampaignsModal) => {
                 if (campaignModel.getCampaignName().indexOf('bla_bla') > -1)
                     return false
