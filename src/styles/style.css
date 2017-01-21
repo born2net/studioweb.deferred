@@ -102,13 +102,13 @@ aside > aside > div > ul > li {
     padding-top: 100px;
 }
 
-#domRoot {
-    min-height: 100%;
-    height: auto;
-    margin: 0 auto -60px; /* respective of footer */
-    padding: 0 0 60px; /* respective of footer */
-    background-color: #f5f5f5;
-}
+/*#domRoot {*/
+    /*min-height: 100%;*/
+    /*height: auto;*/
+    /*margin: 0 auto -60px; !* respective of footer *!*/
+    /*padding: 0 0 60px; !* respective of footer *!*/
+    /*background-color: #f5f5f5;*/
+/*}*/
 
 #appHeaderName {
     float: left;
@@ -206,55 +206,56 @@ aside > aside > div > ul > li {
 /*min-height: 55px;*/
 /*}*/
 
-#mainPanelWrap {
-    border-right: 2px #d9d9d9 solid;
-    padding-left: 40px;
-}
-
-#propPanel, #mainPanelWrap {
-    /*height: 200px;*/
-    /*border-left: 2px #d9d9d9 solid;*/
+/*#mainPanelWrap {*/
+    /*border-right: 2px #d9d9d9 solid;*/
     /*padding-left: 40px;*/
-    -webkit-transition: width 0.1s ease, margin 0.1s ease;
-    -moz-transition: width 0.1s ease, margin 0.1s ease;
-    -o-transition: width 0.1s ease, margin 0.1s ease;
-    transition: width 0.1s ease, margin 0.1s ease;
-}
+    /*min-height: 100%;*/
+/*}*/
 
-#propPanel {
-    margin: 0 auto;
-    height: 100%;
-    padding-top: 15px;
-    /* overflow-y: scroll; */
-    width: 250px; /* properties panel width we have to work with to display all app props */
-    /* background-color: #fff5ba; */
-}
+/*#propPanel, #mainPanelWrap {*/
+    /*!*height: 200px;*!*/
+    /*!*border-left: 2px #d9d9d9 solid;*!*/
+    /*!*padding-left: 40px;*!*/
+    /*-webkit-transition: width 0.1s ease, margin 0.1s ease;*/
+    /*-moz-transition: width 0.1s ease, margin 0.1s ease;*/
+    /*-o-transition: width 0.1s ease, margin 0.1s ease;*/
+    /*transition: width 0.1s ease, margin 0.1s ease;*/
+/*}*/
 
-#appEverNodesContent {
-    height: 100%;
-    width: 100%;
-    min-height: 100%;
-    min-width: 100%;
-    /* background-color: pink; */
-}
+/*#propPanel {*/
+    /*margin: 0 auto;*/
+    /*height: 100%;*/
+    /*padding-top: 15px;*/
+    /*!* overflow-y: scroll; *!*/
+    /*width: 250px; !* properties panel width we have to work with to display all app props *!*/
+    /*!* background-color: #fff5ba; *!*/
+/*}*/
 
-#footer {
-    height: 60px; /* respective of footer */
-    background-color: #222222;
-}
+/*#appEverNodesContent {*/
+    /*height: 100%;*/
+    /*width: 100%;*/
+    /*min-height: 100%;*/
+    /*min-width: 100%;*/
+    /*!* background-color: pink; *!*/
+/*}*/
 
-#footer i {
-    font-size: 2em;
-    padding-left: 20px;
-    padding-right: 5px;
-    color: #358ac9;
-}
+/*#footer {*/
+    /*height: 60px; !* respective of footer *!*/
+    /*background-color: #222222;*/
+/*}*/
 
-#footerText {
-    color: #808080;
-    padding: 0px;
-    margin: 0px;
-}
+/*#footer i {*/
+    /*font-size: 2em;*/
+    /*padding-left: 20px;*/
+    /*padding-right: 5px;*/
+    /*color: #358ac9;*/
+/*}*/
+
+/*#footerText {*/
+    /*color: #808080;*/
+    /*padding: 0px;*/
+    /*margin: 0px;*/
+/*}*/
 
 #appNavigatorWasp {
     position: fixed;
@@ -299,18 +300,18 @@ aside > aside > div > ul > li {
     padding: 20px;
 }
 
-#campaignProperties {
-    padding-top: 10px;
-    padding-right: 10px;
-}
+/*#campaignProperties {*/
+    /*padding-top: 10px;*/
+    /*padding-right: 10px;*/
+/*}*/
 
-#appMailWaspContent {
-    height: 100%;
-    width: 100%;
-    min-height: 100%;
-    min-width: 100%;
-    /* background-color: pink; */
-}
+/*#appMailWaspContent {*/
+    /*height: 100%;*/
+    /*width: 100%;*/
+    /*min-height: 100%;*/
+    /*min-width: 100%;*/
+    /*!* background-color: pink; *!*/
+/*}*/
 
 .noScroll {
     overflow: hidden;
@@ -322,16 +323,16 @@ aside > aside > div > ul > li {
 
 }
 
-.headerPropIcon {
-    position: fixed !important;
-    top: 0px !important;
-    color: #f5f5f5;
-    right: 50px !important;
-    z-index: 1500;
-    background-color: #151515;
-    float: right;
-    border: black;
-}
+/*.headerPropIcon {*/
+    /*position: fixed !important;*/
+    /*top: 0px !important;*/
+    /*color: #f5f5f5;*/
+    /*right: 50px !important;*/
+    /*z-index: 1500;*/
+    /*background-color: #151515;*/
+    /*float: right;*/
+    /*border: black;*/
+/*}*/
 
 .yScroll {
     overflow-y: scroll;
