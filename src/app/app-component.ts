@@ -7,13 +7,12 @@ import {ToastsManager} from "ng2-toastr";
 import {Consts} from "../Conts";
 import {Observable} from "rxjs";
 import * as packageJson from "../../package.json";
-import * as _ from 'lodash';
 import {AuthService} from "../services/AuthService";
 import {LocalStorage} from "../services/LocalStorage";
 
 @Component({
     selector: 'app-root',
-    templateUrl: './app.component.html'
+    templateUrl: './app-component.html'
 })
 export class AppComponent {
     version: string;
