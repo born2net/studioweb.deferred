@@ -17,7 +17,7 @@ import {Compbaser} from "ng-mslib";
             transition('* => void', animate(333, style({opacity: 0})))
         ])
     ],
-    templateUrl: './campaigns.navigation.html'
+    templateUrl: './campaigns-navigation.html'
 })
 export class CampaignsNavigation extends Compbaser {
 }

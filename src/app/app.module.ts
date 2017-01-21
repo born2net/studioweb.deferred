@@ -37,7 +37,7 @@ import {environment} from "../environments/environment";
 import {productionReducer} from "../store/store.data";
 import {NgmslibService} from "ng-mslib";
 import {SharedModule} from "../modules/shared.module";
-import {Dashboard} from "./dashboard/dashboard.navigation";
+import {Dashboard} from "./dashboard/dashboard-navigation";
 import {Appwrap} from "./appwrap";
 import "hammerjs";
 import "fabric";
