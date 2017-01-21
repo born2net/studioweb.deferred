@@ -6,7 +6,6 @@ import {Component, ChangeDetectionStrategy, ElementRef, Output, EventEmitter} fr
 
     styles: [`
         .mainPanelWrap {
-             border-left: 1px #808080 solid; 
             -webkit-transition: width 0.1s ease, margin 0.1s ease;
             -moz-transition: width 0.1s ease, margin 0.1s ease;
             -o-transition: width 0.1s ease, margin 0.1s ease;
@@ -22,7 +21,7 @@ import {Component, ChangeDetectionStrategy, ElementRef, Output, EventEmitter} fr
         }
     `],
     template: `
-            <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 mainPanelWrap">            
+            <div class="col-xs-7 col-sm-8 col-md-9 col-lg-10 mainPanelWrap">            
                 <ng-content></ng-content>
             </div>
     `
@@ -33,13 +32,15 @@ export class PanelSplitMain {
 
     }
 
+
     setFullScreen(value) {
         if (!value) {
-            jQuery(this.el.nativeElement).find('.mainPanelWrap').removeClass('col-md-10 col-lg-10')
-            jQuery(this.el.nativeElement).find('.mainPanelWrap').addClass('col-md-12 col-lg-12')
+            // full screen
+            jQuery(this.el.nativeElement).find('.mainPanelWrap').removeClass('col-xs-7 col-sm-8 col-md-9 col-lg-10')
+            jQuery(this.el.nativeElement).find('.mainPanelWrap').addClass('col-xs-12')
         } else {
-            jQuery(this.el.nativeElement).find('.mainPanelWrap').addClass('col-md-10 col-lg-10')
-            jQuery(this.el.nativeElement).find('.mainPanelWrap').removeClass('col-md-12 col-lg-12')
+            jQuery(this.el.nativeElement).find('.mainPanelWrap').addClass('col-xs-7 col-sm-8 col-md-9 col-lg-10')
+            jQuery(this.el.nativeElement).find('.mainPanelWrap').removeClass('col-xs-12')
         }
 
     }

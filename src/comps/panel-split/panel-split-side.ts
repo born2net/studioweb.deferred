@@ -9,6 +9,7 @@ import {Component, ChangeDetectionStrategy, ElementRef, Output, EventEmitter, Ch
             min-height: 100%;
             max-height: 100%;
             right: 0;
+            top: 0;
             height: 100%;
             overflow: hidden;
             -webkit-transition: width 0.1s ease, margin 0.1s ease;
@@ -25,19 +26,21 @@ import {Component, ChangeDetectionStrategy, ElementRef, Output, EventEmitter, Ch
         .restorePanel {
             position: absolute;
             right: 0;
-            top: 10px;
+            top: 3px;
         }
         
         .fa-arrow-circle-right {
-            padding-top: 18px;
+            padding-top: 60px;
         }
     `],
     template: `
-            <div class="hidden-xs hidden-sm restorePanel" *ngIf="!showSidePanel">
+            <!--<div class="hidden-xs hidden-sm restorePanel" *ngIf="!showSidePanel">-->
+            <div class="restorePanel" *ngIf="!showSidePanel">
                 <a style="font-size: 1.5em ; color: #313335" href="#" class="btn fa fa-arrow-circle-left" (click)="_toggle($event)"></a>
             </div>
             
-            <div class="hidden-xs hidden-sm col-md-2 col-lg-2 propPanelWrap">
+            <!--<div class="hidden-xs hidden-sm col-md-2 col-lg-2 propPanelWrap">-->
+            <div class="col-xs-5 col-sm-4 col-md-3 col-lg-2 propPanelWrap">
                 <a style="font-size: 1.5em ; color: white" href="#" class="btn fa fa-arrow-circle-right" (click)="_toggle($event)"></a>
                 <ng-content></ng-content>
             </div>
@@ -62,11 +65,11 @@ export class PanelSplitSide {
         this.showSidePanel = !this.showSidePanel;
         this.onToggle.emit(this.showSidePanel);
         if (this.showSidePanel) {
-            jQuery(this.el.nativeElement).find('.propPanelWrap').addClass('col-md-2 col-lg-2')
+            jQuery(this.el.nativeElement).find('.propPanelWrap').addClass('col-xs-7 col-sm-8 col-md-9 col-lg-10')
             jQuery(this.el.nativeElement).find('.propPanelWrap').fadeIn('50')
         } else {
             jQuery(this.el.nativeElement).find('.propPanelWrap').fadeOut(0)
-            jQuery(this.el.nativeElement).find('.propPanelWrap').removeClass('col-md-2 col-lg-2')
+            jQuery(this.el.nativeElement).find('.propPanelWrap').removeClass('col-xs-7 col-sm-8 col-md-9 col-lg-10')
         }
     }
 }
