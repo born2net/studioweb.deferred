@@ -1,31 +1,31 @@
-import {Component, ChangeDetectionStrategy, ElementRef, Output, EventEmitter, HostListener} from "@angular/core";
+import {Component, ChangeDetectionStrategy, ElementRef, HostListener} from "@angular/core";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'panel-split-main',
 
     styles: [`
-        .mmm {
-                overflow: auto;
+        .ng-content-wrapper {
+                overflow-y: hidden;
                 margin-left: 5px;
         }
         @media (min-width: 767px) {
-             .mmm {
+             .ng-content-wrapper {
                 margin-right: 60px;
             }
         }
         @media (min-width: 768px) {
-             .mmm {
+             .ng-content-wrapper {
                 margin-right: 10px;
             }
         }
         @media (min-width: 992px) {
-             .mmm {
+             .ng-content-wrapper {
                 margin-right: 30px;
             }
         }
         @media (min-width: 1900px) {
-             .mmm {
+             .ng-content-wrapper {
                 margin-right: 30px;
             }
         }
@@ -48,8 +48,8 @@ import {Component, ChangeDetectionStrategy, ElementRef, Output, EventEmitter, Ho
     `],
     template: `
             <div #parentdiv class="col-xs-7 col-sm-8 col-md-9 col-lg-10 mainPanelWrap">
-                <!--<div class="mmm" [style.height.px]="parentdiv.clientHeight">-->
-                <div class="mmm" [style.height.px]="divHeight">
+                <!--<div class="ng-content-wrapper" [style.height.px]="parentdiv.clientHeight">-->
+                <div class="ng-content-wrapper" [style.height.px]="m_divHeight">
                     <ng-content></ng-content>
                 </div>
             </div>
@@ -58,32 +58,28 @@ import {Component, ChangeDetectionStrategy, ElementRef, Output, EventEmitter, Ho
 export class PanelSplitMain {
 
     constructor(private el: ElementRef) {
-
     }
 
-    divHeight;
+    m_divHeight;
 
-    ngAfterViewInit(){
-        // this.divHeight = jQuery('body').innerHeight();
-        // jQuery(this.el.nativeElement).find('.propPanelWrap').height(h-100);
-        // this.onResize();
-    }
 
-    ngAfterContentInit(){
+    ngAfterContentInit() {
+        jQuery('.ng-content-wrapper', this.el.nativeElement)
+            .delay(500)
+            .queue(function (next) {
+                $(this).css('overflow-y', 'scroll');
+                next();
+            });
         this.onResize();
     }
 
-    //
-    // @HostBinding('style.height.px')
-    // boxHeight: number = 5000;
-    //
+    // @HostBinding('style.overflow')
+    // overFlow;
+
     @HostListener('window:resize')
     onResize() {
-        this.divHeight = jQuery('body').height() -  100;
-        console.log(this.divHeight);
-        // jQuery(this.el.nativeElement).find('.propPanelWrap').height(h-100);
+        this.m_divHeight = jQuery('body').height() - 100;
     }
-
 
     setFullScreen(value) {
         if (!value) {
@@ -94,9 +90,6 @@ export class PanelSplitMain {
             jQuery(this.el.nativeElement).find('.mainPanelWrap').addClass('col-xs-7 col-sm-8 col-md-9 col-lg-10')
             jQuery(this.el.nativeElement).find('.mainPanelWrap').removeClass('col-xs-12')
         }
-
     }
-
-
 }
 
