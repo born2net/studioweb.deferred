@@ -39,7 +39,12 @@ src/**/*.map
 .DS_Store
 Thumbs.db
 
-!service-worker.js
 !signageSDK.js
-!src/store/*.js
+!service-worker.js
+!src/store/pepper.helper.lib.js
+!src/store/signage_sdk.js
 !/temp/*.js
+#src/store/application.state.js
+#src/store/imsdb.interfaces.js
+#src/store/imsdb.interfaces_auto.js
+#src/store/store.data.js

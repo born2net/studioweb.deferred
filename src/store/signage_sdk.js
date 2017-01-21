@@ -1,4 +1,4 @@
-//todo: Alon add this logic for offline
+//todo: Alon need to add this logic for offline
 
 jQuery.ajaxSetup({
     cache: false,
