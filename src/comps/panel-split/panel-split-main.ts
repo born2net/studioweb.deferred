@@ -1,4 +1,5 @@
-import {Component, ChangeDetectionStrategy, ElementRef, HostListener} from "@angular/core";
+import {Component, ChangeDetectionStrategy, ElementRef, HostListener, AfterContentInit} from "@angular/core";
+import {timeout} from "../../decorators/timeout-decorator";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -55,22 +56,28 @@ import {Component, ChangeDetectionStrategy, ElementRef, HostListener} from "@ang
             </div>
     `
 })
-export class PanelSplitMain {
+export class PanelSplitMain implements AfterContentInit {
 
     constructor(private el: ElementRef) {
     }
 
     m_divHeight;
 
-
     ngAfterContentInit() {
-        jQuery('.ng-content-wrapper', this.el.nativeElement)
-            .delay(500)
-            .queue(function (next) {
-                $(this).css('overflow-y', 'scroll');
-                next();
-            });
         this.onResize();
+        this.enableScroller();
+    }
+
+    @timeout(500)
+    private enableScroller(){
+        jQuery('.ng-content-wrapper', this.el.nativeElement).css('overflow-y', 'scroll');
+
+        //     jQuery('.ng-content-wrapper', this.el.nativeElement)
+        //         .delay(500)
+        //         .queue(function (next) {
+        //             $(this).css('overflow-y', 'scroll');
+        //             next();
+        //         });
     }
 
     // @HostBinding('style.overflow')
