@@ -1,14 +1,16 @@
-import {Directive, ElementRef, HostListener} from "@angular/core";
+import {Directive, ElementRef, HostListener, Input} from "@angular/core";
 import {timeout} from "../../decorators/timeout-decorator";
 
 @Directive({
-    selector: '[match-height]'
+    selector: '[matchheight]'
 })
 export class MatchHeight {
 
     constructor(private el: ElementRef) {
         console.log(this.el);
     }
+
+    @Input() matchheight:number = 50;
 
     ngAfterContentInit() {
         this.onResize();
@@ -24,7 +26,7 @@ export class MatchHeight {
 
     @HostListener('window:resize')
     onResize() {
-        var bodyHeight = jQuery('body').height() - 150;
+        var bodyHeight = jQuery('body').height() - this.matchheight;
         jQuery(this.el.nativeElement).height(bodyHeight);
     }
 

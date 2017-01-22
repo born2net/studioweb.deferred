@@ -33,7 +33,7 @@
 <button class="btn btn-primary" (click)="save()">save to server</button>
 
 <div class="responsive-pad-right">
-    <div match-height  style="overflow: scroll">
+    <div matchheight="250"  style="overflow: scroll">
         <ul (click)="$event.preventDefault()" class="appList list-group">
             <a href="#" class="list-group-item" *ngFor="let campaign of campaigns$ | async">
                 <h4>{{campaign?.getCampaignName()}}</h4>
