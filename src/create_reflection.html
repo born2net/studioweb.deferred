@@ -76,7 +76,7 @@ export interface IBaseProto {
 export interface ISDK {
         `;
         _.forEach(msdb.m_selectedDataBase.m_tableList, (k, v) => {
-            var storeName = capitalizeFirstLetter(S(k).camelize().s) + 'Modal';
+            var storeName = capitalizeFirstLetter(S(k).camelize().s) + 'Model';
             var storeTemplate = `
         table_${k}?: List&lt;${storeName}&gt;;`;
             allReduxStores = `${allReduxStores} ${storeTemplate}`
@@ -124,7 +124,7 @@ ${b2}
         // build StoreModels
         var allStores = 'import {StoreModel} from "../store/model/StoreModel";\n';
         _.forEach(msdb.m_selectedDataBase.m_tableList, (table, v) => {
-            var storeName = capitalizeFirstLetter(S(table).camelize().s) + 'Modal';
+            var storeName = capitalizeFirstLetter(S(table).camelize().s) + 'Model';
             var fields = modelFields['table_' + table];
             var fieldNames = '';
             _.forEach(fields, (fieldName) => {

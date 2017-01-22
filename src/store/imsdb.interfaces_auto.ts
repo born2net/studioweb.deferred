@@ -6,7 +6,7 @@ import {List} from 'immutable';
 
 import {StoreModel} from "../store/model/StoreModel";
 
-export class GlobalSettingsModal extends StoreModel {
+export class GlobalSettingsModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getParamId() {
@@ -30,7 +30,7 @@ export class GlobalSettingsModal extends StoreModel {
     }
 
 }
-export class ResourcesModal extends StoreModel {
+export class ResourcesModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getResourceId() {
@@ -122,7 +122,7 @@ export class ResourcesModal extends StoreModel {
     }
 
 }
-export class AdLocalPackagesModal extends StoreModel {
+export class AdLocalPackagesModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getAdLocalPackageId() {
@@ -158,7 +158,7 @@ export class AdLocalPackagesModal extends StoreModel {
     }
 
 }
-export class AdLocalContentsModal extends StoreModel {
+export class AdLocalContentsModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getAdLocalContentId() {
@@ -186,7 +186,7 @@ export class AdLocalContentsModal extends StoreModel {
     }
 
 }
-export class CategoryValuesModal extends StoreModel {
+export class CategoryValuesModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getCategoryValueId() {
@@ -210,7 +210,7 @@ export class CategoryValuesModal extends StoreModel {
     }
 
 }
-export class CatalogItemsModal extends StoreModel {
+export class CatalogItemsModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getCatalogItemId() {
@@ -234,7 +234,7 @@ export class CatalogItemsModal extends StoreModel {
     }
 
 }
-export class CatalogItemInfosModal extends StoreModel {
+export class CatalogItemInfosModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getCatalogItemId() {
@@ -266,7 +266,7 @@ export class CatalogItemInfosModal extends StoreModel {
     }
 
 }
-export class CatalogItemResourcesModal extends StoreModel {
+export class CatalogItemResourcesModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getCatalogItemResourceId() {
@@ -294,7 +294,7 @@ export class CatalogItemResourcesModal extends StoreModel {
     }
 
 }
-export class CatalogItemCategoriesModal extends StoreModel {
+export class CatalogItemCategoriesModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getCatalogItemCategoryId() {
@@ -318,7 +318,7 @@ export class CatalogItemCategoriesModal extends StoreModel {
     }
 
 }
-export class PlayerDataModal extends StoreModel {
+export class PlayerDataModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getPlayerDataId() {
@@ -354,7 +354,7 @@ export class PlayerDataModal extends StoreModel {
     }
 
 }
-export class BoardsModal extends StoreModel {
+export class BoardsModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getBoardId() {
@@ -398,7 +398,7 @@ export class BoardsModal extends StoreModel {
     }
 
 }
-export class CampaignsModal extends StoreModel {
+export class CampaignsModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getCampaignId() {
@@ -450,7 +450,7 @@ export class CampaignsModal extends StoreModel {
     }
 
 }
-export class CampaignChannelsModal extends StoreModel {
+export class CampaignChannelsModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getCampaignChannelId() {
@@ -490,7 +490,7 @@ export class CampaignChannelsModal extends StoreModel {
     }
 
 }
-export class CampaignChannelPlayersModal extends StoreModel {
+export class CampaignChannelPlayersModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getCampaignChannelPlayerId() {
@@ -530,7 +530,7 @@ export class CampaignChannelPlayersModal extends StoreModel {
     }
 
 }
-export class CampaignTimelinesModal extends StoreModel {
+export class CampaignTimelinesModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getCampaignTimelineId() {
@@ -558,7 +558,7 @@ export class CampaignTimelinesModal extends StoreModel {
     }
 
 }
-export class CampaignEventsModal extends StoreModel {
+export class CampaignEventsModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getCampaignEventId() {
@@ -602,7 +602,7 @@ export class CampaignEventsModal extends StoreModel {
     }
 
 }
-export class CampaignBoardsModal extends StoreModel {
+export class CampaignBoardsModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getCampaignBoardId() {
@@ -638,7 +638,7 @@ export class CampaignBoardsModal extends StoreModel {
     }
 
 }
-export class BoardTemplatesModal extends StoreModel {
+export class BoardTemplatesModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getBoardTemplateId() {
@@ -662,7 +662,7 @@ export class BoardTemplatesModal extends StoreModel {
     }
 
 }
-export class BoardTemplateViewersModal extends StoreModel {
+export class BoardTemplateViewersModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getBoardTemplateViewerId() {
@@ -714,7 +714,7 @@ export class BoardTemplateViewersModal extends StoreModel {
     }
 
 }
-export class CampaignTimelineChanelsModal extends StoreModel {
+export class CampaignTimelineChanelsModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getCampaignTimelineChanelId() {
@@ -754,7 +754,7 @@ export class CampaignTimelineChanelsModal extends StoreModel {
     }
 
 }
-export class CampaignTimelineChannelsModal extends StoreModel {
+export class CampaignTimelineChannelsModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getCampaignTimelineChannelId() {
@@ -774,7 +774,7 @@ export class CampaignTimelineChannelsModal extends StoreModel {
     }
 
 }
-export class CampaignTimelineBoardTemplatesModal extends StoreModel {
+export class CampaignTimelineBoardTemplatesModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getCampaignTimelineBoardTemplateId() {
@@ -810,7 +810,7 @@ export class CampaignTimelineBoardTemplatesModal extends StoreModel {
     }
 
 }
-export class CampaignTimelineBoardViewerChanelsModal extends StoreModel {
+export class CampaignTimelineBoardViewerChanelsModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getCampaignTimelineBoardViewerChanelId() {
@@ -838,7 +838,7 @@ export class CampaignTimelineBoardViewerChanelsModal extends StoreModel {
     }
 
 }
-export class CampaignTimelineBoardViewerChannelsModal extends StoreModel {
+export class CampaignTimelineBoardViewerChannelsModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getCampaignTimelineBoardViewerChannelId() {
@@ -866,7 +866,7 @@ export class CampaignTimelineBoardViewerChannelsModal extends StoreModel {
     }
 
 }
-export class CampaignTimelineChanelPlayersModal extends StoreModel {
+export class CampaignTimelineChanelPlayersModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getCampaignTimelineChanelPlayerId() {
@@ -914,7 +914,7 @@ export class CampaignTimelineChanelPlayersModal extends StoreModel {
     }
 
 }
-export class CampaignTimelineSchedulesModal extends StoreModel {
+export class CampaignTimelineSchedulesModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getCampaignTimelineScheduleId() {
@@ -974,7 +974,7 @@ export class CampaignTimelineSchedulesModal extends StoreModel {
     }
 
 }
-export class CampaignTimelineSequencesModal extends StoreModel {
+export class CampaignTimelineSequencesModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getCampaignTimelineSequenceId() {
@@ -1006,7 +1006,7 @@ export class CampaignTimelineSequencesModal extends StoreModel {
     }
 
 }
-export class ScriptsModal extends StoreModel {
+export class ScriptsModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getScriptId() {
@@ -1026,7 +1026,7 @@ export class ScriptsModal extends StoreModel {
     }
 
 }
-export class MusicChannelsModal extends StoreModel {
+export class MusicChannelsModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getMusicChannelId() {
@@ -1054,7 +1054,7 @@ export class MusicChannelsModal extends StoreModel {
     }
 
 }
-export class MusicChannelSongsModal extends StoreModel {
+export class MusicChannelSongsModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getMusicChannelSongId() {
@@ -1078,7 +1078,7 @@ export class MusicChannelSongsModal extends StoreModel {
     }
 
 }
-export class BranchStationsModal extends StoreModel {
+export class BranchStationsModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getBranchStationId() {
@@ -1278,7 +1278,7 @@ export class BranchStationsModal extends StoreModel {
     }
 
 }
-export class AdRatesModal extends StoreModel {
+export class AdRatesModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getAdRateId() {
@@ -1318,7 +1318,7 @@ export class AdRatesModal extends StoreModel {
     }
 
 }
-export class StationAdsModal extends StoreModel {
+export class StationAdsModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getBranchStationId() {
@@ -1350,7 +1350,7 @@ export class StationAdsModal extends StoreModel {
     }
 
 }
-export class AdOutPackagesModal extends StoreModel {
+export class AdOutPackagesModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getAdOutPackageId() {
@@ -1378,7 +1378,7 @@ export class AdOutPackagesModal extends StoreModel {
     }
 
 }
-export class AdOutPackageContentsModal extends StoreModel {
+export class AdOutPackageContentsModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getAdOutPackageContentId() {
@@ -1414,7 +1414,7 @@ export class AdOutPackageContentsModal extends StoreModel {
     }
 
 }
-export class AdOutPackageStationsModal extends StoreModel {
+export class AdOutPackageStationsModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getAdOutPackageStationId() {
@@ -1458,7 +1458,7 @@ export class AdOutPackageStationsModal extends StoreModel {
     }
 
 }
-export class AdInDomainsModal extends StoreModel {
+export class AdInDomainsModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getAdInDomainId() {
@@ -1482,7 +1482,7 @@ export class AdInDomainsModal extends StoreModel {
     }
 
 }
-export class AdInDomainBusinessesModal extends StoreModel {
+export class AdInDomainBusinessesModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getAdInDomainBusinessId() {
@@ -1510,7 +1510,7 @@ export class AdInDomainBusinessesModal extends StoreModel {
     }
 
 }
-export class AdInDomainBusinessPackagesModal extends StoreModel {
+export class AdInDomainBusinessPackagesModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getAdInDomainBusinessPackageId() {
@@ -1546,7 +1546,7 @@ export class AdInDomainBusinessPackagesModal extends StoreModel {
     }
 
 }
-export class AdInDomainBusinessPackageStationsModal extends StoreModel {
+export class AdInDomainBusinessPackageStationsModel extends StoreModel {
     constructor(data: any = {}) {super(data);}
 
     public getAdInDomainBusinessPackageStationId() {
@@ -1583,46 +1583,46 @@ export class AdInDomainBusinessPackageStationsModal extends StoreModel {
 
 export interface ISDK {
 
-    table_global_settings?: List<GlobalSettingsModal>;
-    table_resources?: List<ResourcesModal>;
-    table_ad_local_packages?: List<AdLocalPackagesModal>;
-    table_ad_local_contents?: List<AdLocalContentsModal>;
-    table_category_values?: List<CategoryValuesModal>;
-    table_catalog_items?: List<CatalogItemsModal>;
-    table_catalog_item_infos?: List<CatalogItemInfosModal>;
-    table_catalog_item_resources?: List<CatalogItemResourcesModal>;
-    table_catalog_item_categories?: List<CatalogItemCategoriesModal>;
-    table_player_data?: List<PlayerDataModal>;
-    table_boards?: List<BoardsModal>;
-    table_campaigns?: List<CampaignsModal>;
-    table_campaign_channels?: List<CampaignChannelsModal>;
-    table_campaign_channel_players?: List<CampaignChannelPlayersModal>;
-    table_campaign_timelines?: List<CampaignTimelinesModal>;
-    table_campaign_events?: List<CampaignEventsModal>;
-    table_campaign_boards?: List<CampaignBoardsModal>;
-    table_board_templates?: List<BoardTemplatesModal>;
-    table_board_template_viewers?: List<BoardTemplateViewersModal>;
-    table_campaign_timeline_chanels?: List<CampaignTimelineChanelsModal>;
-    table_campaign_timeline_channels?: List<CampaignTimelineChannelsModal>;
-    table_campaign_timeline_board_templates?: List<CampaignTimelineBoardTemplatesModal>;
-    table_campaign_timeline_board_viewer_chanels?: List<CampaignTimelineBoardViewerChanelsModal>;
-    table_campaign_timeline_board_viewer_channels?: List<CampaignTimelineBoardViewerChannelsModal>;
-    table_campaign_timeline_chanel_players?: List<CampaignTimelineChanelPlayersModal>;
-    table_campaign_timeline_schedules?: List<CampaignTimelineSchedulesModal>;
-    table_campaign_timeline_sequences?: List<CampaignTimelineSequencesModal>;
-    table_scripts?: List<ScriptsModal>;
-    table_music_channels?: List<MusicChannelsModal>;
-    table_music_channel_songs?: List<MusicChannelSongsModal>;
-    table_branch_stations?: List<BranchStationsModal>;
-    table_ad_rates?: List<AdRatesModal>;
-    table_station_ads?: List<StationAdsModal>;
-    table_ad_out_packages?: List<AdOutPackagesModal>;
-    table_ad_out_package_contents?: List<AdOutPackageContentsModal>;
-    table_ad_out_package_stations?: List<AdOutPackageStationsModal>;
-    table_ad_in_domains?: List<AdInDomainsModal>;
-    table_ad_in_domain_businesses?: List<AdInDomainBusinessesModal>;
-    table_ad_in_domain_business_packages?: List<AdInDomainBusinessPackagesModal>;
-    table_ad_in_domain_business_package_stations?: List<AdInDomainBusinessPackageStationsModal>;
+    table_global_settings?: List<GlobalSettingsModel>;
+    table_resources?: List<ResourcesModel>;
+    table_ad_local_packages?: List<AdLocalPackagesModel>;
+    table_ad_local_contents?: List<AdLocalContentsModel>;
+    table_category_values?: List<CategoryValuesModel>;
+    table_catalog_items?: List<CatalogItemsModel>;
+    table_catalog_item_infos?: List<CatalogItemInfosModel>;
+    table_catalog_item_resources?: List<CatalogItemResourcesModel>;
+    table_catalog_item_categories?: List<CatalogItemCategoriesModel>;
+    table_player_data?: List<PlayerDataModel>;
+    table_boards?: List<BoardsModel>;
+    table_campaigns?: List<CampaignsModel>;
+    table_campaign_channels?: List<CampaignChannelsModel>;
+    table_campaign_channel_players?: List<CampaignChannelPlayersModel>;
+    table_campaign_timelines?: List<CampaignTimelinesModel>;
+    table_campaign_events?: List<CampaignEventsModel>;
+    table_campaign_boards?: List<CampaignBoardsModel>;
+    table_board_templates?: List<BoardTemplatesModel>;
+    table_board_template_viewers?: List<BoardTemplateViewersModel>;
+    table_campaign_timeline_chanels?: List<CampaignTimelineChanelsModel>;
+    table_campaign_timeline_channels?: List<CampaignTimelineChannelsModel>;
+    table_campaign_timeline_board_templates?: List<CampaignTimelineBoardTemplatesModel>;
+    table_campaign_timeline_board_viewer_chanels?: List<CampaignTimelineBoardViewerChanelsModel>;
+    table_campaign_timeline_board_viewer_channels?: List<CampaignTimelineBoardViewerChannelsModel>;
+    table_campaign_timeline_chanel_players?: List<CampaignTimelineChanelPlayersModel>;
+    table_campaign_timeline_schedules?: List<CampaignTimelineSchedulesModel>;
+    table_campaign_timeline_sequences?: List<CampaignTimelineSequencesModel>;
+    table_scripts?: List<ScriptsModel>;
+    table_music_channels?: List<MusicChannelsModel>;
+    table_music_channel_songs?: List<MusicChannelSongsModel>;
+    table_branch_stations?: List<BranchStationsModel>;
+    table_ad_rates?: List<AdRatesModel>;
+    table_station_ads?: List<StationAdsModel>;
+    table_ad_out_packages?: List<AdOutPackagesModel>;
+    table_ad_out_package_contents?: List<AdOutPackageContentsModel>;
+    table_ad_out_package_stations?: List<AdOutPackageStationsModel>;
+    table_ad_in_domains?: List<AdInDomainsModel>;
+    table_ad_in_domain_businesses?: List<AdInDomainBusinessesModel>;
+    table_ad_in_domain_business_packages?: List<AdInDomainBusinessPackagesModel>;
+    table_ad_in_domain_business_package_stations?: List<AdInDomainBusinessPackageStationsModel>;
 
 }
 

@@ -1,6 +1,6 @@
-import {CampaignsModal} from "../imsdb.interfaces_auto";
+import {CampaignsModel} from "../imsdb.interfaces_auto";
 
-export class CampaignsModalExt extends CampaignsModal {
+export class CampaignsModelExt extends CampaignsModel {
 
     public getCampaignPlaylistModeName(): string {
         if (this.getCampaignPlaylistMode() == 0) {

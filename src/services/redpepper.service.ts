@@ -125,7 +125,7 @@ export class RedPepperService {
         var tables = {}
         tablesNames.forEach((table, v) => {
             var tableName = 'table_' + table;
-            var storeName = this.capitalizeFirstLetter(StringJS(table).camelize().s) + 'Modal';
+            var storeName = this.capitalizeFirstLetter(StringJS(table).camelize().s) + 'Model';
             var storeModelList: List<StoreModel> = List<StoreModel>();
             tables[tableName] = storeModelList;            
             if (this.databaseManager[tableName]().getAllPrimaryKeys().length == 0) {

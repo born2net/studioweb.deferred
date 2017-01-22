@@ -9,7 +9,7 @@ import {ApplicationState} from "../application.state";
 import {Actions, Effect} from "@ngrx/effects";
 import {Observable} from "rxjs";
 import {RedPepperService} from "../../services/redpepper.service";
-import {CampaignsModalExt} from "../model/msdb-models-extended";
+import {CampaignsModelExt} from "../model/msdb-models-extended";
 
 export const EFFECT_INIT_REDUXIFY_MSDB = 'EFFECT_INIT_REDUXIFY_MSDB';
 export const EFFECT_CREATE_CAMPAIGN_BOARD = 'EFFECT_CREATE_CAMPAIGN_BOARD';
@@ -36,7 +36,7 @@ export class MsdbEffects {
     @Effect({dispatch: false})
     renameCampaign: Observable<Action> = this.actions$.ofType(EFFECT_RENAME_CAMPAIGN)
         .do((action: Action) => {
-            var campaignId: CampaignsModalExt = (action.payload.campaign as CampaignsModalExt).getCampaignId();
+            var campaignId: CampaignsModelExt = (action.payload.campaign as CampaignsModelExt).getCampaignId();
             var newName: string = action.payload.newName;
             this.redPepperService.renameCampaign(campaignId, newName);
             this.redPepperService.reduxCommit();
@@ -45,14 +45,14 @@ export class MsdbEffects {
     @Effect({dispatch: false})
     removeCampaign: Observable<Action> = this.actions$.ofType(EFFECT_REMOVE_CAMPAIGN)
         .do((action: Action) => {
-            var campaignId: CampaignsModalExt = (action.payload as CampaignsModalExt).getCampaignId();
+            var campaignId: CampaignsModelExt = (action.payload as CampaignsModelExt).getCampaignId();
             this.redPepperService.removeCampaignKeepBoards(campaignId);
             this.redPepperService.reduxCommit();
         })
 
     // .map(toPayload,(payload)=>{
     //     debugger;
-    //     var campaignId: CampaignsModalExt = (payload as CampaignsModalExt).getCampaignId();
+    //     var campaignId: CampaignsModelExt = (payload as CampaignsModelExt).getCampaignId();
     //     return {
     //         type: 'ACTION_INJECT_SDK',
     //         payload: [this.redPepperService.removeCampaignEntirely(campaignId)]

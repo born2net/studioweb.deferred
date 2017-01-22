@@ -7,9 +7,9 @@ import {Compbaser} from "ng-mslib";
 import {Router} from "@angular/router";
 import {EFFECT_RENAME_CAMPAIGN, EFFECT_REMOVE_CAMPAIGN, EFFECT_CREATE_CAMPAIGN_BOARD} from "../../store/effects/msdb.effects";
 import {UserModel} from "../../models/UserModel";
-import {CampaignsModal, ResourcesModal} from "../../store/imsdb.interfaces_auto";
+import {ResourcesModel} from "../../store/imsdb.interfaces_auto";
 import {RedPepperService} from "../../services/redpepper.service";
-import {CampaignsModalExt} from "../../store/model/msdb-models-extended";
+import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
 
 @Component({
     selector: 'campaign-list',
@@ -28,7 +28,7 @@ import {CampaignsModalExt} from "../../store/model/msdb-models-extended";
 })
 export class CampaignList extends Compbaser {
 
-    public campaigns$: Observable<List<CampaignsModalExt>>;
+    public campaigns$: Observable<List<CampaignsModelExt>>;
     public userModel$: Observable<UserModel>;
     cars;
 
@@ -44,16 +44,16 @@ export class CampaignList extends Compbaser {
             this.store.dispatch(({type: 'AAA'}))
         }, 500)
         this.userModel$ = this.store.select(store => store.appDb.userModel);
-        this.campaigns$ = this.store.select(store => store.msDatabase.sdk.table_campaigns).map((list: List<CampaignsModal>) => {
+        this.campaigns$ = this.store.select(store => store.msDatabase.sdk.table_campaigns).map((list: List<CampaignsModelExt>) => {
             this.cars = list;//.toArray();
             console.log(this.cars.length);
-            return list.filter((campaignModel: CampaignsModal) => {
+            return list.filter((campaignModel: CampaignsModelExt) => {
                 if (campaignModel.getCampaignName().indexOf('bla_bla') > -1)
                     return false
                 return true;
             })
         });
-        this.store.select(store => store.msDatabase.sdk.table_resources).subscribe((resourceModels: List<ResourcesModal>) => {
+        this.store.select(store => store.msDatabase.sdk.table_resources).subscribe((resourceModels: List<ResourcesModel>) => {
             console.log(resourceModels.first().getResourceName());
             console.log(resourceModels.first().getResourceBytesTotal());
         })
@@ -84,7 +84,7 @@ export class CampaignList extends Compbaser {
         this.router.navigate(['/App1/StudioPro'])
     }
 
-    _removeCampaign(campaign: CampaignsModal) {
+    _removeCampaign(campaign: CampaignsModelExt) {
         this.store.dispatch({type: EFFECT_REMOVE_CAMPAIGN, payload: campaign})
     }
 
