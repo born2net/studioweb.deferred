@@ -153,6 +153,17 @@ a {
     height: 100%;
 }
 
+.appList {
+    padding-right: 10px;
+}
+
+.appList .openProps {
+    float: right;
+    position: relative;
+    top: -45px;
+}
+
+
 .form-signin {
     max-width: 330px;
     padding: 15px;
@@ -266,7 +277,7 @@ a {
 */
 
 .page.left {
-    left: -100%;
+    left: -200%;
 }
 
 .page.center {
@@ -274,12 +285,12 @@ a {
 }
 
 .page.right {
-    left: 100%;
+    left: 200%;
 }
 
 .page.transition {
-    -webkit-transition-duration: .25s;
-    transition-duration: .25s;
+    -webkit-transition-duration: .50s;
+    transition-duration: .50s;
 }
 
 /************************************
@@ -907,3 +918,29 @@ small.release {
 /*.new_row {*/
 /*clear:both;*/
 /*}*/
+
+
+.ng-content-wrapper {
+    overflow-y: hidden !important;
+    margin-left: 5px;
+}
+@media (min-width: 767px) {
+    .ng-content-wrapper {
+        margin-right: 60px;
+    }
+}
+@media (min-width: 768px) {
+    .ng-content-wrapper {
+        margin-right: 10px;
+    }
+}
+@media (min-width: 992px) {
+    .ng-content-wrapper {
+        margin-right: 30px;
+    }
+}
+@media (min-width: 1900px) {
+    .ng-content-wrapper {
+        margin-right: 30px;
+    }
+}

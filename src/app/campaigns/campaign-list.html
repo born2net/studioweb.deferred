@@ -1,0 +1,75 @@
+<div class="yScroll">
+    <div style="padding-bottom: 10px">
+        <span style="font-size: 1.8em;" data-localize="campaignSelection">campaign selection</span>
+    </div>
+    <div>
+        <div class="btn-group">
+            <button (click)="createCampaign()" type="button" class="btn btn-default">
+                <i style="font-size: 1em" class="fa fa-rocket"></i>
+                <span>new campaign</span>
+            </button>
+            <button disabled="true" type="button" class="btn btn-default">
+                <i style="font-size: 1em" class="fa fa-trash-o"></i>
+                <span>remove</span>
+            </button>
+            <button disabled="true" type="button" class="btn btn-danger">
+                <i class="fa fa-magic"></i>
+                <span>Get Wizard help</span>
+            </button>
+        </div>
+
+    </div>
+
+
+    <button (click)="onRoute1()">camp</button>
+    <button (click)="onRoute2()">fq</button>
+    <button (click)="onRoute3()">res</button>
+    <button (click)="onRoute4()">sett</button>
+    <button (click)="onRoute5()">stations</button>
+    <button (click)="onRoute6()">pro</button>
+    <h4>user name: {{(userModel$ | async)?.getUser() }}</h4>
+    <h4>account type: {{(userModel$ | async)?.getAccountType()}}</h4>
+
+
+    <button class="btn btn-primary" (click)="save()">save to server</button>
+
+
+    <ul (click)="$event.preventDefault()" class="appList list-group">
+        <a href="#" class="list-group-item" *ngFor="let campaign of campaigns$ | async">
+            <h4>{{campaign?.getCampaignName()}}</h4>
+            <p class="list-group-item-text">play list mode: {{campaign?.getCampaignPlaylistMode()} </p>
+            <div class="openProps">
+                <button (click)="_removeCampaign(campaign)" type="button" class=" btn btn-default btn-sm"><i style="font-size: 1.5em" class="fa fa-gear"></i></button>
+            </div>
+            <!--<input #ren (focus)="selectedCampaign=campaign" (blur)="selectedCampaign=campaign ; renameCampaign(campaign,ren.value)" value="{{campaign?.getCampaignName()}}">-->
+            <!--<button (click)="removeCampaign(campaign)" class="fa fa-remove"></button>-->
+        </a>
+    </ul>
+
+
+    <hr/>
+    <h4>ng-bootstrap dropdown</h4>
+    <div class="btn-group" dropdown (click)="$event.preventDefault()">
+        <button id="single-button" type="button" class="btn btn-primary" dropdownToggle>
+            Button dropdown <span class="caret"></span>
+        </button>
+        <ul dropdownMenu role="menu" aria-labelledby="single-button">
+            <li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>
+            <li role="menuitem"><a class="dropdown-item" href="#">Another action</a></li>
+            <li role="menuitem"><a class="dropdown-item" href="#">Something else here</a></li>
+            <li class="divider dropdown-divider"></li>
+            <li role="menuitem"><a class="dropdown-item" href="#">Separated link</a></li>
+        </ul>
+    </div>
+    <p-orderList [responsive]="true" [value]="campaigns$ | async | ListToArrayPipe ">
+        <template let-car pTemplate="item">
+            <div class="ui-helper-clearfix">
+                <!--<img src="showcase/resources/demo/images/car/{{car.brand}}.gif" style="display:inline-block;margin:2px 0 2px 2px"/>-->
+                <div style="font-size:14px;float:left;margin:15px 5px 0 0">{{car.getCampaignName()}}</div>
+            </div>
+        </template>
+    </p-orderList>
+
+
+
+</div>
