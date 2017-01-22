@@ -97,10 +97,12 @@ export class RedPepperService {
     }
 
     /**
-     * reduxCommit
+     * reduxCommit: this is the secret sauce that syncs the entire msdb which downloads on init
+     * to the redux store.
+     *
      * if passed in table names, use them to sync to redux
      * if not, try and see if any pending pendingTableSync exist, if so sync to redux
-     * if not, process all tables
+     * if not, process the entire msdb table list to redux store
      * @param tableNameTargets
      * @returns {redpepperTables}
      */
