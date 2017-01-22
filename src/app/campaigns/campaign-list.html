@@ -16,10 +16,7 @@
             <span>Get Wizard help</span>
         </button>
     </div>
-
 </div>
-
-
 <button (click)="onRoute1()">camp</button>
 <button (click)="onRoute2()">fq</button>
 <button (click)="onRoute3()">res</button>
@@ -28,7 +25,6 @@
 <button (click)="onRoute6()">pro</button>
 <h4>user name: {{(userModel$ | async)?.getUser() }}</h4>
 <h4>account type: {{(userModel$ | async)?.getAccountType()}}</h4>
-
 
 <button class="btn btn-primary" (click)="save()">save to server</button>
 
@@ -47,28 +43,28 @@
         </ul>
 
 
-        <hr/>
-        <h4>ng-bootstrap dropdown</h4>
-        <div class="btn-group" dropdown (click)="$event.preventDefault()">
-            <button id="single-button" type="button" class="btn btn-primary" dropdownToggle>
-                Button dropdown <span class="caret"></span>
-            </button>
-            <ul dropdownMenu role="menu" aria-labelledby="single-button">
-                <li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>
-                <li role="menuitem"><a class="dropdown-item" href="#">Another action</a></li>
-                <li role="menuitem"><a class="dropdown-item" href="#">Something else here</a></li>
-                <li class="divider dropdown-divider"></li>
-                <li role="menuitem"><a class="dropdown-item" href="#">Separated link</a></li>
-            </ul>
-        </div>
-        <p-orderList [responsive]="true" [value]="campaigns$ | async | ListToArrayPipe ">
-            <template let-car pTemplate="item">
-                <div class="ui-helper-clearfix">
-                    <!--<img src="showcase/resources/demo/images/car/{{car.brand}}.gif" style="display:inline-block;margin:2px 0 2px 2px"/>-->
-                    <div style="font-size:14px;float:left;margin:15px 5px 0 0">{{car.getCampaignName()}}</div>
-                </div>
-            </template>
-        </p-orderList>
+        <!--<hr/>-->
+        <!--<h4>ng-bootstrap dropdown</h4>-->
+        <!--<div class="btn-group" dropdown (click)="$event.preventDefault()">-->
+            <!--<button id="single-button" type="button" class="btn btn-primary" dropdownToggle>-->
+                <!--Button dropdown <span class="caret"></span>-->
+            <!--</button>-->
+            <!--<ul dropdownMenu role="menu" aria-labelledby="single-button">-->
+                <!--<li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>-->
+                <!--<li role="menuitem"><a class="dropdown-item" href="#">Another action</a></li>-->
+                <!--<li role="menuitem"><a class="dropdown-item" href="#">Something else here</a></li>-->
+                <!--<li class="divider dropdown-divider"></li>-->
+                <!--<li role="menuitem"><a class="dropdown-item" href="#">Separated link</a></li>-->
+            <!--</ul>-->
+        <!--</div>-->
+        <!--<p-orderList [responsive]="true" [value]="campaigns$ | async | ListToArrayPipe ">-->
+            <!--<template let-car pTemplate="item">-->
+                <!--<div class="ui-helper-clearfix">-->
+                    <!--&lt;!&ndash;<img src="showcase/resources/demo/images/car/{{car.brand}}.gif" style="display:inline-block;margin:2px 0 2px 2px"/>&ndash;&gt;-->
+                    <!--<div style="font-size:14px;float:left;margin:15px 5px 0 0">{{car.getCampaignName()}}</div>-->
+                <!--</div>-->
+            <!--</template>-->
+        <!--</p-orderList>-->
 
 
     </div>

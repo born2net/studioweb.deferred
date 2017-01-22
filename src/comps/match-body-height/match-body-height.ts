@@ -9,6 +9,7 @@ export class MatchBodyHeight implements AfterContentInit {
         console.log(this.el);
     }
 
+    // offset total height
     @Input() matchBodyHeight:number = 50;
 
     ngAfterContentInit() {
@@ -23,6 +24,7 @@ export class MatchBodyHeight implements AfterContentInit {
 }
 
 // import {timeout} from "../../decorators/timeout-decorator";
+// constructor { this.enableScroller() }
 // @timeout(500)
 // private enableScroller() {
 //     // jQuery('.ng-content-wrapper', this.el.nativeElement).css('overflow-y', 'scroll');

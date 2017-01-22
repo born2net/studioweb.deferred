@@ -16,7 +16,6 @@ import {RedPepperService} from "../../services/redpepper.service";
     templateUrl: './campaign-list.html'
 })
 
-
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'campaign-list',
