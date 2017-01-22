@@ -9,6 +9,7 @@ import {EFFECT_RENAME_CAMPAIGN, EFFECT_REMOVE_CAMPAIGN, EFFECT_CREATE_CAMPAIGN_B
 import {UserModel} from "../../models/UserModel";
 import {CampaignsModal, ResourcesModal} from "../../store/imsdb.interfaces_auto";
 import {RedPepperService} from "../../services/redpepper.service";
+import {CampaignsModalExt} from "../../store/model/msdb-models-extended";
 
 @Component({
     selector: 'campaign-list',
@@ -20,21 +21,18 @@ import {RedPepperService} from "../../services/redpepper.service";
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'campaign-list',
     styles: [`
-        .ui-orderlist {
-            width: 400px;
-        }
-        .ui-orderlist-list {
-            width: 400px;
-        }
+        .ui-orderlist {width: 400px;}
+        .ui-orderlist-list {width: 400px;}
     `],
     templateUrl: './campaign-list.html'
 })
 export class CampaignList extends Compbaser {
 
-    public campaigns$: Observable<any>;
+    public campaigns$: Observable<List<CampaignsModalExt>>;
     public userModel$: Observable<UserModel>;
     cars;
-    constructor(private el:ElementRef, private store: Store<ApplicationState>, private redPepperService: RedPepperService, private router: Router) {
+
+    constructor(private el: ElementRef, private store: Store<ApplicationState>, private redPepperService: RedPepperService, private router: Router) {
         super();
 
 

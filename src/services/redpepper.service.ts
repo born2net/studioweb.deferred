@@ -2,6 +2,7 @@ import {Injectable} from "@angular/core";
 import {Observable} from "rxjs";
 import {IDataBaseManager, ILoadManager, IPepperConnection, IPepperAuthReply} from "../store/imsdb.interfaces";
 import * as MsdbModels from "../store/imsdb.interfaces_auto";
+import * as MsdbModelsExtended from "../store/model/msdb-models-extended";
 import {TableNames, ISDK} from "../store/imsdb.interfaces_auto";
 import {StoreModel} from "../store/model/StoreModel";
 import {List} from "immutable";
@@ -137,7 +138,12 @@ export class RedPepperService {
                         return;
                     record.self = null;
                     record.__proto__ = null;
-                    var newClass: StoreModel = new MsdbModels[storeName](record);
+                    var newClass: StoreModel;
+                    if (MsdbModelsExtended[storeName+'Ext']){
+                        newClass = new MsdbModelsExtended[storeName+'Ext'](record);
+                    } else {
+                        newClass = new MsdbModels[storeName](record);
+                    }
                     storeModelList = storeModelList.push(newClass);
                     tables[tableName] = storeModelList;
                     tableNamesTouched[tableName] = tableName;
