@@ -1,4 +1,4 @@
-import {Component, ChangeDetectionStrategy, ElementRef, Output, EventEmitter, ChangeDetectorRef, HostListener, HostBinding} from "@angular/core";
+import {Component, ChangeDetectionStrategy, ElementRef, Output, EventEmitter} from "@angular/core";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -51,16 +51,12 @@ export class PanelSplitSide {
     constructor(private el: ElementRef) {
     }
 
-    // @HostListener('window:resize')
-    // onResize() {
-    // }
-
     @Output()
     onToggle: EventEmitter<boolean> = new EventEmitter<boolean>();
 
     private showSidePanel: boolean = true;
 
-    _toggle(event:MouseEvent) {
+    _toggle(event: MouseEvent) {
         event.preventDefault();
         this.showSidePanel = !this.showSidePanel;
         this.onToggle.emit(this.showSidePanel);

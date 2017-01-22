@@ -9,9 +9,9 @@ import {PanelSplitMain} from "../comps/panel-split/panel-split-main";
 import {PanelSplitSide} from "../comps/panel-split/panel-split-side";
 import {PanelSplitContainer} from "../comps/panel-split/panel-split-container";
 import {ListToArrayPipe} from "../pipes/list-to-array-pipe";
-import {MatchHeight} from "../comps/match-height/match-height";
+import {MatchBodyHeight} from "../comps/match-body-height/match-body-height";
 
-var sharedComponents = [Infobox, Sliderpanel, Slideritem, PanelSplitMain, PanelSplitSide, PanelSplitContainer, ListToArrayPipe, MatchHeight];
+var sharedComponents = [Infobox, Sliderpanel, Slideritem, PanelSplitMain, PanelSplitSide, PanelSplitContainer, ListToArrayPipe, MatchBodyHeight];
 
 @NgModule({
     imports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule],

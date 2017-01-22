@@ -1,4 +1,4 @@
-import {Component, ChangeDetectionStrategy, ElementRef, ContentChildren, ContentChild} from "@angular/core";
+import {Component, ChangeDetectionStrategy, ElementRef, ContentChild, AfterViewInit} from "@angular/core";
 import {PanelSplitMain} from "./panel-split-main";
 import {PanelSplitSide} from "./panel-split-side";
 
@@ -11,7 +11,7 @@ import {PanelSplitSide} from "./panel-split-side";
             </div>
     `
 })
-export class PanelSplitContainer {
+export class PanelSplitContainer implements AfterViewInit {
     constructor(private el: ElementRef) {
     }
 
@@ -24,7 +24,7 @@ export class PanelSplitContainer {
     ngAfterViewInit() {
         if (!this.panelSpiltMain || !this.panelSplitSide)
             throw new Error('panel-split-container requires main and side children');
-        this.panelSplitSide.onToggle.subscribe((value:boolean)=>{
+        this.panelSplitSide.onToggle.subscribe((value: boolean) => {
             this.panelSpiltMain.setFullScreen(value)
         })
     }
