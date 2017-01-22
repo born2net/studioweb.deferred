@@ -5,7 +5,7 @@ import {Component, ChangeDetectionStrategy} from "@angular/core";
     selector: 'campaigns',
     template: `
         <Sliderpanel>
-            <Slideritem  class="page center order1 selected" [toDirection]="'left'" [to]="'order2'">
+            <Slideritem class="page center order1 selected" [toDirection]="'left'" [to]="'order2'">
                 <campaign-list></campaign-list>
             </Slideritem>
             <Slideritem class="page right order2" class="page right order2" [toDirection]="'left'" [fromDirection]="'right'" [from]="'order1'" [to]="'order3'">

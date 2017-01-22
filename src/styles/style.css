@@ -27,7 +27,6 @@ body {
     font-family: 'Raleway', 'arial';
     height: 100%;
     background-color: #f3f3f4;
-    overflow-y: auto;
     overflow-x: hidden;
     padding-top: 25px;
 }
@@ -140,6 +139,10 @@ a {
 
 .noScroll {
     overflow: hidden;
+}
+
+.noYscroll {
+    overflow-y: hidden !important;
 }
 
 .noSpace {
@@ -920,27 +923,23 @@ small.release {
 /*}*/
 
 
-.ng-content-wrapper {
-    overflow-y: hidden !important;
-    margin-left: 5px;
-}
 @media (min-width: 767px) {
-    .ng-content-wrapper {
-        margin-right: 60px;
+    .responsive-pad-right {
+        margin-right: 60px !important;
     }
 }
 @media (min-width: 768px) {
-    .ng-content-wrapper {
-        margin-right: 10px;
+    .responsive-pad-right {
+        margin-right: 10px !important;;
     }
 }
 @media (min-width: 992px) {
-    .ng-content-wrapper {
-        margin-right: 30px;
+    .responsive-pad-right {
+        margin-right: 30px !important;
     }
 }
 @media (min-width: 1900px) {
-    .ng-content-wrapper {
-        margin-right: 30px;
+    .responsive-pad-right {
+        margin-right: 30px !important;
     }
 }
