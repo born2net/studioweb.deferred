@@ -27,8 +27,22 @@ import {routerTransition} from "../route-animation";
     //     ])
     // ],
 
-    templateUrl: './campaigns-navigation.html'
+    template: `
+        <small class="debug">campaigns-navigation</small>
+        <panel-split-container>
+            <panel-split-main>
+                <campaigns>
+                </campaigns>
+            </panel-split-main>
+            <panel-split-side>
+                <props></props>
+            </panel-split-side>
+        </panel-split-container>
+`
 })
 export class CampaignsNavigation extends Compbaser {
+    constructor(){
+        super();
+    }
 }
 

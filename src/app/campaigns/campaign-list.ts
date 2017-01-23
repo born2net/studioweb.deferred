@@ -1,4 +1,4 @@
-import {Component, ChangeDetectionStrategy, ElementRef, Input} from "@angular/core";
+import {Component, ChangeDetectionStrategy, ElementRef, Input, EventEmitter, Output} from "@angular/core";
 import {ApplicationState} from "../../store/application.state";
 import {Store} from "@ngrx/store";
 import {Observable} from "rxjs";
@@ -101,14 +101,16 @@ export class CampaignList extends Compbaser {
         })
     }
 
+    @Output()
+    slideToNext: EventEmitter<any> = new EventEmitter<any>();
+
     m_selectedCampaign: CampaignsModelExt;
 
     _onCampaignSelected(event: MouseEvent, campaign: CampaignsModelExt) {
         if (jQuery(event.target).hasClass('settings')) {
             this.store.dispatch(({type: ACTION_UI_USER_FOCUS_ITEM, payload: UiUserFocusItemEnum.campaign}))
         } else {
-            this.store.dispatch(({type: ACTION_UI_USER_FOCUS_ITEM, payload: UiUserFocusItemEnum.campaignBoard}))
-
+            this.slideToNext.emit();
         }
         this.m_selectedCampaign = campaign;
 

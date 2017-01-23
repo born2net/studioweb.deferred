@@ -5,11 +5,11 @@ import {Sliderpanel} from "./Sliderpanel";
     selector: 'Slideritem',
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-                    <button *ngIf="fromDirection" type="button" (click)="onPrev($event)" class="btn btn-default btn-sm">
+                    <button *ngIf="fromDirection && showFromButton" type="button" (click)="onPrev()" class="btn btn-default btn-sm">
                         <span class="fa fa-arrow-left "></span>
                     </button>
                     
-                    <button *ngIf="toDirection" type="button" (click)="onNext($event)" class="btn btn-default btn-sm">
+                    <button *ngIf="toDirection && showToButton" type="button" (click)="onNext()" class="btn btn-default btn-sm">
                         <span class="fa fa-arrow-right"></span>
                     </button>                
                         
@@ -27,6 +27,8 @@ export class Slideritem {
     @Input() fromDirection: 'left' | 'right';
     @Input() to: string;
     @Input() from: string;
+    @Input() showToButton: boolean = true;
+    @Input() showFromButton: boolean = true;
 
     public addClass(i_className) {
         this.viewContainer.element.nativeElement.classList.add(i_className);
@@ -48,11 +50,11 @@ export class Slideritem {
         this.sliderPanel.slideToPage(to, direction)
     }
 
-    private onNext(event) {
+    public onNext() {
         this.slideTo(this.to, this.toDirection);
     }
 
-    private onPrev(event) {
+    public onPrev() {
         this.slideTo(this.from, this.fromDirection);
     }
 }
