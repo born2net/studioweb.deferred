@@ -29,7 +29,6 @@ export class MsdbEffects {
     @Effect({dispatch: false})
     reduxifyMsdb$: Observable<Action> = this.actions$.ofType(EFFECT_INIT_REDUXIFY_MSDB)
         .do(() => {
-            console.log(2);
             this.redPepperService.reduxCommit();
         })
 

@@ -11,18 +11,18 @@ import {ResourcesModel} from "../../store/imsdb.interfaces_auto";
 import {RedPepperService} from "../../services/redpepper.service";
 import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
 
-@Component({
-    selector: 'campaign-list',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    templateUrl: './campaign-list.html'
-})
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'campaign-list',
     styles: [`
-        .ui-orderlist {width: 400px;}
-        .ui-orderlist-list {width: 400px;}
+        /*.selectedItem {*/
+             /*background-color: green !important*/
+         /*}*/
+         /*a.list-group-item:focus,  button.list-group-item:focus  {*/
+            /*background-color: pink !important;*/
+        /*}*/
+
     `],
     templateUrl: './campaign-list.html'
 })
@@ -59,6 +59,11 @@ export class CampaignList extends Compbaser {
         })
     }
 
+    m_selectedCampaign: CampaignsModelExt;
+
+    _onCampaignSelected(campaign: CampaignsModelExt) {
+        this.m_selectedCampaign = campaign;
+    }
 
     onRoute1() {
         this.router.navigate(['/App1/Campaigns'])

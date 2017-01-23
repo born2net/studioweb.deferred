@@ -32,11 +32,11 @@
 <div class="responsive-pad-right">
     <div matchBodyHeight="250"  style="overflow: scroll">
         <ul (click)="$event.preventDefault()" class="appList list-group">
-            <a href="#" class="list-group-item" *ngFor="let campaign of campaigns$ | async">
+            <a (click)="_onCampaignSelected(campaign)" [ngClass]="{'selectedItem': m_selectedCampaign == campaign}" href="#" class="list-group-item" *ngFor="let campaign of campaigns$ | async">
                 <h4>{{campaign?.getCampaignName()}}</h4>
                 <p class="list-group-item-text">play list mode: {{campaign?.getCampaignPlaylistModeName()}} </p>
                 <div class="openProps">
-                    <button (click)="_removeCampaign(campaign)" type="button" class=" btn btn-default btn-sm"><i style="font-size: 1.5em" class="fa fa-gear"></i></button>
+                    <button  type="button" class=" btn btn-default btn-sm"><i style="font-size: 1.5em" class="fa fa-gear"></i></button>
                 </div>
                 <!--<input #ren (focus)="selectedCampaign=campaign" (blur)="selectedCampaign=campaign ; renameCampaign(campaign,ren.value)" value="{{campaign?.getCampaignName()}}">-->
                 <!--<button (click)="removeCampaign(campaign)" class="fa fa-remove"></button>-->
