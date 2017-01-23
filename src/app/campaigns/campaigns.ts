@@ -7,8 +7,11 @@ import {Compbaser} from "ng-mslib";
     template: `
         <small class="debug" style="padding-left: 25px">{{me}}</small>
         <Sliderpanel>
-            <Slideritem #campaignSlider class="page center screen1 selected" [showToButton]="false" [toDirection]="'left'" [to]="'screen2'">
-                <campaign-list (slideToNext)="campaignSlider.onNext()"></campaign-list>
+            <Slideritem #sliderItemCampaignList class="page center screen1 selected" [showToButton]="false" [toDirection]="'left'" [to]="'screen5'">
+                <campaign-list (slideToCampaignName)="sliderItemNotDisplayed.onNext()" (slideToCampaignEditor)="sliderItemCampaignList.onNext()"></campaign-list>
+            </Slideritem>
+            <Slideritem #sliderItemNotDisplayed class="page right sliderItemNotDisplayed" [toDirection]="'left'" [fromDirection]="'right'" [from]="'screen1'" [to]="'screen2'">
+                <!-- nothing will show here as we use this component as a jumping point -->
             </Slideritem>
             <Slideritem class="page right screen2" [toDirection]="'left'" [fromDirection]="'right'" [from]="'screen1'" [to]="'screen3'">
                 <campaign-name></campaign-name>
@@ -19,7 +22,7 @@ import {Compbaser} from "ng-mslib";
             <Slideritem class="page right screen4" [toDirection]="'left'" [fromDirection]="'right'" [from]="'screen3'" [to]="'screen5'">
                 <campaign-layout></campaign-layout>
             </Slideritem>
-            <Slideritem class="page right screen5" [fromDirection]="'right'" [from]="'screen4'">
+            <Slideritem class="page right screen5" [fromDirection]="'right'" [from]="'screen1'">
                 <campaign-editor></campaign-editor>
             </Slideritem>
         </Sliderpanel>

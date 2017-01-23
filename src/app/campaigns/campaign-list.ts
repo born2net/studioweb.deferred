@@ -102,7 +102,10 @@ export class CampaignList extends Compbaser {
     }
 
     @Output()
-    slideToNext: EventEmitter<any> = new EventEmitter<any>();
+    slideToCampaignEditor: EventEmitter<any> = new EventEmitter<any>();
+
+    @Output()
+    slideToCampaignName: EventEmitter<any> = new EventEmitter<any>();
 
     m_selectedCampaign: CampaignsModelExt;
 
@@ -110,7 +113,7 @@ export class CampaignList extends Compbaser {
         if (jQuery(event.target).hasClass('settings')) {
             this.store.dispatch(({type: ACTION_UI_USER_FOCUS_ITEM, payload: UiUserFocusItemEnum.campaign}))
         } else {
-            this.slideToNext.emit();
+            this.slideToCampaignEditor.emit();
         }
         this.m_selectedCampaign = campaign;
 
@@ -156,8 +159,9 @@ export class CampaignList extends Compbaser {
         });
     }
 
-    private createCampaign() {
-        this.store.dispatch({type: EFFECT_CREATE_CAMPAIGN_BOARD});
+    _createCampaign() {
+        // this.store.dispatch({type: EFFECT_CREATE_CAMPAIGN_BOARD});
+        this.slideToCampaignName.emit();
     }
 
     destroy() {
