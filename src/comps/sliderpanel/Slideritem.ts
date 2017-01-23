@@ -1,5 +1,10 @@
-import {Component, ChangeDetectionStrategy, ViewContainerRef, ChangeDetectorRef, Input} from "@angular/core";
+import {Component, ChangeDetectionStrategy, ViewContainerRef, ChangeDetectorRef, Input, EventEmitter, Output} from "@angular/core";
 import {Sliderpanel} from "./Sliderpanel";
+
+export interface ISliderItemData {
+    to: string;
+    direction: string;
+}
 
 @Component({
     selector: 'Slideritem',
@@ -29,6 +34,8 @@ export class Slideritem {
     @Input() from: string;
     @Input() showToButton: boolean = true;
     @Input() showFromButton: boolean = true;
+    @Output()
+    onChange: EventEmitter<ISliderItemData> = new EventEmitter<ISliderItemData>();
 
     public addClass(i_className) {
         this.viewContainer.element.nativeElement.classList.add(i_className);
@@ -46,7 +53,11 @@ export class Slideritem {
         this.viewContainer.element.nativeElement.classList.remove(i_className);
     }
 
-    protected slideTo(to: string, direction: string) {
+    public slideTo(to: string, direction: string) {
+        this.onChange.emit({
+            to: to,
+            direction: direction
+        })
         this.sliderPanel.slideToPage(to, direction)
     }
 

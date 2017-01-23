@@ -1,5 +1,9 @@
 import {Component, ChangeDetectionStrategy} from "@angular/core";
 import {Compbaser} from "ng-mslib";
+import {ISliderItemData} from "../../comps/sliderpanel/Slideritem";
+import {Store} from "@ngrx/store";
+import {ApplicationState} from "../../store/application.state";
+import {ACTION_UI_USER_FOCUS_ITEM, UiUserFocusItemEnum} from "../../store/actions/appdb.actions";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -7,30 +11,31 @@ import {Compbaser} from "ng-mslib";
     template: `
         <small class="debug" style="padding-left: 25px">{{me}}</small>
         <Sliderpanel>
-            <Slideritem #sliderItemCampaignList class="page center screen1 selected" [showToButton]="false" [toDirection]="'left'" [to]="'screen5'">
-                <campaign-list (slideToCampaignName)="sliderItemNotDisplayed.onNext()" (slideToCampaignEditor)="sliderItemCampaignList.onNext()"></campaign-list>
+            <Slideritem #sliderItemCampaignList class="page center campaignList selected" [showToButton]="false" [toDirection]="'left'" [to]="'campaignEditor'">
+                <campaign-list (slideToCampaignName)="sliderItemCampaignList.slideTo('campaignName','left')" (slideToCampaignEditor)="sliderItemCampaignList.onNext()"></campaign-list>
             </Slideritem>
-            <Slideritem #sliderItemNotDisplayed class="page right sliderItemNotDisplayed" [toDirection]="'left'" [fromDirection]="'right'" [from]="'screen1'" [to]="'screen2'">
-                <!-- nothing will show here as we use this component as a jumping point -->
-            </Slideritem>
-            <Slideritem class="page right screen2" [toDirection]="'left'" [fromDirection]="'right'" [from]="'screen1'" [to]="'screen3'">
+            <Slideritem class="page right campaignName" [toDirection]="'left'" [fromDirection]="'right'" [from]="'campaignList'" [to]="'campaignOrientation'">
                 <campaign-name></campaign-name>
             </Slideritem>
-            <Slideritem class="page right screen3" [toDirection]="'left'" [fromDirection]="'right'" [from]="'screen2'" [to]="'screen4'">
+            <Slideritem class="page right campaignOrientation" [toDirection]="'left'" [fromDirection]="'right'" [from]="'campaignName'" [to]="'campaignLayout'">
                 <campaign-orientation></campaign-orientation>
             </Slideritem>
-            <Slideritem class="page right screen4" [toDirection]="'left'" [fromDirection]="'right'" [from]="'screen3'" [to]="'screen5'">
+            <Slideritem class="page right campaignLayout" [toDirection]="'left'" [fromDirection]="'right'" [from]="'campaignOrientation'" [to]="'campaignEditor'">
                 <campaign-layout></campaign-layout>
             </Slideritem>
-            <Slideritem class="page right screen5" [fromDirection]="'right'" [from]="'screen1'">
+            <Slideritem (onChange)="_onSlideChange($event)" class="page right campaignEditor" [fromDirection]="'right'" [from]="'campaignList'">
                 <campaign-editor></campaign-editor>
             </Slideritem>
         </Sliderpanel>
     `
 })
 export class Campaigns extends Compbaser {
-    constructor() {
+    constructor(private store: Store<ApplicationState>) {
         super();
+    }
+
+    _onSlideChange(event: ISliderItemData) {
+        this.store.dispatch(({type: ACTION_UI_USER_FOCUS_ITEM, payload: UiUserFocusItemEnum.miniDashboard}))
     }
 }
 
