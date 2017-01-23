@@ -10,11 +10,17 @@ import {UiUserFocusItemEnum} from "../../store/actions/appdb.actions";
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `<small class="debug">{{me}}</small>
                <ul [ngSwitch]="m_uiUserFocusItem$ | async">
-                  <div *ngSwitchCase="m_uiUserFocusItemEnum.campaign">
+                  <div *ngSwitchCase="m_uiUserFocusItemEnum.campaignProps">
                     <h1>campaign props</h1>
+                  </div>
+                  <div *ngSwitchCase="m_uiUserFocusItemEnum.miniDashboard">
+                    <h1>dashboard</h1>
                   </div>
                   <div *ngSwitchCase="m_uiUserFocusItemEnum.campaignBoard">
                     <h1>campaign board</h1>
+                  </div>
+                  <div *ngSwitchCase="m_uiUserFocusItemEnum.campaignEditor">
+                    <h1>campaign editor</h1>
                   </div>
                 </ul>
            `,

@@ -111,9 +111,10 @@ export class CampaignList extends Compbaser {
 
     _onCampaignSelected(event: MouseEvent, campaign: CampaignsModelExt) {
         if (jQuery(event.target).hasClass('settings')) {
-            this.store.dispatch(({type: ACTION_UI_USER_FOCUS_ITEM, payload: UiUserFocusItemEnum.campaign}))
+            this.store.dispatch(({type: ACTION_UI_USER_FOCUS_ITEM, payload: UiUserFocusItemEnum.campaignProps}))
         } else {
             this.slideToCampaignEditor.emit();
+            this.store.dispatch(({type: ACTION_UI_USER_FOCUS_ITEM, payload: UiUserFocusItemEnum.campaignEditor}))
         }
         this.m_selectedCampaign = campaign;
 
@@ -161,6 +162,7 @@ export class CampaignList extends Compbaser {
 
     _createCampaign() {
         // this.store.dispatch({type: EFFECT_CREATE_CAMPAIGN_BOARD});
+        this.store.dispatch(({type: ACTION_UI_USER_FOCUS_ITEM, payload: UiUserFocusItemEnum.miniDashboard}))
         this.slideToCampaignName.emit();
     }
 

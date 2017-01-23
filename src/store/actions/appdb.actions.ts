@@ -30,7 +30,9 @@ export enum AuthenticateFlags {
 
 export enum UiUserFocusItemEnum {
     none,
-    campaign,
+    miniDashboard,
+    campaignProps,
+    campaignEditor,
     campaignChannel,
     campaignBoard,
     timelineBlock,
