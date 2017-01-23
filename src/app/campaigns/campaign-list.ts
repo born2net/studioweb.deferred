@@ -96,8 +96,8 @@ export class CampaignList extends Compbaser {
             })
         });
         this.store.select(store => store.msDatabase.sdk.table_resources).subscribe((resourceModels: List<ResourcesModel>) => {
-            console.log(resourceModels.first().getResourceName());
-            console.log(resourceModels.first().getResourceBytesTotal());
+            // console.log(resourceModels.first().getResourceName());
+            // console.log(resourceModels.first().getResourceBytesTotal());
         })
     }
 

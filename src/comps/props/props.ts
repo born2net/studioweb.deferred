@@ -29,7 +29,7 @@ export class Props extends Compbaser {
 
     constructor(private store: Store<ApplicationState>) {
         super();
-        this.m_uiUserFocusItem$ = this.store.select(store => store.appDb.uiState.uiUserFocusItem);
+        this.m_uiUserFocusItem$ = this.store.select(store => store.appDb.uiState.uiSideProps);
 
     }
 

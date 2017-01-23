@@ -26,7 +26,7 @@ export interface IMsDatabase {
 
 export interface IAppDb {
     uiState: {
-        uiUserFocusItem:number;
+        uiSideProps:number;
         campaign: {
             campaignSelected: number;
             timelineSelected: number;
@@ -52,7 +52,7 @@ export const INITIAL_STORE_DATA: IMsDatabase = {
 
 export const INITIAL_APP_DB: IAppDb = {
     uiState: {
-        uiUserFocusItem: SideProps.none,
+        uiSideProps: SideProps.none,
         campaign: {
             campaignSelected: -1,
             timelineSelected: -1

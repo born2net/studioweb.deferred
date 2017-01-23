@@ -6,7 +6,6 @@ import {Directive, ElementRef, HostListener, Input, AfterContentInit} from "@ang
 export class MatchBodyHeight implements AfterContentInit {
 
     constructor(private el: ElementRef) {
-        console.log(this.el);
     }
 
     // offset total height
