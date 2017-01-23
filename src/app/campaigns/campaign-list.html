@@ -1,6 +1,7 @@
 <div style="padding-bottom: 10px">
     <span style="font-size: 1.8em;" data-localize="campaignSelection">campaign selection</span>
 </div>
+<test-comp [val]="timelineSelected$ | async"></test-comp>
 <div>
     <div class="btn-group">
         <button (click)="createCampaign()" type="button" class="btn btn-default">
@@ -30,7 +31,7 @@
 
 <!-- move scroller to proper offset -->
 <div class="responsive-pad-right">
-    <div matchBodyHeight="250"  style="overflow: scroll">
+    <div matchBodyHeight="350"  style="overflow: scroll">
         <ul (click)="$event.preventDefault()" class="appList list-group">
             <a (click)="_onCampaignSelected($event, campaign)" [ngClass]="{'selectedItem': m_selectedCampaign == campaign}" href="#" class="list-group-item" *ngFor="let campaign of campaigns$ | async">
                 <h4>{{campaign?.getCampaignName()}}</h4>

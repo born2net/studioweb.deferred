@@ -13,11 +13,13 @@ const reducers = {msDatabase, appDb};
 export const developmentReducer: ActionReducer<ApplicationState> = compose(storeFreeze, combineReducers)(reducers);
 export const productionReducer: ActionReducer<ApplicationState> = combineReducers(reducers);
 
+
+
 export interface IMsDatabase {
     uiState: {
         campaign: {
-            campaignSelected: Map<string,number>;
-            timelineSelected: Map<string,number>;
+            campaignSelected: number;
+            timelineSelected: number;
         }
     }    ,
     threads: { [key: number]: any };
@@ -45,8 +47,8 @@ export const INITIAL_STORE_DATA: IMsDatabase = {
     thread: {id: -1},
     uiState: {
         campaign: {
-            campaignSelected: Map({id: -1}),
-            timelineSelected: Map({id: -1}),
+            campaignSelected: -1,
+            timelineSelected: -1
         }
     },
     sdk: null

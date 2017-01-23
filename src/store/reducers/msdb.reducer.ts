@@ -9,18 +9,18 @@ export function msDatabase(state: IMsDatabase, action: Action): IMsDatabase {
     switch (action.type) {
 
         case 'ALL': {
-            state.uiState.campaign.campaignSelected = Map({id: 1});
-            state.uiState.campaign.timelineSelected = Map({id: 1});
+            state.uiState.campaign.campaignSelected = 1;
+            state.uiState.campaign.timelineSelected = 1;
             return state;
         }
 
         case 'CAMP': {
-            state.uiState.campaign.campaignSelected = Map({id: 2});
+            state.uiState.campaign.campaignSelected = 2;
             return state;
         }
 
         case 'TIME': {
-            state.uiState.campaign.timelineSelected = Map({id: _.random(1,100)});
+            state.uiState.campaign.timelineSelected = action.payload;
             return state;
         }
 
