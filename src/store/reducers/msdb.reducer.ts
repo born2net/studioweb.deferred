@@ -8,22 +8,6 @@ import * as _ from "lodash";
 export function msDatabase(state: IMsDatabase, action: Action): IMsDatabase {
     switch (action.type) {
 
-        case 'ALL': {
-            state.uiState.campaign.campaignSelected = 1;
-            state.uiState.campaign.timelineSelected = 1;
-            return state;
-        }
-
-        case 'CAMP': {
-            state.uiState.campaign.campaignSelected = 2;
-            return state;
-        }
-
-        case 'TIME': {
-            state.uiState.campaign.timelineSelected = action.payload;
-            return state;
-        }
-
         /**
          * this special reducer can receive a single or array of redpepperTables and reduce it into the new store state
          * if multiple redpepperTables are given, we reduce it in such a way that if duplicate tables of the same type

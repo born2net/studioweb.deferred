@@ -15,6 +15,23 @@ export function appDb(state: IAppDb, action: any): IAppDb {
             state.appBaseUrl = `${baseUrl}`;
             return state;
 
+
+        case 'ALL': {
+            state.uiState.campaign.campaignSelected = 1;
+            state.uiState.campaign.timelineSelected = 1;
+            return state;
+        }
+
+        case 'CAMP': {
+            state.uiState.uiUserFocusItem = action.payload;
+            return state;
+        }
+
+        case 'TIME': {
+            state.uiState.campaign.timelineSelected = action.payload;
+            return state;
+        }
+
         case EffectActions.EFFECT_UPDATE_USER_MODEL:
             var userModel: UserModel = action.payload;
             state.userModel = userModel.setTime();

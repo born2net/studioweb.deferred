@@ -8,6 +8,7 @@ import {storeFreeze} from "ngrx-store-freeze";
 import {ActionReducer, combineReducers} from "@ngrx/store";
 import {ApplicationState} from "./application.state";
 import {compose} from "@ngrx/core";
+import {UiUserFocusItemEnum} from "../comps/props/props";
 
 const reducers = {msDatabase, appDb};
 export const developmentReducer: ActionReducer<ApplicationState> = compose(storeFreeze, combineReducers)(reducers);
@@ -16,12 +17,6 @@ export const productionReducer: ActionReducer<ApplicationState> = combineReducer
 
 
 export interface IMsDatabase {
-    uiState: {
-        campaign: {
-            campaignSelected: number;
-            timelineSelected: number;
-        }
-    }    ,
     threads: { [key: number]: any };
     thread: {
         id: number;
@@ -31,6 +26,13 @@ export interface IMsDatabase {
 
 
 export interface IAppDb {
+    uiState: {
+        uiUserFocusItem:number;
+        campaign: {
+            campaignSelected: number;
+            timelineSelected: number;
+        }
+    }
     totalStations: string;
     appStartTime: number;
     appBaseUrl: string;
@@ -45,17 +47,18 @@ export interface IAppDb {
 export const INITIAL_STORE_DATA: IMsDatabase = {
     threads: {},
     thread: {id: -1},
-    uiState: {
-        campaign: {
-            campaignSelected: -1,
-            timelineSelected: -1
-        }
-    },
     sdk: null
 }
 
 
 export const INITIAL_APP_DB: IAppDb = {
+    uiState: {
+        uiUserFocusItem: UiUserFocusItemEnum.none,
+        campaign: {
+            campaignSelected: -1,
+            timelineSelected: -1
+        }
+    },
     totalStations: '',
     appStartTime: -1,
     appBaseUrl: '',
