@@ -61,7 +61,6 @@ export class CampaignList extends Compbaser {
         this.timelineSelected$ = this.store.select(store => store.appDb.uiState.campaign.timelineSelected).map(v => v);
 
         this.store.select(store => store.appDb.uiState.campaign.campaignSelected).map((v) => {
-            console.log(v);
         }).subscribe((e) => {
         });
         setTimeout(() => {
@@ -110,7 +109,7 @@ export class CampaignList extends Compbaser {
     m_selectedCampaign: CampaignsModelExt;
 
     _onCampaignSelected(event: MouseEvent, campaign: CampaignsModelExt) {
-        if (jQuery(event.target).hasClass('settings')) {
+        if (jQuery(event.target).hasClass('props')) {
             this.store.dispatch(({type: ACTION_UI_SIDE_PROPS, payload: SideProps.campaignProps}))
         } else {
             this.slideToCampaignEditor.emit();

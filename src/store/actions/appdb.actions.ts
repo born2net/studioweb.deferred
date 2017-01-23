@@ -33,8 +33,6 @@ export enum SideProps {
     miniDashboard,
     campaignProps,
     campaignEditor,
-    campaignChannel,
-    campaignBoard,
     timelineBlock,
     sceneBlock
 }
