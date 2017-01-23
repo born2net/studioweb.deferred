@@ -2,25 +2,25 @@ import {Action} from "@ngrx/store";
 import {ACTION_INJECT_SDK} from "../actions/appdb.actions";
 import {IMsDatabase} from "../store.data";
 import {redpepperTables} from "../../services/redpepper.service";
-import {List} from "immutable";
+import {List, Map} from "immutable";
 import * as _ from "lodash";
 
 export function msDatabase(state: IMsDatabase, action: Action): IMsDatabase {
     switch (action.type) {
 
         case 'ALL': {
-            state.uiState.campaign.campaignSelected = 1;
-            state.uiState.campaign.timelineSelected = 1;
+            state.uiState.campaign.campaignSelected = Map({id: 1});
+            state.uiState.campaign.timelineSelected = Map({id: 1});
             return state;
         }
 
         case 'CAMP': {
-            state.uiState.campaign.campaignSelected = 2;
+            state.uiState.campaign.campaignSelected = Map({id: 2});
             return state;
         }
 
         case 'TIME': {
-            state.uiState.campaign.timelineSelected = _.random(1,100);
+            state.uiState.campaign.timelineSelected = Map({id: _.random(1,100)});
             return state;
         }
 

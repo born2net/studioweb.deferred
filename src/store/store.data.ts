@@ -1,7 +1,7 @@
 import {Map, List} from 'immutable';
 import {UserModel} from "../models/UserModel";
 import {AuthenticateFlags} from "./actions/appdb.actions";
-import {ISDK} from "../store/imsdb.interfaces_auto";
+import {ISDK, CampaignBoardsModel} from "../store/imsdb.interfaces_auto";
 import {appDb} from "../store/reducers/appdb.reducer";
 import {msDatabase} from "../store/reducers/msdb.reducer";
 import {storeFreeze} from "ngrx-store-freeze";
@@ -13,17 +13,20 @@ const reducers = {msDatabase, appDb};
 export const developmentReducer: ActionReducer<ApplicationState> = compose(storeFreeze, combineReducers)(reducers);
 export const productionReducer: ActionReducer<ApplicationState> = combineReducers(reducers);
 
-
 export interface IMsDatabase {
     uiState: {
         campaign: {
-            campaignSelected: number;
-            timelineSelected: number;
+            campaignSelected: Map<string,number>;
+            timelineSelected: Map<string,number>;
         }
     }    ,
     threads: { [key: number]: any };
+    thread: {
+        id: number;
+    },
     sdk: ISDK
 }
+
 
 export interface IAppDb {
     totalStations: string;
@@ -39,10 +42,11 @@ export interface IAppDb {
 
 export const INITIAL_STORE_DATA: IMsDatabase = {
     threads: {},
+    thread: {id: -1},
     uiState: {
         campaign: {
-            campaignSelected: -1,
-            timelineSelected: -1,
+            campaignSelected: Map({id: -1}),
+            timelineSelected: Map({id: -1}),
         }
     },
     sdk: null
