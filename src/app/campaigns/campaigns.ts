@@ -3,7 +3,7 @@ import {Compbaser} from "ng-mslib";
 import {ISliderItemData} from "../../comps/sliderpanel/Slideritem";
 import {Store} from "@ngrx/store";
 import {ApplicationState} from "../../store/application.state";
-import {ACTION_UI_USER_FOCUS_ITEM, UiUserFocusItemEnum} from "../../store/actions/appdb.actions";
+import {ACTION_UI_SIDE_PROPS, SideProps} from "../../store/actions/appdb.actions";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,10 +32,12 @@ import {ACTION_UI_USER_FOCUS_ITEM, UiUserFocusItemEnum} from "../../store/action
 export class Campaigns extends Compbaser {
     constructor(private store: Store<ApplicationState>) {
         super();
+        this.store.dispatch(({type: ACTION_UI_SIDE_PROPS, payload: SideProps.miniDashboard}))
     }
 
     _onSlideChange(event: ISliderItemData) {
-        this.store.dispatch(({type: ACTION_UI_USER_FOCUS_ITEM, payload: UiUserFocusItemEnum.miniDashboard}))
+        if (event.direction == 'right' && event.to == 'campaignList')
+            this.store.dispatch(({type: ACTION_UI_SIDE_PROPS, payload: SideProps.miniDashboard}))
     }
 }
 

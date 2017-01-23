@@ -11,7 +11,7 @@ import {Observable} from "rxjs";
 export const APP_INIT = 'APP_INIT';
 export const ACTION_INJECT_SDK = 'ACTION_INJECT_SDK';
 export const ACTION_TWO_FACTOR_REMOVED = 'ACTION_TWO_FACTOR_REMOVED';
-export const ACTION_UI_USER_FOCUS_ITEM = 'ACTION_UI_USER_FOCUS_ITEM';
+export const ACTION_UI_SIDE_PROPS = 'ACTION_UI_SIDE_PROPS';
 
 export enum AuthenticateFlags {
     NONE,
@@ -28,7 +28,7 @@ export enum AuthenticateFlags {
     TWO_FACTOR_UPDATE_FAIL
 }
 
-export enum UiUserFocusItemEnum {
+export enum SideProps {
     none,
     miniDashboard,
     campaignProps,

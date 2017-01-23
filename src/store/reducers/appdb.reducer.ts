@@ -23,7 +23,7 @@ export function appDb(state: IAppDb, action: any): IAppDb {
             return state;
         }
 
-        case ActionsConst.ACTION_UI_USER_FOCUS_ITEM: {
+        case ActionsConst.ACTION_UI_SIDE_PROPS: {
             state.uiState.uiUserFocusItem = action.payload;
             return state;
         }

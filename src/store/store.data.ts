@@ -1,6 +1,6 @@
 import {Map, List} from 'immutable';
 import {UserModel} from "../models/UserModel";
-import {AuthenticateFlags, UiUserFocusItemEnum} from "./actions/appdb.actions";
+import {AuthenticateFlags, SideProps} from "./actions/appdb.actions";
 import {ISDK, CampaignBoardsModel} from "../store/imsdb.interfaces_auto";
 import {appDb} from "../store/reducers/appdb.reducer";
 import {msDatabase} from "../store/reducers/msdb.reducer";
@@ -52,7 +52,7 @@ export const INITIAL_STORE_DATA: IMsDatabase = {
 
 export const INITIAL_APP_DB: IAppDb = {
     uiState: {
-        uiUserFocusItem: UiUserFocusItemEnum.none,
+        uiUserFocusItem: SideProps.none,
         campaign: {
             campaignSelected: -1,
             timelineSelected: -1

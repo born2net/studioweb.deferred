@@ -3,7 +3,7 @@ import {Compbaser} from "ng-mslib";
 import {ApplicationState} from "../../store/application.state";
 import {Store} from "@ngrx/store";
 import {Observable} from "rxjs";
-import {UiUserFocusItemEnum} from "../../store/actions/appdb.actions";
+import {SideProps} from "../../store/actions/appdb.actions";
 
 @Component({
     selector: 'props',
@@ -33,8 +33,8 @@ export class Props extends Compbaser {
 
     }
 
-    m_uiUserFocusItemEnum = UiUserFocusItemEnum;
-    m_uiUserFocusItem$: Observable<UiUserFocusItemEnum>;
+    m_uiUserFocusItemEnum = SideProps;
+    m_uiUserFocusItem$: Observable<SideProps>;
 
     ngOnInit() {
     }

@@ -10,7 +10,7 @@ import {UserModel} from "../../models/UserModel";
 import {ResourcesModel} from "../../store/imsdb.interfaces_auto";
 import {RedPepperService} from "../../services/redpepper.service";
 import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
-import {UiUserFocusItemEnum, ACTION_UI_USER_FOCUS_ITEM} from "../../store/actions/appdb.actions";
+import {SideProps, ACTION_UI_SIDE_PROPS} from "../../store/actions/appdb.actions";
 
 
 @Component({
@@ -111,10 +111,10 @@ export class CampaignList extends Compbaser {
 
     _onCampaignSelected(event: MouseEvent, campaign: CampaignsModelExt) {
         if (jQuery(event.target).hasClass('settings')) {
-            this.store.dispatch(({type: ACTION_UI_USER_FOCUS_ITEM, payload: UiUserFocusItemEnum.campaignProps}))
+            this.store.dispatch(({type: ACTION_UI_SIDE_PROPS, payload: SideProps.campaignProps}))
         } else {
             this.slideToCampaignEditor.emit();
-            this.store.dispatch(({type: ACTION_UI_USER_FOCUS_ITEM, payload: UiUserFocusItemEnum.campaignEditor}))
+            this.store.dispatch(({type: ACTION_UI_SIDE_PROPS, payload: SideProps.campaignEditor}))
         }
         this.m_selectedCampaign = campaign;
 
@@ -162,12 +162,12 @@ export class CampaignList extends Compbaser {
 
     _createCampaign() {
         // this.store.dispatch({type: EFFECT_CREATE_CAMPAIGN_BOARD});
-        this.store.dispatch(({type: ACTION_UI_USER_FOCUS_ITEM, payload: UiUserFocusItemEnum.miniDashboard}))
+        this.store.dispatch(({type: ACTION_UI_SIDE_PROPS, payload: SideProps.miniDashboard}))
         this.slideToCampaignName.emit();
     }
 
     destroy() {
-        this.store.dispatch(({type: ACTION_UI_USER_FOCUS_ITEM, payload: UiUserFocusItemEnum.none}))
+        this.store.dispatch(({type: ACTION_UI_SIDE_PROPS, payload: SideProps.none}))
     }
 }
 
