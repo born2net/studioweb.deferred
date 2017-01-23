@@ -125,9 +125,6 @@ export class LoginPanel extends Compbaser {
 
         this.cancelOnDestroy(
             this.store.select(store => store.appDb.userModel)
-                .debug('got here!!!')
-                .debug('aaa')
-                .debug()
                 .subscribe((userModel: UserModel) => {
                 this.userModel = userModel
             })

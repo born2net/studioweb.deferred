@@ -1,11 +1,25 @@
-import {Component, ChangeDetectionStrategy, ViewChild, trigger, transition, animate, state, style, ElementRef} from "@angular/core";
+import {
+    Component,
+    ChangeDetectionStrategy,
+    ViewChild,
+    trigger,
+    transition,
+    animate,
+    state,
+    style,
+    ElementRef
+} from "@angular/core";
 import {ApplicationState} from "../../store/application.state";
 import {Store} from "@ngrx/store";
 import {Observable} from "rxjs";
 import {List} from "immutable";
 import {Compbaser} from "ng-mslib";
 import {Router} from "@angular/router";
-import {EFFECT_RENAME_CAMPAIGN, EFFECT_REMOVE_CAMPAIGN, EFFECT_CREATE_CAMPAIGN_BOARD} from "../../store/effects/msdb.effects";
+import {
+    EFFECT_RENAME_CAMPAIGN,
+    EFFECT_REMOVE_CAMPAIGN,
+    EFFECT_CREATE_CAMPAIGN_BOARD
+} from "../../store/effects/msdb.effects";
 import {UserModel} from "../../models/UserModel";
 import {ResourcesModel} from "../../store/imsdb.interfaces_auto";
 import {RedPepperService} from "../../services/redpepper.service";
@@ -36,13 +50,36 @@ export class CampaignList extends Compbaser {
         super();
 
 
-        this.store.select(store => store.msDatabase.participants[0].a.c).map((v) => {
+        this.store.select(store => store.msDatabase.uiState.campaign).map((v) => {
+            console.log(v);
+        }).subscribe((e) => {
+        });
+
+        this.store.select(store => store.msDatabase.uiState.campaign.timelineSelected).map((v) => {
+            console.log(v);
+        }).subscribe((e) => {
+        });
+
+        this.store.select(store => store.msDatabase.uiState.campaign.campaignSelected).map((v) => {
             console.log(v);
         }).subscribe((e) => {
         });
         setTimeout(() => {
-            this.store.dispatch(({type: 'AAA'}))
-        }, 500)
+            this.store.dispatch(({type: 'ALL'}))
+        }, 1000)
+
+        setTimeout(() => {
+            this.store.dispatch(({type: 'CAMP'}))
+        }, 2000)
+
+        setTimeout(() => {
+            this.store.dispatch(({type: 'TIME'}))
+        }, 3000)
+
+        setTimeout(() => {
+            this.store.dispatch(({type: 'TIME'}))
+        }, 6000)
+
         this.userModel$ = this.store.select(store => store.appDb.userModel);
         this.campaigns$ = this.store.select(store => store.msDatabase.sdk.table_campaigns).map((list: List<CampaignsModelExt>) => {
             this.cars = list;//.toArray();
@@ -61,8 +98,15 @@ export class CampaignList extends Compbaser {
 
     m_selectedCampaign: CampaignsModelExt;
 
-    _onCampaignSelected(campaign: CampaignsModelExt) {
+    _onCampaignSelected(event: MouseEvent, campaign: CampaignsModelExt) {
+        if (jQuery(event.target).hasClass('settings')) {
+            console.log('load props');
+        } else {
+            console.log('load campaign');
+
+        }
         this.m_selectedCampaign = campaign;
+
     }
 
     onRoute1() {

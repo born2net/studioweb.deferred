@@ -15,13 +15,12 @@ export const productionReducer: ActionReducer<ApplicationState> = combineReducer
 
 
 export interface IMsDatabase {
-    participants: [
-        {
-            a: {
-                c: any;
-            }
+    uiState: {
+        campaign: {
+            campaignSelected: number;
+            timelineSelected: number;
         }
-        ],
+    }    ,
     threads: { [key: number]: any };
     sdk: ISDK
 }
@@ -40,14 +39,12 @@ export interface IAppDb {
 
 export const INITIAL_STORE_DATA: IMsDatabase = {
     threads: {},
-    participants: [
-        {
-            a: {
-                c: 1
-            }
+    uiState: {
+        campaign: {
+            campaignSelected: -1,
+            timelineSelected: -1,
         }
-
-    ],
+    },
     sdk: null
 }
 
