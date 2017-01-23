@@ -10,7 +10,7 @@ import {UserModel} from "../../models/UserModel";
 import {ResourcesModel} from "../../store/imsdb.interfaces_auto";
 import {RedPepperService} from "../../services/redpepper.service";
 import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
-import {UiUserFocusItemEnum} from "../../comps/props/props";
+import {UiUserFocusItemEnum, ACTION_UI_USER_FOCUS_ITEM} from "../../store/actions/appdb.actions";
 
 
 @Component({
@@ -68,10 +68,6 @@ export class CampaignList extends Compbaser {
             this.store.dispatch(({type: 'ALL'}))
         }, 1000)
 
-        // setTimeout(() => {
-        //     this.store.dispatch(({type: 'CAMP'}))
-        // }, 2000)
-
         setTimeout(() => {
             this.store.dispatch(({type: 'TIME', payload: 10}))
         }, 3000)
@@ -109,9 +105,9 @@ export class CampaignList extends Compbaser {
 
     _onCampaignSelected(event: MouseEvent, campaign: CampaignsModelExt) {
         if (jQuery(event.target).hasClass('settings')) {
-            this.store.dispatch(({type: 'CAMP', payload: UiUserFocusItemEnum.campaign}))
+            this.store.dispatch(({type: ACTION_UI_USER_FOCUS_ITEM, payload: UiUserFocusItemEnum.campaign}))
         } else {
-            this.store.dispatch(({type: 'CAMP', payload: UiUserFocusItemEnum.campaignBoard}))
+            this.store.dispatch(({type: ACTION_UI_USER_FOCUS_ITEM, payload: UiUserFocusItemEnum.campaignBoard}))
 
         }
         this.m_selectedCampaign = campaign;
@@ -163,6 +159,7 @@ export class CampaignList extends Compbaser {
     }
 
     destroy() {
+        this.store.dispatch(({type: ACTION_UI_USER_FOCUS_ITEM, payload: UiUserFocusItemEnum.none}))
     }
 }
 

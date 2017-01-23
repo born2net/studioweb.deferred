@@ -1,18 +1,9 @@
 import {Component, ChangeDetectionStrategy} from "@angular/core";
 import {Compbaser} from "ng-mslib";
-import {reduce} from "rxjs/operator/reduce";
 import {ApplicationState} from "../../store/application.state";
 import {Store} from "@ngrx/store";
 import {Observable} from "rxjs";
-
-export enum UiUserFocusItemEnum {
-    none,
-    campaign,
-    campaignChannel,
-    campaignBoard,
-    timelineBlock,
-    sceneBlock
-}
+import {UiUserFocusItemEnum} from "../../store/actions/appdb.actions";
 
 @Component({
     selector: 'props',
@@ -32,10 +23,7 @@ export class Props extends Compbaser {
 
     constructor(private store: Store<ApplicationState>) {
         super();
-        this.m_uiUserFocusItem$ = this.store.select(store => store.appDb.uiState.uiUserFocusItem).map(v => {
-            console.log(v);
-            return v
-        });
+        this.m_uiUserFocusItem$ = this.store.select(store => store.appDb.uiState.uiUserFocusItem);
 
     }
 

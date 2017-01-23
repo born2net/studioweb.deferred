@@ -3,6 +3,7 @@ import {Map} from "immutable";
 import {UserModel} from "../../models/UserModel";
 import * as StoreActions from "../actions/appdb.actions";
 import * as EffectActions from "../effects/appdb.effects";
+import * as ActionsConst from "../actions/appdb.actions";
 
 const baseUrl = 'https://galaxy.signage.me/WebService/ResellerService.ashx';
 export const appBaseUrlCloud = 'https://secure.digitalsignage.com';
@@ -22,7 +23,7 @@ export function appDb(state: IAppDb, action: any): IAppDb {
             return state;
         }
 
-        case 'CAMP': {
+        case ActionsConst.ACTION_UI_USER_FOCUS_ITEM: {
             state.uiState.uiUserFocusItem = action.payload;
             return state;
         }
