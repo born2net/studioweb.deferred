@@ -10,7 +10,9 @@ import {UserModel} from "../../models/UserModel";
 import {ResourcesModel} from "../../store/imsdb.interfaces_auto";
 import {RedPepperService} from "../../services/redpepper.service";
 import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
-import {SideProps, ACTION_UI_SIDE_PROPS} from "../../store/actions/appdb.actions";
+import {SideProps, ACTION_UISTATE_UPDATE} from "../../store/actions/appdb.actions";
+import {IUiState} from "../../store/store.data";
+import * as _ from 'lodash';
 
 
 @Component({
@@ -58,30 +60,19 @@ export class CampaignList extends Compbaser {
         }).subscribe((e) => {
         });
 
-        this.timelineSelected$ = this.store.select(store => store.appDb.uiState.campaign.timelineSelected).map(v => v);
+        this.timelineSelected$ = this.store.select(store => store.appDb.uiState.campaign.timelineSelected).map(v => {
+            return v
+        });
 
         this.store.select(store => store.appDb.uiState.campaign.campaignSelected).map((v) => {
+            console.log(v);
         }).subscribe((e) => {
         });
-        setTimeout(() => {
-            this.store.dispatch(({type: 'ALL'}))
-        }, 1000)
 
-        setTimeout(() => {
-            this.store.dispatch(({type: 'TIME', payload: 10}))
-        }, 3000)
-
-        setTimeout(() => {
-            this.store.dispatch(({type: 'TIME', payload: 20}))
-        }, 5000)
-
-        setTimeout(() => {
-            this.store.dispatch(({type: 'TIME', payload: 10}))
-        }, 6000)
-
-        setTimeout(() => {
-            this.store.dispatch(({type: 'TIME', payload: 10}))
-        }, 7000)
+        this.store.select(store => store.appDb.uiState.uiSideProps).map((v) => {
+            console.log(v);
+        }).subscribe((e) => {
+        });
 
 
         this.userModel$ = this.store.select(store => store.appDb.userModel);
@@ -109,13 +100,34 @@ export class CampaignList extends Compbaser {
     m_selectedCampaign: CampaignsModelExt;
 
     _onCampaignSelected(event: MouseEvent, campaign: CampaignsModelExt) {
+        let uiState: IUiState;
         if (jQuery(event.target).hasClass('props')) {
-            this.store.dispatch(({type: ACTION_UI_SIDE_PROPS, payload: SideProps.campaignProps}))
+            uiState = {
+                uiSideProps: SideProps.campaignProps
+            }
+            this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
         } else {
+            uiState = {
+                uiSideProps: SideProps.campaignEditor
+            }
             this.slideToCampaignEditor.emit();
-            this.store.dispatch(({type: ACTION_UI_SIDE_PROPS, payload: SideProps.campaignEditor}))
+            this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
         }
         this.m_selectedCampaign = campaign;
+
+        // let uiState: IUiState = {
+        //     campaign: {
+        //         campaignSelected: 123
+        //     }
+        // };
+        // uiState.campaign.campaignSelected = _.random(1,1999);
+        // this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+
+        // var b: IUiState = {
+        //     uiSideProps: _.random(1,1222)
+        // }
+        // this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: b}))
+
 
     }
 
@@ -160,13 +172,14 @@ export class CampaignList extends Compbaser {
     }
 
     _createCampaign() {
-        // this.store.dispatch({type: EFFECT_CREATE_CAMPAIGN_BOARD});
-        this.store.dispatch(({type: ACTION_UI_SIDE_PROPS, payload: SideProps.miniDashboard}))
+        var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
+        this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
         this.slideToCampaignName.emit();
     }
 
     destroy() {
-        this.store.dispatch(({type: ACTION_UI_SIDE_PROPS, payload: SideProps.none}))
+        var uiState: IUiState = {uiSideProps: SideProps.none}
+        this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 }
 

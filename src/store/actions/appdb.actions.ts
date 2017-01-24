@@ -11,7 +11,7 @@ import {Observable} from "rxjs";
 export const APP_INIT = 'APP_INIT';
 export const ACTION_INJECT_SDK = 'ACTION_INJECT_SDK';
 export const ACTION_TWO_FACTOR_REMOVED = 'ACTION_TWO_FACTOR_REMOVED';
-export const ACTION_UI_SIDE_PROPS = 'ACTION_UI_SIDE_PROPS';
+export const ACTION_UISTATE_UPDATE = 'ACTION_UISTATE_UPDATE';
 
 export enum AuthenticateFlags {
     NONE,

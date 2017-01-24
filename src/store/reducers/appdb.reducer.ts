@@ -4,6 +4,7 @@ import {UserModel} from "../../models/UserModel";
 import * as StoreActions from "../actions/appdb.actions";
 import * as EffectActions from "../effects/appdb.effects";
 import * as ActionsConst from "../actions/appdb.actions";
+import * as _ from 'lodash';
 
 const baseUrl = 'https://galaxy.signage.me/WebService/ResellerService.ashx';
 export const appBaseUrlCloud = 'https://secure.digitalsignage.com';
@@ -16,20 +17,10 @@ export function appDb(state: IAppDb, action: any): IAppDb {
             state.appBaseUrl = `${baseUrl}`;
             return state;
 
-
-        case 'ALL': {
-            state.uiState.campaign.campaignSelected = 1;
-            state.uiState.campaign.timelineSelected = 1;
-            return state;
-        }
-
-        case ActionsConst.ACTION_UI_SIDE_PROPS: {
-            state.uiState.uiSideProps = action.payload;
-            return state;
-        }
-
-        case 'TIME': {
-            state.uiState.campaign.timelineSelected = action.payload;
+        case ActionsConst.ACTION_UISTATE_UPDATE: {
+            _.forEach(action.payload, (value, key) => {
+                state.uiState[key] = action.payload[key];
+            })
             return state;
         }
 

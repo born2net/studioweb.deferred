@@ -23,15 +23,16 @@ export interface IMsDatabase {
     sdk: ISDK
 }
 
+export interface IUiState {
+    uiSideProps?:number;
+    campaign?: {
+        campaignSelected?: number;
+        timelineSelected?: number;
+    }
+}
 
 export interface IAppDb {
-    uiState: {
-        uiSideProps:number;
-        campaign: {
-            campaignSelected: number;
-            timelineSelected: number;
-        }
-    }
+    uiState: IUiState;
     totalStations: string;
     appStartTime: number;
     appBaseUrl: string;

@@ -3,7 +3,8 @@ import {Compbaser} from "ng-mslib";
 import {ISliderItemData} from "../../comps/sliderpanel/Slideritem";
 import {Store} from "@ngrx/store";
 import {ApplicationState} from "../../store/application.state";
-import {ACTION_UI_SIDE_PROPS, SideProps} from "../../store/actions/appdb.actions";
+import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
+import {IUiState} from "../../store/store.data";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,12 +33,14 @@ import {ACTION_UI_SIDE_PROPS, SideProps} from "../../store/actions/appdb.actions
 export class Campaigns extends Compbaser {
     constructor(private store: Store<ApplicationState>) {
         super();
-        this.store.dispatch(({type: ACTION_UI_SIDE_PROPS, payload: SideProps.miniDashboard}))
+        var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
+        this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 
     _onSlideChange(event: ISliderItemData) {
+        var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
         if (event.direction == 'right' && event.to == 'campaignList')
-            this.store.dispatch(({type: ACTION_UI_SIDE_PROPS, payload: SideProps.miniDashboard}))
+            this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 }
 
