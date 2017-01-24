@@ -19,12 +19,12 @@ import {IUiState} from "../../store/store.data";
                 <campaign-name></campaign-name>
             </Slideritem>
             <Slideritem  #sliderItemCampaignOrientation class="page left campaignOrientation" [showToButton]="false" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignName'" [to]="'campaignResolution'">
-                <campaign-orientation (onOrientationSelected)="sliderItemCampaignOrientation.onNext()"></campaign-orientation>
+                <campaign-orientation #campaignOrientation (onOrientationSelected)="sliderItemCampaignOrientation.onNext()"></campaign-orientation>
             </Slideritem>
             <Slideritem class="page left campaignResolution" [showToButton]="true" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignOrientation'" [to]="'campaignLayout'">
-                <campaign-resolution></campaign-resolution>
+                <campaign-resolution [setOrientation]="campaignOrientation.getOrientationChanged" ></campaign-resolution>
             </Slideritem>
-            <Slideritem class="page left campaignLayout" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignResolution'" [to]="'campaignEditor'">
+            <Slideritem (onChange)="_onSlideChange($event)" class="page left campaignLayout" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignResolution'" [to]="'campaignEditor'">
                 <campaign-layout></campaign-layout>
             </Slideritem>
             <Slideritem (onChange)="_onSlideChange($event)" class="page left campaignEditor" [fromDirection]="'left'" [from]="'campaignList'">
@@ -41,9 +41,20 @@ export class Campaigns extends Compbaser {
     }
 
     _onSlideChange(event: ISliderItemData) {
-        var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
-        if (event.direction == 'left' && event.to == 'campaignList')
-            this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+        if (event.direction == 'left' && event.to == 'campaignList') {
+            var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
+            return this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+        }
+
+        if (event.direction == 'right' && event.to == 'campaignEditor')
+            return this._createCampaign();
+    }
+
+
+
+    private _createCampaign(){
+        console.log('creating campaign...');
+        //todo: create campaign here
     }
 
 }

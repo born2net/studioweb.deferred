@@ -1,6 +1,8 @@
-import {Component, ChangeDetectionStrategy} from "@angular/core";
+import {Component, ChangeDetectionStrategy, Input} from "@angular/core";
 import {Compbaser} from "ng-mslib";
-              
+import * as screenTemplates from "../../libs/screen-templates.json";
+import * as _ from 'lodash';
+import {OrientationEnum} from "./campaign-orientation";
 
 @Component({
     selector: 'campaign-resolution',
@@ -15,6 +17,11 @@ export class CampaignResolution extends Compbaser {
 
     constructor() {
         super();
+    }
+
+    @Input()
+    set setOrientation(i_orientation: OrientationEnum) {
+        console.log(i_orientation);
     }
 
     ngOnInit() {

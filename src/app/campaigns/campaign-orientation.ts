@@ -58,7 +58,7 @@ export class CampaignOrientation extends Compbaser {
         this.onOrientationSelected.emit(this.m_orientation)
     }
 
-    public onOrientationChanged(): OrientationEnum {
+    public get getOrientationChanged(): OrientationEnum {
         return this.m_orientation;
     }
 
