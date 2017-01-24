@@ -32,6 +32,7 @@ export class CampaignResolution extends Compbaser {
         for (var screenResolution in screenTemplates[orientation]) {
             this.screens.push(screenResolution)
         }
+        console.log(3333);
     }
 
     private screens: Array<any>;
