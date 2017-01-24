@@ -12,6 +12,7 @@ import {CampaignName} from "./campaign-name";
 import {CampaignOrientation} from "./campaign-orientation";
 import {CampaignLayout} from "./campaign-layout";
 import {CampaignEditor} from "./campaign-editor";
+import {CampaignResolution} from "./campaign-resolution";
 
 export const LAZY_ROUTES = [
     {path: ':folder', component: CampaignsNavigation},
@@ -21,7 +22,7 @@ export const LAZY_ROUTES = [
 
 @NgModule({
     imports: [DropdownModulePrime, SharedModule, CommonModule, DropdownModule, OrderListModule, RouterModule.forChild(LAZY_ROUTES)],
-    declarations: [CampaignsNavigation, Campaigns, CampaignList, TestComp, CampaignName, CampaignOrientation, CampaignLayout, CampaignEditor]
+    declarations: [CampaignsNavigation, Campaigns, CampaignList, TestComp, CampaignName, CampaignOrientation, CampaignLayout, CampaignEditor, CampaignResolution]
 })
 export class CampaignsLazyModule {
 }

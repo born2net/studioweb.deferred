@@ -10,21 +10,24 @@ import {IUiState} from "../../store/store.data";
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'campaigns',
     template: `
-        <small class="debug" style="padding-left: 25px">{{me}}</small>
+        <small class="debug" style="padding-right: 25px">{{me}}</small>
         <Sliderpanel>
-            <Slideritem #sliderItemCampaignList class="page center campaignList selected" [showToButton]="false" [toDirection]="'left'" [to]="'campaignEditor'">
-                <campaign-list (slideToCampaignName)="sliderItemCampaignList.slideTo('campaignName','left')" (slideToCampaignEditor)="sliderItemCampaignList.onNext()"></campaign-list>
+            <Slideritem #sliderItemCampaignList class="page center campaignList selected" [showToButton]="false" [toDirection]="'right'" [to]="'campaignEditor'">
+                <campaign-list (slideToCampaignName)="sliderItemCampaignList.slideTo('campaignName','right')" (slideToCampaignEditor)="sliderItemCampaignList.onNext()"></campaign-list>
             </Slideritem>
-            <Slideritem class="page right campaignName" [toDirection]="'left'" [fromDirection]="'right'" [from]="'campaignList'" [to]="'campaignOrientation'">
+            <Slideritem class="page left campaignName" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignList'" [to]="'campaignOrientation'">
                 <campaign-name></campaign-name>
             </Slideritem>
-            <Slideritem class="page right campaignOrientation" [toDirection]="'left'" [fromDirection]="'right'" [from]="'campaignName'" [to]="'campaignLayout'">
-                <campaign-orientation></campaign-orientation>
+            <Slideritem  #sliderItemCampaignOrientation class="page left campaignOrientation" [showToButton]="false" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignName'" [to]="'campaignResolution'">
+                <campaign-orientation (onOrientationSelected)="sliderItemCampaignOrientation.onNext()"></campaign-orientation>
             </Slideritem>
-            <Slideritem class="page right campaignLayout" [toDirection]="'left'" [fromDirection]="'right'" [from]="'campaignOrientation'" [to]="'campaignEditor'">
+            <Slideritem class="page left campaignResolution" [showToButton]="true" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignOrientation'" [to]="'campaignLayout'">
+                <campaign-resolution></campaign-resolution>
+            </Slideritem>
+            <Slideritem class="page left campaignLayout" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignResolution'" [to]="'campaignEditor'">
                 <campaign-layout></campaign-layout>
             </Slideritem>
-            <Slideritem (onChange)="_onSlideChange($event)" class="page right campaignEditor" [fromDirection]="'right'" [from]="'campaignList'">
+            <Slideritem (onChange)="_onSlideChange($event)" class="page left campaignEditor" [fromDirection]="'left'" [from]="'campaignList'">
                 <campaign-editor></campaign-editor>
             </Slideritem>
         </Sliderpanel>
@@ -39,8 +42,9 @@ export class Campaigns extends Compbaser {
 
     _onSlideChange(event: ISliderItemData) {
         var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
-        if (event.direction == 'right' && event.to == 'campaignList')
+        if (event.direction == 'left' && event.to == 'campaignList')
             this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
+
 }
 

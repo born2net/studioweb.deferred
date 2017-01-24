@@ -54,23 +54,20 @@ export class CampaignList extends Compbaser {
     constructor(private el: ElementRef, private store: Store<ApplicationState>, private redPepperService: RedPepperService, private router: Router) {
         super();
 
-
         this.store.select(store => store.appDb.uiState.campaign).map((v) => {
-            console.log(v);
+            // console.log(v);
         }).subscribe((e) => {
         });
 
-        this.timelineSelected$ = this.store.select(store => store.appDb.uiState.campaign.timelineSelected).map(v => {
-            return v
-        });
+        this.timelineSelected$ = this.store.select(store => store.appDb.uiState.campaign.timelineSelected).map(v => v);
 
         this.store.select(store => store.appDb.uiState.campaign.campaignSelected).map((v) => {
-            console.log(v);
+            // console.log(v);
         }).subscribe((e) => {
         });
 
         this.store.select(store => store.appDb.uiState.uiSideProps).map((v) => {
-            console.log(v);
+            // console.log(v);
         }).subscribe((e) => {
         });
 
