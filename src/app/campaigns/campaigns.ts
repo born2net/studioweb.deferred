@@ -19,10 +19,10 @@ import {IUiState} from "../../store/store.data";
                 <campaign-name></campaign-name>
             </Slideritem>
             <Slideritem  #sliderItemCampaignOrientation class="page left campaignOrientation" [showToButton]="false" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignName'" [to]="'campaignResolution'">
-                <campaign-orientation #campaignOrientation (onOrientationSelected)="sliderItemCampaignOrientation.onNext()"></campaign-orientation>
+                <campaign-orientation #campaignOrientation (onSelection)="sliderItemCampaignOrientation.onNext()"></campaign-orientation>
             </Slideritem>
-            <Slideritem class="page left campaignResolution" [showToButton]="true" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignOrientation'" [to]="'campaignLayout'">
-                <campaign-resolution [setOrientation]="campaignOrientation.getOrientationChanged" ></campaign-resolution>
+            <Slideritem #sliderItemCampaignResolution class="page left campaignResolution" [showToButton]="false" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignOrientation'" [to]="'campaignLayout'">
+                <campaign-resolution (onSelection)="sliderItemCampaignResolution.onNext()" [setOrientation]="campaignOrientation.getOrientationChanged" ></campaign-resolution>
             </Slideritem>
             <Slideritem (onChange)="_onSlideChange($event)" class="page left campaignLayout" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignResolution'" [to]="'campaignEditor'">
                 <campaign-layout></campaign-layout>

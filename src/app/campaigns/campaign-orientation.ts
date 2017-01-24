@@ -43,7 +43,7 @@ export class CampaignOrientation extends Compbaser {
     }
 
     @Output()
-    onOrientationSelected: EventEmitter<OrientationEnum> = new EventEmitter<OrientationEnum>();
+    onSelection: EventEmitter<OrientationEnum> = new EventEmitter<OrientationEnum>();
 
     m_orientation: OrientationEnum;
     OrientationEnum = OrientationEnum;
@@ -55,7 +55,7 @@ export class CampaignOrientation extends Compbaser {
 
     @timeout(800)
     private _next() {
-        this.onOrientationSelected.emit(this.m_orientation)
+        this.onSelection.emit(this.m_orientation)
     }
 
     public get getOrientationChanged(): OrientationEnum {

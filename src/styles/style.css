@@ -967,9 +967,9 @@ small.release {
 /*clear:both;*/
 /*}*/
 
-/*a.list-group-item:focus,  button.list-group-item:focus  {*/
-/*background-color: rgba(204, 204, 204, 0.4);*/
-/*}*/
+a.list-group-item:focus, button.list-group-item:focus {
+    background-color: #c4c4c4;
+}
 
 .selectedItem {
     background-color: #c4c4c4 !important;
