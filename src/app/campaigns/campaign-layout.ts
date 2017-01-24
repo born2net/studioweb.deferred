@@ -1,5 +1,7 @@
 import {Component, ChangeDetectionStrategy} from "@angular/core";
 import {Compbaser} from "ng-mslib";
+import * as screenTemplates from "../../libs/screen-templates.json";
+import * as _ from 'lodash';
 
 @Component({
     selector: 'campaign-layout',
@@ -13,6 +15,9 @@ export class CampaignLayout extends Compbaser {
 
     constructor() {
         super();
+        _.forEach(screenTemplates,(v,k)=>{
+            console.log('a'+k,v);
+        })
     }
 
     ngOnInit() {

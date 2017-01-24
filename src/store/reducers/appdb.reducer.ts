@@ -50,8 +50,6 @@ export function appDb(state: IAppDb, action: any): IAppDb {
         default:
             return state;
     }
-
-
 }
 
 
