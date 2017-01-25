@@ -1,5 +1,5 @@
 {
-  "HORIZONTAL": {
+  "0": {
     "1920x1080": {
       "screenType0": {
         "sd0": {
@@ -5314,7 +5314,7 @@
       }
     }
   },
-  "VERTICAL": {
+  "1": {
     "1080x1920": {
       "screenType0": {
         "sd0": {

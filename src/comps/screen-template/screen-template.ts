@@ -17,17 +17,18 @@
  is of interest to a subscribed listener.
 
  **/
-import {Component, ChangeDetectionStrategy, Input, ElementRef, ViewContainerRef} from "@angular/core";
+import {Component, ChangeDetectionStrategy, Input, ElementRef} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import * as _ from "lodash";
 import {Lib} from "../../Lib";
+import {OrientationEnum} from "../../app/campaigns/campaign-orientation";
 
 export interface IScreenTemplateData {
     i_selfDestruct: boolean;
     i_owner: Object;
     resolution: string;
     screenType: string;
-    orientation: 'HORIZONTAL' | 'VERTICAL';
+    orientation: OrientationEnum;
     screenProps: {};
     scale: number;
 }

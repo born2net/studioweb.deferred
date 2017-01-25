@@ -8,7 +8,7 @@ export enum OrientationEnum {
     VERTICAL
 }
 
-export type OrientationConst = "HORIZONTAL" | "VERTICAL";
+// export type OrientationConst = "HORIZONTAL" | "VERTICAL";
 
 
 @Component({

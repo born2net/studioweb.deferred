@@ -50,7 +50,7 @@ export class CampaignLayout extends Compbaser {
             var screenTemplateData: IScreenTemplateData = {
                 i_owner: null,
                 i_selfDestruct: true,
-                orientation: this.m_orientation == 0 ? 'HORIZONTAL' : 'VERTICAL',
+                orientation: this.m_orientation,
                 resolution: this.m_resolution,
                 screenType: screenType,
                 screenProps: screenTemplates[this.m_orientation][this.m_resolution][screenType],

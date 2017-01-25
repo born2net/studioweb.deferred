@@ -44,7 +44,7 @@ export class CampaignResolution extends Compbaser {
     @Input()
     set setOrientation(i_orientation: OrientationEnum) {
         this.screens = [];
-        var orientation = i_orientation == OrientationEnum.HORIZONTAL ? 'HORIZONTAL' : 'VERTICAL';
+        var orientation:OrientationEnum = i_orientation;
         for (var screenResolution in screenTemplates[orientation]) {
             this.screens.push(screenResolution)
         }
