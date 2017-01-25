@@ -16,9 +16,7 @@ export class CampaignLayout extends Compbaser {
 
     constructor() {
         super();
-        // _.forEach(screenTemplates,(v,k)=>{
-        //     console.log('a'+k,v);
-        // })
+
     }
 
     ngOnInit() {

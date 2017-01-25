@@ -1,5 +1,17 @@
 import {Component, ChangeDetectionStrategy, trigger, transition, animate, state, style} from "@angular/core";
 import {Compbaser} from "ng-mslib";
+import * as screenTemplates from "../../libs/screen-templates.json";
+import * as _ from 'lodash';
+
+interface IScreenTemplateData {
+    i_selfDestruct: boolean;
+    i_owner: Object;
+    resolution: string;
+    screenType: string;
+    orientation: 'HORIZONTAL' | 'VERTICAL';
+    screenProps: {};
+    scale: number;
+}
 
 @Component({
     selector: 'Dashboard',
@@ -19,10 +31,19 @@ import {Compbaser} from "ng-mslib";
         ])
     ],
     template: `<h2>Account Dashboard</h2>
+                
                <chart [options]="options"></chart>
+               
+               <div *ngIf="templateData">
+                    <screen-template [setTemplate]="templateData"></screen-template>
+                </div>
+                
     `,
 })
 export class Dashboard extends Compbaser {
+
+    templateData: IScreenTemplateData;
+
     constructor() {
         super();
         this.options = {
@@ -31,6 +52,25 @@ export class Dashboard extends Compbaser {
                 data: [29.9, 71.5, 106.4, 129.2],
             }]
         };
+
+        this.templateData = {
+            i_selfDestruct: true,
+            i_owner: this,
+            resolution: '1920x1080',
+            screenType: 'screenType11',
+            orientation: 'HORIZONTAL',
+            screenProps: screenTemplates['HORIZONTAL']['1920x1080']['screenType11'],
+            scale: 14
+        };
+
+        // screenProps: screenTemplates[this.templateData['orientation']][this.templateData['resolution']][this.templateData['screenType']],
+        this.templateData['screenProps'] = screenTemplates['HORIZONTAL']['1920x1080']['screenType11'];
+
+
+        // _.forEach(screenTemplates,(v,k)=>{
+        //     console.log('a'+k,v);
+        // })
+        
     }
     options: Object;
 

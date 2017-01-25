@@ -41,6 +41,7 @@ import {Dashboard} from "./dashboard/dashboard-navigation";
 import {Appwrap} from "./appwrap";
 import "hammerjs";
 import "fabric";
+import {ScreenTemplate} from "../comps/screen-template/screen-template";
 
 export var providing = [CommBroker, AUTH_PROVIDERS, RedPepperService, LocalStorage, StoreService, AppdbAction,
     {
@@ -49,7 +50,7 @@ export var providing = [CommBroker, AUTH_PROVIDERS, RedPepperService, LocalStora
     }
 ];
 
-var decelerations = [AppComponent, AutoLogin, LoginPanel, Logo, Appwrap, Dashboard, Tabs, Tab, Logout, NgMenu, NgMenuItem, ImgLoader, BlurForwarder,];
+var decelerations = [AppComponent, AutoLogin, LoginPanel, Logo, Appwrap, Dashboard, Tabs, Tab, Logout, NgMenu, NgMenuItem, ImgLoader, BlurForwarder,ScreenTemplate];
 
 export function appReducer(state: any = INITIAL_APPLICATION_STATE, action: any) {
     if (environment.production) {

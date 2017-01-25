@@ -49,6 +49,8 @@ export class ScreenTemplate extends Compbaser {
         this.m_svgWidth = (this.m_resolution.split('x')[0]) / this.m_scale;
         this.m_svgHeight = (this.m_resolution.split('x')[1]) / this.m_scale;
         this.m_useLabels = false;
+        this.create()
+        this.selectableFrame();
     }
 
     m_selfDestruct;
@@ -96,7 +98,7 @@ export class ScreenTemplate extends Compbaser {
      **/
     _deselectViewers() {
         var self = this;
-        jQuery('.screenDivisionClass', this.el.nativeElement).each(function () {
+        jQuery('.screenDivisionClass', self.el.nativeElement).each(function () {
             if (jQuery(this).is('rect')) {
                 jQuery(this).css({'fill': 'rgb(230,230,230)'});
             }
@@ -113,7 +115,7 @@ export class ScreenTemplate extends Compbaser {
         var self = this;
         // var a = jQuery('#' + self.m_myElementID);
         // var b = jQuery('#' + self.m_myElementID).find('rect');
-        jQuery('#' + self.m_myElementID, this.el.nativeElement).find('rect').each(function () {
+        jQuery('#' + self.m_myElementID, self.el.nativeElement).find('rect').each(function () {
             jQuery(this).on('mouseover', function () {
                 jQuery(this).css({'fill': 'rgb(190,190,190)'});
             }).mouseout(function () {
@@ -138,7 +140,7 @@ export class ScreenTemplate extends Compbaser {
      @method getDivisions
      @return {array} f array of all svg divisions
      **/
-    getDivisions() {
+    getDivisions(): any {
         var self = this;
         var svg = self.create();
         return jQuery(svg).find('rect');
@@ -199,12 +201,14 @@ export class ScreenTemplate extends Compbaser {
                 '" class="screenDivisionClass"' +
                 '  style="fill:rgb(230,230,230);stroke-width:2;stroke:rgb(72,72,72)"/>';
         }
-        return (jQuery('<svg class="svgSD" id="' + self.m_myElementID + '" width="' + self.m_svgWidth + '" height="' + self.m_svgHeight + '" xmlns="http://www.w3.org/2000/svg">  ' +
+        var snippet = (jQuery('<svg class="svgSD" id="' + self.m_myElementID + '" width="' + self.m_svgWidth + '" height="' + self.m_svgHeight + '" xmlns="http://www.w3.org/2000/svg">  ' +
             '<g>' +
             screensDivisons +
             screenLabels +
             '</g> ' +
             '</svg>'));
+        jQuery(self.el.nativeElement).append(snippet);
+        return snippet;
     }
 
     /**
@@ -216,11 +220,11 @@ export class ScreenTemplate extends Compbaser {
     selectableFrame() {
         var self = this;
         var applyToSelected = function (e) {
-            jQuery('#' + self.m_myElementID, this.el.nativeElement).parent().parent().parent().find('rect').css({
+            jQuery('#' + self.m_myElementID, self.el.nativeElement).parent().find('rect').css({
                 'stroke-width': '2',
                 'stroke': 'rgb(72,72,72)'
             });
-            jQuery('#' + self.m_myElementID, this.el.nativeElement).find('rect').css({'stroke-width': '2', 'stroke': Lib.GetThemeColor()});
+            jQuery('#' + self.m_myElementID, self.el.nativeElement).find('rect').css({'stroke-width': '2', 'stroke': Lib.GetThemeColor()});
             self._onViewSelected(e, self);
         }
         // listen one
@@ -254,13 +258,13 @@ export class ScreenTemplate extends Compbaser {
     selectDivison(i_campaign_timeline_board_viewer_id) {
         var self = this;
         self._deselectViewers();
-        var selectedElement = jQuery('#' + self.m_myElementID,this.el.nativeElement).find('[data-campaign_timeline_board_viewer_id="' + i_campaign_timeline_board_viewer_id + '"]');
+        var selectedElement = jQuery('#' + self.m_myElementID, self.el.nativeElement).find('[data-campaign_timeline_board_viewer_id="' + i_campaign_timeline_board_viewer_id + '"]');
         jQuery(selectedElement).css({'fill': Lib.GetThemeColor()});
     }
 
     destroy() {
         var self = this;
-        jQuery('.screenDivisionClass',this.el.nativeElement).off('click contextmenu', function (e) {
+        jQuery('.screenDivisionClass', self.el.nativeElement).off('click contextmenu', function (e) {
             self._onViewSelected(e, self);
         });
         jQuery(this).off('mouseover', function () {
@@ -268,8 +272,8 @@ export class ScreenTemplate extends Compbaser {
         }).mouseout(function () {
             jQuery(this).css({'fill': 'rgb(230,230,230)'});
         });
-        jQuery.each(self, function (k) {
-            self[k] = undefined;
-        });
+        // jQuery.each(self, function (k) {
+        //     self[k] = undefined;
+        // });
     }
 }
