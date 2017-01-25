@@ -30,15 +30,14 @@ export interface IScreenTemplateData {
     screenType: string;
     orientation: OrientationEnum;
     screenProps: {};
+    campaignName: string;
     scale: number;
 }
 
 @Component({
     selector: 'screen-template',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    template: `
-               <small class="debug">{{me}}</small>
-           `,
+    template: `<!--<small class="debug">{{me}}</small>-->`,
 })
 export class ScreenTemplate extends Compbaser {
 
