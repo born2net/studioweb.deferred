@@ -16,16 +16,16 @@ import {IUiState} from "../../store/store.data";
                 <campaign-list (slideToCampaignName)="sliderItemCampaignList.slideTo('campaignName','right')" (slideToCampaignEditor)="sliderItemCampaignList.onNext()"></campaign-list>
             </Slideritem>
             <Slideritem class="page left campaignName" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignList'" [to]="'campaignOrientation'">
-                <campaign-name></campaign-name>
+                <campaign-name #campaigNname></campaign-name>
             </Slideritem>
             <Slideritem  #sliderItemCampaignOrientation class="page left campaignOrientation" [showToButton]="false" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignName'" [to]="'campaignResolution'">
                 <campaign-orientation #campaignOrientation (onSelection)="sliderItemCampaignOrientation.onNext()"></campaign-orientation>
             </Slideritem>
             <Slideritem #sliderItemCampaignResolution class="page left campaignResolution" [showToButton]="false" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignOrientation'" [to]="'campaignLayout'">
-                <campaign-resolution (onSelection)="sliderItemCampaignResolution.onNext()" [setOrientation]="campaignOrientation.getOrientationChanged" ></campaign-resolution>
+                <campaign-resolution #campaignResolution (onSelection)="sliderItemCampaignResolution.onNext()" [setOrientation]="campaignOrientation.getOrientationChanged" ></campaign-resolution>
             </Slideritem>
             <Slideritem (onChange)="_onSlideChange($event)" class="page left campaignLayout" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignResolution'" [to]="'campaignEditor'">
-                <campaign-layout></campaign-layout>
+                <campaign-layout [setOrientation]="campaignOrientation.getOrientationChanged" [setResolution]="campaignResolution.getResolutionChanged"></campaign-layout>
             </Slideritem>
             <Slideritem (onChange)="_onSlideChange($event)" class="page left campaignEditor" [fromDirection]="'left'" [from]="'campaignList'">
                 <campaign-editor></campaign-editor>

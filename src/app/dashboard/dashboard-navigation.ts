@@ -26,9 +26,9 @@ import {IScreenTemplateData} from "../../comps/screen-template/screen-template";
                 
                <chart [options]="options"></chart>
                
-               <div *ngIf="templateData">
-                    <screen-template [setTemplate]="templateData"></screen-template>
-                </div>
+               <!--<div *ngIf="templateData">-->
+                    <!--<screen-template [setTemplate]="templateData"></screen-template>-->
+                <!--</div>-->
                 
     `,
 })
@@ -45,18 +45,18 @@ export class Dashboard extends Compbaser {
             }]
         };
 
-        this.templateData = {
-            i_selfDestruct: true,
-            i_owner: this,
-            resolution: '1920x1080',
-            screenType: 'screenType11',
-            orientation: 'HORIZONTAL',
-            screenProps: screenTemplates['HORIZONTAL']['1920x1080']['screenType11'],
-            scale: 14
-        };
-
-        // screenProps: screenTemplates[this.templateData['orientation']][this.templateData['resolution']][this.templateData['screenType']],
-        this.templateData['screenProps'] = screenTemplates['HORIZONTAL']['1920x1080']['screenType11'];
+        // this.templateData = {
+        //     i_selfDestruct: true,
+        //     i_owner: this,
+        //     resolution: '1920x1080',
+        //     screenType: 'screenType11',
+        //     orientation: 'HORIZONTAL',
+        //     screenProps: screenTemplates['HORIZONTAL']['1920x1080']['screenType11'],
+        //     scale: 14
+        // };
+        //
+        // // screenProps: screenTemplates[this.templateData['orientation']][this.templateData['resolution']][this.templateData['screenType']],
+        // this.templateData['screenProps'] = screenTemplates['HORIZONTAL']['1920x1080']['screenType11'];
 
 
         // _.forEach(screenTemplates,(v,k)=>{

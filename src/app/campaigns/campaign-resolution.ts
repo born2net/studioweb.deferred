@@ -1,8 +1,9 @@
-import {Component, ChangeDetectionStrategy, Input, Output, EventEmitter} from "@angular/core";
+import {Component, ChangeDetectionStrategy, Input, Output, EventEmitter, ViewChild} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import * as screenTemplates from "../../libs/screen-templates.json";
 import {OrientationEnum} from "./campaign-orientation";
 import {timeout} from "../../decorators/timeout-decorator";
+import {Observable, Observer} from "rxjs";
 
 @Component({
     selector: 'campaign-resolution',
@@ -10,7 +11,7 @@ import {timeout} from "../../decorators/timeout-decorator";
     template: `<small class="debug">{{me}}</small>
                 <h4>screen resolution</h4>
                 <div (click)="$event.preventDefault()">
-                    <a (click)="_onSelection(screen)" href="#" class="list-group-item" *ngFor="let screen of screens">
+                    <a id="#aaa" (click)="_nextClick.next(screen)" href="#" class="list-group-item" *ngFor="let screen of screens">
                         <label class="screenResolutionLabel">{{screen}}</label>
                     </a>
                 </div>
@@ -18,8 +19,23 @@ import {timeout} from "../../decorators/timeout-decorator";
 })
 export class CampaignResolution extends Compbaser {
 
+    private screens: Array<any>;
+    private m_resolution: string;
+    _nextClick: Observer<any>;
+
     constructor() {
         super();
+        this.cancelOnDestroy(
+            Observable.create(observer => {
+                this._nextClick = observer
+            }).map((m_resolution) => {
+                this.m_resolution = m_resolution;
+            })
+                .debounceTime(800)
+                .do(() => {
+                    this.onSelection.emit(this.m_resolution)
+                }).subscribe()
+        )
     }
 
     @Output()
@@ -32,23 +48,9 @@ export class CampaignResolution extends Compbaser {
         for (var screenResolution in screenTemplates[orientation]) {
             this.screens.push(screenResolution)
         }
-        console.log(3333);
     }
 
-    private screens: Array<any>;
-    private m_resolution: string;
-
-    _onSelection(i_resolution: string) {
-        this.m_resolution = i_resolution;
-        this._next();
-    }
-
-    @timeout(800)
-    private _next() {
-        this.onSelection.emit(this.m_resolution)
-    }
-
-    public getResolution() {
+    public get getResolutionChanged(): string {
         return this.m_resolution;
     }
 

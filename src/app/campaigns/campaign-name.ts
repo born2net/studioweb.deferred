@@ -20,7 +20,7 @@ export class CampaignName extends Compbaser {
 
     m_campaignName:string = '';
 
-    public getCamaignName(){
+    public get getCampaignNameChanged(): string {
         return this.m_campaignName;
     }
 
