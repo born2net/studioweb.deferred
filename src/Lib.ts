@@ -39,6 +39,13 @@ export class Lib {
         }
     }
 
+    static GetThemeColor() {
+        var light = true;
+        if (light)
+            return '#428ac9 ';
+        return '#eb7c66';
+    }
+
     /**
      *
      * @param dateString format of date + time: /Date(1469923200000+0000)/"
