@@ -66,10 +66,8 @@ export class CampaignLayout extends Compbaser {
     private _render() {
         if (_.isUndefined(this.m_orientation) || _.isUndefined(this.m_resolution))
             return;
-        console.log('rendering' + this.m_resolution + ' ' + this.m_orientation);
         this.m_screenLayouts = [];
         for (var screenType in screenTemplates[this.m_orientation][this.m_resolution]) {
-
             var screenTemplateData: IScreenTemplateData = {
                 i_owner: null,
                 i_selfDestruct: true,
@@ -81,16 +79,6 @@ export class CampaignLayout extends Compbaser {
                 campaignName: this.m_campainName
             };
             this.m_screenLayouts.push(screenTemplateData);
-
-            // var screenTemplate = new ScreenTemplateFactory({
-            //     i_screenTemplateData: screenTemplateData,
-            //     i_selfDestruct: true,
-            //     i_owner: self
-            // });
-            // var snippet = screenTemplate.create();
-            // $(Elements.SCREEN_LAYOUT_LIST).append($(snippet));
-            // screenTemplate.selectableFrame();
-            // self.m_screens.push(screenTemplate);
         }
     }
 

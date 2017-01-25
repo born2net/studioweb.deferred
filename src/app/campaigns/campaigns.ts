@@ -5,9 +5,7 @@ import {Store} from "@ngrx/store";
 import {ApplicationState} from "../../store/application.state";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
 import {IUiState} from "../../store/store.data";
-import {OrientationEnum} from "./campaign-orientation";
 import {IScreenTemplateData} from "../../comps/screen-template/screen-template";
-
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,

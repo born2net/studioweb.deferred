@@ -11,7 +11,7 @@ import {Observable, Observer} from "rxjs";
     template: `<small class="debug">{{me}}</small>
                 <h4>screen resolution</h4>
                 <div (click)="$event.preventDefault()">
-                    <a id="#aaa" (click)="_nextClick.next(screen)" href="#" class="list-group-item" *ngFor="let screen of screens">
+                    <a (click)="_nextClick.next(screen)" href="#" class="list-group-item" *ngFor="let screen of screens">
                         <label class="screenResolutionLabel">{{screen}}</label>
                     </a>
                 </div>
@@ -53,7 +53,6 @@ export class CampaignResolution extends Compbaser {
     public get getResolutionChanged(): string {
         return this.m_resolution;
     }
-
 
     ngOnInit() {
     }
