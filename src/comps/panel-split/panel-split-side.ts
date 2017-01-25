@@ -6,16 +6,16 @@ import {Component, ChangeDetectionStrategy, ElementRef, Output, EventEmitter} fr
     styles: [`
         .propPanelWrap {
             position: fixed;
-            min-height: 100%;
-            max-height: 100%;
+            /*min-height: 100%;*/
+            /*max-height: 100%;*/
             right: 0;
             top: 0;
             height: 100%;
             overflow: hidden;
-            -webkit-transition: width 0.1s ease, margin 0.1s ease;
-            -moz-transition: width 0.1s ease, margin 0.1s ease;
-            -o-transition: width 0.1s ease, margin 0.1s ease;
-            transition: width 0.1s ease, margin 0.1s ease;
+            -webkit-transition: width 1s ease, margin 1s ease;
+            -moz-transition: width 1s ease, margin 1s ease;
+            -o-transition: width 1s ease, margin 1s ease;
+            transition: width 1s ease, margin 1s ease;
             background-color: #4c4c4c;
             padding: 0;
             margin: 0;

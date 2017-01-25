@@ -6,10 +6,10 @@ import {Component, ChangeDetectionStrategy, ElementRef} from "@angular/core";
 
     styles: [`
         .mainPanelWrap {
-            -webkit-transition: width 0.1s ease, margin 0.1s ease;
-            -moz-transition: width 0.1s ease, margin 0.1s ease;
-            -o-transition: width 0.1s ease, margin 0.1s ease;
-            transition: width 0.1s ease, margin 0.1s ease;
+            -webkit-transition: width 1s ease, margin 1s ease;
+            -moz-transition: width 1s ease, margin 1s ease;
+            -o-transition: width 1s ease, margin 1s ease;
+            transition: width 1s ease, margin 1s ease;
         }
         button {
             width: 200px;
