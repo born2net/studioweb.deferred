@@ -75,7 +75,6 @@ export class CampaignList extends Compbaser {
         this.userModel$ = this.store.select(store => store.appDb.userModel);
         this.campaigns$ = this.store.select(store => store.msDatabase.sdk.table_campaigns).map((list: List<CampaignsModelExt>) => {
             this.cars = list;//.toArray();
-            console.log(this.cars.length);
             return list.filter((campaignModel: CampaignsModelExt) => {
                 if (campaignModel.getCampaignName().indexOf('bla_bla') > -1)
                     return false

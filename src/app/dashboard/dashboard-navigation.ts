@@ -1,17 +1,9 @@
 import {Component, ChangeDetectionStrategy, trigger, transition, animate, state, style} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import * as screenTemplates from "../../libs/screen-templates.json";
-import * as _ from 'lodash';
+import {IScreenTemplateData} from "../../comps/screen-template/screen-template";
 
-interface IScreenTemplateData {
-    i_selfDestruct: boolean;
-    i_owner: Object;
-    resolution: string;
-    screenType: string;
-    orientation: 'HORIZONTAL' | 'VERTICAL';
-    screenProps: {};
-    scale: number;
-}
+
 
 @Component({
     selector: 'Dashboard',

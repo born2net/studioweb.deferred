@@ -22,6 +22,15 @@ import {Compbaser} from "ng-mslib";
 import * as _ from "lodash";
 import {Lib} from "../../Lib";
 
+export interface IScreenTemplateData {
+    i_selfDestruct: boolean;
+    i_owner: Object;
+    resolution: string;
+    screenType: string;
+    orientation: 'HORIZONTAL' | 'VERTICAL';
+    screenProps: {};
+    scale: number;
+}
 
 @Component({
     selector: 'screen-template',
@@ -37,10 +46,9 @@ export class ScreenTemplate extends Compbaser {
     }
 
     @Input()
-    set setTemplate(i_screenTemplateData: any) {
-        // this.m_selfDestruct = i_selfDestruct;
+    set setTemplate(i_screenTemplateData: IScreenTemplateData) {
+        this.m_selfDestruct = i_screenTemplateData.i_selfDestruct;
         this.m_myElementID = 'svgScreenLayout' + '_' + _.uniqueId();
-        this.m_selfDestruct = false;
         this.m_screenTemplateData = i_screenTemplateData;
         this.m_orientation = i_screenTemplateData['orientation'];
         this.m_resolution = i_screenTemplateData['resolution'];
@@ -49,7 +57,7 @@ export class ScreenTemplate extends Compbaser {
         this.m_svgWidth = (this.m_resolution.split('x')[0]) / this.m_scale;
         this.m_svgHeight = (this.m_resolution.split('x')[1]) / this.m_scale;
         this.m_useLabels = false;
-        this.create()
+        this._create()
         this.selectableFrame();
     }
 
@@ -72,7 +80,7 @@ export class ScreenTemplate extends Compbaser {
      @param {Object} i_caller
      @return {Boolean} false
      **/
-    _onViewSelected(e, i_caller) {
+    private _onViewSelected(e, i_caller) {
         var self = i_caller;
         var element = e.target;
 
@@ -96,7 +104,7 @@ export class ScreenTemplate extends Compbaser {
      @method _deselectViewers
      @return none
      **/
-    _deselectViewers() {
+    private _deselectViewers() {
         var self = this;
         jQuery('.screenDivisionClass', self.el.nativeElement).each(function () {
             if (jQuery(this).is('rect')) {
@@ -111,7 +119,7 @@ export class ScreenTemplate extends Compbaser {
      @method _mouseOverEffect
      @return none
      **/
-    _mouseOverEffect() {
+    private _mouseOverEffect() {
         var self = this;
         // var a = jQuery('#' + self.m_myElementID);
         // var b = jQuery('#' + self.m_myElementID).find('rect');
@@ -135,31 +143,31 @@ export class ScreenTemplate extends Compbaser {
         // return self.m_owner;
     }
 
-    /**
-     Create all the screen divisions (aka viewers) as svg snippets and push them into an array
-     @method getDivisions
-     @return {array} f array of all svg divisions
-     **/
-    getDivisions(): any {
-        var self = this;
-        var svg = self.create();
-        return jQuery(svg).find('rect');
-        // var f = jQuery(svg).find('rect').map(function (k, v) {
-        //     return '<svg style="padding: 0px; margin: 15px" width="20px" height="20px" xmlns="http://www.w3.org/2000/svg">  ' +
-        //         '<g>' +
-        //         v['outerHTML'] +
-        //         '</g> ' +
-        //         '</svg>';
-        // });
-        // return f;
-    }
+    // /**
+    //  Create all the screen divisions (aka viewers) as svg snippets and push them into an array
+    //  @method getDivisions
+    //  @return {array} f array of all svg divisions
+    //  **/
+    // getDivisions(): any {
+    //     var self = this;
+    //     var svg = self._create();
+    //     return jQuery(svg).find('rect');
+    //     // var f = jQuery(svg).find('rect').map(function (k, v) {
+    //     //     return '<svg style="padding: 0px; margin: 15px" width="20px" height="20px" xmlns="http://www.w3.org/2000/svg">  ' +
+    //     //         '<g>' +
+    //     //         v['outerHTML'] +
+    //     //         '</g> ' +
+    //     //         '</svg>';
+    //     // });
+    //     // return f;
+    // }
 
     /**
      Create will produce the actual SVG based Template (screen) with inner viewers and return HTML snippet to the caller.
      @method create
      @return {Object} html element produced by this factory
      **/
-    create() {
+    private _create() {
         var self = this;
         var screensDivisons = '';
         var screenLabels = '';
@@ -264,6 +272,7 @@ export class ScreenTemplate extends Compbaser {
 
     destroy() {
         var self = this;
+        jQuery('.screenDivisionClass', '#' + self.m_myElementID).off('mouseup contextmenu');
         jQuery('.screenDivisionClass', self.el.nativeElement).off('click contextmenu', function (e) {
             self._onViewSelected(e, self);
         });
