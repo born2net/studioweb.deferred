@@ -9,16 +9,16 @@ import {SideProps} from "../../store/actions/appdb.actions";
     selector: 'campaign-list',
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-               <small class="debug">{{me}}</small>
+            <small class="debug">{{me}}</small>
             <ul (click)="$event.preventDefault()" class="appList list-group">
-            <a (click)="_onCampaignSelected($event, campaign)" [ngClass]="{'selectedItem': m_selectedCampaign == campaign}" href="#" class="list-group-item" *ngFor="let campaign of m_campaigns$">
-                <h4>{{campaign?.getCampaignName()}}</h4>
-                <p class="list-group-item-text">play list mode: {{campaign?.getCampaignPlaylistModeName()}} </p>
-                <div class="openProps">
-                    <button  type="button" class="props btn btn-default btn-sm"><i style="font-size: 1.5em" class="props fa fa-gear"></i></button>
-                </div>
-            </a>
-        </ul>
+                    <a (click)="_onCampaignSelected($event, campaign)" [ngClass]="{'selectedItem': m_selectedCampaign == campaign}" href="#" class="list-group-item" *ngFor="let campaign of m_campaigns$">
+                        <h4>{{campaign?.getCampaignName()}}</h4>
+                        <p class="list-group-item-text">play list mode: {{campaign?.getCampaignPlaylistModeName()}} </p>
+                        <div class="openProps">
+                            <button  type="button" class="props btn btn-default btn-sm"><i style="font-size: 1.5em" class="props fa fa-gear"></i></button>
+                        </div>
+                    </a>
+            </ul>
            `,
 })
 export class CampaignList extends Compbaser {

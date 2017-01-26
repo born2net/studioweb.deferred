@@ -166,11 +166,11 @@ export class CampaignManager extends Compbaser {
     }
 
     _createCampaign() {
-        // var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
-        // this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
-        // this.slideToCampaignName.emit();
+        var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
+        this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+        this.slideToCampaignName.emit();
 
-        this.store.dispatch(({type: EFFECT_CREATE_CAMPAIGN_BOARD}))
+        // this.store.dispatch(({type: EFFECT_CREATE_CAMPAIGN_BOARD}))
 
     }
 

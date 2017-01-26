@@ -36,11 +36,12 @@
 <button class="btn btn-primary" (click)="save()">save to server</button>
 <!-- move scroller to proper offset -->
 <div class="responsive-pad-right">
-
-    <div matchBodyHeight="350"  style="overflow: scroll">
-
-        <campaign-list (onCampaignSelected)="_onCampaignSelected($event)" (slideToCampaignName)="slideToCampaignName.emit($event)" (slideToCampaignEditor)="slideToCampaignEditor.emit($event)"  [campaigns]="campaigns$ | async"></campaign-list>
-
+    <div matchBodyHeight="350" style="overflow: scroll">
+        <campaign-list (onCampaignSelected)="_onCampaignSelected($event)"
+                       (slideToCampaignName)="slideToCampaignName.emit($event)"
+                       (slideToCampaignEditor)="slideToCampaignEditor.emit($event)"
+                       [campaigns]="campaigns$ | async">
+        </campaign-list>
         <hr/>
         <h2>sample code for testing only</h2>
         <h4>ng-bootstrap dropdown</h4>
@@ -63,9 +64,5 @@
                 </div>
             </template>
         </p-orderList>
-
-
     </div>
-
-
 </div>
