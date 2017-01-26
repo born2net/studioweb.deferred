@@ -1,11 +1,11 @@
-import {Component, ChangeDetectionStrategy, ElementRef, Input, EventEmitter, Output} from "@angular/core";
+import {Component, ChangeDetectionStrategy, ElementRef, EventEmitter, Output} from "@angular/core";
 import {ApplicationState} from "../../store/application.state";
 import {Store} from "@ngrx/store";
 import {Observable} from "rxjs";
 import {List} from "immutable";
 import {Compbaser} from "ng-mslib";
 import {Router} from "@angular/router";
-import {EFFECT_RENAME_CAMPAIGN, EFFECT_REMOVE_CAMPAIGN, EFFECT_CREATE_CAMPAIGN_BOARD} from "../../store/effects/msdb.effects";
+import {EFFECT_REMOVE_CAMPAIGN} from "../../store/effects/msdb.effects";
 import {UserModel} from "../../models/UserModel";
 import {ResourcesModel} from "../../store/imsdb.interfaces_auto";
 import {RedPepperService} from "../../services/redpepper.service";
@@ -129,14 +129,10 @@ export class CampaignManager extends Compbaser {
         this.store.dispatch({type: EFFECT_REMOVE_CAMPAIGN, payload: campaign})
     }
 
-    private renameCampaign(campaign, newName) {
-        this.store.dispatch({type: EFFECT_RENAME_CAMPAIGN, payload: {campaign: campaign, newName: newName}})
-    }
-
     private save() {
         console.log('saving...');
         this.redPepperService.save((result) => {
-            if (result.status == true){
+            if (result.status == true) {
                 alert('saved');
             } else {
                 alert(JSON.stringify(result));
@@ -145,7 +141,7 @@ export class CampaignManager extends Compbaser {
         });
     }
 
-    _onCampaignSelected(i_uiState:IUiState){
+    _onCampaignSelected(i_uiState: IUiState) {
         this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: i_uiState}))
     }
 
@@ -163,8 +159,6 @@ export class CampaignManager extends Compbaser {
         this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 }
-
-
 
 
 // let uiState: IUiState = {

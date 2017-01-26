@@ -14,7 +14,6 @@ import {CampaignsModelExt} from "../model/msdb-models-extended";
 export const EFFECT_INIT_REDUXIFY_MSDB = 'EFFECT_INIT_REDUXIFY_MSDB';
 export const EFFECT_CREATE_CAMPAIGN_BOARD = 'EFFECT_CREATE_CAMPAIGN_BOARD';
 export const EFFECT_REMOVE_CAMPAIGN = 'EFFECT_REMOVE_CAMPAIGN';
-export const EFFECT_RENAME_CAMPAIGN = 'EFFECT_RENAME_CAMPAIGN';
 
 @Injectable()
 export class MsdbEffects {
@@ -32,16 +31,38 @@ export class MsdbEffects {
             this.redPepperService.reduxCommit();
         })
 
-    //todo: add @Effect() getStations API
+    //todo: add @Effect() getStations API as it is a pure side effecr
 
-    @Effect({dispatch: false})
-    renameCampaign: Observable<Action> = this.actions$.ofType(EFFECT_RENAME_CAMPAIGN)
-        .do((action: Action) => {
-            var campaignId: CampaignsModelExt = (action.payload.campaign as CampaignsModelExt).getCampaignId();
-            var newName: string = action.payload.newName;
-            this.redPepperService.renameCampaign(campaignId, newName);
-            this.redPepperService.reduxCommit();
-        })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     *
+     * all code below this point needs to be removed into the component that is using it
+     * or into redpepper
+     */
+
 
     @Effect({dispatch: false})
     removeCampaign: Observable<Action> = this.actions$.ofType(EFFECT_REMOVE_CAMPAIGN)
@@ -133,6 +154,32 @@ export class MsdbEffects {
             // dispatch.payload.push(board2)
             // this.store.dispatch({type: ACTION_INJECT_SDK, payload: [tables]});
         })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
 }
 
 
