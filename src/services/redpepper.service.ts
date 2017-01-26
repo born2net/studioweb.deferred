@@ -10,6 +10,7 @@ import {ACTION_INJECT_SDK} from "../store/actions/appdb.actions";
 import {Store} from "@ngrx/store";
 import {ApplicationState} from "../store/application.state";
 import * as _ from "lodash";
+import {NgmslibService} from "ng-mslib";
 
 export type redpepperTables = {
     tables: ISDK
@@ -19,7 +20,7 @@ export type redpepperTables = {
 @Injectable()
 export class RedPepperService {
 
-    constructor(private store: Store<ApplicationState>) {
+    constructor(private store: Store<ApplicationState>, private ngmslibService: NgmslibService) {
     }
 
     private m_tablesPendingToProcess: Array<any> = [];
@@ -129,7 +130,7 @@ export class RedPepperService {
             var tableName = 'table_' + table;
             var storeName = this.capitalizeFirstLetter(StringJS(table).camelize().s) + 'Model';
             var storeModelList: List<StoreModel> = List<StoreModel>();
-            tables[tableName] = storeModelList;            
+            tables[tableName] = storeModelList;
             if (this.databaseManager[tableName]().getAllPrimaryKeys().length == 0) {
                 tables[tableName] = storeModelList;
                 tableNamesTouched[tableName] = tableName;
@@ -141,8 +142,8 @@ export class RedPepperService {
                     record.self = null;
                     record.__proto__ = null;
                     var newClass: StoreModel;
-                    if (MsdbModelsExtended[storeName+'Ext']){
-                        newClass = new MsdbModelsExtended[storeName+'Ext'](record);
+                    if (MsdbModelsExtended[storeName + 'Ext']) {
+                        newClass = new MsdbModelsExtended[storeName + 'Ext'](record);
                     } else {
                         newClass = new MsdbModels[storeName](record);
                     }
@@ -251,9 +252,10 @@ export class RedPepperService {
      @return {Object} foundCampaignRecord
      **/
     setCampaignRecord(i_campaign_id, i_key, i_value): void {
+        var value = this.ngmslibService.cleanCharForXml(i_value);
         this.databaseManager.table_campaigns().openForEdit(i_campaign_id);
         var recCampaign = this.databaseManager.table_campaigns().getRec(i_campaign_id);
-        recCampaign[i_key] = i_value;
+        recCampaign[i_key] = value;
         this.addPendingTables(['table_campaigns']);
     }
 

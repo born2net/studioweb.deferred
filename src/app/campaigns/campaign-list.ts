@@ -152,8 +152,12 @@ export class CampaignList extends Compbaser {
     private save() {
         console.log('saving...');
         this.redPepperService.save((result) => {
-            alert('saved');
-            console.log(result);
+            if (result.status == true){
+                alert('saved');
+            } else {
+                alert(JSON.stringify(result));
+            }
+            console.log(JSON.stringify(result));
         });
     }
 

@@ -4,12 +4,14 @@ import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 import {enableProdMode} from '@angular/core';
 import {environment} from './environments/environment';
 import {AppModule} from "./app/app-module";
-import {Observable} from "rxjs";
+import {Observable, Subscription} from "rxjs";
 // import { AppModule } from './app/';
 
 import {hmrBootstrap} from './hmr';
 
 const debuggerOn = true;
+
+Observable.prototype.one = Observable.prototype.subscribe;
 
 Observable.prototype.debug = function(message:string) {
     return this.do(
@@ -36,6 +38,9 @@ Observable.prototype.debug = function(message:string) {
 declare module 'rxjs/Observable' {
     interface Observable<T> {
         debug: (...any) => Observable<T>
+    }
+    interface Observable<T> {
+        one(next?: (value: T) => void, error?: (error: any) => void, complete?: () => void): Subscription;
     }
 }
 

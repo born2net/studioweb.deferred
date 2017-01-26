@@ -22,7 +22,7 @@ export class YellowPepperService {
             });
     }
 
-    public findCampaignByIdConcatTest(i_campaignId):Observable<CampaignsModelExt> {
+    public findCampaignByIdConcatTest(i_campaignId): Observable<CampaignsModelExt> {
         var campaign1$ = this.findCampaignById(i_campaignId)
         var campaign2$ = this.findCampaignById(1)
         var campaign3$ = this.findCampaignById(2)
@@ -40,6 +40,10 @@ export class YellowPepperService {
             console.log(e, f);
             return e
         }).take(1)
+    }
+
+    public listenCampaignSelected(): any {
+        return this.store.select(store => store.appDb.uiState.campaign.campaignSelected);
     }
 
 }

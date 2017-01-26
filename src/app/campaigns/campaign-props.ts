@@ -1,11 +1,11 @@
 import {Component, Input, ChangeDetectionStrategy} from "@angular/core";
 import {FormControl, FormGroup, FormBuilder} from "@angular/forms";
-import * as _ from "lodash";
 import {Compbaser, NgmslibService} from "ng-mslib";
-import {Store} from "@ngrx/store";
-import {ApplicationState} from "../../store/application.state";
 import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
 import {YellowPepperService} from "../../services/yellowpepper.service";
+import {RedPepperService} from "../../services/redpepper.service";
+import {timeout} from "../../decorators/timeout-decorator";
+import * as _ from "lodash";
 
 @Component({
     selector: 'campaign-props',
@@ -26,7 +26,7 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
                                 </div>
                                 <ul class="list-group">
                                     <li class="list-group-item">
-                                        maintain aspect ratio
+                                        kiosk mode
                                         <div class="material-switch pull-right">
                                             <input (change)="onFormChange(customerNetwork2.checked)"
                                                    [formControl]="contGroup.controls['kiosk_mode']"
@@ -37,7 +37,7 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
                                     </li>
                                     <li class="list-group-item">
                                         <div class="input-group">
-                                            <span class="input-group-addon"><i class="fa fa-clock-o"></i></span>
+                                            <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
                                             <input [formControl]="contGroup.controls['campaign_name']" required
                                                    pattern="[0-9]|[a-z]|[A-Z]+"
                                                    type="text" class="form-control" minlength="3" maxlength="15"
@@ -46,10 +46,10 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
                                     </li>
                                     <li class="list-group-item">
                                         <div class="input-group">
-                                            <span class="input-group-addon"><i class="fa fa-circle-o-notch"></i></span>
+                                            <span class="input-group-addon"><i class="fa fa-key"></i></span>
                                             <input type="number" [formControl]="contGroup.controls['campaign_playlist_mode']" min="0"
                                                    class="form-control"
-                                                   placeholder="repetitions">
+                                                   placeholder="access key">
                                         </div>
                                     </li>
                                 </ul>
@@ -60,26 +60,18 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
             </div>
     `,
     styles: [`
-        input.ng-invalid {
-            border-right: 10px solid red;
-        }
-        .material-switch {
-            position: relative;
-            padding-top: 10px;
-        }
-        .input-group {
-            padding-top: 10px;
-        }
-        i {
-            width: 20px;
-        }
+        input.ng-invalid { border-right: 10px solid red;  }
+        .material-switch {  position: relative; padding-top: 10px; }
+        .input-group { padding-top: 10px; } 
+        i { width: 20px; }
     `]
 })
 export class CampaignProps extends Compbaser {
 
     private campaignModel: CampaignsModelExt;
 
-    constructor(private fb: FormBuilder, private store: Store<ApplicationState>, private ngmslibService: NgmslibService, private yellowPepperService: YellowPepperService) {
+
+    constructor(private fb: FormBuilder, private ngmslibService: NgmslibService, private yp: YellowPepperService, private rp: RedPepperService) {
         super();
         this.contGroup = fb.group({
             'campaign_name': [''],
@@ -91,15 +83,14 @@ export class CampaignProps extends Compbaser {
         })
 
         this.cancelOnDestroy(
-            this.store.select(store => store.appDb.uiState.campaign.campaignSelected).subscribe((i_campaignId) => {
-                this.yellowPepperService.findCampaignById(i_campaignId).subscribe((campaign: CampaignsModelExt) => {
+            this.yp.listenCampaignSelected().subscribe((i_campaignId) => {
+                this.yp.findCampaignById(i_campaignId).one((campaign: CampaignsModelExt) => {
                     this.campaignModel = campaign;
                     this.renderFormInputs();
                 })
             })
         )
     }
-
 
     @Input()
     set setCampaignModel(i_campaignModel) {
@@ -114,37 +105,27 @@ export class CampaignProps extends Compbaser {
         this.updateSore();
     }
 
+    @timeout()
     private updateSore() {
-        setTimeout(() => {
-            console.log(this.contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.contGroup.value)));
-            // this.appStore.dispatch(this.adnetAction.saveCustomerInfo(Lib.CleanCharForXml(this.contGroup.value), this.customerModel.customerId()))
-        }, 1)
+        console.log(this.contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.contGroup.value)));
+        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_name', this.contGroup.value.campaign_name);
+        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_playlist_mode', this.contGroup.value.campaign_playlist_mode);
+        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_timeline_id', 0); //todo: you need to fix this as zero is arbitrary number right now
+        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_mode', this.contGroup.value.kiosk_mode);
+        this.rp.reduxCommit()
     }
 
     private renderFormInputs() {
         if (!this.campaignModel)
             return;
         _.forEach(this.formInputs, (value, key: string) => {
-            let data;
-            if (key=='kiosk_mode'){
-                console.log(key);
-                data = this.campaignModel.getKey(key);
-                if (data=='True'){
-                    data = true;
-                } else {
-                    data = false;
-                }
-
-            } else {
-                data = this.campaignModel.getKey(key);
-            }
-
+            let data = this.campaignModel.getKey(key);
+            data = StringJS(data).booleanToNumber();
             this.formInputs[key].setValue(data)
         });
     };
 
     destroy() {
-        // this.listeners.unsubscribe();
     }
 }
 
@@ -197,3 +178,28 @@ export class CampaignProps extends Compbaser {
 //         console.log(camp);
 //     })
 // )
+// import {Subscriber} from "rxjs";
+// private listeners: Subscriber<any> = new Subscriber();
+// this.listeners.add(
+//     this.yp.listenCampaignSelected().subscribe((i_campaignId) => {
+//
+//         this.yp.findCampaignById(i_campaignId).subscribe((campaign: CampaignsModelExt) => {
+//             this.campaignModel = campaign;
+//             this.renderFormInputs();
+//         })
+//
+//         this.yp.findCampaignById(i_campaignId).subscribe((campaign: CampaignsModelExt) => {
+//             this.campaignModel = campaign;
+//             this.renderFormInputs();
+//         })
+//
+//         this.yp.findCampaignById(i_campaignId).subscribe((campaign: CampaignsModelExt) => {
+//             this.campaignModel = campaign;
+//             this.renderFormInputs();
+//         })
+//     })
+// )
+
+// destroy() {
+//     // this.listeners.unsubscribe();
+// }
