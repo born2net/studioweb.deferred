@@ -5,7 +5,6 @@ import "rxjs/add/operator/mergeMap";
 import "rxjs/add/operator/merge";
 import "rxjs/add/operator/debounceTime";
 import {Action, Store} from "@ngrx/store";
-import {ApplicationState} from "../application.state";
 import {Actions, Effect} from "@ngrx/effects";
 import {Observable} from "rxjs";
 import {RedPepperService} from "../../services/redpepper.service";
@@ -18,7 +17,6 @@ export class MsdbEffects {
 
     constructor(private actions$: Actions,
                 @Inject('OFFLINE_ENV') private offlineEnv,
-                private store: Store<ApplicationState>,
                 private redPepperService: RedPepperService,
                 private http: Http) {
     }
