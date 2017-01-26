@@ -1,13 +1,10 @@
 import {Component, Input, ChangeDetectionStrategy} from "@angular/core";
 import {FormControl, FormGroup, FormBuilder} from "@angular/forms";
-import {Map, List} from 'immutable';
 import * as _ from "lodash";
 import {Compbaser, NgmslibService} from "ng-mslib";
 import {Store} from "@ngrx/store";
 import {ApplicationState} from "../../store/application.state";
 import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
-import {Observable, Subscriber} from "rxjs";
-import {RedPepperService} from "../../services/redpepper.service";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 
 @Component({
@@ -32,7 +29,7 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
                                         maintain aspect ratio
                                         <div class="material-switch pull-right">
                                             <input (change)="onFormChange(customerNetwork2.checked)"
-                                                   [formControl]="contGroup.controls['access_key']"
+                                                   [formControl]="contGroup.controls['kiosk_mode']"
                                                    id="customerNetwork2" #customerNetwork2
                                                    name="customerNetwork2" type="checkbox"/>
                                             <label for="customerNetwork2" class="label-primary"></label>
@@ -42,9 +39,9 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-clock-o"></i></span>
                                             <input [formControl]="contGroup.controls['campaign_name']" required
-                                                   pattern="[0-9]|[a-z]+"
+                                                   pattern="[0-9]|[a-z]|[A-Z]+"
                                                    type="text" class="form-control" minlength="3" maxlength="15"
-                                                   placeholder="duration">
+                                                   placeholder="campaign name">
                                         </div>
                                     </li>
                                     <li class="list-group-item">
@@ -81,75 +78,26 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
 export class CampaignProps extends Compbaser {
 
     private campaignModel: CampaignsModelExt;
-    public timelineSelected$: Observable<number>;
-    // private listeners: Subscriber<any> = new Subscriber();
 
-    constructor(private fb: FormBuilder, private store: Store<ApplicationState>, private ngmslibService: NgmslibService, private yellowpepperService: YellowPepperService) {
+    constructor(private fb: FormBuilder, private store: Store<ApplicationState>, private ngmslibService: NgmslibService, private yellowPepperService: YellowPepperService) {
         super();
         this.contGroup = fb.group({
             'campaign_name': [''],
             'campaign_playlist_mode': [0],
-            'access_key': [0]
+            'kiosk_mode': [0]
         });
         _.forEach(this.contGroup.controls, (value, key: string) => {
             this.formInputs[key] = this.contGroup.controls[key] as FormControl;
         })
 
-        var campaign1$ = this.yellowpepperService.findCampaignObs(0)
-        var campaign2$ = this.yellowpepperService.findCampaignObs(1)
-        var campaign3$ = this.yellowpepperService.findCampaignObs(1)
-
-        this.cancelOnDestroy(
-            campaign1$.concatMap((x: CampaignsModelExt) => {
-                return campaign2$;
-            }, (a: CampaignsModelExt, b: CampaignsModelExt) => {
-                return a;
-            }).concatMap((campaignsModel: CampaignsModelExt) => {
-                return this.yellowpepperService.findCampaignObs(campaignsModel.getCampaignId())
-            }, (c: CampaignsModelExt, d: CampaignsModelExt) => {
-                console.log(c, d);
-                return d;
-            }).concatMap((campaignsModel: CampaignsModelExt) => this.yellowpepperService.findCampaignObs(campaignsModel.getCampaignId()), (e: CampaignsModelExt, f: CampaignsModelExt) => {
-                console.log(e, f);
-                return e
-            }).take(1).subscribe((g: CampaignsModelExt) => {
-                console.log(g);
-            })
-        )
-
         this.cancelOnDestroy(
             this.store.select(store => store.appDb.uiState.campaign.campaignSelected).subscribe((i_campaignId) => {
-                // var found = this.findCampaign(i_campaignId);
-                this.findCampaignObs(i_campaignId).subscribe((campaign: CampaignsModelExt) => {
-                    console.log(campaign);
+                this.yellowPepperService.findCampaignById(i_campaignId).subscribe((campaign: CampaignsModelExt) => {
+                    this.campaignModel = campaign;
+                    this.renderFormInputs();
                 })
             })
         )
-    }
-
-
-    private findCampaignObs(i_campaignId: number): Observable<CampaignsModelExt> {
-        return this.store.select(store => store.msDatabase.sdk.table_campaigns)
-            .take(1)
-            .map((i_campaigns: List<CampaignsModelExt>) => {
-                console.log('look up campaign ' + i_campaignId);
-                return i_campaigns.find((i_campaign: CampaignsModelExt) => {
-                    var id = i_campaign.getCampaignId();
-                    return id == i_campaignId;
-                });
-            });
-    }
-
-    private findCampaign(i_campaignId: number) {
-        let v;
-        this.store.select(store => store.msDatabase.sdk.table_campaigns).take(1).subscribe((i_campaigns: List<CampaignsModelExt>) => {
-            console.log('look up campaign ' + i_campaignId);
-            v = i_campaigns.find((i_campaign: CampaignsModelExt) => {
-                var id = i_campaign.getCampaignId();
-                return id == i_campaignId;
-            })
-        })
-        return v;
     }
 
 
@@ -177,7 +125,20 @@ export class CampaignProps extends Compbaser {
         if (!this.campaignModel)
             return;
         _.forEach(this.formInputs, (value, key: string) => {
-            var data = this.campaignModel.getKey('Value')[key];
+            let data;
+            if (key=='kiosk_mode'){
+                console.log(key);
+                data = this.campaignModel.getKey(key);
+                if (data=='True'){
+                    data = true;
+                } else {
+                    data = false;
+                }
+
+            } else {
+                data = this.campaignModel.getKey(key);
+            }
+
             this.formInputs[key].setValue(data)
         });
     };
@@ -186,3 +147,53 @@ export class CampaignProps extends Compbaser {
         // this.listeners.unsubscribe();
     }
 }
+
+// var campaign1$ = this.yellowpepperService.findCampaignObs(0)
+// var campaign2$ = this.yellowpepperService.findCampaignObs(1)
+// var campaign3$ = this.yellowpepperService.findCampaignObs(1)
+// campaign1$.concatMap((x: CampaignsModelExt) => {
+//     return campaign2$;
+// }, (a: CampaignsModelExt, b: CampaignsModelExt) => {
+//     return a;
+// }).concatMap((campaignsModel: CampaignsModelExt) => {
+//     return this.yellowpepperService.findCampaignObs(campaignsModel.getCampaignId())
+// }, (c: CampaignsModelExt, d: CampaignsModelExt) => {
+//     console.log(c, d);
+//     return d;
+// }).concatMap((campaignsModel: CampaignsModelExt) => this.yellowpepperService.findCampaignObs(campaignsModel.getCampaignId()), (e: CampaignsModelExt, f: CampaignsModelExt) => {
+//     console.log(e, f);
+//     return e
+// }).take(1).subscribe((g: CampaignsModelExt) => {
+//     console.log(g);
+// })
+
+// private findCampaignObs(i_campaignId: number): Observable<CampaignsModelExt> {
+//     return this.store.select(store => store.msDatabase.sdk.table_campaigns)
+//         .take(1)
+//         .map((i_campaigns: List<CampaignsModelExt>) => {
+//             console.log('look up campaign ' + i_campaignId);
+//             return i_campaigns.find((i_campaign: CampaignsModelExt) => {
+//                 var id = i_campaign.getCampaignId();
+//                 return id == i_campaignId;
+//             });
+//         });
+// }
+
+// private findCampaign(i_campaignId: number) {
+//     let v;
+//     this.store.select(store => store.msDatabase.sdk.table_campaigns).take(1).subscribe((i_campaigns: List<CampaignsModelExt>) => {
+//         console.log('look up campaign ' + i_campaignId);
+//         v = i_campaigns.find((i_campaign: CampaignsModelExt) => {
+//             var id = i_campaign.getCampaignId();
+//             return id == i_campaignId;
+//         })
+//     })
+//     return v;
+// }
+
+
+// this.cancelOnDestroy(
+//     this.yellowpepperService.findCampaignObsConcatTest(0).subscribe((camp:CampaignsModelExt)=>{
+//         console.log(camp);
+//     })
+// )

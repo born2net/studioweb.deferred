@@ -12,7 +12,7 @@ import {RedPepperService} from "../../services/redpepper.service";
 import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
 import {SideProps, ACTION_UISTATE_UPDATE} from "../../store/actions/appdb.actions";
 import {IUiState} from "../../store/store.data";
-import * as _ from 'lodash';
+
 
 
 @Component({
@@ -28,7 +28,6 @@ export class TestComp extends Compbaser {
         this.m_val = i_val;
     }
 }
-
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,

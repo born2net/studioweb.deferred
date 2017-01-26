@@ -32,6 +32,8 @@ export class MsdbEffects {
             this.redPepperService.reduxCommit();
         })
 
+    //todo: add @Effect() getStations API
+
     @Effect({dispatch: false})
     renameCampaign: Observable<Action> = this.actions$.ofType(EFFECT_RENAME_CAMPAIGN)
         .do((action: Action) => {

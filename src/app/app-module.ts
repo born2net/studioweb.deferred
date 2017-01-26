@@ -16,7 +16,6 @@ import {routing} from "../app-routes";
 import {LoginPanel} from "../comps/entry/LoginPanel";
 import {Logout} from "../comps/logout/Logout";
 import {Logo} from "../comps/logo/Logo";
-import {BlurForwarder} from "../comps/blurforwarder/BlurForwarder";
 import {ImgLoader} from "../comps/imgloader/ImgLoader";
 import {ChartModule} from "angular2-highcharts";
 import {CommBroker} from "../services/CommBroker";
@@ -51,7 +50,7 @@ export var providing = [CommBroker, AUTH_PROVIDERS, RedPepperService, YellowPepp
     }
 ];
 
-var decelerations = [AppComponent, AutoLogin, LoginPanel, Logo, Appwrap, Dashboard, Tabs, Tab, Logout, NgMenu, NgMenuItem, ImgLoader, BlurForwarder];
+var decelerations = [AppComponent, AutoLogin, LoginPanel, Logo, Appwrap, Dashboard, Tabs, Tab, Logout, NgMenu, NgMenuItem, ImgLoader];
 
 export function appReducer(state: any = INITIAL_APPLICATION_STATE, action: any) {
     if (environment.production) {

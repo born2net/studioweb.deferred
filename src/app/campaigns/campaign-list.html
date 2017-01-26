@@ -4,7 +4,10 @@
 <div style="padding-bottom: 10px">
     <span style="font-size: 1.8em;" data-localize="campaignSelection">campaign selection</span>
 </div>
+
+<!-- example of a dumb component and how we pass ngrx data to it -->
 <test-comp [val]="timelineSelected$ | async"></test-comp>
+
 <div>
     <div class="btn-group">
         <button (click)="_createCampaign()" type="button" class="btn btn-default">
