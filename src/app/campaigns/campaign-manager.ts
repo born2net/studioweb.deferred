@@ -5,7 +5,6 @@ import {Observable} from "rxjs";
 import {List} from "immutable";
 import {Compbaser} from "ng-mslib";
 import {Router} from "@angular/router";
-import {EFFECT_REMOVE_CAMPAIGN} from "../../store/effects/msdb.effects";
 import {UserModel} from "../../models/UserModel";
 import {ResourcesModel} from "../../store/imsdb.interfaces_auto";
 import {RedPepperService} from "../../services/redpepper.service";
@@ -123,10 +122,6 @@ export class CampaignManager extends Compbaser {
 
     onRoute6() {
         this.router.navigate(['/App1/StudioPro'])
-    }
-
-    _removeCampaign(campaign: CampaignsModelExt) {
-        this.store.dispatch({type: EFFECT_REMOVE_CAMPAIGN, payload: campaign})
     }
 
     private save() {

@@ -13,7 +13,6 @@ import {CampaignsModelExt} from "../model/msdb-models-extended";
 
 export const EFFECT_INIT_REDUXIFY_MSDB = 'EFFECT_INIT_REDUXIFY_MSDB';
 export const EFFECT_CREATE_CAMPAIGN_BOARD = 'EFFECT_CREATE_CAMPAIGN_BOARD';
-export const EFFECT_REMOVE_CAMPAIGN = 'EFFECT_REMOVE_CAMPAIGN';
 
 @Injectable()
 export class MsdbEffects {
@@ -57,29 +56,6 @@ export class MsdbEffects {
 
 
 
-    /**
-     *
-     * all code below this point needs to be removed into the component that is using it
-     * or into redpepper
-     */
-
-
-    @Effect({dispatch: false})
-    removeCampaign: Observable<Action> = this.actions$.ofType(EFFECT_REMOVE_CAMPAIGN)
-        .do((action: Action) => {
-            var campaignId: CampaignsModelExt = (action.payload as CampaignsModelExt).getCampaignId();
-            this.redPepperService.removeCampaignKeepBoards(campaignId);
-            this.redPepperService.reduxCommit();
-        })
-
-    // .map(toPayload,(payload)=>{
-    //     debugger;
-    //     var campaignId: CampaignsModelExt = (payload as CampaignsModelExt).getCampaignId();
-    //     return {
-    //         type: 'ACTION_INJECT_SDK',
-    //         payload: [this.redPepperService.removeCampaignEntirely(campaignId)]
-    //     }
-    // })
 
     @Effect({dispatch: false})
     createCampaign: Observable<Action> = this.actions$.ofType(EFFECT_CREATE_CAMPAIGN_BOARD)

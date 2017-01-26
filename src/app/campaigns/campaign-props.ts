@@ -57,6 +57,7 @@ import * as _ from "lodash";
                         </div>
                     </div>
                 </form>
+                <button (click)="removeCampaign()"  class="btn">delete campaign</button>
             </div>
     `,
     styles: [`
@@ -109,6 +110,12 @@ export class CampaignProps extends Compbaser {
         this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_timeline_id', 0); //todo: you need to fix this as zero is arbitrary number right now
         this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_mode', this.m_contGroup.value.kiosk_mode);
         this.rp.reduxCommit()
+    }
+
+    private removeCampaign(){
+        var campaignId = this.campaignModel.getCampaignId();
+        this.rp.removeCampaignKeepBoards(campaignId);
+        this.rp.reduxCommit();
     }
 
     private renderFormInputs() {
