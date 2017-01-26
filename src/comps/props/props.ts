@@ -11,7 +11,7 @@ import {SideProps} from "../../store/actions/appdb.actions";
     template: `<small class="debug">{{me}}</small>
                <ul [ngSwitch]="m_uiUserFocusItem$ | async">
                   <div *ngSwitchCase="m_uiUserFocusItemEnum.campaignProps">
-                    <h1>campaign props</h1>
+                    <campaign-props></campaign-props>
                   </div>
                   <div *ngSwitchCase="m_uiUserFocusItemEnum.miniDashboard">
                     <h1>dashboard</h1>

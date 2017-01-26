@@ -6,6 +6,7 @@ import {Ng2Bs3ModalModule} from "ng2-bs3-modal/ng2-bs3-modal";
 import {AppComponent} from "./app-component";
 import {LocalStorage} from "../services/LocalStorage";
 import {RedPepperService} from "../services/redpepper.service";
+import {YellowPepperService} from "../services/yellowpepper.service";
 import {MsLibModule} from "ng-mslib/dist/mslib.module";
 import {ToastModule} from "ng2-toastr";
 import {DropdownModule, AccordionModule, AlertModule, ModalModule} from "ng2-bootstrap";
@@ -43,7 +44,7 @@ import "hammerjs";
 import "fabric";
 // import {ScreenTemplate} from "../comps/screen-template/screen-template";
 
-export var providing = [CommBroker, AUTH_PROVIDERS, RedPepperService, LocalStorage, StoreService, AppdbAction,
+export var providing = [CommBroker, AUTH_PROVIDERS, RedPepperService, YellowPepperService, LocalStorage, StoreService, AppdbAction,
     {
         provide: "OFFLINE_ENV",
         useValue: window['offlineDevMode']

@@ -11,8 +11,10 @@ import {PanelSplitContainer} from "../comps/panel-split/panel-split-container";
 import {ListToArrayPipe} from "../pipes/list-to-array-pipe";
 import {MatchBodyHeight} from "../comps/match-body-height/match-body-height";
 import {Props} from "../comps/props/props";
+import {ScreenTemplate} from "../comps/screen-template/screen-template";
+import {CampaignProps} from "../app/campaigns/campaign-props";
 
-var sharedComponents = [Infobox, Sliderpanel, Slideritem, PanelSplitMain, PanelSplitSide, PanelSplitContainer, ListToArrayPipe, MatchBodyHeight, Props];
+var sharedComponents = [Infobox, Sliderpanel, Slideritem, PanelSplitMain, PanelSplitSide, PanelSplitContainer, ListToArrayPipe, MatchBodyHeight, Props, ScreenTemplate, CampaignProps];
 
 @NgModule({
     imports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule],

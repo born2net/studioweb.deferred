@@ -99,32 +99,23 @@ export class CampaignList extends Compbaser {
         let uiState: IUiState;
         if (jQuery(event.target).hasClass('props')) {
             uiState = {
-                uiSideProps: SideProps.campaignProps
+                uiSideProps: SideProps.campaignProps,
+                campaign: {
+                    campaignSelected: campaign.getCampaignId()
+                }
             }
             this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
         } else {
             uiState = {
-                uiSideProps: SideProps.campaignEditor
+                uiSideProps: SideProps.campaignEditor,
+                campaign: {
+                    campaignSelected: campaign.getCampaignId()
+                }
             }
             this.slideToCampaignEditor.emit();
             this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
         }
         this.m_selectedCampaign = campaign;
-
-        // let uiState: IUiState = {
-        //     campaign: {
-        //         campaignSelected: 123
-        //     }
-        // };
-        // uiState.campaign.campaignSelected = _.random(1,1999);
-        // this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
-
-        // var b: IUiState = {
-        //     uiSideProps: _.random(1,1222)
-        // }
-        // this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: b}))
-
-
     }
 
     onRoute1() {
@@ -168,9 +159,12 @@ export class CampaignList extends Compbaser {
     }
 
     _createCampaign() {
-        var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
-        this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
-        this.slideToCampaignName.emit();
+        // var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
+        // this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+        // this.slideToCampaignName.emit();
+
+        this.store.dispatch(({type: EFFECT_CREATE_CAMPAIGN_BOARD}))
+
     }
 
     destroy() {
@@ -182,14 +176,15 @@ export class CampaignList extends Compbaser {
 
 
 
+// let uiState: IUiState = {
+//     campaign: {
+//         campaignSelected: 123
+//     }
+// };
+// uiState.campaign.campaignSelected = _.random(1,1999);
+// this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
 
-
-
-
-
-
-
-
-
-
-
+// var b: IUiState = {
+//     uiSideProps: _.random(1,1222)
+// }
+// this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: b}))
