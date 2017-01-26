@@ -11,6 +11,16 @@ export class YellowPepperService {
     constructor(private store: Store<ApplicationState>) {
     }
 
+    public listenCampaignSelected(){
+        var campaignSelected$ = this.store.select(store => store.appDb.uiState.campaign.campaignSelected)
+        var campaigns$ = this.store.select(store => store.msDatabase.sdk.table_campaigns);
+        return campaignSelected$.switchMap(v => campaigns$, (campaignId,campaigns)=> {
+            return campaigns.find((i_campaign: CampaignsModelExt) => {
+                return i_campaign.getCampaignId() == campaignId;
+            });
+        })
+    }
+
     public findCampaignById(i_campaignId: number): Observable<CampaignsModelExt> {
         return this.store.select(store => store.msDatabase.sdk.table_campaigns)
             .take(1)
@@ -21,8 +31,8 @@ export class YellowPepperService {
                 });
             });
     }
-
-    public findCampaignByIdConcatTest(i_campaignId): Observable<CampaignsModelExt> {
+    
+    public findCampaignByIdConcatTemp1(i_campaignId): Observable<CampaignsModelExt> {
         var campaign1$ = this.findCampaignById(i_campaignId)
         var campaign2$ = this.findCampaignById(1)
         var campaign3$ = this.findCampaignById(2)
@@ -42,8 +52,19 @@ export class YellowPepperService {
         }).take(1)
     }
 
-    public listenCampaignSelected(): any {
+    public listenCampaignSelectedTemp2(): any {
         return this.store.select(store => store.appDb.uiState.campaign.campaignSelected);
     }
 
+    public listenCampaignSelectedTemp3(): Observable<CampaignsModelExt> {
+
+        var campaignSelected$ = this.store.select(store => store.appDb.uiState.campaign.campaignSelected)
+        var campaigns$ = this.store.select(store => store.msDatabase.sdk.table_campaigns);
+
+        return campaignSelected$.combineLatest(campaigns$, (campaignId: number, campaigns: List<CampaignsModelExt>) => {
+            return campaigns.find((i_campaign: CampaignsModelExt) => {
+                return i_campaign.getCampaignId() == campaignId;
+            });
+        })
+    }
 }

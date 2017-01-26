@@ -83,13 +83,20 @@ export class CampaignProps extends Compbaser {
         })
 
         this.cancelOnDestroy(
-            this.yp.listenCampaignSelected().subscribe((i_campaignId) => {
-                this.yp.findCampaignById(i_campaignId).one((campaign: CampaignsModelExt) => {
-                    this.campaignModel = campaign;
-                    this.renderFormInputs();
-                })
+            this.yp.listenCampaignSelected().subscribe((campaign:CampaignsModelExt)=>{
+                this.campaignModel = campaign;
+                this.renderFormInputs();
             })
         )
+
+        // this.cancelOnDestroy(
+        //     this.yp.listenCampaignSelected().subscribe((i_campaignId) => {
+        //         this.yp.findCampaignById(i_campaignId).one((campaign: CampaignsModelExt) => {
+        //             this.campaignModel = campaign;
+        //             this.renderFormInputs();
+        //         })
+        //     })
+        // )
     }
 
     @Input()
@@ -129,6 +136,22 @@ export class CampaignProps extends Compbaser {
     }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // var campaign1$ = this.yellowpepperService.findCampaignObs(0)
 // var campaign2$ = this.yellowpepperService.findCampaignObs(1)
 // var campaign3$ = this.yellowpepperService.findCampaignObs(1)
@@ -147,7 +170,6 @@ export class CampaignProps extends Compbaser {
 // }).take(1).subscribe((g: CampaignsModelExt) => {
 //     console.log(g);
 // })
-
 // private findCampaignObs(i_campaignId: number): Observable<CampaignsModelExt> {
 //     return this.store.select(store => store.msDatabase.sdk.table_campaigns)
 //         .take(1)
@@ -159,7 +181,6 @@ export class CampaignProps extends Compbaser {
 //             });
 //         });
 // }
-
 // private findCampaign(i_campaignId: number) {
 //     let v;
 //     this.store.select(store => store.msDatabase.sdk.table_campaigns).take(1).subscribe((i_campaigns: List<CampaignsModelExt>) => {
@@ -171,8 +192,6 @@ export class CampaignProps extends Compbaser {
 //     })
 //     return v;
 // }
-
-
 // this.cancelOnDestroy(
 //     this.yellowpepperService.findCampaignObsConcatTest(0).subscribe((camp:CampaignsModelExt)=>{
 //         console.log(camp);
@@ -199,7 +218,6 @@ export class CampaignProps extends Compbaser {
 //         })
 //     })
 // )
-
 // destroy() {
 //     // this.listeners.unsubscribe();
 // }
