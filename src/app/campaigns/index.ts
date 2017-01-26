@@ -7,12 +7,13 @@ import {SharedModule} from "../../modules/shared.module";
 import {DropdownModule} from "ng2-bootstrap";
 import {Campaigns} from "./campaigns";
 import {OrderListModule} from "primeng/components/orderlist/orderlist";
-import {CampaignList, TestComp} from "./campaign-list";
+import {CampaignManager, TestComp} from "./campaign-manager";
 import {CampaignName} from "./campaign-name";
 import {CampaignOrientation} from "./campaign-orientation";
 import {CampaignLayout} from "./campaign-layout";
 import {CampaignEditor} from "./campaign-editor";
 import {CampaignResolution} from "./campaign-resolution";
+import {CampaignList} from "./campaign-list";
 
 export const LAZY_ROUTES = [
     {path: ':folder', component: CampaignsNavigation},
@@ -22,7 +23,7 @@ export const LAZY_ROUTES = [
 
 @NgModule({
     imports: [DropdownModulePrime, SharedModule, CommonModule, DropdownModule, OrderListModule, RouterModule.forChild(LAZY_ROUTES)],
-    declarations: [CampaignsNavigation, Campaigns, CampaignList, TestComp, CampaignName, CampaignOrientation, CampaignLayout, CampaignEditor, CampaignResolution]
+    declarations: [CampaignsNavigation, Campaigns, CampaignManager, TestComp, CampaignName, CampaignOrientation, CampaignLayout, CampaignEditor, CampaignResolution, CampaignList]
 })
 export class CampaignsLazyModule {
 }

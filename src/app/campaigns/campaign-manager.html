@@ -36,21 +36,13 @@
 <button class="btn btn-primary" (click)="save()">save to server</button>
 <!-- move scroller to proper offset -->
 <div class="responsive-pad-right">
-    <div matchBodyHeight="350"  style="overflow: scroll">
-        <ul (click)="$event.preventDefault()" class="appList list-group">
-            <a (click)="_onCampaignSelected($event, campaign)" [ngClass]="{'selectedItem': m_selectedCampaign == campaign}" href="#" class="list-group-item" *ngFor="let campaign of campaigns$ | async">
-                <h4>{{campaign?.getCampaignName()}}</h4>
-                <p class="list-group-item-text">play list mode: {{campaign?.getCampaignPlaylistModeName()}} </p>
-                <div class="openProps">
-                    <button  type="button" class="props btn btn-default btn-sm"><i style="font-size: 1.5em" class="props fa fa-gear"></i></button>
-                </div>
-                <!--<input #ren (focus)="selectedCampaign=campaign" (blur)="selectedCampaign=campaign ; renameCampaign(campaign,ren.value)" value="{{campaign?.getCampaignName()}}">-->
-                <!--<button (click)="removeCampaign(campaign)" class="fa fa-remove"></button>-->
-            </a>
-        </ul>
 
+    <div matchBodyHeight="350"  style="overflow: scroll">
+
+        <campaign-list (onCampaignSelected)="_onCampaignSelected($event)" (slideToCampaignName)="slideToCampaignName.emit($event)" (slideToCampaignEditor)="slideToCampaignEditor.emit($event)"  [campaigns]="campaigns$ | async"></campaign-list>
 
         <hr/>
+        <h2>sample code for testing only</h2>
         <h4>ng-bootstrap dropdown</h4>
         <div class="btn-group" dropdown (click)="$event.preventDefault()">
             <button id="single-button" type="button" class="btn btn-primary" dropdownToggle>
@@ -67,7 +59,6 @@
         <p-orderList [responsive]="true" [value]="campaigns$ | async | ListToArrayPipe ">
             <template let-car pTemplate="item">
                 <div class="ui-helper-clearfix">
-                    <!--<img src="showcase/resources/demo/images/car/{{car.brand}}.gif" style="display:inline-block;margin:2px 0 2px 2px"/>-->
                     <div style="font-size:14px;float:left;margin:15px 5px 0 0">{{car.getCampaignName()}}</div>
                 </div>
             </template>

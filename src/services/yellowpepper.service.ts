@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {Store} from "@ngrx/store";
+import {Store, Action} from "@ngrx/store";
 import {ApplicationState} from "../store/application.state";
 import {Observable} from "rxjs";
 import {CampaignsModelExt} from "../store/model/msdb-models-extended";
@@ -9,6 +9,10 @@ import {List} from "immutable";
 export class YellowPepperService {
 
     constructor(private store: Store<ApplicationState>) {
+    }
+
+    public dispatch(action:Action){
+        this.store.dispatch(action)
     }
 
     public listenCampaignSelected(){

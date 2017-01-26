@@ -13,8 +13,8 @@ import {IScreenTemplateData} from "../../comps/screen-template/screen-template";
     template: `
         <small class="debug" style="padding-right: 25px">{{me}}</small>
         <Sliderpanel>
-            <Slideritem #sliderItemCampaignList class="page center campaignList selected" [showToButton]="false" [toDirection]="'right'" [to]="'campaignEditor'">
-                <campaign-list (slideToCampaignName)="sliderItemCampaignList.slideTo('campaignName','right')" (slideToCampaignEditor)="sliderItemCampaignList.onNext()"></campaign-list>
+            <Slideritem #sliderItemCampaignManager class="page center campaignList selected" [showToButton]="false" [toDirection]="'right'" [to]="'campaignEditor'">
+                <campaign-manager (slideToCampaignName)="sliderItemCampaignManager.slideTo('campaignName','right')" (slideToCampaignEditor)="sliderItemCampaignManager.onNext()"></campaign-manager>
             </Slideritem>
             <Slideritem class="page left campaignName" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignList'" [to]="'campaignOrientation'">
                 <campaign-name #campaignName></campaign-name>
