@@ -20,14 +20,14 @@
     "release": "rm -r -f ./dist && npm run x_bump && npm run x_prod && npm run x_sw && npm run x_rsync"
   },
   "dependencies": {
-    "@angular/common": "2.4.4",
-    "@angular/compiler": "2.4.4",
-    "@angular/core": "2.4.4",
-    "@angular/forms": "2.4.4",
-    "@angular/http": "2.4.4",
-    "@angular/language-service": "^2.4.4",
-    "@angular/platform-browser": "2.4.4",
-    "@angular/platform-browser-dynamic": "2.4.4",
+    "@angular/common": "2.4.5",
+    "@angular/compiler": "2.4.5",
+    "@angular/core": "2.4.5",
+    "@angular/forms": "2.4.5",
+    "@angular/http": "2.4.5",
+    "@angular/language-service": "^2.4.5",
+    "@angular/platform-browser": "2.4.5",
+    "@angular/platform-browser-dynamic": "2.4.5",
     "@angular/router": "3.2.1",
     "@ngrx/core": "^1.2.0",
     "@ngrx/effects": "^2.0.0",
@@ -70,8 +70,8 @@
     "zone.js": "^0.7.5"
   },
   "devDependencies": {
-    "@angular/compiler-cli": "2.4.4",
-    "@angular/language-service": "^2.4.4",
+    "@angular/compiler-cli": "2.4.5",
+    "@angular/language-service": "^2.4.5",
     "@angularclass/hmr": "^1.2.2",
     "@types/hammerjs": "^2.0.33",
     "@types/immutable": "^3.8.6",

@@ -112,13 +112,10 @@ export class CampaignProps extends Compbaser {
             }).concatMap((campaignsModel: CampaignsModelExt) => this.yellowpepperService.findCampaignObs(campaignsModel.getCampaignId()), (e: CampaignsModelExt, f: CampaignsModelExt) => {
                 console.log(e, f);
                 return e
-            })
-                .take(1).subscribe((g: CampaignsModelExt) => {
+            }).take(1).subscribe((g: CampaignsModelExt) => {
                 console.log(g);
-
             })
         )
-
 
         this.cancelOnDestroy(
             this.store.select(store => store.appDb.uiState.campaign.campaignSelected).subscribe((i_campaignId) => {
