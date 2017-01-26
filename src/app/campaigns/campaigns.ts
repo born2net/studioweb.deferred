@@ -52,7 +52,7 @@ export class Campaigns extends Compbaser {
     }
 
     private _createCampaign(createCampaign:IScreenTemplateData){
-        console.log('creating campaign... ' + createCampaign);
+        console.log('creating campaign... ' + JSON.stringify(createCampaign));
     }
 
 }

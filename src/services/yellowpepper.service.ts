@@ -11,21 +11,21 @@ export class YellowPepperService {
     constructor(private store: Store<ApplicationState>) {
     }
 
-    public dispatch(action:Action){
-        this.store.dispatch(action)
+    public dispatch(action: Action) {
+        this.store.dispatch(action);
     }
 
-    public listenCampaignSelected(){
+    public listenCampaignSelected() {
         var campaignSelected$ = this.store.select(store => store.appDb.uiState.campaign.campaignSelected)
         var campaigns$ = this.store.select(store => store.msDatabase.sdk.table_campaigns);
-        return campaignSelected$.switchMap(v => campaigns$, (campaignId,campaigns)=> {
+        return campaignSelected$.switchMap(v => campaigns$, (campaignId, campaigns) => {
             return campaigns.find((i_campaign: CampaignsModelExt) => {
                 return i_campaign.getCampaignId() == campaignId;
             });
         })
     }
 
-    public findCampaignById(i_campaignId: number): Observable<CampaignsModelExt> {
+    public findCampaignByIdTest(i_campaignId: number): Observable<CampaignsModelExt> {
         return this.store.select(store => store.msDatabase.sdk.table_campaigns)
             .take(1)
             .map((i_campaigns: List<CampaignsModelExt>) => {
@@ -35,22 +35,22 @@ export class YellowPepperService {
                 });
             });
     }
-    
+
     public findCampaignByIdConcatTemp1(i_campaignId): Observable<CampaignsModelExt> {
-        var campaign1$ = this.findCampaignById(i_campaignId)
-        var campaign2$ = this.findCampaignById(1)
-        var campaign3$ = this.findCampaignById(2)
+        var campaign1$ = this.findCampaignByIdTest(i_campaignId)
+        var campaign2$ = this.findCampaignByIdTest(1)
+        var campaign3$ = this.findCampaignByIdTest(2)
 
         return campaign1$.concatMap((x: CampaignsModelExt) => {
             return campaign2$;
         }, (a: CampaignsModelExt, b: CampaignsModelExt) => {
             return a;
         }).concatMap((campaignsModel: CampaignsModelExt) => {
-            return this.findCampaignById(campaignsModel.getCampaignId())
+            return this.findCampaignByIdTest(campaignsModel.getCampaignId())
         }, (c: CampaignsModelExt, d: CampaignsModelExt) => {
             console.log(c, d);
             return d;
-        }).concatMap((campaignsModel: CampaignsModelExt) => this.findCampaignById(campaignsModel.getCampaignId()), (e: CampaignsModelExt, f: CampaignsModelExt) => {
+        }).concatMap((campaignsModel: CampaignsModelExt) => this.findCampaignByIdTest(campaignsModel.getCampaignId()), (e: CampaignsModelExt, f: CampaignsModelExt) => {
             console.log(e, f);
             return e
         }).take(1)

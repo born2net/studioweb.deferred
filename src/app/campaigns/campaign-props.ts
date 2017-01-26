@@ -139,7 +139,7 @@ export class CampaignProps extends Compbaser {
 
 // this.cancelOnDestroy(
 //     this.yp.listenCampaignSelected().subscribe((i_campaignId) => {
-//         this.yp.findCampaignById(i_campaignId).one((campaign: CampaignsModelExt) => {
+//         this.yp.findCampaignByIdTest(i_campaignId).one((campaign: CampaignsModelExt) => {
 //             this.campaignModel = campaign;
 //             this.renderFormInputs();
 //         })
@@ -195,17 +195,17 @@ export class CampaignProps extends Compbaser {
 // this.listeners.add(
 //     this.yp.listenCampaignSelected().subscribe((i_campaignId) => {
 //
-//         this.yp.findCampaignById(i_campaignId).subscribe((campaign: CampaignsModelExt) => {
+//         this.yp.findCampaignByIdTest(i_campaignId).subscribe((campaign: CampaignsModelExt) => {
 //             this.campaignModel = campaign;
 //             this.renderFormInputs();
 //         })
 //
-//         this.yp.findCampaignById(i_campaignId).subscribe((campaign: CampaignsModelExt) => {
+//         this.yp.findCampaignByIdTest(i_campaignId).subscribe((campaign: CampaignsModelExt) => {
 //             this.campaignModel = campaign;
 //             this.renderFormInputs();
 //         })
 //
-//         this.yp.findCampaignById(i_campaignId).subscribe((campaign: CampaignsModelExt) => {
+//         this.yp.findCampaignByIdTest(i_campaignId).subscribe((campaign: CampaignsModelExt) => {
 //             this.campaignModel = campaign;
 //             this.renderFormInputs();
 //         })
