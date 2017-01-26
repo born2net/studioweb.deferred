@@ -13,22 +13,6 @@ import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
 import {SideProps, ACTION_UISTATE_UPDATE} from "../../store/actions/appdb.actions";
 import {IUiState} from "../../store/store.data";
 
-
-
-@Component({
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    selector: 'test-comp',
-    template: '<h3>campaign id selected: {{m_val}}</h3>'
-})
-export class TestComp extends Compbaser {
-    m_val;
-
-    @Input()
-    set val(i_val) {
-        this.m_val = i_val;
-    }
-}
-
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'campaign-manager',
