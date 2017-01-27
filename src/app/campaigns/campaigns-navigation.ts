@@ -4,28 +4,27 @@ import {routerTransition} from "../route-animation";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    // new animation, can't add due to angular language service bug
-    host: {
-        '[@routerTransition]': '',
-        '[style.display]': "'block'"
-    },
-    animations: [routerTransition()],
-
-    // old animation
+    // new animation, can't add due to aot limitation and angular language service bug
     // host: {
-    //     '[@routeAnimation]': 'true',
+    //     '[@routerTransition]': '',
     //     '[style.display]': "'block'"
     // },
-    // animations: [
-    //     trigger('routeAnimation', [
-    //         state('*', style({opacity: 1})),
-    //         transition('void => *', [
-    //             style({opacity: 0}),
-    //             animate(333)
-    //         ]),
-    //         transition('* => void', animate(333, style({opacity: 0})))
-    //     ])
-    // ],
+    // animations: [routerTransition()],
+
+    host: {
+        '[@routeAnimation]': 'true',
+        '[style.display]': "'block'"
+    },
+    animations: [
+        trigger('routeAnimation', [
+            state('*', style({opacity: 1})),
+            transition('void => *', [
+                style({opacity: 0}),
+                animate(333)
+            ]),
+            transition('* => void', animate(333, style({opacity: 0})))
+        ])
+    ],
 
     template: `
         <small class="debug">campaigns-navigation</small>

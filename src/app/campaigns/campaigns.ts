@@ -6,6 +6,7 @@ import {ApplicationState} from "../../store/application.state";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
 import {IUiState} from "../../store/store.data";
 import {IScreenTemplateData} from "../../comps/screen-template/screen-template";
+import {YellowPepperService} from "../../services/yellowpepper.service";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,16 +36,16 @@ import {IScreenTemplateData} from "../../comps/screen-template/screen-template";
     `
 })
 export class Campaigns extends Compbaser {
-    constructor(private store: Store<ApplicationState>) {
+    constructor(private yp:YellowPepperService) {
         super();
         var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
-        this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+        this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 
     _onSlideChange(event: ISliderItemData) {
         if (event.direction == 'left' && event.to == 'campaignList') {
             var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
-            return this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+            return this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
         }
 
         // if (event.direction == 'right' && event.to == 'campaignEditor')
