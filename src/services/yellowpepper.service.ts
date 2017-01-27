@@ -4,6 +4,7 @@ import {ApplicationState} from "../store/application.state";
 import {Observable} from "rxjs";
 import {CampaignsModelExt} from "../store/model/msdb-models-extended";
 import {List} from "immutable";
+import {BoardsModel} from "../store/imsdb.interfaces_auto";
 
 @Injectable()
 export class YellowPepperService {
@@ -30,18 +31,47 @@ export class YellowPepperService {
                     return i_campaign.getCampaignId() == campaignId;
                 });
             });
-
-
-        // var campaignSelected$ = this.store.select(store => store.appDb.uiState.campaign.campaignSelected)
-        // var campaignsList$ = this.store.select(store => store.msDatabase.sdk.table_campaigns);
-        // return campaignSelected$.switchMap(i_campaignList => campaignsList$, (campaignId, campaigns) => {
-        //     return campaigns.find((i_campaign: CampaignsModelExt) => {
-        //         return i_campaign.getCampaignId() == campaignId;
-        //     });
-        // })
     }
 
-    public findCampaignByIdTest(i_campaignId: number): Observable<CampaignsModelExt> {
+    /*****************************************************/
+    // below are some brain dumps and examples only
+    /*****************************************************/
+
+    private listenCampaignSelectedExampleWithSwitchMap() {
+        var campaignSelected$ = this.store.select(store => store.appDb.uiState.campaign.campaignSelected)
+        var campaignsList$ = this.store.select(store => store.msDatabase.sdk.table_campaigns);
+        return campaignSelected$.switchMap(i_campaignList => campaignsList$, (campaignId, campaigns) => {
+            return campaigns.find((i_campaign: CampaignsModelExt) => {
+                return i_campaign.getCampaignId() == campaignId;
+            });
+        })
+    }
+
+    private listenCampaignSelectedExampleFurtherLatestFromSelections() {
+        var campaignSelected$ = this.store.select(
+            store => store.appDb.uiState.campaign.campaignSelected
+        );
+        var boards$ = this.store.select(
+            store => store.msDatabase.sdk.table_boards
+        );
+        var campaignsList$ = this.store.select(
+            store => store.msDatabase.sdk.table_campaigns
+        );
+        return campaignSelected$.withLatestFrom(
+            campaignsList$,
+            (campaignId, campaigns) => {
+                return campaigns.find((i_campaign: CampaignsModelExt) => {
+                    return i_campaign.getCampaignId() == campaignId;
+                });
+            }).withLatestFrom(
+            boards$,
+            (campaign: CampaignsModelExt, boards: List<BoardsModel>) => {
+                console.log(boards);
+                return campaign;
+            });
+    }
+
+    private findCampaignByIdTest(i_campaignId: number): Observable<CampaignsModelExt> {
         return this.store.select(store => store.msDatabase.sdk.table_campaigns)
             .take(1)
             .map((i_campaigns: List<CampaignsModelExt>) => {
@@ -52,7 +82,7 @@ export class YellowPepperService {
             });
     }
 
-    public findCampaignByIdConcatTemp1(i_campaignId): Observable<CampaignsModelExt> {
+    private findCampaignByIdConcatTemp1(i_campaignId): Observable<CampaignsModelExt> {
         var campaign1$ = this.findCampaignByIdTest(i_campaignId)
         var campaign2$ = this.findCampaignByIdTest(1)
         var campaign3$ = this.findCampaignByIdTest(2)
@@ -72,11 +102,11 @@ export class YellowPepperService {
         }).take(1)
     }
 
-    public listenCampaignSelectedTemp2(): any {
+    private listenCampaignSelectedTemp2(): any {
         return this.store.select(store => store.appDb.uiState.campaign.campaignSelected);
     }
 
-    public listenCampaignSelectedTemp3(): Observable<CampaignsModelExt> {
+    private listenCampaignSelectedTemp3(): Observable<CampaignsModelExt> {
 
         var campaignSelected$ = this.store.select(store => store.appDb.uiState.campaign.campaignSelected)
         var campaigns$ = this.store.select(store => store.msDatabase.sdk.table_campaigns);
