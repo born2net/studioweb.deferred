@@ -16,14 +16,29 @@ export class YellowPepperService {
     }
 
     public listenCampaignSelected() {
-        var campaignSelected$ = this.store.select(store => store.appDb.uiState.campaign.campaignSelected)
-        var campaignsList$ = this.store.select(store => store.msDatabase.sdk.table_campaigns);
-        
-        return campaignSelected$.switchMap(i_campaignSelected => campaignsList$, (campaignId, campaigns) => {
-            return campaigns.find((i_campaign: CampaignsModelExt) => {
-                return i_campaign.getCampaignId() == campaignId;
+
+        var campaignSelected$ = this.store.select(
+            store => store.appDb.uiState.campaign.campaignSelected
+        );
+        var campaignsList$ = this.store.select(
+            store => store.msDatabase.sdk.table_campaigns
+        );
+        return campaignSelected$.withLatestFrom(
+            campaignsList$,
+            (campaignId, campaigns) => {
+                return campaigns.find((i_campaign: CampaignsModelExt) => {
+                    return i_campaign.getCampaignId() == campaignId;
+                });
             });
-        })
+
+
+        // var campaignSelected$ = this.store.select(store => store.appDb.uiState.campaign.campaignSelected)
+        // var campaignsList$ = this.store.select(store => store.msDatabase.sdk.table_campaigns);
+        // return campaignSelected$.switchMap(i_campaignList => campaignsList$, (campaignId, campaigns) => {
+        //     return campaigns.find((i_campaign: CampaignsModelExt) => {
+        //         return i_campaign.getCampaignId() == campaignId;
+        //     });
+        // })
     }
 
     public findCampaignByIdTest(i_campaignId: number): Observable<CampaignsModelExt> {
