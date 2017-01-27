@@ -47,7 +47,6 @@ export class Campaigns extends Compbaser {
             var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
             return this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
         }
-
         // if (event.direction == 'right' && event.to == 'campaignEditor')
         //     return this._createCampaign();
     }

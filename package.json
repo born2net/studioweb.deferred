@@ -1,6 +1,6 @@
 {
   "name": "studioweb",
-  "version": "0.1.87",
+  "version": "0.1.91",
   "license": "Modified GPL (see readme.md)",
   "angular-cli": {},
   "scripts": {
@@ -19,7 +19,7 @@
     "x_translate": "node_modules/.bin/ng-xi18n -p src/tsconfig.json --i18nFormat=xmb",
     "x_node_copy": "cp -r -f ./node_modules/ ./dist/out-tsc/",
     "cp module": "cp ./node_modules/ng-mslib/src/myng-component.ts ./node_modules/ng-mslib/dist/",
-    "local": "npm run x_node_copy && npm run x_translate",
+    "generate_locale": "npm run x_node_copy && npm run x_translate",
     "hmr": "ng serve --port 4208 --aot false --hmr -e=hmr",
     "dev": "ng serve --port 4208 --aot false",
     "release_aot_hebrew": "rm -r -f ./dist && npm run x_bump && npm run x_prod_aot_hebrew && npm run x_sw && npm run x_rsync",
