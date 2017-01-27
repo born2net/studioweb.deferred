@@ -178,41 +178,41 @@ export class RedPepperService {
     }
 
     //todo: finish process
-    createCampaignEntire() {
+    createCampaignEntire(screenProps:{}, campaignName:string) {
 
+        if (campaignName == '')
+            campaignName = 'new campaign';
 
         // ////////////////////////////////////////////////
         // // Created a brand new campaign and a new board
         // ////////////////////////////////////////////////
-        //
         // var width = BB.comBroker.getService(BB.SERVICES['RESOLUTION_SELECTOR_VIEW']).getResolution().split('x')[0];
         // var height = BB.comBroker.getService(BB.SERVICES['RESOLUTION_SELECTOR_VIEW']).getResolution().split('x')[1];
         // var board_id = this.redPepperService.createBoard('my board', 500,500).data.board_id;
-
-        var m_timelines = {};
-        var screenProps = {
-            sd0: {
-                id: 'horizontal_1920x1080_screenType10_sd0',
-                x: 0,
-                y: 0,
-                w: 1920,
-                h: 360
-            },
-            sd1: {
-                id: 'horizontal_1920x1080_screenType10_sd1',
-                x: 0,
-                y: 360,
-                w: 1920,
-                h: 360
-            },
-            sd2: {
-                id: 'horizontal_1920x1080_screenType10_sd2',
-                x: 0,
-                y: 720,
-                w: 1920,
-                h: 360
-            }
-        }
+        // var m_timelines = {};
+        // var screenProps = {
+        //     sd0: {
+        //         id: 'horizontal_1920x1080_screenType10_sd0',
+        //         x: 0,
+        //         y: 0,
+        //         w: 1920,
+        //         h: 360
+        //     },
+        //     sd1: {
+        //         id: 'horizontal_1920x1080_screenType10_sd1',
+        //         x: 0,
+        //         y: 360,
+        //         w: 1920,
+        //         h: 360
+        //     },
+        //     sd2: {
+        //         id: 'horizontal_1920x1080_screenType10_sd2',
+        //         x: 0,
+        //         y: 720,
+        //         w: 1920,
+        //         h: 360
+        //     }
+        // }
 
         var board_id = this.createBoard('my board', 500, 500);
         var newTemplateData = this.createNewTemplate(board_id, screenProps);
@@ -220,7 +220,6 @@ export class RedPepperService {
         var viewers = newTemplateData['viewers'];
         var m_selected_campaign_id = this.createCampaign('campaign');
         var campaign_board_id = this.assignCampaignToBoard(m_selected_campaign_id, board_id);
-        var campaignName = 'foo campaign ' + Math.random();
         this.setCampaignRecord(m_selected_campaign_id, 'campaign_name', campaignName);
         var campaign_timeline_id = this.createNewTimeline(m_selected_campaign_id);
         this.setCampaignTimelineSequencerIndex(m_selected_campaign_id, campaign_timeline_id, 0);
@@ -229,7 +228,7 @@ export class RedPepperService {
         var campaign_timeline_board_template_id = this.assignTemplateToTimeline(campaign_timeline_id, board_template_id, campaign_board_id);
         var channels = this.createTimelineChannels(campaign_timeline_id, viewers);
         this.assignViewersToTimelineChannels(campaign_timeline_board_template_id, viewers, channels);
-        // this.reduxCommit();
+        this.reduxCommit();
     }
 
     renameCampaign(i_campaignId, i_newCampaignName): void {

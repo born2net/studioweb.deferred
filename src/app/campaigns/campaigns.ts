@@ -7,6 +7,7 @@ import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.action
 import {IUiState} from "../../store/store.data";
 import {IScreenTemplateData} from "../../comps/screen-template/screen-template";
 import {YellowPepperService} from "../../services/yellowpepper.service";
+import {RedPepperService} from "../../services/redpepper.service";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,7 +37,7 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
     `
 })
 export class Campaigns extends Compbaser {
-    constructor(private yp:YellowPepperService) {
+    constructor(private yp:YellowPepperService, private rp:RedPepperService) {
         super();
         var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
         this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
@@ -52,7 +53,7 @@ export class Campaigns extends Compbaser {
     }
 
     private _createCampaign(createCampaign:IScreenTemplateData){
-        console.log('creating campaign... ' + JSON.stringify(createCampaign));
+        this.rp.createCampaignEntire(createCampaign.screenProps, createCampaign.campaignName);
     }
 
 }
