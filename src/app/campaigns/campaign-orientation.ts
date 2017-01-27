@@ -24,7 +24,7 @@ export enum OrientationEnum {
         }
     `],
     template: `<small class="debug">{{me}}</small>
-                <h4>screen orientation</h4>
+                <h4 i18n>screen orientation</h4>
                 <div id="orientationView">
                     <table width="100%" border="0" cellspacing="0" cellpadding="50">
                         <tr>

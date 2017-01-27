@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE translationbundle [
+<!ELEMENT translationbundle (translation)*>
+<!ATTLIST translationbundle lang CDATA #REQUIRED>
+
+<!ELEMENT translation (#PCDATA|ph)*>
+<!ATTLIST translation id CDATA #REQUIRED>
+<!ATTLIST translation desc CDATA #IMPLIED>
+<!ATTLIST translation meaning CDATA #IMPLIED>
+<!ATTLIST translation xml:space (default|preserve) "default">
+
+<!ELEMENT ph (#PCDATA|ex)*>
+<!ATTLIST ph name CDATA #REQUIRED>
+
+<!ELEMENT ex (#PCDATA)>
+]>
+<translationbundle lang="he">
+  <translation id="6442260420788285679">6442260420788285679</translation>
+  <translation id="1156206314346372426">1156206314346372426</translation>
+  <translation id="8613741909398167343">8613741909398167343</translation>
+  <translation id="7652143960831314087">7652143960831314087</translation>
+  <translation id="6108618462851148193">6108618462851148193</translation>
+  <translation id="9198441993514322349">9198441993514322349</translation>
+  <translation id="2741646832903808697">2741646832903808697</translation>
+  <translation id="6454444033973204385">6454444033973204385</translation>
+  <translation id="6028894272398949430">6028894272398949430</translation>
+  <translation id="2123171795960509943">2123171795960509943</translation>
+  <translation id="3008329758802399315">3008329758802399315</translation>
+  <translation id="8694910169978522327">8694910169978522327</translation>
+  <translation id="4145364267099301397">4145364267099301397</translation>
+  <translation id="3843469504048287640">3843469504048287640</translation>
+  <translation id="1167977099462453641">1167977099462453641</translation>
+</translationbundle>

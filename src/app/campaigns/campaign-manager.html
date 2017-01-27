@@ -2,21 +2,21 @@
 
 
 <div style="padding-bottom: 10px">
-    <span style="font-size: 1.8em;" data-localize="campaignSelection">campaign selection</span>
+    <span i18n style="font-size: 1.8em;" i18n>campaign selection</span>
 </div>
 <div>
     <div class="btn-group">
         <button (click)="_createCampaign()" type="button" class="btn btn-default">
             <i style="font-size: 1em" class="fa fa-rocket"></i>
-            <span>new campaign</span>
+            <span i18n>new campaign</span>
         </button>
         <button disabled="true" type="button" class="btn btn-default">
             <i style="font-size: 1em" class="fa fa-trash-o"></i>
-            <span>remove</span>
+            <span i18n>remove</span>
         </button>
         <button disabled="true" type="button" class="btn btn-danger">
             <i class="fa fa-magic"></i>
-            <span>Get Wizard help</span>
+            <span i18n>Get Wizard help</span>
         </button>
     </div>
 </div>
@@ -29,7 +29,7 @@
 <h4>user name: {{(userModel$ | async)?.getUser() }}</h4>
 <h4>account type: {{(userModel$ | async)?.getAccountType()}}</h4>
 
-<button class="btn btn-primary" (click)="save()">save to server</button>
+<button i18n class="btn btn-primary" (click)="save()">save to server</button>
 <!-- move scroller to proper offset -->
 <div class="responsive-pad-right">
     <div matchBodyHeight="350" style="overflow: scroll">

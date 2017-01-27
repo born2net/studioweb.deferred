@@ -15,13 +15,13 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
                     <campaign-props></campaign-props>
                   </div>
                   <div *ngSwitchCase="m_uiUserFocusItemEnum.miniDashboard">
-                    <h1>dashboard</h1>
+                    <h1 i18n>dashboard</h1>
                   </div>
                   <div *ngSwitchCase="m_uiUserFocusItemEnum.campaignBoard">
-                    <h1>campaign board</h1>
+                    <h1 i18n>campaign board</h1>
                   </div>
                   <div *ngSwitchCase="m_uiUserFocusItemEnum.campaignEditor">
-                    <h1>campaign editor</h1>
+                    <h1 i18n>campaign editor</h1>
                   </div>
                 </ul>
            `,

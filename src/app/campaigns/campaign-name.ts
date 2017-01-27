@@ -6,10 +6,10 @@ import {Compbaser} from "ng-mslib";
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
                <small class="debug">{{me}}</small>
-               <h3>Select your campaign name</h3>
+               <h3 i18n>Select your campaign name</h3>
                 <input id="newCampaignName" style="width: 50%" [(ngModel)]="m_campaignName" 
                 type="text" class="form-control" 
-                value="My campaign" placeholder="Enter new campaign name">
+                value="My campaign" i18n-placeholder placeholder="Enter new campaign name">
            `,
 })
 export class CampaignName extends Compbaser {

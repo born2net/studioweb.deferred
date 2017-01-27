@@ -6,7 +6,7 @@ import {Compbaser} from "ng-mslib";
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
                <small class="debug">{{me}}</small>
-               <h4>campaign editor</h4>
+               <h4 i18n>campaign editor</h4>
            `,
 })
 export class CampaignEditor extends Compbaser {

@@ -9,7 +9,7 @@ import {Observable, Observer} from "rxjs";
     selector: 'campaign-resolution',
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `<small class="debug">{{me}}</small>
-                <h4>screen resolution</h4>
+                <h4 i18n>screen resolution</h4>
                 <div (click)="$event.preventDefault()">
                     <a (click)="_nextClick.next(screen)" href="#" class="list-group-item" *ngFor="let screen of screens">
                         <label class="screenResolutionLabel">{{screen}}</label>

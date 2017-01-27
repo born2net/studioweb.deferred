@@ -10,7 +10,7 @@ import {Observable, Observer} from "rxjs";
     selector: 'campaign-layout',
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `<small class="debug">{{me}}</small>
-               <h4>screen layout</h4>
+               <h4 i18n>screen layout</h4>
                 <div (click)="_nextClick.next(screenLayout)" style="float: left; padding: 20px" *ngFor="let screenLayout of m_screenLayouts">
                     <screen-template [setTemplate]="screenLayout"></screen-template>
                 </div>

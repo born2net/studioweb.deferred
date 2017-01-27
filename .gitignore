@@ -48,3 +48,6 @@ Thumbs.db
 #src/store/imsdb.interfaces.js
 #src/store/imsdb.interfaces_auto.js
 #src/store/store.data.js
+
+#*.xlf
+#*.xmb
