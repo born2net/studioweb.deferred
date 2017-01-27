@@ -1,0 +1,162 @@
+<small class="debug">{{me}}</small>
+<h4 i18n>campaign editor</h4>
+
+
+<div id="campaignView">
+    <div class="panel-group" id="timelinesCollapsible">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a id="toggleTimelinesCollapsible" data-toggle="collapse" data-parent="#timelinesCollapsible" href="#screenSelectorContainerCollapse">
+                        <span style="position: relative; top: 3px" class="glyphicon glyphicon-chevron-down"></span>
+                    </a>
+                    <button id="backToCampaigns" type="button" style="margin-left: 8px" title="add new timeline" data-localize="empty" data-localize-tooltip="backToCampaignsTooltip" class="btn btn-default btn-sm">
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                    </button>
+
+                    <button id="addNewTimelineButton" type="button" title="add new timeline" data-localize="empty" data-localize-tooltip="addNewTimelineButtonToolTip" class="btn btn-default btn-sm">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </button>
+                    <button id="removeTimelineButton" type="button" title="remove the selected timeline" data-localize="empty" data-localize-tooltip="removeTimelineButtonToolTip" class="btn btn-default btn-sm">
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </button>
+                    <button id="editScreenLayout" type="button" title="edit screen layout" data-localize="empty" data-localize-tooltip="editScreenLayout" class="btn btn-default btn-sm">
+                        <i class="fa fa-object-group"></i>
+                    </button>
+                    <button id="campaignPreview" type="button" title="campaign preview" data-localize="empty" data-localize-tooltip="campaignPreviewTooltip" class="btn btn-default btn-sm">
+                        <i class="fa fa-play-circle"></i>
+                    </button>
+
+                    <div class="sequenceClass" style="float: right; margin-right: 35px; position: relative; top: 6px">
+                        <span style="font-size: 1em" data-localize="campaignLength">campaign length:</span>
+                        <span id="timelinesTotalLength" style="font-size: 1em"> 00:00:00</span>
+                    </div>
+
+                </h4>
+            </div>
+            <div id="screenSelectorContainerCollapse" class="panel-collapse collapse in">
+                <div class="panel-body">
+                    <aside>
+                        <aside>
+                            <div id="screenSelectorContainer" class="context" vertical-align="middle" data-toggle="context" data-target="#sequencerContextMenu">
+                                <div id="sequencerContextMenu">
+                                    <ul id="sequencerMenuContext" class="dropdown-menu" role="menu">
+                                        <li>
+                                            <a tabindex="-1" name="editLayout" data-localize="editLayout">edit
+                                                layout</a>
+                                        </li>
+                                        <li>
+                                            <a tabindex="-1" name="remove" data-localize="remove">remove</a>
+                                        </li>
+                                        <li>
+                                            <a tabindex="-1" name="first" data-localize="moveFirst">move to
+                                                first</a>
+                                        </li>
+                                        <li>
+                                            <a tabindex="-1" name="last" data-localize="moveLast">move to last</a>
+                                        <li>
+                                            <a tabindex="-1" name="firstChannel" data-localize="firstChannel">first
+                                                channel</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <hr class="dottedHR">
+                                <div id="screenLayoutsUL"></div>
+                                <sequencer></sequencer>
+
+                            </div>
+                        </aside>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="index.html" style="display:none" id="attachDragDropMainScreenSelection" data-role="button">Link button</a>
+    <a href="index.html" style="display:none" id="dettachDragDropMainScreenSelection" data-role="button">Link button</a>
+
+    <div class="panel-group" id="storylineCollapsible">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a id="toggleStorylineCollapsible" data-toggle="collapse" data-parent="#storylineCollapsible" href="#storylineContainerCollapse">
+                        <span class="collapsed glyphicon glyphicon-chevron-right"></span>
+                        <span data-localize="timeline">Timeline</span>
+                    </a>
+                    <button style="margin-left: 30px" id="selectNextChannel" type="button" class="btn btn-default btn-sm">
+                        <i class="fa fa-crosshairs"></i><span data-localize="nextChannel"> next channel</span>
+                    </button>
+                    <button id="addBlockButton" type="button" title="add content" data-localize="empty" data-localize-tooltip="addContent" class="btn btn-default btn-sm">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                    <button id="removeBlockButton" type="button" title="remove content" data-localize="empty" data-localize-tooltip="removeContent" class="btn btn-default btn-sm">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                    <button id="timelinePreview" type="button" title="campaign preview" data-localize="empty" data-localize-tooltip="campaignPreviewTooltip" class="btn btn-default btn-sm">
+                        <i class="fa fa-play-circle"></i>
+                    </button>
+                </h4>
+            </div>
+            <div id="storylineContainerCollapse" class="panel-collapse collapse">
+
+                <div id="storylineContextMenu">
+                    <ul id="storylineMenuContex" class="dropdown-menu" role="menu">
+                        <li>
+                            <a tabindex="-1" name="nextChannel" data-localize="nextChannel">next channel</a>
+                        </li>
+                        <li>
+                            <a tabindex="-1" name="addContent" data-localize="addContent">add content</a>
+                        </li>
+                        <li>
+                            <a tabindex="-1" name="removeContent" data-localize="removeContent">remove content</a>
+                        </li>
+                        <li>
+                            <a tabindex="-1" name="first" data-localize="moveFirst">move
+                                to first</a>
+                        </li>
+                        <li>
+                            <a tabindex="-1" name="last" data-localize="moveLast">move
+                                to last</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="panel-body">
+                    <aside>
+                        <aside>
+                            <div id="storyLine" class="context" data-toggle="context" data-target="#storylineContextMenu"></div>
+                        </aside>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- deprecated -->
+    <div id="selectedTimeline" style="display: none">
+        <div align="center" id="selectedLayoutContainer" class="centerContent"></div>
+    </div>
+
+    <div id="channelListView">
+        <div>
+            <div id="channelListContextMenu">
+                <ul id="channelListMenuContex" class="dropdown-menu" role="menu">
+                    <li>
+                        <a tabindex="-1" name="remove" data-localize="remove">remove</a>
+                    </li>
+                    <li>
+                        <a tabindex="-1" name="first" data-localize="moveFirst">move to
+                            first</a>
+                    </li>
+                    <li>
+                        <a tabindex="-1" name="last" data-localize="moveLast">move to
+                            last</a>
+                    </li>
+                </ul>
+            </div>
+            <ul id="sortable" class="list-group context" style="padding:20px" data-toggle="context" data-target="#channelListContextMenu"></ul>
+        </div>
+    </div>
+</div>
+
+
+

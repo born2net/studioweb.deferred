@@ -178,7 +178,7 @@ export class RedPepperService {
     }
 
     //todo: finish process
-    createCampaignEntire(screenProps:{}, campaignName:string) {
+    createCampaignEntire(screenProps:{}, campaignName:string):number {
 
         if (campaignName == '')
             campaignName = 'new campaign';
@@ -229,6 +229,7 @@ export class RedPepperService {
         var channels = this.createTimelineChannels(campaign_timeline_id, viewers);
         this.assignViewersToTimelineChannels(campaign_timeline_board_template_id, viewers, channels);
         this.reduxCommit();
+        return m_selected_campaign_id;
     }
 
     renameCampaign(i_campaignId, i_newCampaignName): void {

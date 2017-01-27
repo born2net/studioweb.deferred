@@ -89,7 +89,7 @@ export class CampaignProps extends Compbaser {
                 this.campaignModel = campaign;
                 this.renderFormInputs();
             })
-        )
+        );
     }
 
     @Input()

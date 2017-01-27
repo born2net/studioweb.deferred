@@ -38,7 +38,6 @@ declare module 'redux-thunk' {
 
 }
 
-
 interface Window {
     g_protocol: string;
     g_masterDomain: string;
@@ -77,6 +76,10 @@ interface jQueryModal extends JQuery {
 interface JQuery {
     modal: any;
 }
+
+declare var jQueryAny: any;
+declare var Draggable;
+
 
 interface PlatformStatic {
     description?: string;

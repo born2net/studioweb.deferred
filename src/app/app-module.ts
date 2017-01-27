@@ -41,9 +41,11 @@ import {Dashboard} from "./dashboard/dashboard-navigation";
 import {Appwrap} from "./appwrap";
 import "hammerjs";
 import "fabric";
+import "gsap";
+
 // import {ScreenTemplate} from "../comps/screen-template/screen-template";
 
-export var providing = [CommBroker, AUTH_PROVIDERS, RedPepperService, YellowPepperService, LocalStorage, StoreService, AppdbAction,
+export var providing = [CommBroker, AUTH_PROVIDERS, RedPepperService, YellowPepperService, LocalStorage, StoreService, AppdbAction, CommBroker,
     {
         provide: "OFFLINE_ENV",
         useValue: window['offlineDevMode']
@@ -109,6 +111,7 @@ export function appReducer(state: any = INITIAL_APPLICATION_STATE, action: any) 
 export class AppModule {
     constructor(private ngmslibService: NgmslibService) {
         console.log(`running in dev mode: ${ngmslibService.inDevMode()}`);
+        window['jQueryAny'] = jQuery;
         this.ngmslibService.globalizeStringJS();
         console.log(StringJS('app-loaded-and-ready').humanize().s);
     }
