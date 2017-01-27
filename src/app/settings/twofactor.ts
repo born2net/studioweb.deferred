@@ -2,13 +2,12 @@ import {Component, ChangeDetectionStrategy, ElementRef, ViewChild, ChangeDetecto
 import {FormControl, FormGroup, FormBuilder} from "@angular/forms";
 import * as _ from "lodash";
 import {LocalStorage} from "../../services/LocalStorage";
-import {Store} from "@ngrx/store";
 import {AppdbAction, AuthenticateFlags} from "../../store/actions/appdb.actions";
-import {ApplicationState} from "../../store/application.state";
 import {UserModel} from "../../models/UserModel";
 import {Map} from "immutable";
 import {EFFECT_TWO_FACTOR_UPDATING} from "../../store/effects/appdb.effects";
 import {Compbaser} from "ng-mslib";
+import {YellowPepperService} from "../../services/yellowpepper.service";
 
 @Component({
     selector: 'Twofactor',
@@ -55,7 +54,7 @@ export class Twofactor extends Compbaser {
                 private el: ElementRef,
                 private cd: ChangeDetectorRef,
                 private appdbAction: AppdbAction,
-                private store: Store<ApplicationState>) {
+                private yp: YellowPepperService) {
         super();
         this.contGroup = fb.group({
             'TwofactorCont': ['']
@@ -63,7 +62,7 @@ export class Twofactor extends Compbaser {
         _.forEach(this.contGroup.controls, (value, key: string) => {
             this.formInputs[key] = this.contGroup.controls[key] as FormControl;
         })
-        this.store.select(store => store.appDb.userModel).subscribe((userModel: UserModel) => {
+        this.yp.ngrxStore.select(store => store.appDb.userModel).subscribe((userModel: UserModel) => {
             this.twoFactorStatus = userModel.getTwoFactorRequired();
             this.changeTwoFactorStatus();
         })
@@ -80,7 +79,7 @@ export class Twofactor extends Compbaser {
 
     private listenEvents() {
         this.cancelOnDestroy(
-            this.store.select(store => store.appDb.appAuthStatus).skip(1).subscribe((i_authStatus: Map<string,AuthenticateFlags>) => {
+            this.yp.ngrxStore.select(store => store.appDb.appAuthStatus).skip(1).subscribe((i_authStatus: Map<string,AuthenticateFlags>) => {
                 let authStatus: AuthenticateFlags = i_authStatus.get('authStatus')
                 switch (authStatus) {
                     case AuthenticateFlags.TWO_FACTOR_UPDATE_PASS: {
@@ -111,7 +110,7 @@ export class Twofactor extends Compbaser {
     private onActivate() {
         if (this.activateToken.nativeElement.value.length < 6)
             return bootbox.alert('token is too short');
-        this.store.dispatch({
+        this.yp.ngrxStore.dispatch({
             type: EFFECT_TWO_FACTOR_UPDATING,
             payload: {
                 token: this.activateToken.nativeElement.value,

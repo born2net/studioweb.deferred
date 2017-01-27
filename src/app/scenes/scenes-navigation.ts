@@ -46,7 +46,7 @@ export class ScenesNavigation extends Compbaser {
     @ViewChild('canvas2')
     canvas2;
 
-    constructor(private store: Store<ApplicationState>, private redPepperService: RedPepperService, private router: Router) {
+    constructor() {
         super();
     }
 

@@ -6,6 +6,7 @@ import {Observable} from "rxjs";
 import {UserModel} from "../../models/UserModel";
 import {Store} from "@ngrx/store";
 import {ApplicationState} from "../../store/application.state";
+import {YellowPepperService} from "../../services/yellowpepper.service";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,7 +31,6 @@ import {ApplicationState} from "../../store/application.state";
                
                <h4>user name: {{(userModel$ | async)?.getUser() }}</h4>
                <h4>account type: {{(userModel$ | async)?.getAccountType()}}</h4>
-               <h4>total campaigns {{totalCampaigns}}</h4>
                <hr/>
                <small class="debug">{{me}}</small>
                <p-dropdown [options]="cities" ></p-dropdown>
@@ -40,9 +40,8 @@ import {ApplicationState} from "../../store/application.state";
 })
 export class StudioProNavigation extends Compbaser {
 
-    constructor(private store: Store<ApplicationState>, private redPepperService: RedPepperService) {
+    constructor(private yp:YellowPepperService) {
         super();
-        this.totalCampaigns = redPepperService.getCampaignIDs().length;
         this.cities = [];
         this.cities.push({label: 'Select City', value: null});
         this.cities.push({label: 'New York', value: {id: 1, name: 'New York', code: 'NY'}});
@@ -51,12 +50,11 @@ export class StudioProNavigation extends Compbaser {
         this.cities.push({label: 'Istanbul', value: {id: 4, name: 'Istanbul', code: 'IST'}});
         this.cities.push({label: 'Paris', value: {id: 5, name: 'Paris', code: 'PRS'}});
 
-        this.userModel$ = this.store.select(store => store.appDb.userModel);
+        this.userModel$ = this.yp.ngrxStore.select(store => store.appDb.userModel);
     }
 
     public userModel$: Observable<UserModel>;
 
-    totalCampaigns = 0;
     cities: SelectItem[];
     selectedCity: string;
     lastLogin = 'v9';

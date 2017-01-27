@@ -11,6 +11,7 @@ import {RedPepperService} from "../../services/redpepper.service";
 import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
 import {SideProps, ACTION_UISTATE_UPDATE} from "../../store/actions/appdb.actions";
 import {IUiState} from "../../store/store.data";
+import {YellowPepperService} from "../../services/yellowpepper.service";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,29 +34,29 @@ export class CampaignManager extends Compbaser {
     public timelineSelected$: Observable<number>;
     cars;
 
-    constructor(private el: ElementRef, private store: Store<ApplicationState>, private redPepperService: RedPepperService, private router: Router) {
+    constructor(private el: ElementRef, private yp: YellowPepperService, private redPepperService: RedPepperService, private router: Router) {
         super();
 
-        this.store.select(store => store.appDb.uiState.campaign).map((v) => {
+        this.yp.ngrxStore.select(store => store.appDb.uiState.campaign).map((v) => {
             // console.log(v);
         }).subscribe((e) => {
         });
 
-        this.timelineSelected$ = this.store.select(store => store.appDb.uiState.campaign.timelineSelected).map(v => v);
+        this.timelineSelected$ = this.yp.ngrxStore.select(store => store.appDb.uiState.campaign.timelineSelected).map(v => v);
 
-        this.store.select(store => store.appDb.uiState.campaign.campaignSelected).map((v) => {
+        this.yp.ngrxStore.select(store => store.appDb.uiState.campaign.campaignSelected).map((v) => {
             // console.log(v);
         }).subscribe((e) => {
         });
 
-        this.store.select(store => store.appDb.uiState.uiSideProps).map((v) => {
+        this.yp.ngrxStore.select(store => store.appDb.uiState.uiSideProps).map((v) => {
             // console.log(v);
         }).subscribe((e) => {
         });
 
 
-        this.userModel$ = this.store.select(store => store.appDb.userModel);
-        this.campaigns$ = this.store.select(store => store.msDatabase.sdk.table_campaigns).map((list: List<CampaignsModelExt>) => {
+        this.userModel$ = this.yp.ngrxStore.select(store => store.appDb.userModel);
+        this.campaigns$ = this.yp.ngrxStore.select(store => store.msDatabase.sdk.table_campaigns).map((list: List<CampaignsModelExt>) => {
             this.cars = list;//.toArray();
             return list.filter((campaignModel: CampaignsModelExt) => {
                 if (campaignModel.getCampaignName().indexOf('bla_bla') > -1)
@@ -63,7 +64,7 @@ export class CampaignManager extends Compbaser {
                 return true;
             })
         });
-        this.store.select(store => store.msDatabase.sdk.table_resources).subscribe((resourceModels: List<ResourcesModel>) => {
+        this.yp.ngrxStore.select(store => store.msDatabase.sdk.table_resources).subscribe((resourceModels: List<ResourcesModel>) => {
             // console.log(resourceModels.first().getResourceName());
             // console.log(resourceModels.first().getResourceBytesTotal());
         })
@@ -86,7 +87,7 @@ export class CampaignManager extends Compbaser {
     //                 campaignSelected: campaign.getCampaignId()
     //             }
     //         }
-    //         this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+    //         this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     //     } else {
     //         uiState = {
     //             uiSideProps: SideProps.campaignEditor,
@@ -95,7 +96,7 @@ export class CampaignManager extends Compbaser {
     //             }
     //         }
     //         this.slideToCampaignEditor.emit();
-    //         this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+    //         this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     //     }
     //     this.m_selectedCampaign = campaign;
     // }
@@ -137,18 +138,18 @@ export class CampaignManager extends Compbaser {
     }
 
     _onCampaignSelected(i_uiState: IUiState) {
-        this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: i_uiState}))
+        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: i_uiState}))
     }
 
     _createCampaign() {
         var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
-        this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
         this.slideToCampaignName.emit();
     }
 
     destroy() {
         var uiState: IUiState = {uiSideProps: SideProps.none}
-        this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 }
 
@@ -159,9 +160,9 @@ export class CampaignManager extends Compbaser {
 //     }
 // };
 // uiState.campaign.campaignSelected = _.random(1,1999);
-// this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+// this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
 
 // var b: IUiState = {
 //     uiSideProps: _.random(1,1222)
 // }
-// this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: b}))
+// this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: b}))

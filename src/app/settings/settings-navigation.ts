@@ -29,7 +29,7 @@ import {ApplicationState} from "../../store/application.state";
 })
 export class SettingsNavigation extends Compbaser {
 
-    constructor(private store: Store<ApplicationState>, private redPepperService: RedPepperService) {
+    constructor() {
         super();
     }
 

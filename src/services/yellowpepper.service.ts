@@ -16,6 +16,10 @@ export class YellowPepperService {
         this.store.dispatch(action);
     }
 
+    public get ngrxStore(): Store<ApplicationState> {
+        return this.store;
+    }
+
     public listenCampaignSelected() {
 
         var campaignSelected$ = this.store.select(

@@ -4,6 +4,7 @@ import {ApplicationState} from "../../store/application.state";
 import {Store} from "@ngrx/store";
 import {Observable} from "rxjs";
 import {SideProps} from "../../store/actions/appdb.actions";
+import {YellowPepperService} from "../../services/yellowpepper.service";
 
 @Component({
     selector: 'props',
@@ -27,10 +28,9 @@ import {SideProps} from "../../store/actions/appdb.actions";
 })
 export class Props extends Compbaser {
 
-    constructor(private store: Store<ApplicationState>) {
+    constructor(private yp: YellowPepperService) {
         super();
-        this.m_uiUserFocusItem$ = this.store.select(store => store.appDb.uiState.uiSideProps);
-
+        this.m_uiUserFocusItem$ = this.yp.ngrxStore.select(store => store.appDb.uiState.uiSideProps);
     }
 
     m_uiUserFocusItemEnum = SideProps;
