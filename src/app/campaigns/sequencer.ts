@@ -146,12 +146,11 @@ export class Sequencer extends Compbaser {
      **/
     _listenReset() {
         var self = this;
-        //todo: fix
-        // this.comBroker.listen(BB.EVENTS.CAMPAIGN_RESET, function () {
-        //     self.m_timelines = {};
-        //     self.m_screenTemplates = {};
-        //     jQuery(self.m_thumbsContainer).empty();
-        // });
+        this.comBroker.listen('CAMPAIGN_RESET', function () {
+            self.m_timelines = {};
+            self.m_screenTemplates = {};
+            jQuery(self.m_thumbsContainer).empty();
+        });
     }
 
     /**

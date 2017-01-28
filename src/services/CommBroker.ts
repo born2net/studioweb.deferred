@@ -66,10 +66,10 @@ import * as _ from 'lodash'
 
 
 export interface IMessage {
-    fromInstance:any,
-    event:string,
-    context:any,
-    message:any
+    fromInstance: any,
+    event: string,
+    context: any,
+    message: any
 }
 
 // create an alias type just so it's easier to associate
@@ -78,9 +78,9 @@ type SubjectMessages = Subject<Array<SubjectMessage>>;
 
 @Injectable()
 export class CommBroker {
-    private streamMessages:Subject<IMessage>;
-    private services:string[];
-    private randomName:number = Math.random();
+    private streamMessages: Subject<IMessage>;
+    private services: string[];
+    private randomName: number = Math.random();
 
     constructor() {
         var self = this;
@@ -112,28 +112,32 @@ export class CommBroker {
      @method fire
      @params IMessage
      **/
-    public fire(iMessage:IMessage):void {
+    public fire(iMessage: IMessage): void {
         var self = this;
         self.streamMessages.next(iMessage);
     }
 
-    public onEvent(event:string) {
+    public onEvent(event: string) {
         var self = this;
-        return self.streamMessages.filter((e)=> {
+        return self.streamMessages.filter((e) => {
             return e.event == event;
         })
     }
 
-    public onInstance(instance:any) {
+    public listen(events, func) {
+        // deprecated
+    }
+
+    public onInstance(instance: any) {
         var self = this;
-        return self.streamMessages.filter((e)=> {
+        return self.streamMessages.filter((e) => {
             return e.fromInstance == instance;
         })
     }
 
-    public onInstanceAndEvent(instance:any, event:string) {
+    public onInstanceAndEvent(instance: any, event: string) {
         var self = this;
-        return self.streamMessages.filter((e)=> {
+        return self.streamMessages.filter((e) => {
             return e.fromInstance == instance && e.event == event
         })
     }
@@ -155,7 +159,7 @@ export class CommBroker {
      @param {String} i_name
      @return {Object} services member
      **/
-    getService(i_name):any {
+    getService(i_name): any {
         if (i_name == undefined) {
             //log('cant get set undefined service ' + i_name);
             return undefined;
@@ -194,11 +198,11 @@ export class CommBroker {
      @param {Event} i_fireEvent
      @return none
      **/
-    setValue(i_name:any, i_value:any, i_fireEvent?:string):void {
+    setValue(i_name: any, i_value: any, i_fireEvent?: string): void {
         var self = this;
         this.services[i_name] = i_value;
         if (i_fireEvent) {
-            var msg:IMessage = {
+            var msg: IMessage = {
                 fromInstance: self,
                 event: i_fireEvent,
                 context: null,
@@ -214,8 +218,8 @@ export class CommBroker {
      @param {String} i_name
      @return {Object} m_services member
      **/
-    getValue(i_name):any {
-        var v:any = this.services[i_name];
+    getValue(i_name): any {
+        var v: any = this.services[i_name];
         if (v === 0)
             return this.services[i_name]
         if (!_.isUndefined(v))

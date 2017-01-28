@@ -1984,7 +1984,7 @@ export class RedPepperService {
 
         var sequenceIndex = -1;
 
-        $(this.databaseManager.table_campaign_timeline_sequences().getAllPrimaryKeys()).each(function (k, campaign_timeline_sequence_id) {
+        $(this.databaseManager.table_campaign_timeline_sequences().getAllPrimaryKeys()).each((k, campaign_timeline_sequence_id)=> {
             var recCampaignTimelineSequence = this.databaseManager.table_campaign_timeline_sequences().getRec(campaign_timeline_sequence_id);
             if (recCampaignTimelineSequence['campaign_timeline_id'] == i_campaign_timeline_id) {
                 sequenceIndex = recCampaignTimelineSequence['sequence_index'];

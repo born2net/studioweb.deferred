@@ -69,9 +69,14 @@ export class AuthService {
 
     private enterApplication() {
         setTimeout(() => {
-            // console.log('enter app');
+            console.log('enter app');
             // this.router.navigate(['/App1/Dashboard']);
-            this.router.navigate([this.requestedRoute]);
+            if (this.ngmslibService.inDevMode()){
+                this.router.navigate(['/App1/Campaigns']);
+            } else {
+                this.router.navigate([this.requestedRoute]);
+            }
+
             this.storeService.loadServices();
         }, 10)
     }
