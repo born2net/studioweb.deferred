@@ -52,5 +52,5 @@ Thumbs.db
 #*.xmb
 
 
-!temp/Elements.js
-!temp/conversion.txt
+!temp/*.js
+!temp/*.txt
