@@ -33,11 +33,13 @@ export class Sequencer extends Compbaser {
      */
     _getScreenTemplate(i_campaignTimelinesModel: CampaignTimelinesModel) {
 
-        this.yp.getTemplatesOfTimeline(i_campaignTimelinesModel.getCampaignTimelineId()).subscribe((timelineBoardTemplateIds:Array<number>)=>{
-            console.log(timelineBoardTemplateIds);
+        this.yp.getTemplatesOfTimeline(i_campaignTimelinesModel.getCampaignTimelineId()).get((campaignTimelineBoardTemplateIds: Array<number>) => {
+            //todo: currently we only support single template per timeline thus [0], in the future refactor
+            var campaignTimelineBoardTemplateId = campaignTimelineBoardTemplateIds[0];
+            this.yp.getTemplateViewersScreenProps(i_campaignTimelinesModel.getCampaignTimelineId(), campaignTimelineBoardTemplateId).get()
         });
 
-        // var boardTemplateIDs = pepper.getTemplatesOfTimeline(self.m_campaign_timeline_id);
+        // done var boardTemplateIDs = pepper.getTemplatesOfTimeline(self.m_campaign_timeline_id);
         // for (var i = 0; i < boardTemplateIDs.length; i++) {
         //     self._populateBoardTemplate(boardTemplateIDs[i]);
         // }
@@ -77,7 +79,7 @@ export class Sequencer extends Compbaser {
         this.m_campaignTimelinesModels = i_campaignTimelinesModels;
         this.m_campaignTimelinesModelsOrdered = []
         this.m_campaignTimelinesModels.forEach((i_campaignTimelinesModel: CampaignTimelinesModel) => {
-            this.yp.getCampaignTimelineSequencerIndex(i_campaignTimelinesModel.getCampaignTimelineId()).subscribe((index: number) => {
+            this.yp.getCampaignTimelineSequencerIndex(i_campaignTimelinesModel.getCampaignTimelineId()).get((index: number) => {
                 this.m_campaignTimelinesModelsOrdered[index] = i_campaignTimelinesModel;
             });
         })

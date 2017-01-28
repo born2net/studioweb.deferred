@@ -4,7 +4,10 @@ import {ApplicationState} from "../store/application.state";
 import {Observable} from "rxjs";
 import {CampaignsModelExt} from "../store/model/msdb-models-extended";
 import {List} from "immutable";
-import {BoardsModel, CampaignTimelineBoardTemplatesModel, CampaignTimelineSequencesModel, CampaignTimelinesModel} from "../store/imsdb.interfaces_auto";
+import {
+    BoardsModel, BoardTemplateViewersModel, CampaignTimelineBoardTemplatesModel, CampaignTimelineBoardViewerChanelsModel, CampaignTimelineBoardViewerChannelsModel, CampaignTimelineSequencesModel,
+    CampaignTimelinesModel
+} from "../store/imsdb.interfaces_auto";
 
 @Injectable()
 export class YellowPepperService {
@@ -95,7 +98,31 @@ export class YellowPepperService {
      @param {Number} i_campaign_timeline_board_template_id
      @return {Object} screenProps all viewers and all their properties
      **/
-    getTemplateViewersScreenProps(i_campaign_timeline_id, i_campaign_timeline_board_template_id) {
+    getTemplateViewersScreenProps(i_campaign_timeline_id, i_campaign_timeline_board_template_id): Observable<any> {
+
+        var table_campaign_timeline_board_templates$ = this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_board_templates);
+        var table_campaign_timeline_board_viewer_chanels$ = this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_board_viewer_chanels);
+        var table_board_template_viewers$ = this.store.select(store => store.msDatabase.sdk.table_board_template_viewers);
+
+        return Observable.combineLatest(
+            table_campaign_timeline_board_templates$,
+            table_board_template_viewers$,
+            table_campaign_timeline_board_viewer_chanels$,
+            (campaignTimelineBoardTemplatesModels: List<CampaignTimelineBoardTemplatesModel>,
+             boardTemplateViewersModels: List<BoardTemplateViewersModel>,
+             campaignTimelineBoardViewerChanelsModels: List<CampaignTimelineBoardViewerChanelsModel>) => {
+
+                var campaignTimelineBoardViewerChanelsModel = campaignTimelineBoardViewerChanelsModels.find( (campaignTimelineBoardViewerChanelsModel:CampaignTimelineBoardViewerChanelsModel) => {
+                    return campaignTimelineBoardViewerChanelsModel.getCampaignTimelineBoardTemplateId() == i_campaign_timeline_board_template_id
+                })
+
+                return campaignTimelineBoardViewerChanelsModel;
+
+                // var boardTemplateViewersModel = boardTemplateViewersModels.find((boardTemplateViewersModel)=>{
+                //     boardTemplateViewersModel.getBoardTemplateId(campaignTimelineBoardViewerChanelsModel.getBoardTemplateViewerId())
+                // })
+
+            })
 
         // var counter = -1;
         // var screenProps = {};
