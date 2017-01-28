@@ -3,6 +3,7 @@
     "baseUrl": "",
     "declaration": false,
     "emitDecoratorMetadata": true,
+    "skipLibCheck": false,
     "experimentalDecorators": true,
     "lib": [
       "es6",

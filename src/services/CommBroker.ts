@@ -124,10 +124,6 @@ export class CommBroker {
         })
     }
 
-    public listen(events, func) {
-        // deprecated
-    }
-
     public onInstance(instance: any) {
         var self = this;
         return self.streamMessages.filter((e) => {
