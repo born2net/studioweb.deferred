@@ -8,16 +8,15 @@ import {Map, List} from 'immutable';
 
 @Component({
     selector: 'campaign-editor',
-    changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './campaign-editors.html'
 })
 export class CampaignEditor extends Compbaser {
 
     private campaignModel: CampaignsModelExt;
+    private campaignTimelinesModels: List<CampaignTimelinesModel>;
 
     constructor(private yp: YellowPepperService, private rp:RedPepperService) {
         super();
-
         this.cancelOnDestroy(
             this.yp.listenCampaignSelected().subscribe((campaign: CampaignsModelExt) => {
                 if (!campaign)
@@ -26,13 +25,11 @@ export class CampaignEditor extends Compbaser {
                 this._loadCampaignTimelines();
             })
         );
-
     }
 
     private _loadCampaignTimelines(){
-
         this.yp.getCampaignTimelines(this.campaignModel.getCampaignId()).subscribe((campaignTimelinesModels:List<CampaignTimelinesModel>)=>{
-            console.log(campaignTimelinesModels.size);
+            this.campaignTimelinesModels = campaignTimelinesModels;
         })
     }
 

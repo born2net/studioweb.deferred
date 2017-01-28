@@ -4,7 +4,7 @@ import {ApplicationState} from "../store/application.state";
 import {Observable} from "rxjs";
 import {CampaignsModelExt} from "../store/model/msdb-models-extended";
 import {List} from "immutable";
-import {BoardsModel, CampaignTimelinesModel} from "../store/imsdb.interfaces_auto";
+import {BoardsModel, CampaignTimelineSequencesModel, CampaignTimelinesModel} from "../store/imsdb.interfaces_auto";
 
 @Injectable()
 export class YellowPepperService {
@@ -20,7 +20,12 @@ export class YellowPepperService {
         return this.store;
     }
 
-    public listenCampaignSelected() {
+    /**
+     Listen to when a campaign is selected via the store state uiState.campaign.campaignSelected
+     @method listenCampaignSelected
+     @param {Observable<CampaignsModelExt>} i_campaign_id
+     **/
+    public listenCampaignSelected(): Observable<CampaignsModelExt> {
 
         var campaignSelected$ = this.store.select(
             store => store.appDb.uiState.campaign.campaignSelected
@@ -42,7 +47,7 @@ export class YellowPepperService {
      @method getCampaignTimelines
      @param {Number} i_campaign_id
      **/
-    getCampaignTimelines(i_campaign_id:number):Observable<List<CampaignTimelinesModel>> {
+    getCampaignTimelines(i_campaign_id: number): Observable<List<CampaignTimelinesModel>> {
         return this.store.select(store => store.msDatabase.sdk.table_campaign_timelines)
             .map((campaignTimelinesModels: List<CampaignTimelinesModel>) => {
                 return campaignTimelinesModels.filter((campaignTimelinesModel: CampaignTimelinesModel) => {
@@ -52,11 +57,72 @@ export class YellowPepperService {
     }
 
     /**
+     Get the sequence index of a timeline in the specified campaign
+     @method getCampaignTimelineSequencerIndex
+     @param {Number} i_campaign_timeline_id
+     **/
+    getCampaignTimelineSequencerIndex(i_campaign_timeline_id): Observable<number> {
+        console.log(i_campaign_timeline_id);
+        return this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_sequences)
+            .map((campaignTimelineSequencesModels: List<CampaignTimelineSequencesModel>) => {
+                var found: CampaignTimelineSequencesModel = campaignTimelineSequencesModels.find((campaignTimelineSequencesModel: CampaignTimelineSequencesModel) => {
+                    return campaignTimelineSequencesModel.getCampaignTimelineId() == i_campaign_timeline_id
+                });
+                return found.getSequenceIndex();
+            }).take(1);
+    }
+
+    /**
+     Build screenProps json object with all viewers and all of their respective attributes for the given timeline_id / template_id
+     @method getTemplateViewersScreenProps
+     @param {Number} i_campaign_timeline_id
+     @param {Number} i_campaign_timeline_board_template_id
+     @return {Object} screenProps all viewers and all their properties
+     **/
+    getTemplateViewersScreenProps(i_campaign_timeline_id, i_campaign_timeline_board_template_id) {
+
+        // var counter = -1;
+        // var screenProps = {};
+        // var viewOrderIndexes = {};
+        // $(this.databaseManager.table_campaign_timeline_board_viewer_chanels().getAllPrimaryKeys()).each(function (k, campaign_timeline_board_viewer_chanel_id) {
+        //
+        //     var recCampaignTimelineBoardViewerChanel = this.databaseManager.table_campaign_timeline_board_viewer_chanels().getRec(campaign_timeline_board_viewer_chanel_id);
+        //     if (recCampaignTimelineBoardViewerChanel['campaign_timeline_board_template_id'] == i_campaign_timeline_board_template_id) {
+        //         var recBoardTemplateViewer = this.databaseManager.table_board_template_viewers().getRec(recCampaignTimelineBoardViewerChanel['board_template_viewer_id']);
+        //         // console.log(i_campaign_timeline_board_template_id + ' ' + recBoardTemplateViewer['board_template_viewer_id']);
+        //         counter++;
+        //         screenProps['sd' + counter] = {};
+        //         screenProps['sd' + counter]['campaign_timeline_board_viewer_id'] = recBoardTemplateViewer['board_template_viewer_id'];
+        //         screenProps['sd' + counter]['campaign_timeline_id'] = i_campaign_timeline_id;
+        //         screenProps['sd' + counter]['x'] = recBoardTemplateViewer['pixel_x'];
+        //         screenProps['sd' + counter]['y'] = recBoardTemplateViewer['pixel_y'];
+        //         screenProps['sd' + counter]['w'] = recBoardTemplateViewer['pixel_width'];
+        //         screenProps['sd' + counter]['h'] = recBoardTemplateViewer['pixel_height'];
+        //
+        //         // make sure that every view_order we assign is unique and sequential
+        //         var viewOrder = recBoardTemplateViewer['viewer_order'];
+        //         if (!_.isUndefined(viewOrderIndexes[viewOrder])) {
+        //             for (var i = 0; i < 100; i++) {
+        //                 if (_.isUndefined(viewOrderIndexes[i])) {
+        //                     viewOrder = i;
+        //                     break;
+        //                 }
+        //             }
+        //         }
+        //         viewOrderIndexes[viewOrder] = true;
+        //         screenProps['sd' + counter]['view_order'] = viewOrder;
+        //     }
+        // });
+        //
+        // return screenProps;
+    }
+
+    /**
      Get campaigns
      @method getCampaign
      @param {Number} i_campaign_id
      **/
-    getCampaign(i_campaign_id:number):Observable<CampaignsModelExt> {
+    getCampaign(i_campaign_id: number): Observable<CampaignsModelExt> {
         return this.store.select(store => store.msDatabase.sdk.table_campaigns)
             .map((campaignModels: List<CampaignsModelExt>) => {
                 return campaignModels.find((campaignModel: CampaignsModelExt) => {
