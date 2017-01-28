@@ -12,7 +12,7 @@ import {CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
         <h2>timelines: {{m_campaignTimelinesModels?.size}}</h2>
         <div style="float: left; padding: 20px" *ngFor="let campaignTimelinesModel of m_campaignTimelinesModelsOrdered">
             <div>{{campaignTimelinesModel.getTimelineName()}}</div>
-            <!--<screen-template [setTemplate]="_getScreenTemplate(campaignTimelinesModel)"></screen-template>-->
+            <screen-template [setTemplate]="_getScreenTemplate(campaignTimelinesModel)"></screen-template>
         </div>
 
     `,
@@ -32,6 +32,10 @@ export class Sequencer extends Compbaser {
      * @private
      */
     _getScreenTemplate(i_campaignTimelinesModel: CampaignTimelinesModel) {
+
+        this.yp.getTemplatesOfTimeline(i_campaignTimelinesModel.getCampaignTimelineId()).subscribe((timelineBoardTemplateIds:Array<number>)=>{
+            console.log(timelineBoardTemplateIds);
+        });
 
         // var boardTemplateIDs = pepper.getTemplatesOfTimeline(self.m_campaign_timeline_id);
         // for (var i = 0; i < boardTemplateIDs.length; i++) {

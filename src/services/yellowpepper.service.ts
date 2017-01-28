@@ -4,7 +4,7 @@ import {ApplicationState} from "../store/application.state";
 import {Observable} from "rxjs";
 import {CampaignsModelExt} from "../store/model/msdb-models-extended";
 import {List} from "immutable";
-import {BoardsModel, CampaignTimelineSequencesModel, CampaignTimelinesModel} from "../store/imsdb.interfaces_auto";
+import {BoardsModel, CampaignTimelineBoardTemplatesModel, CampaignTimelineSequencesModel, CampaignTimelinesModel} from "../store/imsdb.interfaces_auto";
 
 @Injectable()
 export class YellowPepperService {
@@ -62,13 +62,29 @@ export class YellowPepperService {
      @param {Number} i_campaign_timeline_id
      **/
     getCampaignTimelineSequencerIndex(i_campaign_timeline_id): Observable<number> {
-        console.log(i_campaign_timeline_id);
         return this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_sequences)
             .map((campaignTimelineSequencesModels: List<CampaignTimelineSequencesModel>) => {
                 var found: CampaignTimelineSequencesModel = campaignTimelineSequencesModels.find((campaignTimelineSequencesModel: CampaignTimelineSequencesModel) => {
                     return campaignTimelineSequencesModel.getCampaignTimelineId() == i_campaign_timeline_id
                 });
                 return found.getSequenceIndex();
+            }).take(1);
+    }
+
+    /**
+     Get all the campaign > timeline > board > template ids of a timeline
+     @method getTemplatesOfTimeline
+     @param {Number} i_campaign_timeline_id
+     @return {Array} template ids
+     **/
+    getTemplatesOfTimeline(i_campaign_timeline_id): Observable<Array<number>> {
+        return this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_board_templates)
+            .map((campaignTimelineBoardTemplatesModels: List<CampaignTimelineBoardTemplatesModel>) => {
+                return campaignTimelineBoardTemplatesModels.reduce((result: Array<number>, campaignTimelineBoardTemplatesModel: CampaignTimelineBoardTemplatesModel) => {
+                    if (campaignTimelineBoardTemplatesModel.getCampaignTimelineId() == i_campaign_timeline_id)
+                        result.push(campaignTimelineBoardTemplatesModel.getCampaignTimelineBoardTemplateId());
+                    return result;
+                }, [])
             }).take(1);
     }
 
