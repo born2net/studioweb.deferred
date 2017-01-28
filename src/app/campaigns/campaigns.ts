@@ -8,6 +8,7 @@ import {IUiState} from "../../store/store.data";
 import {IScreenTemplateData} from "../../comps/screen-template/screen-template";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {RedPepperService} from "../../services/redpepper.service";
+import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -57,6 +58,5 @@ export class Campaigns extends Compbaser {
         var uiState: IUiState = {campaign: {campaignSelected: campaignId}}
         this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
-
 }
 

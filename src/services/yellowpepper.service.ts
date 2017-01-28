@@ -1,10 +1,10 @@
 import {Injectable} from "@angular/core";
-import {Store, Action} from "@ngrx/store";
+import {Action, Store} from "@ngrx/store";
 import {ApplicationState} from "../store/application.state";
 import {Observable} from "rxjs";
 import {CampaignsModelExt} from "../store/model/msdb-models-extended";
 import {List} from "immutable";
-import {BoardsModel} from "../store/imsdb.interfaces_auto";
+import {BoardsModel, CampaignTimelinesModel} from "../store/imsdb.interfaces_auto";
 
 @Injectable()
 export class YellowPepperService {
@@ -36,6 +36,35 @@ export class YellowPepperService {
                 });
             });
     }
+
+    /**
+     Get all timeline ids for specified campaign
+     @method getCampaignTimelines
+     @param {Number} i_campaign_id
+     **/
+    getCampaignTimelines(i_campaign_id:number):Observable<List<CampaignTimelinesModel>> {
+        return this.store.select(store => store.msDatabase.sdk.table_campaign_timelines)
+            .map((campaignTimelinesModels: List<CampaignTimelinesModel>) => {
+                return campaignTimelinesModels.filter((campaignTimelinesModel: CampaignTimelinesModel) => {
+                    return campaignTimelinesModel.getCampaignId() == i_campaign_id;
+                });
+            }).take(1);
+    }
+
+    /**
+     Get campaigns
+     @method getCampaign
+     @param {Number} i_campaign_id
+     **/
+    getCampaign(i_campaign_id:number):Observable<CampaignsModelExt> {
+        return this.store.select(store => store.msDatabase.sdk.table_campaigns)
+            .map((campaignModels: List<CampaignsModelExt>) => {
+                return campaignModels.find((campaignModel: CampaignsModelExt) => {
+                    return campaignModel.getCampaignId() == i_campaign_id;
+                });
+            }).take(1);
+    }
+
 
     /*****************************************************/
     // below are some brain dumps and examples only

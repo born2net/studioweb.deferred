@@ -43,6 +43,10 @@ export class StoreModel {
         return this._data;
     }
 
+    public toPureJs(){
+        return this.getData().toObject();
+    }
+
     /**
      * Create a List or update a list if one exists, with the Map key provided and the value to push to the new/updated list
      * @param ClassName
