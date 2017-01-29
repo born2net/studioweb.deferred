@@ -6,8 +6,7 @@ DigitalSignage.com StudioWeb
 
 ```
 git clone https://github.com/born2net/studioweb.git
-cd studiotouch
-npm install autoprefixer
+cd studioweb
 npm install angular-cli -g
 npm install --no-optional
 ```
