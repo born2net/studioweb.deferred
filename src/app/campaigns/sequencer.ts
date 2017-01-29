@@ -4,6 +4,7 @@ import {RedPepperService} from "../../services/redpepper.service";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {List} from "immutable";
 import {CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
+import * as _ from 'lodash';
 
 @Component({
     selector: 'sequencer',
@@ -12,7 +13,7 @@ import {CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
         <h2>timelines: {{m_campaignTimelinesModels?.size}}</h2>
         <div style="float: left; padding: 20px" *ngFor="let campaignTimelinesModel of m_campaignTimelinesModelsOrdered">
             <div>{{campaignTimelinesModel.getTimelineName()}}</div>
-            <screen-template [setTemplate]="_getScreenTemplate(campaignTimelinesModel)"></screen-template>
+            <!--<screen-template [setTemplate]="_getScreenTemplate(campaignTimelinesModel)"></screen-template>-->
         </div>
 
     `,
@@ -78,11 +79,14 @@ export class Sequencer extends Compbaser {
             return;
         this.m_campaignTimelinesModels = i_campaignTimelinesModels;
         this.m_campaignTimelinesModelsOrdered = []
+        var unorderedCampaigns = []
         this.m_campaignTimelinesModels.forEach((i_campaignTimelinesModel: CampaignTimelinesModel) => {
             this.yp.getCampaignTimelineSequencerIndex(i_campaignTimelinesModel.getCampaignTimelineId()).get((index: number) => {
-                this.m_campaignTimelinesModelsOrdered[index] = i_campaignTimelinesModel;
+                unorderedCampaigns.push({index: index, campaign: i_campaignTimelinesModel});
             });
         })
+        this.m_campaignTimelinesModelsOrdered = _.sortBy(unorderedCampaigns, [function(o) { return o.index; }]);
+
     }
 
     ngOnInit() {

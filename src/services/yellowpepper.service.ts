@@ -112,15 +112,16 @@ export class YellowPepperService {
              boardTemplateViewersModels: List<BoardTemplateViewersModel>,
              campaignTimelineBoardViewerChanelsModels: List<CampaignTimelineBoardViewerChanelsModel>) => {
 
-                var campaignTimelineBoardViewerChanelsModel = campaignTimelineBoardViewerChanelsModels.find( (campaignTimelineBoardViewerChanelsModel:CampaignTimelineBoardViewerChanelsModel) => {
+                var campaignTimelineBoardViewerChanelsModel = campaignTimelineBoardViewerChanelsModels.filter( (campaignTimelineBoardViewerChanelsModel:CampaignTimelineBoardViewerChanelsModel) => {
                     return campaignTimelineBoardViewerChanelsModel.getCampaignTimelineBoardTemplateId() == i_campaign_timeline_board_template_id
                 })
-
-                return campaignTimelineBoardViewerChanelsModel;
+                // var board_template_viewer_id = campaignTimelineBoardViewerChanelsModel.getBoardTemplateViewerId();
 
                 // var boardTemplateViewersModel = boardTemplateViewersModels.find((boardTemplateViewersModel)=>{
-                //     boardTemplateViewersModel.getBoardTemplateId(campaignTimelineBoardViewerChanelsModel.getBoardTemplateViewerId())
+                //     return boardTemplateViewersModel.getBoardTemplateId() == board_template_viewer_id;
                 // })
+                console.log();
+
 
             })
 
