@@ -9,12 +9,11 @@ import * as _ from 'lodash';
 @Component({
     selector: 'sequencer',
     template: `
-        <small class="debug">{{me}}</small>
-        <h2>timelines: {{m_campaignTimelinesModels?.size}}</h2>
-        <div style="float: left; padding: 20px" *ngFor="let campaignTimelinesModel of m_campaignTimelinesModelsOrdered">
-            <div>{{campaignTimelinesModel.getTimelineName()}}</div>
-            <!--<screen-template [setTemplate]="_getScreenTemplate(campaignTimelinesModel)"></screen-template>-->
-        </div>
+      <small class="debug">{{me}}</small><h2>timelines: {{m_campaignTimelinesModels?.size}}</h2>
+      <div style="float: left; padding: 20px" *ngFor="let campaignTimelinesModel of m_campaignTimelinesModelsOrdered">
+        <div>{{campaignTimelinesModel.getTimelineName()}}</div>
+        <!--<screen-template [setTemplate]="_getScreenTemplate(campaignTimelinesModel)"></screen-template>-->
+      </div>
 
     `,
 })
@@ -78,15 +77,23 @@ export class Sequencer extends Compbaser {
         if (!i_campaignTimelinesModels)
             return;
         this.m_campaignTimelinesModels = i_campaignTimelinesModels;
+        this.sortTimelines();
+    }
+
+    private sortTimelines() {
         this.m_campaignTimelinesModelsOrdered = []
-        var unorderedCampaigns = []
+        var orderedTimelines = []
         this.m_campaignTimelinesModels.forEach((i_campaignTimelinesModel: CampaignTimelinesModel) => {
             this.yp.getCampaignTimelineSequencerIndex(i_campaignTimelinesModel.getCampaignTimelineId()).get((index: number) => {
-                unorderedCampaigns.push({index: index, campaign: i_campaignTimelinesModel});
+                orderedTimelines.push({index: index, campaign: i_campaignTimelinesModel});
             });
         })
-        this.m_campaignTimelinesModelsOrdered = _.sortBy(unorderedCampaigns, [function(o) { return o.index; }]);
-
+        var orderedTimelines = _.sortBy(orderedTimelines, [function (o) {
+            return o.index;
+        }]);
+        this.m_campaignTimelinesModelsOrdered = _.toArray(_.map(orderedTimelines, function (o) {
+            return o.campaign;
+        }));
     }
 
     ngOnInit() {
