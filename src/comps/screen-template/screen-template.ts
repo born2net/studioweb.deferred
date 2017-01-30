@@ -24,8 +24,8 @@ import {Lib} from "../../Lib";
 import {OrientationEnum} from "../../app/campaigns/campaign-orientation";
 
 export interface IScreenTemplateData {
-    i_selfDestruct: boolean;
-    i_owner: Object;
+    // i_selfDestruct: boolean;
+    // i_owner: Object;
     resolution: string;
     screenType: string;
     orientation: OrientationEnum;
@@ -47,7 +47,7 @@ export class ScreenTemplate extends Compbaser {
 
     @Input()
     set setTemplate(i_screenTemplateData: IScreenTemplateData) {
-        this.m_selfDestruct = i_screenTemplateData.i_selfDestruct;
+        // this.m_selfDestruct = i_screenTemplateData.i_selfDestruct;
         this.m_myElementID = 'svgScreenLayout' + '_' + _.uniqueId();
         this.m_screenTemplateData = i_screenTemplateData;
         this.m_orientation = i_screenTemplateData['orientation'];
@@ -90,7 +90,7 @@ export class ScreenTemplate extends Compbaser {
         var screenData = {
             sd: jQuery(element).data('sd'),
             elementID: i_caller.m_myElementID,
-            owner: i_caller.getOwner(),
+            // owner: i_caller.getOwner(),
             campaign_timeline_board_viewer_id: campaign_timeline_board_viewer_id,
             campaign_timeline_id: campaign_timeline_id,
             screenTemplateData: self.m_screenTemplateData

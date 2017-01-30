@@ -5,6 +5,9 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
 import {List} from "immutable";
 import {CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 import * as _ from 'lodash';
+import {IScreenTemplateData} from "../../comps/screen-template/screen-template";
+import {OrientationEnum} from "./campaign-orientation";
+import {Observable} from "rxjs";
 
 @Component({
     selector: 'sequencer',
@@ -12,7 +15,7 @@ import * as _ from 'lodash';
       <small class="debug">{{me}}</small><h2>timelines: {{m_campaignTimelinesModels?.size}}</h2>
       <div style="float: left; padding: 20px" *ngFor="let campaignTimelinesModel of m_campaignTimelinesModelsOrdered">
         <div>{{campaignTimelinesModel.getTimelineName()}}</div>
-        <!--<screen-template [setTemplate]="_getScreenTemplate(campaignTimelinesModel)"></screen-template>-->
+        <screen-template [setTemplate]="_getScreenTemplate(campaignTimelinesModel) | async"></screen-template>
       </div>
 
     `,
@@ -31,13 +34,24 @@ export class Sequencer extends Compbaser {
      * @param i_campaignTimelinesModel here we get the CampaignTimelinesModel and find its boards so <screen-template/> can draw the UI thumbnails
      * @private
      */
-    _getScreenTemplate(i_campaignTimelinesModel: CampaignTimelinesModel) {
+    _getScreenTemplate(i_campaignTimelinesModel: CampaignTimelinesModel): Observable<IScreenTemplateData> {
+        return this.yp.getTemplatesOfTimeline(i_campaignTimelinesModel.getCampaignTimelineId())
+            .map((campaignTimelineBoardTemplateIds: Array<number>) => {
+                return campaignTimelineBoardTemplateIds[0];
+            }).switchMap((campaignTimelineBoardTemplateId) => {
+                return this.yp.getTemplateViewersScreenProps(i_campaignTimelinesModel.getCampaignTimelineId(), campaignTimelineBoardTemplateId).map((screenProps) => {
+                    var screenTemplateData: IScreenTemplateData = {
+                        orientation: OrientationEnum.HORIZONTAL,
+                        resolution: '1920x1080',
+                        screenType: 'bar',
+                        screenProps: screenProps,
+                        scale: 14,
+                        campaignName: 'foo'
+                    };
+                    return screenTemplateData;
+                })
+            })
 
-        this.yp.getTemplatesOfTimeline(i_campaignTimelinesModel.getCampaignTimelineId()).get((campaignTimelineBoardTemplateIds: Array<number>) => {
-            //todo: currently we only support single template per timeline thus [0], in the future refactor
-            var campaignTimelineBoardTemplateId = campaignTimelineBoardTemplateIds[0];
-            this.yp.getTemplateViewersScreenProps(i_campaignTimelinesModel.getCampaignTimelineId(), campaignTimelineBoardTemplateId).get()
-        });
 
         // done var boardTemplateIDs = pepper.getTemplatesOfTimeline(self.m_campaign_timeline_id);
         // for (var i = 0; i < boardTemplateIDs.length; i++) {

@@ -69,8 +69,6 @@ export class CampaignLayout extends Compbaser {
         this.m_screenLayouts = [];
         for (var screenType in screenTemplates[this.m_orientation][this.m_resolution]) {
             var screenTemplateData: IScreenTemplateData = {
-                i_owner: null,
-                i_selfDestruct: true,
                 orientation: this.m_orientation,
                 resolution: this.m_resolution,
                 screenType: screenType,

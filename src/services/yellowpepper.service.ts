@@ -4,8 +4,14 @@ import {ApplicationState} from "../store/application.state";
 import {Observable} from "rxjs";
 import {CampaignsModelExt} from "../store/model/msdb-models-extended";
 import {List} from "immutable";
+import * as _ from 'lodash';
+
 import {
-    BoardsModel, BoardTemplateViewersModel, CampaignTimelineBoardTemplatesModel, CampaignTimelineBoardViewerChanelsModel, CampaignTimelineBoardViewerChannelsModel, CampaignTimelineSequencesModel,
+    BoardsModel,
+    BoardTemplateViewersModel,
+    CampaignTimelineBoardTemplatesModel,
+    CampaignTimelineBoardViewerChanelsModel,
+    CampaignTimelineSequencesModel,
     CampaignTimelinesModel
 } from "../store/imsdb.interfaces_auto";
 
@@ -100,29 +106,67 @@ export class YellowPepperService {
      **/
     getTemplateViewersScreenProps(i_campaign_timeline_id, i_campaign_timeline_board_template_id): Observable<any> {
 
+
         var table_campaign_timeline_board_templates$ = this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_board_templates);
         var table_campaign_timeline_board_viewer_chanels$ = this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_board_viewer_chanels);
         var table_board_template_viewers$ = this.store.select(store => store.msDatabase.sdk.table_board_template_viewers);
+
+        var counter = -1;
+        var screenProps = {};
+        var viewOrderIndexes = {};
 
         return Observable.combineLatest(
             table_campaign_timeline_board_templates$,
             table_board_template_viewers$,
             table_campaign_timeline_board_viewer_chanels$,
+
             (campaignTimelineBoardTemplatesModels: List<CampaignTimelineBoardTemplatesModel>,
              boardTemplateViewersModels: List<BoardTemplateViewersModel>,
              campaignTimelineBoardViewerChanelsModels: List<CampaignTimelineBoardViewerChanelsModel>) => {
 
-                var campaignTimelineBoardViewerChanelsModel = campaignTimelineBoardViewerChanelsModels.filter( (campaignTimelineBoardViewerChanelsModel:CampaignTimelineBoardViewerChanelsModel) => {
-                    return campaignTimelineBoardViewerChanelsModel.getCampaignTimelineBoardTemplateId() == i_campaign_timeline_board_template_id
-                })
+                // var campaignTimelineBoardViewerChanelsModel = campaignTimelineBoardViewerChanelsModels
+                //     .filter((campaignTimelineBoardViewerChanelsModel: CampaignTimelineBoardViewerChanelsModel) => {
+                //         return campaignTimelineBoardViewerChanelsModel.getCampaignTimelineBoardTemplateId() == i_campaign_timeline_board_template_id
+                //     })
                 // var board_template_viewer_id = campaignTimelineBoardViewerChanelsModel.getBoardTemplateViewerId();
 
                 // var boardTemplateViewersModel = boardTemplateViewersModels.find((boardTemplateViewersModel)=>{
                 //     return boardTemplateViewersModel.getBoardTemplateId() == board_template_viewer_id;
                 // })
-                console.log();
 
+                campaignTimelineBoardViewerChanelsModels.forEach((campaignTimelineBoardViewerChanelsModel: CampaignTimelineBoardViewerChanelsModel, v) => {
 
+                    if (campaignTimelineBoardViewerChanelsModel.getCampaignTimelineBoardTemplateId() == i_campaign_timeline_board_template_id) {
+                        var board_template_viewer_id = campaignTimelineBoardViewerChanelsModel.getBoardTemplateViewerId();
+                        boardTemplateViewersModels.forEach((recBoardTemplateViewer: BoardTemplateViewersModel) => {
+                            if (recBoardTemplateViewer.getBoardTemplateViewerId() == board_template_viewer_id) {
+                                // console.log(i_campaign_timeline_board_template_id + ' ' + recBoardTemplateViewer['board_template_viewer_id']);
+                                counter++;
+                                screenProps['sd' + counter] = {};
+                                screenProps['sd' + counter]['campaign_timeline_board_viewer_id'] = recBoardTemplateViewer['board_template_viewer_id'];
+                                screenProps['sd' + counter]['campaign_timeline_id'] = i_campaign_timeline_id;
+                                screenProps['sd' + counter]['x'] = recBoardTemplateViewer.getPixelX();
+                                screenProps['sd' + counter]['y'] = recBoardTemplateViewer.getPixelY();
+                                screenProps['sd' + counter]['w'] = recBoardTemplateViewer.getPixelWidth();
+                                screenProps['sd' + counter]['h'] = recBoardTemplateViewer.getPixelHeight();
+
+                                // make sure that every view_order we assign is unique and sequential
+                                var viewOrder = recBoardTemplateViewer.getViewerOrder();
+                                if (!_.isUndefined(viewOrderIndexes[viewOrder])) {
+                                    for (var i = 0; i < 100; i++) {
+                                        if (_.isUndefined(viewOrderIndexes[i])) {
+                                            viewOrder = i;
+                                            break;
+                                        }
+                                    }
+                                }
+                                viewOrderIndexes[viewOrder] = true;
+                                screenProps['sd' + counter]['view_order'] = viewOrder;
+                            }
+                        })
+                    }
+                })
+                return screenProps;
             })
 
         // var counter = -1;
@@ -158,7 +202,6 @@ export class YellowPepperService {
         //     }
         // });
         //
-        // return screenProps;
     }
 
     /**
