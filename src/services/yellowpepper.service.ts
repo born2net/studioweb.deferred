@@ -4,16 +4,18 @@ import {ApplicationState} from "../store/application.state";
 import {Observable} from "rxjs";
 import {CampaignsModelExt} from "../store/model/msdb-models-extended";
 import {List} from "immutable";
-import * as _ from 'lodash';
+import * as _ from "lodash";
 
 import {
     BoardsModel,
+    BoardTemplatesModel,
     BoardTemplateViewersModel,
     CampaignTimelineBoardTemplatesModel,
     CampaignTimelineBoardViewerChanelsModel,
     CampaignTimelineSequencesModel,
     CampaignTimelinesModel
 } from "../store/imsdb.interfaces_auto";
+import {IScreenTemplateData} from "../comps/screen-template/screen-template";
 
 @Injectable()
 export class YellowPepperService {
@@ -104,42 +106,53 @@ export class YellowPepperService {
      @param {Number} i_campaign_timeline_board_template_id
      @return {Object} screenProps all viewers and all their properties
      **/
-    getTemplateViewersScreenProps(i_campaign_timeline_id, i_campaign_timeline_board_template_id): Observable<any> {
-
+    getTemplateViewersScreenProps(i_campaign_timeline_id, i_campaign_timeline_board_template_id): Observable<IScreenTemplateData> {
 
         var table_campaign_timeline_board_templates$ = this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_board_templates);
         var table_campaign_timeline_board_viewer_chanels$ = this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_board_viewer_chanels);
         var table_board_template_viewers$ = this.store.select(store => store.msDatabase.sdk.table_board_template_viewers);
+        var table_board_templates = this.store.select(store => store.msDatabase.sdk.table_board_templates);
+        var table_boards$ = this.store.select(store => store.msDatabase.sdk.table_boards);
 
         var counter = -1;
         var screenProps = {};
         var viewOrderIndexes = {};
+        var boardWidth;
+        var boardHeight;
 
         return Observable.combineLatest(
             table_campaign_timeline_board_templates$,
             table_board_template_viewers$,
             table_campaign_timeline_board_viewer_chanels$,
+            table_board_templates,
+            table_boards$,
 
             (campaignTimelineBoardTemplatesModels: List<CampaignTimelineBoardTemplatesModel>,
              boardTemplateViewersModels: List<BoardTemplateViewersModel>,
-             campaignTimelineBoardViewerChanelsModels: List<CampaignTimelineBoardViewerChanelsModel>) => {
-
-                // var campaignTimelineBoardViewerChanelsModel = campaignTimelineBoardViewerChanelsModels
-                //     .filter((campaignTimelineBoardViewerChanelsModel: CampaignTimelineBoardViewerChanelsModel) => {
-                //         return campaignTimelineBoardViewerChanelsModel.getCampaignTimelineBoardTemplateId() == i_campaign_timeline_board_template_id
-                //     })
-                // var board_template_viewer_id = campaignTimelineBoardViewerChanelsModel.getBoardTemplateViewerId();
-
-                // var boardTemplateViewersModel = boardTemplateViewersModels.find((boardTemplateViewersModel)=>{
-                //     return boardTemplateViewersModel.getBoardTemplateId() == board_template_viewer_id;
-                // })
+             campaignTimelineBoardViewerChanelsModels: List<CampaignTimelineBoardViewerChanelsModel>,
+             boardTemplates: List<BoardTemplatesModel>,
+             boardsModel: List<BoardsModel>) => {
 
                 campaignTimelineBoardViewerChanelsModels.forEach((campaignTimelineBoardViewerChanelsModel: CampaignTimelineBoardViewerChanelsModel, v) => {
 
                     if (campaignTimelineBoardViewerChanelsModel.getCampaignTimelineBoardTemplateId() == i_campaign_timeline_board_template_id) {
+
+
                         var board_template_viewer_id = campaignTimelineBoardViewerChanelsModel.getBoardTemplateViewerId();
                         boardTemplateViewersModels.forEach((recBoardTemplateViewer: BoardTemplateViewersModel) => {
                             if (recBoardTemplateViewer.getBoardTemplateViewerId() == board_template_viewer_id) {
+
+                                var boardId = boardTemplates.find((boardTemplateModel) => {
+                                    return boardTemplateModel.getBoardTemplateId() == recBoardTemplateViewer.getBoardTemplateId();
+                                }).getBoardId();
+
+
+                                var boardModel = boardsModel.find((boardModel) => {
+                                    return boardModel.getBoardId() == boardId;
+                                });
+                                boardWidth = boardModel.getBoardPixelWidth();
+                                boardHeight = boardModel.getBoardPixelHeight();
+
                                 // console.log(i_campaign_timeline_board_template_id + ' ' + recBoardTemplateViewer['board_template_viewer_id']);
                                 counter++;
                                 screenProps['sd' + counter] = {};
@@ -166,7 +179,15 @@ export class YellowPepperService {
                         })
                     }
                 })
-                return screenProps;
+                var screenTemplateData: IScreenTemplateData = {
+                    screenProps: screenProps,
+                    resolution: `${boardWidth}X${boardHeight}`,
+                    screenType: '',
+                    orientation: 0,
+                    campaignName: '',
+                    scale: 10
+                }
+                return screenTemplateData;
             })
 
         // var counter = -1;

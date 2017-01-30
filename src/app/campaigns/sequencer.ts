@@ -39,17 +39,7 @@ export class Sequencer extends Compbaser {
             .map((campaignTimelineBoardTemplateIds: Array<number>) => {
                 return campaignTimelineBoardTemplateIds[0];
             }).switchMap((campaignTimelineBoardTemplateId) => {
-                return this.yp.getTemplateViewersScreenProps(i_campaignTimelinesModel.getCampaignTimelineId(), campaignTimelineBoardTemplateId).map((screenProps) => {
-                    var screenTemplateData: IScreenTemplateData = {
-                        orientation: OrientationEnum.HORIZONTAL,
-                        resolution: '1920x1080',
-                        screenType: 'bar',
-                        screenProps: screenProps,
-                        scale: 14,
-                        campaignName: 'foo'
-                    };
-                    return screenTemplateData;
-                })
+                return this.yp.getTemplateViewersScreenProps(i_campaignTimelinesModel.getCampaignTimelineId(), campaignTimelineBoardTemplateId);
             })
 
 
