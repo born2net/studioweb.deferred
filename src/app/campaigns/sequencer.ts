@@ -4,18 +4,17 @@ import {RedPepperService} from "../../services/redpepper.service";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {List} from "immutable";
 import {CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
-import * as _ from 'lodash';
+import * as _ from "lodash";
 import {IScreenTemplateData} from "../../comps/screen-template/screen-template";
-import {OrientationEnum} from "./campaign-orientation";
 import {Observable} from "rxjs";
 
 @Component({
     selector: 'sequencer',
     template: `
-      <!--<small class="debug">{{me}}</small><h2>timelines: {{m_campaignTimelinesModelsOrdered?.size}}</h2>-->
-      <div style="float: left; padding: 20px" *ngFor="let campaignTimelinesModel of screenTemplates | async">
-        <!--<div>{{campaignTimelinesModel.getTimelineName()}}</div>-->
-        <screen-template [setTemplate]="campaignTimelinesModel"></screen-template>
+      <small class="debug">{{me}}</small><h2>timelines: {{m_campaignTimelinesModels?.size}}</h2>
+      <div style="float: left; padding: 20px" *ngFor="let screenTemplate of _screenTemplates | async">
+        <div>{{screenTemplate.campaignName}}</div>
+        <screen-template [setTemplate]="screenTemplate"></screen-template>
       </div>
 
     `,
@@ -23,7 +22,8 @@ import {Observable} from "rxjs";
 export class Sequencer extends Compbaser {
 
     private m_campaignTimelinesModels: List<CampaignTimelinesModel>;
-    private m_campaignTimelinesModelsOrdered: Array<CampaignTimelinesModel> = [];
+    _screenTemplates: Observable<any>;
+
 
     constructor(private el: ElementRef, private yp: YellowPepperService, private pepper: RedPepperService) {
         super();
@@ -41,33 +41,21 @@ export class Sequencer extends Compbaser {
             }).switchMap((campaignTimelineBoardTemplateId) => {
                 return this.yp.getTemplateViewersScreenProps(i_campaignTimelinesModel.getCampaignTimelineId(), campaignTimelineBoardTemplateId);
             })
-
-
-        // done var boardTemplateIDs = pepper.getTemplatesOfTimeline(self.m_campaign_timeline_id);
-        // for (var i = 0; i < boardTemplateIDs.length; i++) {
-        //     self._populateBoardTemplate(boardTemplateIDs[i]);
-        // }
-
-        // this.yp.getTemplateViewersScreenProps(i_campaignTimelinesModel.getCampaignTimelineId(),)
     }
 
-    screenTemplates:Observable<any>;
 
     @Input()
     set setCampaignTimelinesModels(i_campaignTimelinesModels: List<CampaignTimelinesModel>) {
         if (!i_campaignTimelinesModels)
             return;
         this.m_campaignTimelinesModels = i_campaignTimelinesModels;
-        this.sortTimelines();
-        var all$ = Observable.from(this.m_campaignTimelinesModelsOrdered).map(i_campaignTimelinesModelsOrdered => {
+        var sortedTimelines: Array<CampaignTimelinesModel> = this.sortTimelines();
+        this._screenTemplates = Observable.from(sortedTimelines).map(i_campaignTimelinesModelsOrdered => {
             return this._getScreenTemplate(i_campaignTimelinesModelsOrdered)
-        });
-
-        this.screenTemplates = all$.combineAll()
+        }).combineAll()
     }
 
     private sortTimelines() {
-        this.m_campaignTimelinesModelsOrdered = []
         var orderedTimelines = []
         this.m_campaignTimelinesModels.forEach((i_campaignTimelinesModel: CampaignTimelinesModel) => {
             this.yp.getCampaignTimelineSequencerIndex(i_campaignTimelinesModel.getCampaignTimelineId()).get((index: number) => {
@@ -77,7 +65,7 @@ export class Sequencer extends Compbaser {
         var orderedTimelines = _.sortBy(orderedTimelines, [function (o) {
             return o.index;
         }]);
-        this.m_campaignTimelinesModelsOrdered = _.toArray(_.map(orderedTimelines, function (o) {
+        return _.toArray(_.map(orderedTimelines, function (o) {
             return o.campaign;
         }));
     }

@@ -188,7 +188,7 @@ export class YellowPepperService {
                     resolution: `${boardWidth}x${boardHeight}`,
                     screenType: '',
                     orientation: boardOrientation,
-                    campaignName: '',
+                    campaignName: String(Math.random()),
                     scale: 10
                 }
                 return screenTemplateData;
