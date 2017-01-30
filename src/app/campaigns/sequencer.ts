@@ -12,7 +12,7 @@ import {Observable} from "rxjs";
 @Component({
     selector: 'sequencer',
     template: `
-      <small class="debug">{{me}}</small><h2>timelines: {{m_campaignTimelinesModels?.size}}</h2>
+      <small class="debug">{{me}}</small><h2>timelines: {{m_campaignTimelinesModelsOrdered?.size}}</h2>
       <div style="float: left; padding: 20px" *ngFor="let campaignTimelinesModel of m_campaignTimelinesModelsOrdered">
         <div>{{campaignTimelinesModel.getTimelineName()}}</div>
         <screen-template [setTemplate]="_getScreenTemplate(campaignTimelinesModel) | async"></screen-template>
