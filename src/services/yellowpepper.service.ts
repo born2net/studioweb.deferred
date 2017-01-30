@@ -160,7 +160,7 @@ export class YellowPepperService {
                                 // console.log(i_campaign_timeline_board_template_id + ' ' + recBoardTemplateViewer['board_template_viewer_id']);
                                 counter++;
                                 screenProps['sd' + counter] = {};
-                                screenProps['sd' + counter]['campaign_timeline_board_viewer_id'] = recBoardTemplateViewer['board_template_viewer_id'];
+                                screenProps['sd' + counter]['campaign_timeline_board_viewer_id'] = recBoardTemplateViewer.getBoardTemplateViewerId();
                                 screenProps['sd' + counter]['campaign_timeline_id'] = i_campaign_timeline_id;
                                 screenProps['sd' + counter]['x'] = recBoardTemplateViewer.getPixelX();
                                 screenProps['sd' + counter]['y'] = recBoardTemplateViewer.getPixelY();
