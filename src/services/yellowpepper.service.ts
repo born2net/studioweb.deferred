@@ -139,7 +139,6 @@ export class YellowPepperService {
 
                     if (campaignTimelineBoardViewerChanelsModel.getCampaignTimelineBoardTemplateId() == i_campaign_timeline_board_template_id) {
 
-
                         var board_template_viewer_id = campaignTimelineBoardViewerChanelsModel.getBoardTemplateViewerId();
                         boardTemplateViewersModels.forEach((recBoardTemplateViewer: BoardTemplateViewersModel) => {
                             if (recBoardTemplateViewer.getBoardTemplateViewerId() == board_template_viewer_id) {
@@ -147,7 +146,6 @@ export class YellowPepperService {
                                 var boardId = boardTemplates.find((boardTemplateModel) => {
                                     return boardTemplateModel.getBoardTemplateId() == recBoardTemplateViewer.getBoardTemplateId();
                                 }).getBoardId();
-
 
                                 var boardModel = boardsModel.find((boardModel) => {
                                     return boardModel.getBoardId() == boardId;
@@ -195,40 +193,6 @@ export class YellowPepperService {
                 }
                 return screenTemplateData;
             })
-
-        // var counter = -1;
-        // var screenProps = {};
-        // var viewOrderIndexes = {};
-        // $(this.databaseManager.table_campaign_timeline_board_viewer_chanels().getAllPrimaryKeys()).each(function (k, campaign_timeline_board_viewer_chanel_id) {
-        //
-        //     var recCampaignTimelineBoardViewerChanel = this.databaseManager.table_campaign_timeline_board_viewer_chanels().getRec(campaign_timeline_board_viewer_chanel_id);
-        //     if (recCampaignTimelineBoardViewerChanel['campaign_timeline_board_template_id'] == i_campaign_timeline_board_template_id) {
-        //         var recBoardTemplateViewer = this.databaseManager.table_board_template_viewers().getRec(recCampaignTimelineBoardViewerChanel['board_template_viewer_id']);
-        //         // console.log(i_campaign_timeline_board_template_id + ' ' + recBoardTemplateViewer['board_template_viewer_id']);
-        //         counter++;
-        //         screenProps['sd' + counter] = {};
-        //         screenProps['sd' + counter]['campaign_timeline_board_viewer_id'] = recBoardTemplateViewer['board_template_viewer_id'];
-        //         screenProps['sd' + counter]['campaign_timeline_id'] = i_campaign_timeline_id;
-        //         screenProps['sd' + counter]['x'] = recBoardTemplateViewer['pixel_x'];
-        //         screenProps['sd' + counter]['y'] = recBoardTemplateViewer['pixel_y'];
-        //         screenProps['sd' + counter]['w'] = recBoardTemplateViewer['pixel_width'];
-        //         screenProps['sd' + counter]['h'] = recBoardTemplateViewer['pixel_height'];
-        //
-        //         // make sure that every view_order we assign is unique and sequential
-        //         var viewOrder = recBoardTemplateViewer['viewer_order'];
-        //         if (!_.isUndefined(viewOrderIndexes[viewOrder])) {
-        //             for (var i = 0; i < 100; i++) {
-        //                 if (_.isUndefined(viewOrderIndexes[i])) {
-        //                     viewOrder = i;
-        //                     break;
-        //                 }
-        //             }
-        //         }
-        //         viewOrderIndexes[viewOrder] = true;
-        //         screenProps['sd' + counter]['view_order'] = viewOrder;
-        //     }
-        // });
-        //
     }
 
     /**
