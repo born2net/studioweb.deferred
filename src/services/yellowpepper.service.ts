@@ -16,6 +16,7 @@ import {
     CampaignTimelinesModel
 } from "../store/imsdb.interfaces_auto";
 import {IScreenTemplateData} from "../comps/screen-template/screen-template";
+import {OrientationEnum} from "../app/campaigns/campaign-orientation";
 
 @Injectable()
 export class YellowPepperService {
@@ -119,6 +120,7 @@ export class YellowPepperService {
         var viewOrderIndexes = {};
         var boardWidth;
         var boardHeight;
+        var boardOrientation;
 
         return Observable.combineLatest(
             table_campaign_timeline_board_templates$,
@@ -152,7 +154,11 @@ export class YellowPepperService {
                                 });
                                 boardWidth = boardModel.getBoardPixelWidth();
                                 boardHeight = boardModel.getBoardPixelHeight();
-
+                                if (boardWidth>boardHeight){
+                                    boardOrientation = OrientationEnum.HORIZONTAL;
+                                } else {
+                                    boardOrientation = OrientationEnum.VERTICAL;
+                                }
                                 // console.log(i_campaign_timeline_board_template_id + ' ' + recBoardTemplateViewer['board_template_viewer_id']);
                                 counter++;
                                 screenProps['sd' + counter] = {};
@@ -181,9 +187,9 @@ export class YellowPepperService {
                 })
                 var screenTemplateData: IScreenTemplateData = {
                     screenProps: screenProps,
-                    resolution: `${boardWidth}X${boardHeight}`,
+                    resolution: `${boardWidth}x${boardHeight}`,
                     screenType: '',
-                    orientation: 0,
+                    orientation: boardOrientation,
                     campaignName: '',
                     scale: 10
                 }
