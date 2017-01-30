@@ -12,10 +12,10 @@ import {Observable} from "rxjs";
 @Component({
     selector: 'sequencer',
     template: `
-      <small class="debug">{{me}}</small><h2>timelines: {{m_campaignTimelinesModelsOrdered?.size}}</h2>
-      <div style="float: left; padding: 20px" *ngFor="let campaignTimelinesModel of m_campaignTimelinesModelsOrdered">
-        <div>{{campaignTimelinesModel.getTimelineName()}}</div>
-        <screen-template [setTemplate]="_getScreenTemplate(campaignTimelinesModel) | async"></screen-template>
+      <!--<small class="debug">{{me}}</small><h2>timelines: {{m_campaignTimelinesModelsOrdered?.size}}</h2>-->
+      <div style="float: left; padding: 20px" *ngFor="let campaignTimelinesModel of screenTemplates | async">
+        <!--<div>{{campaignTimelinesModel.getTimelineName()}}</div>-->
+        <screen-template [setTemplate]="campaignTimelinesModel"></screen-template>
       </div>
 
     `,
@@ -51,30 +51,7 @@ export class Sequencer extends Compbaser {
         // this.yp.getTemplateViewersScreenProps(i_campaignTimelinesModel.getCampaignTimelineId(),)
     }
 
-    /**
-     Load up the board template (screen divisions) for this timeline instance.
-     In case sequencer is used, we push it to the sequencer, thus creating the thumbnail template
-     inside the sequencer so this timeline can be selected.
-     Scheduler future support.
-     @method _populateBoardTemplate
-     @param {Number} i_campaign_timeline_board_template_id
-     @return none
-     **/
-    // _populateBoardTemplate(i_campaign_timeline_board_template_id) {
-    //     var self = this;
-    //     var recBoard = pepper.getGlobalBoardRecFromTemplate(i_campaign_timeline_board_template_id);
-    //     var width = parseInt(recBoard['board_pixel_width']);
-    //     var height = parseInt(recBoard['board_pixel_height']);
-    //
-    //     BB.comBroker.getService(BB.SERVICES.RESOLUTION_SELECTOR_VIEW).setResolution(width + 'x' + height);
-    //     if (width > height) {
-    //         BB.comBroker.getService(BB.SERVICES.ORIENTATION_SELECTOR_VIEW).setOrientation(BB.CONSTS.HORIZONTAL);
-    //     } else {
-    //         BB.comBroker.getService(BB.SERVICES.ORIENTATION_SELECTOR_VIEW).setOrientation(BB.CONSTS.VERTICAL);
-    //     }
-    //     var screenProps = pepper.getTemplateViewersScreenProps(self.m_campaign_timeline_id, i_campaign_timeline_board_template_id)
-    //     self.m_sequences.createTimelineThumbnailUI(screenProps);
-    // }
+    screenTemplates:Observable<any>;
 
     @Input()
     set setCampaignTimelinesModels(i_campaignTimelinesModels: List<CampaignTimelinesModel>) {
@@ -82,6 +59,11 @@ export class Sequencer extends Compbaser {
             return;
         this.m_campaignTimelinesModels = i_campaignTimelinesModels;
         this.sortTimelines();
+        var all$ = Observable.from(this.m_campaignTimelinesModelsOrdered).map(i_campaignTimelinesModelsOrdered => {
+            return this._getScreenTemplate(i_campaignTimelinesModelsOrdered)
+        });
+
+        this.screenTemplates = all$.combineAll()
     }
 
     private sortTimelines() {
@@ -106,3 +88,29 @@ export class Sequencer extends Compbaser {
     destroy() {
     }
 }
+
+
+/**
+ Load up the board template (screen divisions) for this timeline instance.
+ In case sequencer is used, we push it to the sequencer, thus creating the thumbnail template
+ inside the sequencer so this timeline can be selected.
+ Scheduler future support.
+ @method _populateBoardTemplate
+ @param {Number} i_campaign_timeline_board_template_id
+ @return none
+ **/
+// _populateBoardTemplate(i_campaign_timeline_board_template_id) {
+//     var self = this;
+//     var recBoard = pepper.getGlobalBoardRecFromTemplate(i_campaign_timeline_board_template_id);
+//     var width = parseInt(recBoard['board_pixel_width']);
+//     var height = parseInt(recBoard['board_pixel_height']);
+//
+//     BB.comBroker.getService(BB.SERVICES.RESOLUTION_SELECTOR_VIEW).setResolution(width + 'x' + height);
+//     if (width > height) {
+//         BB.comBroker.getService(BB.SERVICES.ORIENTATION_SELECTOR_VIEW).setOrientation(BB.CONSTS.HORIZONTAL);
+//     } else {
+//         BB.comBroker.getService(BB.SERVICES.ORIENTATION_SELECTOR_VIEW).setOrientation(BB.CONSTS.VERTICAL);
+//     }
+//     var screenProps = pepper.getTemplateViewersScreenProps(self.m_campaign_timeline_id, i_campaign_timeline_board_template_id)
+//     self.m_sequences.createTimelineThumbnailUI(screenProps);
+// }
