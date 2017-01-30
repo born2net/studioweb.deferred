@@ -188,7 +188,7 @@ export class YellowPepperService {
                     resolution: `${boardWidth}x${boardHeight}`,
                     screenType: '',
                     orientation: boardOrientation,
-                    campaignName: timelineName,
+                    name: timelineName,
                     scale: 10,
                     campaignTimelineId: i_campaign_timeline_id,
                     campaignTimelineBoardTemplateId: i_campaign_timeline_board_template_id

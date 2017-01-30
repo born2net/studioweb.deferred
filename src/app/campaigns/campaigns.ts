@@ -54,7 +54,7 @@ export class Campaigns extends Compbaser {
     }
 
     private _createCampaign(createCampaign:IScreenTemplateData){
-        var campaignId = this.rp.createCampaignEntire(createCampaign.screenProps, createCampaign.campaignName);
+        var campaignId = this.rp.createCampaignEntire(createCampaign.screenProps, createCampaign.name);
         var uiState: IUiState = {campaign: {campaignSelected: campaignId}}
         this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }

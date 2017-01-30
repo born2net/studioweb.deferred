@@ -13,7 +13,7 @@ import {Observable} from "rxjs";
     template: `
       <small class="debug">{{me}}</small><h2>timelines: {{m_campaignTimelinesModels?.size}}</h2>
       <div style="float: left; padding: 20px" *ngFor="let screenTemplate of _screenTemplates | async">
-        <div>{{screenTemplate.campaignName}}</div>
+        <div>{{screenTemplate.name}}</div>
         <screen-template [setTemplate]="screenTemplate"></screen-template>
       </div>
 

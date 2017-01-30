@@ -74,7 +74,7 @@ export class CampaignLayout extends Compbaser {
                 screenType: screenType,
                 screenProps: screenTemplates[this.m_orientation][this.m_resolution][screenType],
                 scale: 14,
-                campaignName: this.m_campainName
+                name: this.m_campainName
             };
             this.m_screenLayouts.push(screenTemplateData);
         }

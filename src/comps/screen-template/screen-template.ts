@@ -30,7 +30,7 @@ export interface IScreenTemplateData {
     screenType: string;
     orientation: OrientationEnum;
     screenProps: {};
-    campaignName: string;
+    name: string;
     scale: number;
     campaignTimelineId?:number,
     campaignTimelineBoardTemplateId?:number
