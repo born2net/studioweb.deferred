@@ -39,7 +39,7 @@ export class Sequencer extends Compbaser {
             .map((campaignTimelineBoardTemplateIds: Array<number>) => {
                 return campaignTimelineBoardTemplateIds[0];
             }).switchMap((campaignTimelineBoardTemplateId) => {
-                return this.yp.getTemplateViewersScreenProps(i_campaignTimelinesModel.getCampaignTimelineId(), campaignTimelineBoardTemplateId);
+                return this.yp.getTemplateViewersScreenProps(i_campaignTimelinesModel.getCampaignTimelineId(), campaignTimelineBoardTemplateId, i_campaignTimelinesModel.getTimelineName());
             })
     }
 
@@ -50,9 +50,10 @@ export class Sequencer extends Compbaser {
             return;
         this.m_campaignTimelinesModels = i_campaignTimelinesModels;
         var sortedTimelines: Array<CampaignTimelinesModel> = this.sortTimelines();
-        this._screenTemplates = Observable.from(sortedTimelines).map(i_campaignTimelinesModelsOrdered => {
-            return this._getScreenTemplate(i_campaignTimelinesModelsOrdered)
-        }).combineAll()
+        this._screenTemplates = Observable.from(sortedTimelines)
+            .map(i_campaignTimelinesModelsOrdered => {
+                return this._getScreenTemplate(i_campaignTimelinesModelsOrdered)
+            }).combineAll()
     }
 
     private sortTimelines() {

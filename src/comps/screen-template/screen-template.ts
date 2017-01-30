@@ -32,6 +32,8 @@ export interface IScreenTemplateData {
     screenProps: {};
     campaignName: string;
     scale: number;
+    campaignTimelineId?:number,
+    campaignTimelineBoardTemplateId?:number
 }
 
 @Component({

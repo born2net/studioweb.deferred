@@ -107,7 +107,7 @@ export class YellowPepperService {
      @param {Number} i_campaign_timeline_board_template_id
      @return {Object} screenProps all viewers and all their properties
      **/
-    getTemplateViewersScreenProps(i_campaign_timeline_id, i_campaign_timeline_board_template_id): Observable<IScreenTemplateData> {
+    getTemplateViewersScreenProps(i_campaign_timeline_id, i_campaign_timeline_board_template_id, timelineName = ''): Observable<IScreenTemplateData> {
 
         var table_campaign_timeline_board_templates$ = this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_board_templates);
         var table_campaign_timeline_board_viewer_chanels$ = this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_board_viewer_chanels);
@@ -188,8 +188,10 @@ export class YellowPepperService {
                     resolution: `${boardWidth}x${boardHeight}`,
                     screenType: '',
                     orientation: boardOrientation,
-                    campaignName: String(Math.random()),
-                    scale: 10
+                    campaignName: timelineName,
+                    scale: 10,
+                    campaignTimelineId: i_campaign_timeline_id,
+                    campaignTimelineBoardTemplateId: i_campaign_timeline_board_template_id
                 }
                 return screenTemplateData;
             })
