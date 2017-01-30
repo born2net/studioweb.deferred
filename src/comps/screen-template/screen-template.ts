@@ -41,12 +41,15 @@ export interface IScreenTemplateData {
 })
 export class ScreenTemplate extends Compbaser {
 
+    private created = false;
     constructor(private el: ElementRef) {
         super();
     }
 
     @Input()
     set setTemplate(i_screenTemplateData: IScreenTemplateData) {
+        if (this.created) return
+        this.created = true;
         // this.m_selfDestruct = i_screenTemplateData.i_selfDestruct;
         this.m_myElementID = 'svgScreenLayout' + '_' + _.uniqueId();
         this.m_screenTemplateData = i_screenTemplateData;
