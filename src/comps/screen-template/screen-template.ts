@@ -17,7 +17,7 @@
  is of interest to a subscribed listener.
 
  **/
-import {Component, ChangeDetectionStrategy, Input, ElementRef} from "@angular/core";
+import {Component, ChangeDetectionStrategy, Input, ElementRef, EventEmitter, Output} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import * as _ from "lodash";
 import {Lib} from "../../Lib";
@@ -32,8 +32,8 @@ export interface IScreenTemplateData {
     screenProps: {};
     name: string;
     scale: number;
-    campaignTimelineId?:number,
-    campaignTimelineBoardTemplateId?:number
+    campaignTimelineId?: number,
+    campaignTimelineBoardTemplateId?: number
 }
 
 @Component({
@@ -44,6 +44,7 @@ export interface IScreenTemplateData {
 export class ScreenTemplate extends Compbaser {
 
     private created = false;
+
     constructor(private el: ElementRef) {
         super();
     }
@@ -63,8 +64,12 @@ export class ScreenTemplate extends Compbaser {
         this.m_svgHeight = (this.m_resolution.split('x')[1]) / this.m_scale;
         this.m_useLabels = false;
         this._create()
-        this.selectableFrame();
+        // this.selectableFrame();
+        // this._mouseOverEffect()
     }
+
+    @Output()
+    onSelected: EventEmitter<any> = new EventEmitter<any>();
 
     m_selfDestruct;
     m_screenTemplateData;
@@ -253,6 +258,29 @@ export class ScreenTemplate extends Compbaser {
             });
         }
     }
+
+    /**
+     When enabled, selectableFrame will allow for UI mouse / click of the outer frame of the template (screen) and not
+     individual viewers.
+     @method selectableFrame
+     @return none
+     **/
+    selectFrame() {
+        jQuery('#' + this.m_myElementID, this.el.nativeElement).parent().find('rect').css({
+            'stroke-width': '2',
+            'stroke': 'rgb(72,72,72)'
+        });
+        jQuery('#' + this.m_myElementID, this.el.nativeElement).find('rect').css({'stroke-width': '2', 'stroke': Lib.GetThemeColor()});
+        // this._onViewSelected(e, this);
+    }
+
+    deSelectFrame() {
+        jQuery('#' + this.m_myElementID, this.el.nativeElement).parent().find('rect').css({
+            'stroke-width': '2',
+            'stroke': 'rgb(72,72,72)'
+        });
+    }
+
 
     /**
      The public method version of _deselectViewers, which de-selects all viewers

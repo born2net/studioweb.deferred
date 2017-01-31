@@ -1,24 +1,42 @@
-import {Component, ElementRef, Input} from "@angular/core";
+import {Component, ElementRef, Input, QueryList, ViewChildren} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {RedPepperService} from "../../services/redpepper.service";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {List} from "immutable";
-import {CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
+import {CampaignTimelineChanelsModel, CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 import * as _ from "lodash";
-import {IScreenTemplateData} from "../../comps/screen-template/screen-template";
+import {IScreenTemplateData, ScreenTemplate} from "../../comps/screen-template/screen-template";
 import {Observable} from "rxjs";
+import {IUiState} from "../../store/store.data";
+import {ACTION_UISTATE_UPDATE} from "../../store/actions/appdb.actions";
+
+// @Component({
+//     selector: 'alert-danger',
+//     template: `
+//         <p>Alert danger</p>
+//     `,
+// })
+// export class AlertDangerComponent {
+//
+// }
 
 @Component({
     selector: 'sequencer',
     template: `
-        <small class="debug">{{me}}</small><h2>timelines: {{m_campaignTimelinesModels?.size}}</h2>
-        
-            <!--<div>{{screenTemplate.name}}</div>-->
-            <!--<div id="draggableTimelines">-->
-                <screen-template class="draggableTimeline" *ngFor="let screenTemplate of _screenTemplates | async" 
-                                  (click)="_onScreenTemplateSelected(screenTemplate)" [setTemplate]="screenTemplate"></screen-template>
-            <!--</div>-->
-        
+        <!--<small class="debug">{{me}}</small><h2>timelines: {{m_campaignTimelinesModels?.size}}</h2>-->
+        <!--<div>{{screenTemplate.name}}</div>-->
+        <!--<div id="dragcontainer" style="width: 1000px">-->
+        <!--<alert-danger style="float: left; padding: 30px" class="drag" *ngFor="let c of [1,2,3,4]"></alert-danger>-->
+        <!--</div>-->
+
+        <div id="dragcontainer" style="width: 1000px; padding-left: 0; margin-left: 0">
+            <screen-template style="float: left; margin: 10px" #st class="draggableTimeline" *ngFor="let screenTemplate of _screenTemplates | async"
+                             (click)="_onScreenTemplateSelected(screenTemplate, st)" [setTemplate]="screenTemplate">
+            </screen-template>
+        </div>
+
+
+
 
     `,
 })
@@ -30,14 +48,28 @@ export class Sequencer extends Compbaser {
     m_thumbsContainer;
     target;
     x;
+    selectedScreenTemplate: ScreenTemplate;
+    selectedTimelineId:number;
+    m_selectedChannel:number;
+    m_selectedTimelineID:number;
 
     constructor(private el: ElementRef, private yp: YellowPepperService, private pepper: RedPepperService) {
         super();
         this.m_thumbsContainer = el.nativeElement;
     }
 
-    _onScreenTemplateSelected(event) {
-        console.log(event);
+    _onScreenTemplateSelected(event, screenTemplate: ScreenTemplate) {
+        this.m_selectedChannel = -1;
+        this.tmpScreenTemplates.forEach((i_screenTemplate) => {
+            if (i_screenTemplate == screenTemplate) {
+                i_screenTemplate.selectFrame();
+                this.selectedScreenTemplate = i_screenTemplate;
+                this.selectedTimelineId = i_screenTemplate.m_screenTemplateData.campaignTimelineId;
+            } else {
+                i_screenTemplate.deSelectFrame();
+            }
+
+        })
     }
 
     _getScreenTemplate(i_campaignTimelinesModel: CampaignTimelinesModel): Observable<IScreenTemplateData> {
@@ -50,6 +82,55 @@ export class Sequencer extends Compbaser {
             })
     }
 
+    @ViewChildren(ScreenTemplate) tmpScreenTemplates: QueryList<ScreenTemplate>;
+
+
+    /**
+     Select next channel
+     @method selectNextChannel
+     **/
+    onSelectNextChannel() {
+        if (!this.selectedScreenTemplate)
+            return;
+
+        var timeline_channel_id, campaign_timeline_board_viewer_id;
+        this.yp.getChannelsOfTimeline(this.selectedTimelineId).subscribe((channelsIDs) => {
+            if (_.isUndefined(this.m_selectedChannel)) {
+                timeline_channel_id = channelsIDs[0];
+            } else {
+                for (var ch in channelsIDs) {
+                    if (channelsIDs[ch] == this.m_selectedChannel) {
+                        if (_.isUndefined(channelsIDs[parseInt(ch) + 1])) {
+                            timeline_channel_id = channelsIDs[0];
+                        } else {
+                            timeline_channel_id = channelsIDs[parseInt(ch) + 1];
+                        }
+                    }
+                }
+            }
+            this.m_selectedChannel = timeline_channel_id;
+            this.yp.getAssignedViewerIdFromChannelId(timeline_channel_id).subscribe((campaign_timeline_board_viewer_id) => {
+                // note: workaround for when viewer is unassigned, need to investigate
+                if (_.isUndefined(campaign_timeline_board_viewer_id))
+                    return;
+                // var screenData = {
+                //     m_owner: self,
+                //     campaign_timeline_id: this.m_selectedTimelineID,
+                //     campaign_timeline_board_viewer_id: campaign_timeline_board_viewer_id
+                // };
+                this.selectedScreenTemplate.selectDivison(campaign_timeline_board_viewer_id)
+
+                var uiState: IUiState = {campaign: {campaignTimelineBoardViewerSelected: campaign_timeline_board_viewer_id}}
+                this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+
+                // self._removeBlockSelection();
+                // self._addChannelSelection(timeline_channel_id);
+                // BB.comBroker.getService(BB.SERVICES['SEQUENCER_VIEW']).selectViewer(screenData.campaign_timeline_id, screenData.campaign_timeline_board_viewer_id);
+                // BB.comBroker.fire(BB.EVENTS.ON_VIEWER_SELECTED, this, screenData);
+                // BB.comBroker.fire(BB.EVENTS.CAMPAIGN_TIMELINE_CHANNEL_SELECTED, this, null, self.m_selectedChannel);
+            });
+        });
+    }
 
     @Input()
     set setCampaignTimelinesModels(i_campaignTimelinesModels: List<CampaignTimelinesModel>) {
@@ -61,9 +142,9 @@ export class Sequencer extends Compbaser {
             .map(i_campaignTimelinesModelsOrdered => {
                 return this._getScreenTemplate(i_campaignTimelinesModelsOrdered)
             }).combineAll()
-        setTimeout(()=>{
-            this._createSortable('.draggableTimeline');
-        },300)
+        setTimeout(() => {
+            this._createSortable('#dragcontainer');
+        }, 300)
 
     }
 
@@ -92,36 +173,41 @@ export class Sequencer extends Compbaser {
         if (jQuery(i_selector).children().length == 0) return;
         var sortable = document.querySelector(i_selector);
         self.m_draggables = Draggable.create(sortable.children, {
-            type: "x",
-            bounds: sortable,
-            edgeResistance: 1,
-            dragResistance: 0,
-            onPress: self._sortablePress,
-            onDragStart: self._sortableDragStart,
-            onDrag: self._sortableDrag,
-            liveSnap: self._sortableSnap,
-            zIndexBoost: true,
-            onDragEnd () {
-                var t = this.target,
-                    max = t.kids.length - 1,
-                    //newIndex = Math.round(this.x / t.currentWidth);
-                    newIndex = Math.ceil(this.x / t.currentWidth);
-                newIndex += (newIndex < 0 ? -1 : 0) + t.originalIndex;
-                if (newIndex === max) {
-                    t.parentNode.appendChild(t);
-                } else {
-                    t.parentNode.insertBefore(t, t.kids[newIndex + 1]);
-                }
-                TweenLite.set(t.kids, {xPercent: 0, overwrite: "all"});
-                TweenLite.set(t, {y: 0, color: ""});
-                // var orderedTimelines = self.reSequenceTimelines();
-                // jQuery(self.m_thumbsContainer).empty();
-                // BB.comBroker.getService(BB.SERVICES.CAMPAIGN_VIEW).populateTimelines(orderedTimelines);
-                // var campaign_timeline_id = BB.comBroker.getService(BB.SERVICES.CAMPAIGN_VIEW).getSelectedTimeline();
-                // self.selectTimeline(campaign_timeline_id);
+                type: "x",
+                bounds: sortable,
+                edgeResistance: 1,
+                dragResistance: 0,
+                onPress: self._sortablePress,
+                onDragStart: self._sortableDragStart,
+                onDrag: self._sortableDrag,
+                liveSnap: self._sortableSnap,
+                zIndexBoost: true,
+                onDragEnd () {
+                    var t = this.target,
+                        max = t.kids.length - 1,
+                        newIndex = Math.round(this.x / t.currentWidth);
+                    //newIndex += (newIndex < 0 ? -1 : 0) + t.currentIndex;
+                    var preIndex = newIndex;
+                    //alert(this.x);
+                    newIndex += t.originalIndex;
+                    if (newIndex === max) {
+                        t.parentNode.appendChild(t);
+                    } else {
+                        if (preIndex >= 0) t.parentNode.insertBefore(t, t.kids[newIndex + 1]);
+                        else t.parentNode.insertBefore(t, t.kids[newIndex]);
+                    }
+                    TweenLite.set(t.kids, {xPercent: 0, overwrite: "all"});
+                    TweenLite.set(t, {x: 0, color: ""});
 
+                    // var orderedTimelines = self.reSequenceTimelines();
+                    // jQuery(self.m_thumbsContainer).empty();
+                    // BB.comBroker.getService(BB.SERVICES.CAMPAIGN_VIEW).populateTimelines(orderedTimelines);
+                    // var campaign_timeline_id = BB.comBroker.getService(BB.SERVICES.CAMPAIGN_VIEW).getSelectedTimeline();
+                    // self.selectTimeline(campaign_timeline_id);
+
+                }
             }
-        });
+        );
     }
 
     /**
@@ -186,6 +272,7 @@ export class Sequencer extends Compbaser {
         // var h = this.target.currentHeight;
         // return Math.round(y / h) * h;
     }
+
 
     ngOnInit() {
     }

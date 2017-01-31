@@ -3,7 +3,10 @@ import {Action, Store} from "@ngrx/store";
 import {ApplicationState} from "../store/application.state";
 import {Observable} from "rxjs";
 import {CampaignsModelExt} from "../store/model/msdb-models-extended";
-import {BoardsModel, BoardTemplatesModel, BoardTemplateViewersModel, CampaignTimelineBoardTemplatesModel, CampaignTimelineBoardViewerChanelsModel, CampaignTimelineSequencesModel, CampaignTimelinesModel} from "../store/imsdb.interfaces_auto";
+import {
+    BoardsModel, BoardTemplatesModel, BoardTemplateViewersModel, CampaignTimelineBoardTemplatesModel, CampaignTimelineBoardViewerChanelsModel, CampaignTimelineChanelsModel, CampaignTimelineSequencesModel,
+    CampaignTimelinesModel
+} from "../store/imsdb.interfaces_auto";
 import {IScreenTemplateData} from "../comps/screen-template/screen-template";
 import {OrientationEnum} from "../app/campaigns/campaign-orientation";
 import {List} from "immutable";
@@ -79,6 +82,34 @@ export class YellowPepperService {
                         result.push(campaignTimelineBoardTemplatesModel.getCampaignTimelineBoardTemplateId());
                     return result;
                 }, [])
+            }).take(1);
+    }
+
+    /**
+     Get all the campaign > timeline > channels ids of a timeline
+     **/
+    getChannelsOfTimeline(i_campaign_timeline_id): Observable<any> {
+        return this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_chanels)
+            .map((campaignTimelineChanels: List<CampaignTimelineChanelsModel>) => {
+                return campaignTimelineChanels.reduce((result: Array<number>, campaignTimelineChanelsModel) => {
+                    if (campaignTimelineChanelsModel.getCampaignTimelineId() == i_campaign_timeline_id)
+                        result.push(campaignTimelineChanelsModel.getCampaignTimelineChanelId());
+                    return result;
+                }, [])
+            }).take(1);
+    }
+
+    /**
+     Get the assigned viewer id to the specified channel
+     **/
+    getAssignedViewerIdFromChannelId(i_campaign_timeline_channel_id) {
+        return this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_board_viewer_chanels)
+            .map((campaignTimelineBoardViewerChanelsModel: List<CampaignTimelineBoardViewerChanelsModel>) => {
+                return campaignTimelineBoardViewerChanelsModel.reduce((result: number, campaignTimelineBoardViewerChanelsModel) => {
+                    if (campaignTimelineBoardViewerChanelsModel.getCampaignTimelineChanelId() == i_campaign_timeline_channel_id)
+                        result = (campaignTimelineBoardViewerChanelsModel.getBoardTemplateViewerId());
+                    return result;
+                }, -1)
             }).take(1);
     }
 
@@ -167,7 +198,7 @@ export class YellowPepperService {
                     screenType: '',
                     orientation: boardOrientation,
                     name: timelineName,
-                    scale: 10,
+                    scale: 14,
                     campaignTimelineId: i_campaign_timeline_id,
                     campaignTimelineBoardTemplateId: i_campaign_timeline_board_template_id
                 }

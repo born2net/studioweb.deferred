@@ -11,7 +11,6 @@ import {MsLibModule} from "ng-mslib/dist/mslib.module";
 import {ToastModule} from "ng2-toastr";
 import {DropdownModule, AccordionModule, AlertModule, ModalModule} from "ng2-bootstrap";
 import {TreeModule, InputTextModule, SelectButtonModule, DropdownModule as DropdownModulePrime} from "primeng/primeng";
-import {NgStringPipesModule} from "angular-pipes";
 import {routing} from "../app-routes";
 import {LoginPanel} from "../comps/entry/LoginPanel";
 import {Logout} from "../comps/logout/Logout";
@@ -117,7 +116,6 @@ export function appReducer(state: any = INITIAL_APPLICATION_STATE, action: any) 
         AccordionModule.forRoot(),
         JsonpModule,
         TreeModule,
-        NgStringPipesModule,
         InputTextModule,
         SelectButtonModule,
         InputTextModule,
