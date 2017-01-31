@@ -29,7 +29,7 @@ import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
                 <campaign-resolution #campaignResolution (onSelection)="sliderItemCampaignResolution.onNext()" [setOrientation]="campaignOrientation.getOrientationChanged" ></campaign-resolution>
             </Slideritem>
             <Slideritem #sliderItemCampaignLayout (onChange)="_onSlideChange($event)" class="page left campaignLayout" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignResolution'" [to]="'campaignEditor'">
-                <campaign-layout (onSelection)="sliderItemCampaignLayout.onNext(); _createCampaign($event)" [setCampaignName]="campaignName.getCampaignNameChanged" [setOrientation]="campaignOrientation.getOrientationChanged" [setResolution]="campaignResolution.getResolutionChanged"></campaign-layout>
+                <campaign-layout (onSelection)="sliderItemCampaignLayout.onNext(); _createCampaign($event, campaignResolution.getResolutionChanged)" [setCampaignName]="campaignName.getCampaignNameChanged" [setOrientation]="campaignOrientation.getOrientationChanged" [setResolution]="campaignResolution.getResolutionChanged"></campaign-layout>
             </Slideritem>
             <Slideritem (onChange)="_onSlideChange($event)" class="page left campaignEditor" [fromDirection]="'left'" [from]="'campaignList'">
                 <campaign-editor></campaign-editor>
@@ -53,8 +53,8 @@ export class Campaigns extends Compbaser {
         //     return this._createCampaign();
     }
 
-    private _createCampaign(createCampaign:IScreenTemplateData){
-        var campaignId = this.rp.createCampaignEntire(createCampaign.screenProps, createCampaign.name);
+    private _createCampaign(createCampaign:IScreenTemplateData, resolution){
+        var campaignId = this.rp.createCampaignEntire(createCampaign.screenProps, createCampaign.name, resolution);
         var uiState: IUiState = {campaign: {campaignSelected: campaignId}}
         this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }

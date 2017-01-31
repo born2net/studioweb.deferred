@@ -3,20 +3,11 @@ import {Action, Store} from "@ngrx/store";
 import {ApplicationState} from "../store/application.state";
 import {Observable} from "rxjs";
 import {CampaignsModelExt} from "../store/model/msdb-models-extended";
-import {List} from "immutable";
-import * as _ from "lodash";
-
-import {
-    BoardsModel,
-    BoardTemplatesModel,
-    BoardTemplateViewersModel,
-    CampaignTimelineBoardTemplatesModel,
-    CampaignTimelineBoardViewerChanelsModel,
-    CampaignTimelineSequencesModel,
-    CampaignTimelinesModel
-} from "../store/imsdb.interfaces_auto";
+import {BoardsModel, BoardTemplatesModel, BoardTemplateViewersModel, CampaignTimelineBoardTemplatesModel, CampaignTimelineBoardViewerChanelsModel, CampaignTimelineSequencesModel, CampaignTimelinesModel} from "../store/imsdb.interfaces_auto";
 import {IScreenTemplateData} from "../comps/screen-template/screen-template";
 import {OrientationEnum} from "../app/campaigns/campaign-orientation";
+import {List} from "immutable";
+import * as _ from "lodash";
 
 @Injectable()
 export class YellowPepperService {
@@ -92,7 +83,7 @@ export class YellowPepperService {
     getTemplatesOfTimeline(i_campaign_timeline_id): Observable<Array<number>> {
         return this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_board_templates)
             .map((campaignTimelineBoardTemplatesModels: List<CampaignTimelineBoardTemplatesModel>) => {
-                return campaignTimelineBoardTemplatesModels.reduce((result: Array<number>, campaignTimelineBoardTemplatesModel: CampaignTimelineBoardTemplatesModel) => {
+                return campaignTimelineBoardTemplatesModels.reduce((result: Array<number>, campaignTimelineBoardTemplatesModel) => {
                     if (campaignTimelineBoardTemplatesModel.getCampaignTimelineId() == i_campaign_timeline_id)
                         result.push(campaignTimelineBoardTemplatesModel.getCampaignTimelineBoardTemplateId());
                     return result;
@@ -152,7 +143,7 @@ export class YellowPepperService {
                                 });
                                 boardWidth = boardModel.getBoardPixelWidth();
                                 boardHeight = boardModel.getBoardPixelHeight();
-                                if (boardWidth>boardHeight){
+                                if (boardWidth > boardHeight) {
                                     boardOrientation = OrientationEnum.HORIZONTAL;
                                 } else {
                                     boardOrientation = OrientationEnum.VERTICAL;

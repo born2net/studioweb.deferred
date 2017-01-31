@@ -178,43 +178,14 @@ export class RedPepperService {
     }
 
     //todo: finish process
-    createCampaignEntire(screenProps:{}, campaignName:string):number {
+    createCampaignEntire(screenProps:{}, campaignName:string, resolution:string):number {
 
         if (campaignName == '')
             campaignName = 'new campaign';
 
-        // ////////////////////////////////////////////////
-        // // Created a brand new campaign and a new board
-        // ////////////////////////////////////////////////
-        // var width = BB.comBroker.getService(BB.SERVICES['RESOLUTION_SELECTOR_VIEW']).getResolution().split('x')[0];
-        // var height = BB.comBroker.getService(BB.SERVICES['RESOLUTION_SELECTOR_VIEW']).getResolution().split('x')[1];
-        // var board_id = this.redPepperService.createBoard('my board', 500,500).data.board_id;
-        // var m_timelines = {};
-        // var screenProps = {
-        //     sd0: {
-        //         id: 'horizontal_1920x1080_screenType10_sd0',
-        //         x: 0,
-        //         y: 0,
-        //         w: 1920,
-        //         h: 360
-        //     },
-        //     sd1: {
-        //         id: 'horizontal_1920x1080_screenType10_sd1',
-        //         x: 0,
-        //         y: 360,
-        //         w: 1920,
-        //         h: 360
-        //     },
-        //     sd2: {
-        //         id: 'horizontal_1920x1080_screenType10_sd2',
-        //         x: 0,
-        //         y: 720,
-        //         w: 1920,
-        //         h: 360
-        //     }
-        // }
-
-        var board_id = this.createBoard('my board', 500, 500);
+        var w = resolution.split('x')[0]
+        var h = resolution.split('x')[1]
+        var board_id = this.createBoard('my board', w, h);
         var newTemplateData = this.createNewTemplate(board_id, screenProps);
         var board_template_id = newTemplateData['board_template_id']
         var viewers = newTemplateData['viewers'];
