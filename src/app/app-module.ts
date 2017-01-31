@@ -41,7 +41,27 @@ import {Dashboard} from "./dashboard/dashboard-navigation";
 import {Appwrap} from "./appwrap";
 import "hammerjs";
 import "fabric";
+
+// import CSSPlugin from 'gsap/CSSPlugin';
+// import TimelineLite from 'gsap/TimelineLite';
+
 import "gsap";
+import 'gsap/CSSPlugin';
+import 'gsap/Draggable';
+import 'gsap/TweenLite';
+// import Draggable from 'gsap/src/minified/pluginsraggable';
+// import TweenLite from 'gsap/TweenLite';
+
+// import TweenLite from 'gsap/TweenLite';
+// import TimelineLite from 'gsap/TimelineLite';
+
+
+
+// import 'gsap/CSSPlugin';
+// import TweenLite from 'gsap/TweenLite';
+// import TimelineLite from 'gsap/TimelineLite';
+//
+
 
 // import {ScreenTemplate} from "../comps/screen-template/screen-template";
 

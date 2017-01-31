@@ -25,8 +25,6 @@ export class YellowPepperService {
 
     /**
      Listen to when a campaign is selected via the store state uiState.campaign.campaignSelected
-     @method listenCampaignSelected
-     @param {Observable<CampaignsModelExt>} i_campaign_id
      **/
     public listenCampaignSelected(): Observable<CampaignsModelExt> {
 
@@ -47,8 +45,6 @@ export class YellowPepperService {
 
     /**
      Get all timeline ids for specified campaign
-     @method getCampaignTimelines
-     @param {Number} i_campaign_id
      **/
     getCampaignTimelines(i_campaign_id: number): Observable<List<CampaignTimelinesModel>> {
         return this.store.select(store => store.msDatabase.sdk.table_campaign_timelines)
@@ -61,8 +57,6 @@ export class YellowPepperService {
 
     /**
      Get the sequence index of a timeline in the specified campaign
-     @method getCampaignTimelineSequencerIndex
-     @param {Number} i_campaign_timeline_id
      **/
     getCampaignTimelineSequencerIndex(i_campaign_timeline_id): Observable<number> {
         return this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_sequences)
@@ -76,9 +70,6 @@ export class YellowPepperService {
 
     /**
      Get all the campaign > timeline > board > template ids of a timeline
-     @method getTemplatesOfTimeline
-     @param {Number} i_campaign_timeline_id
-     @return {Array} template ids
      **/
     getTemplatesOfTimeline(i_campaign_timeline_id): Observable<Array<number>> {
         return this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_board_templates)
@@ -93,10 +84,6 @@ export class YellowPepperService {
 
     /**
      Build screenProps json object with all viewers and all of their respective attributes for the given timeline_id / template_id
-     @method getTemplateViewersScreenProps
-     @param {Number} i_campaign_timeline_id
-     @param {Number} i_campaign_timeline_board_template_id
-     @return {Object} screenProps all viewers and all their properties
      **/
     getTemplateViewersScreenProps(i_campaign_timeline_id, i_campaign_timeline_board_template_id, timelineName = ''): Observable<IScreenTemplateData> {
 
@@ -189,9 +176,7 @@ export class YellowPepperService {
     }
 
     /**
-     Get campaigns
-     @method getCampaign
-     @param {Number} i_campaign_id
+     Get campaigns from campaign id
      **/
     getCampaign(i_campaign_id: number): Observable<CampaignsModelExt> {
         return this.store.select(store => store.msDatabase.sdk.table_campaigns)
