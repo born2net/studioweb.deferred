@@ -185,7 +185,7 @@ export class YellowPepperService {
                     campaignTimelineBoardTemplateId: i_campaign_timeline_board_template_id
                 }
                 return screenTemplateData;
-            })
+            }).take(1)
     }
 
     /**
