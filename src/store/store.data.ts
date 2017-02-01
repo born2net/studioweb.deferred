@@ -56,6 +56,7 @@ export const INITIAL_APP_DB: IAppDb = {
     uiState: {
         uiSideProps: SideProps.none,
         campaign: {
+            campaignTimelineChannelSelected: -1,
             campaignSelected: -1,
             timelineSelected: -1
         }

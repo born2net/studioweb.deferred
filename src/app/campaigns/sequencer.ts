@@ -58,7 +58,6 @@ export class Sequencer extends Compbaser {
     }
 
     _onScreenTemplateSelected(event, screenTemplate: ScreenTemplate) {
-        this._setAndNotifyIds(-1, this.m_selectedTimelineId);
         this.tmpScreenTemplates.forEach((i_screenTemplate) => {
             if (i_screenTemplate == screenTemplate) {
                 i_screenTemplate.selectFrame();
@@ -69,6 +68,7 @@ export class Sequencer extends Compbaser {
                 i_screenTemplate.deselectDivisons();
             }
         })
+        this._setAndNotifyIds(-1, this.m_selectedTimelineId);
     }
 
     _getScreenTemplate(i_campaignTimelinesModel: CampaignTimelinesModel): Observable<IScreenTemplateData> {

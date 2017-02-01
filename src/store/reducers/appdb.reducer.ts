@@ -18,9 +18,7 @@ export function appDb(state: IAppDb, action: any): IAppDb {
             return state;
 
         case ActionsConst.ACTION_UISTATE_UPDATE: {
-            _.forEach(action.payload, (value, key) => {
-                state.uiState[key] = action.payload[key];
-            })
+            _.merge(state.uiState,action.payload);
             return state;
         }
 
