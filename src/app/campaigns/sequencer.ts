@@ -64,8 +64,6 @@ import {ContextMenuService} from "angular2-contextmenu/src/contextMenu.service";
                 <template contextMenuItem (execute)="_onContextClicked('nextch',$event.item)">select next channel</template>
             </context-menu>
         </div>
-
-
     `
 })
 export class Sequencer extends Compbaser {
@@ -80,11 +78,6 @@ export class Sequencer extends Compbaser {
         }
     }
 
-    public items = [
-        {name: 'John', otherProperty: 'Foo'},
-        {name: 'Joe', otherProperty: 'Bar'}
-    ];
-
     public onContextMenu($event: MouseEvent, item: any): void {
         this.contextMenuService.show.next({
             event: $event,
@@ -93,7 +86,6 @@ export class Sequencer extends Compbaser {
         $event.preventDefault();
         $event.stopPropagation();
     }
-
 
     private m_campaignTimelinesModels: List<CampaignTimelinesModel>;
     private _screenTemplates: Observable<any>;

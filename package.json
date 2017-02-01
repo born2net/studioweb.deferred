@@ -35,11 +35,12 @@
     "@angular/language-service": "^2.4.5",
     "@angular/platform-browser": "2.4.5",
     "@angular/platform-browser-dynamic": "2.4.5",
-    "@angular/router": "3.2.1",
+    "@angular/router": "3.4.5",
     "@ngrx/core": "^1.2.0",
     "@ngrx/effects": "^2.0.0",
     "@ngrx/store": "^2.2.1",
     "@ngrx/store-devtools": "^3.2.3",
+    "@ngtools/webpack": "^1.2.4",
     "@types/bootbox": "^4.4.30",
     "@types/gsap": "^1.19.0",
     "@types/lodash": "^4.14.41",
@@ -112,7 +113,7 @@
     "run-sequence": "^1.2.2",
     "sw-precache": "4.2.1",
     "ts-node": "1.2.1",
-    "tslint": "3.13.0",
+    "tslint": "4.3.0",
     "typescript": "~2.0.3",
     "webdriver-manager": "10.2.5"
   }

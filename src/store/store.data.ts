@@ -52,7 +52,6 @@ export const INITIAL_STORE_DATA: IMsDatabase = {
     sdk: null
 }
 
-
 export const INITIAL_APP_DB: IAppDb = {
     uiState: {
         uiSideProps: SideProps.none,
