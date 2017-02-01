@@ -12,11 +12,38 @@ import * as _ from "lodash";
 
 @Component({
     selector: 'sequencer',
+    styles: [`
+        #dragcontainer {
+            padding-left: 0;
+            margin-left: 0;
+            vertical-align: middle;
+            width: 2500px;
+            height: 100px;
+            overflow-y: hidden;
+        }
+
+        .dottedHR {
+            height: 6px;
+            width: 2500px;
+            opacity: 0.6;
+            position: relative;
+            border-top: 12px dotted #c1c1c1;
+            padding-bottom: 7px;
+            top: 20px;
+        }
+
+        .draggableTimeline {
+            float: left;
+            margin: 10px;
+            overflow-y: hidden;
+        }
+
+    `],
     template: `
         <small class="debug">{{me}}</small><h2>timelines: {{m_campaignTimelinesModels?.size}}</h2>
-
-        <div id="dragcontainer" style="width: 1000px; padding-left: 0; margin-left: 0">
-            <screen-template style="float: left; margin: 10px" #st class="draggableTimeline" *ngFor="let screenTemplate of _screenTemplates | async"
+        <hr class="dottedHR">
+        <div id="dragcontainer">
+            <screen-template #st class="draggableTimeline" *ngFor="let screenTemplate of _screenTemplates | async"
                              (click)="_onScreenTemplateSelected(screenTemplate, st)" [setTemplate]="screenTemplate">
             </screen-template>
         </div>
