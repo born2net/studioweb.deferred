@@ -65,9 +65,7 @@ import {ContextMenuComponent} from "angular2-contextmenu";
                 </template>
                 <template contextMenuItem divider="true"></template>
                 <template contextMenuItem (execute)="_onContextClicked('edit',$event.item)">edit layout</template>
-                <template contextMenuItem (execute)="_onContextClicked('first',$event.item)">move to first</template>
-                <template contextMenuItem (execute)="_onContextClicked('last',$event.item)">move to last</template>
-                <template contextMenuItem (execute)="_onContextClicked('ch1',$event.item)">select next channel</template>
+                <template contextMenuItem (execute)="_onContextClicked('nextch',$event.item)">select next channel</template>
             </context-menu>
         </div>
 
@@ -78,6 +76,12 @@ export class Sequencer extends Compbaser {
 
     _onContextClicked(cmd: string, screenTemplateData: IScreenTemplateData) {
         console.log(cmd + ' ' + screenTemplateData.campaignTimelineId);
+        switch (cmd){
+            case 'nextch': {
+                this.onSelectNextChannel()
+                 break;
+            }
+        }
     }
 
     public items = [
@@ -135,15 +139,18 @@ export class Sequencer extends Compbaser {
     _onScreenTemplateSelected(event, screenTemplate: ScreenTemplate) {
         this.tmpScreenTemplates.forEach((i_screenTemplate) => {
             if (i_screenTemplate == screenTemplate) {
-                i_screenTemplate.selectFrame();
-                this.m_selectedScreenTemplate = i_screenTemplate;
-                this.m_selectedTimelineId = i_screenTemplate.m_screenTemplateData.campaignTimelineId;
+                if (this.m_selectedTimelineId != i_screenTemplate.m_screenTemplateData.campaignTimelineId){
+                    i_screenTemplate.selectFrame();
+                    this.m_selectedScreenTemplate = i_screenTemplate;
+                    this.m_selectedTimelineId = i_screenTemplate.m_screenTemplateData.campaignTimelineId;
+                    this._setAndNotifyIds(-1, this.m_selectedTimelineId);
+                }
             } else {
                 i_screenTemplate.deSelectFrame();
                 i_screenTemplate.deselectDivisons();
             }
         })
-        this._setAndNotifyIds(-1, this.m_selectedTimelineId);
+
     }
 
     _getScreenTemplate(i_campaignTimelinesModel: CampaignTimelinesModel): Observable<IScreenTemplateData> {
