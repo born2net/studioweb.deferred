@@ -33,6 +33,7 @@ export class Sequencer extends Compbaser {
     private m_selectedScreenTemplate: ScreenTemplate;
     private m_selectedTimelineId: number;
     private m_selectedChannel: number = -1;
+    private m_selectedCampaignId: number = -1;
 
     constructor(private el: ElementRef, private yp: YellowPepperService, private pepper: RedPepperService) {
         super();
@@ -46,6 +47,7 @@ export class Sequencer extends Compbaser {
         if (!i_campaignTimelinesModels)
             return;
         this.m_campaignTimelinesModels = i_campaignTimelinesModels;
+        this.m_selectedCampaignId = this.m_campaignTimelinesModels.first().getCampaignId();
         var sortedTimelines: Array<CampaignTimelinesModel> = this._sortTimelines();
         this._screenTemplates = Observable.from(sortedTimelines)
             .map(i_campaignTimelinesModelsOrdered => {
@@ -142,7 +144,7 @@ export class Sequencer extends Compbaser {
                     TweenLite.set(t.kids, {xPercent: 0, overwrite: "all"});
                     TweenLite.set(t, {x: 0, color: ""});
 
-                    // var orderedTimelines = self.reSequenceTimelines();
+                    var orderedTimelines = self.reSequenceTimelines();
                     // jQuery(self.m_thumbsContainer).empty();
                     // BB.comBroker.getService(BB.SERVICES.CAMPAIGN_VIEW).populateTimelines(orderedTimelines);
                     // var campaign_timeline_id = BB.comBroker.getService(BB.SERVICES.CAMPAIGN_VIEW).getSelectedTimeline();
@@ -150,6 +152,24 @@ export class Sequencer extends Compbaser {
                 }
             }
         );
+    }
+
+    /**
+     Reorder the timeline in the local msdb to match the UI order of the timeline thumbnails in the Sequencer
+     @method reSequenceTimelines
+     @return {Array} order of timelines ids
+     **/
+    reSequenceTimelines() {
+        var self = this;
+        var order = [];
+        var timelines = jQuery('#dragcontainer', self.el.nativeElement).children().each(function (sequenceIndex) {
+            var element = jQuery(this).find('[data-campaign_timeline_id]').eq(0);
+            var campaign_timeline_id = jQuery(element).data('campaign_timeline_id');
+            order.push(campaign_timeline_id);
+            self.pepper.setCampaignTimelineSequencerIndex(self.m_selectedCampaignId, campaign_timeline_id, sequenceIndex);
+        });
+        this.pepper.reduxCommit();
+        return order;
     }
 
     /**
