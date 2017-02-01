@@ -26,7 +26,7 @@ export interface IMsDatabase {
 export interface IUiState {
     uiSideProps?:number;
     campaign?: {
-        campaignTimelineBoardViewerSelected?: number;
+        campaignTimelineChannelSelected?: number;
         campaignSelected?: number;
         timelineSelected?: number;
     }

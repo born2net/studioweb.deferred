@@ -3,7 +3,7 @@ import {Compbaser} from "ng-mslib";
 import {RedPepperService} from "../../services/redpepper.service";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {List} from "immutable";
-import {CampaignTimelineChanelsModel, CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
+import {CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 import * as _ from "lodash";
 import {IScreenTemplateData, ScreenTemplate} from "../../comps/screen-template/screen-template";
 import {Observable} from "rxjs";
@@ -31,10 +31,9 @@ export class Sequencer extends Compbaser {
     private m_thumbsContainer;
     private target;
     private x: number;
-    private selectedScreenTemplate: ScreenTemplate;
-    private selectedTimelineId: number;
+    private m_selectedScreenTemplate: ScreenTemplate;
+    private m_selectedTimelineId: number;
     private m_selectedChannel: number = -1;
-    private m_selectedTimelineID: number;
 
     constructor(private el: ElementRef, private yp: YellowPepperService, private pepper: RedPepperService) {
         super();
@@ -59,12 +58,12 @@ export class Sequencer extends Compbaser {
     }
 
     _onScreenTemplateSelected(event, screenTemplate: ScreenTemplate) {
-        this._setSelectedChannel(-1);
+        this._setAndNotifyIds(-1, this.m_selectedTimelineId);
         this.tmpScreenTemplates.forEach((i_screenTemplate) => {
             if (i_screenTemplate == screenTemplate) {
                 i_screenTemplate.selectFrame();
-                this.selectedScreenTemplate = i_screenTemplate;
-                this.selectedTimelineId = i_screenTemplate.m_screenTemplateData.campaignTimelineId;
+                this.m_selectedScreenTemplate = i_screenTemplate;
+                this.m_selectedTimelineId = i_screenTemplate.m_screenTemplateData.campaignTimelineId;
             } else {
                 i_screenTemplate.deSelectFrame();
                 i_screenTemplate.deselectDivisons();
@@ -82,9 +81,14 @@ export class Sequencer extends Compbaser {
             })
     }
 
-    private _setSelectedChannel(i_timeline_channel_id) {
+    private _setAndNotifyIds(i_timeline_channel_id, i_timelined_id) {
         this.m_selectedChannel = i_timeline_channel_id;
-        var uiState: IUiState = {campaign: {campaignTimelineBoardViewerSelected: i_timeline_channel_id}}
+        var uiState: IUiState = {
+            campaign: {
+                campaignTimelineChannelSelected: i_timeline_channel_id,
+                timelineSelected: i_timelined_id
+            }
+        }
         this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 
@@ -217,11 +221,11 @@ export class Sequencer extends Compbaser {
      @method selectNextChannel
      **/
     public onSelectNextChannel() {
-        if (!this.selectedScreenTemplate)
+        if (!this.m_selectedScreenTemplate)
             return;
 
         var timeline_channel_id, campaign_timeline_board_viewer_id;
-        this.yp.getChannelsOfTimeline(this.selectedTimelineId).subscribe((channelsIDs) => {
+        this.yp.getChannelsOfTimeline(this.m_selectedTimelineId).subscribe((channelsIDs) => {
             console.log('ch ' + this.m_selectedChannel);
             if (this.m_selectedChannel == -1) {
                 timeline_channel_id = channelsIDs[0];
@@ -246,9 +250,9 @@ export class Sequencer extends Compbaser {
                 //     campaign_timeline_id: this.m_selectedTimelineID,
                 //     campaign_timeline_board_viewer_id: campaign_timeline_board_viewer_id
                 // };
-                this.selectedScreenTemplate.selectDivison(campaign_timeline_board_viewer_id)
+                this.m_selectedScreenTemplate.selectDivison(campaign_timeline_board_viewer_id)
 
-                this._setSelectedChannel(this.m_selectedChannel)
+                this._setAndNotifyIds(this.m_selectedChannel, this.m_selectedTimelineId)
 
                 // self._removeBlockSelection();
                 // self._addChannelSelection(timeline_channel_id);
