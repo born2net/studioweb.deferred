@@ -68,9 +68,6 @@ export class ScreenTemplate extends Compbaser {
         // this._mouseOverEffect()
     }
 
-    @Output()
-    onSelected: EventEmitter<any> = new EventEmitter<any>();
-
     m_selfDestruct;
     m_screenTemplateData;
     m_myElementID;
@@ -142,17 +139,17 @@ export class ScreenTemplate extends Compbaser {
         });
     }
 
-    /**
-     Get the owner (parent) of this instance, i.e., the one who created this.
-     We use the owner attribute as a way to distinguish what type of instance this was created as.
-     @method getOwner
-     @return {Object} m_owner
-     **/
-    getOwner() {
-        // var self = this;
-        // return self.m_owner;
-    }
 
+    // Get the owner (parent) of this instance, i.e., the one who created this.
+    // We use the owner attribute as a way to distinguish what type of instance this was created as.
+    // @method getOwner
+    // @return {Object} m_owner
+    //
+    // getOwner() {
+    //     var self = this;
+    //     return self.m_owner;
+    // }
+    //
     // /**
     //  Create all the screen divisions (aka viewers) as svg snippets and push them into an array
     //  @method getDivisions

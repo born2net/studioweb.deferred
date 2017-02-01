@@ -2,14 +2,13 @@ import {Component, ElementRef, Input, QueryList, ViewChildren} from "@angular/co
 import {Compbaser} from "ng-mslib";
 import {RedPepperService} from "../../services/redpepper.service";
 import {YellowPepperService} from "../../services/yellowpepper.service";
-import {List} from "immutable";
 import {CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
-import * as _ from "lodash";
 import {IScreenTemplateData, ScreenTemplate} from "../../comps/screen-template/screen-template";
 import {Observable} from "rxjs";
 import {IUiState} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE} from "../../store/actions/appdb.actions";
-
+import {List} from "immutable";
+import * as _ from "lodash";
 
 @Component({
     selector: 'sequencer',
@@ -187,9 +186,7 @@ export class Sequencer extends Compbaser {
             indexChange = Math.ceil(this.x / t.currentWidth),
             srcIndex = t.originalIndex,
             dstIndex = srcIndex + indexChange;
-
         // console.log('k ' + t.kids.length + ' s:' + srcIndex + ' d:' + indexChange + ' t:' + (dstIndex - srcIndex));
-
         if (srcIndex < dstIndex) { // moved right
             TweenLite.to(elements.splice(srcIndex + 1, dstIndex - srcIndex), 0.15, {xPercent: -140});  // 140 = width of screen layout widget
             TweenLite.to(elements, 0.15, {xPercent: 0});
@@ -224,7 +221,7 @@ export class Sequencer extends Compbaser {
         if (!this.m_selectedScreenTemplate)
             return;
 
-        var timeline_channel_id, campaign_timeline_board_viewer_id;
+        var timeline_channel_id;
         this.yp.getChannelsOfTimeline(this.m_selectedTimelineId).subscribe((channelsIDs) => {
             console.log('ch ' + this.m_selectedChannel);
             if (this.m_selectedChannel == -1) {
@@ -245,13 +242,7 @@ export class Sequencer extends Compbaser {
                 // note: workaround for when viewer is unassigned, need to investigate
                 if (_.isUndefined(campaign_timeline_board_viewer_id))
                     return;
-                // var screenData = {
-                //     m_owner: self,
-                //     campaign_timeline_id: this.m_selectedTimelineID,
-                //     campaign_timeline_board_viewer_id: campaign_timeline_board_viewer_id
-                // };
                 this.m_selectedScreenTemplate.selectDivison(campaign_timeline_board_viewer_id)
-
                 this._setAndNotifyIds(this.m_selectedChannel, this.m_selectedTimelineId)
 
                 // self._removeBlockSelection();
