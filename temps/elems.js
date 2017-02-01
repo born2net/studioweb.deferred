@@ -190,7 +190,7 @@ module Elements {
     export const CLASS_SCHEDULER_CLASS = '.schedulerClass';
     export const CLASS_SEQUENCE_CLASS = '.sequenceClass';
     export const CLASS_STORYLINE_CHANNEL = '.storylineChannel';
-    export const CLASS_TIMELINE_BLOCK = '.timelineBlock';
+    export const CLASS_TIMELINE_BLOCK = '.timeline';
     export const CLASS_TIMELINE_BLOCK_SELECTED = '.timelineBlockSelected';
     export const CLASS_TIME_PICKER_DAY_DURATION = '.timepickerDayDuration';
     export const CLASS_TIME_PICKER_SCHEDULER = '.datepickerScheduler';

@@ -6,7 +6,7 @@ import {CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 import {IScreenTemplateData, ScreenTemplate} from "../../comps/screen-template/screen-template";
 import {Observable} from "rxjs";
 import {IUiState} from "../../store/store.data";
-import {ACTION_UISTATE_UPDATE} from "../../store/actions/appdb.actions";
+import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
 import {List} from "immutable";
 import * as _ from "lodash";
 import {ContextMenuService} from "angular2-contextmenu/src/contextMenu.service";
@@ -51,6 +51,7 @@ import {ContextMenuService} from "angular2-contextmenu/src/contextMenu.service";
                                  *ngFor="let screenTemplate of _screenTemplates | async"
                                  (contextmenu)="onContextMenu($event, screenTemplate)"
                                  (click)="_onScreenTemplateSelected(screenTemplate, st)"
+                                 (onDivisionDoubleClicked)="_onDivisionDoubleClicked($event)"
                                  [setTemplate]="screenTemplate">
                 </screen-template>
             </div>
@@ -102,14 +103,13 @@ export class Sequencer extends Compbaser {
     private x: number;
     private m_selectedScreenTemplate: ScreenTemplate;
     private m_selectedTimelineId: number;
-    private m_selectedChannel: number = -1;
+    private m_campaignTimelineBoardViewerSelected: number = -1;
+    private m_campaignTimelineChannelSelected: number = -1;
     private m_selectedCampaignId: number = -1;
 
     constructor(private el: ElementRef, private yp: YellowPepperService, private pepper: RedPepperService, private contextMenuService: ContextMenuService) {
         super();
         this.m_thumbsContainer = el.nativeElement;
-
-
     }
 
 
@@ -138,8 +138,12 @@ export class Sequencer extends Compbaser {
                     i_screenTemplate.selectFrame();
                     this.m_selectedScreenTemplate = i_screenTemplate;
                     this.m_selectedTimelineId = i_screenTemplate.m_screenTemplateData.campaignTimelineId;
-                    this._setAndNotifyIds(-1, this.m_selectedTimelineId);
+                    this.m_campaignTimelineChannelSelected = -1;
+                    this.m_campaignTimelineBoardViewerSelected = -1;
+                    this._setAndNotifyIds();
                 }
+                var uiState: IUiState = {uiSideProps: SideProps.timeline}
+                this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
             } else {
                 i_screenTemplate.deSelectFrame();
                 i_screenTemplate.deselectDivisons();
@@ -158,12 +162,12 @@ export class Sequencer extends Compbaser {
             })
     }
 
-    private _setAndNotifyIds(i_timeline_channel_id, i_timelined_id) {
-        this.m_selectedChannel = i_timeline_channel_id;
+    private _setAndNotifyIds() {
         var uiState: IUiState = {
             campaign: {
-                campaignTimelineChannelSelected: i_timeline_channel_id,
-                timelineSelected: i_timelined_id
+                campaignTimelineChannelSelected: this.m_campaignTimelineChannelSelected,
+                campaignTimelineBoardViewerSelected: this.m_campaignTimelineBoardViewerSelected,
+                timelineSelected: this.m_selectedTimelineId
             }
         }
         this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
@@ -309,6 +313,16 @@ export class Sequencer extends Compbaser {
         // return Math.round(y / h) * h;
     }
 
+    _onDivisionDoubleClicked(i_campaign_timeline_board_viewer_id) {
+        this.m_campaignTimelineBoardViewerSelected = i_campaign_timeline_board_viewer_id;
+        this.m_selectedScreenTemplate.selectDivison(i_campaign_timeline_board_viewer_id)
+        this.yp.getChannelFromViewer(this.m_selectedTimelineId, i_campaign_timeline_board_viewer_id)
+            .subscribe((result:any) => {
+                this.m_campaignTimelineChannelSelected = result.channel;
+                this._setAndNotifyIds()
+            })
+    }
+
     /**
      Select next channel
      @method selectNextChannel
@@ -319,12 +333,11 @@ export class Sequencer extends Compbaser {
 
         var timeline_channel_id;
         this.yp.getChannelsOfTimeline(this.m_selectedTimelineId).subscribe((channelsIDs) => {
-            console.log('ch ' + this.m_selectedChannel);
-            if (this.m_selectedChannel == -1) {
+            if (this.m_campaignTimelineChannelSelected == -1) {
                 timeline_channel_id = channelsIDs[0];
             } else {
                 for (var ch in channelsIDs) {
-                    if (channelsIDs[ch] == this.m_selectedChannel) {
+                    if (channelsIDs[ch] == this.m_campaignTimelineChannelSelected) {
                         if (_.isUndefined(channelsIDs[parseInt(ch) + 1])) {
                             timeline_channel_id = channelsIDs[0];
                         } else {
@@ -333,13 +346,17 @@ export class Sequencer extends Compbaser {
                     }
                 }
             }
-            this.m_selectedChannel = timeline_channel_id;
-            this.yp.getAssignedViewerIdFromChannelId(timeline_channel_id).subscribe((campaign_timeline_board_viewer_id) => {
+            this.m_campaignTimelineChannelSelected = timeline_channel_id;
+            this.yp.getAssignedViewerIdFromChannelId(timeline_channel_id).subscribe((i_campaign_timeline_board_viewer_id) => {
                 // note: workaround for when viewer is unassigned, need to investigate
-                if (_.isUndefined(campaign_timeline_board_viewer_id))
+                if (_.isUndefined(i_campaign_timeline_board_viewer_id))
                     return;
-                this.m_selectedScreenTemplate.selectDivison(campaign_timeline_board_viewer_id)
-                this._setAndNotifyIds(this.m_selectedChannel, this.m_selectedTimelineId)
+                this.m_campaignTimelineBoardViewerSelected = i_campaign_timeline_board_viewer_id;
+                this.m_selectedScreenTemplate.selectDivison(i_campaign_timeline_board_viewer_id)
+                this._setAndNotifyIds();
+
+                var uiState: IUiState = {uiSideProps: SideProps.channel}
+                this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
 
                 // self._removeBlockSelection();
                 // self._addChannelSelection(timeline_channel_id);

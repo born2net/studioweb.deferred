@@ -190,7 +190,7 @@ export class Consts {
             CLASS_SCHEDULER_CLASS: '.schedulerClass',
             CLASS_SEQUENCE_CLASS: '.sequenceClass',
             CLASS_STORYLINE_CHANNEL: '.storylineChannel',
-            CLASS_TIMELINE_BLOCK: '.timelineBlock',
+            CLASS_TIMELINE_BLOCK: '.timeline',
             CLASS_TIMELINE_BLOCK_SELECTED: '.timelineBlockSelected',
             CLASS_TIME_PICKER_DAY_DURATION: '.timepickerDayDuration',
             CLASS_TIME_PICKER_SCHEDULER: '.datepickerScheduler',

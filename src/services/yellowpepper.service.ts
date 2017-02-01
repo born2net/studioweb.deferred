@@ -85,6 +85,21 @@ export class YellowPepperService {
             }).take(1);
     }
 
+    public getChannelFromViewer(i_selectedTimeline_id, i_campaign_timeline_board_viewer_id): Observable<{}> {
+        return this.getChannelsOfTimeline(i_selectedTimeline_id).switchMap((timeline_channel_ids) => {
+            return Observable.from(timeline_channel_ids).concatMap((channel: number) => {
+                return this.getAssignedViewerIdFromChannelId(channel)
+                    .map(viewer_id => {
+                        if (viewer_id == i_campaign_timeline_board_viewer_id) {
+                            return {viewer_id, channel};
+                        } else {
+                            return null;
+                        }
+                    }).skipWhile(value => value == null)
+            })
+        }).take(1);
+    }
+
     /**
      Get all the campaign > timeline > channels ids of a timeline
      **/

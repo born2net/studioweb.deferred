@@ -49,6 +49,9 @@ export class ScreenTemplate extends Compbaser {
         super();
     }
 
+    @Output()
+    onDivisionDoubleClicked:EventEmitter<any> = new EventEmitter<any>();
+
     @Input()
     set setTemplate(i_screenTemplateData: IScreenTemplateData) {
         if (this.created) return
@@ -66,6 +69,7 @@ export class ScreenTemplate extends Compbaser {
         this._create()
         // this.selectableFrame();
         // this._mouseOverEffect()
+        this._mouseDoubleClickDivision();
     }
 
     m_selfDestruct;
@@ -135,6 +139,19 @@ export class ScreenTemplate extends Compbaser {
                 jQuery(this).css({'fill': 'rgb(190,190,190)'});
             }).mouseout(function () {
                 jQuery(this).css({'fill': 'rgb(230,230,230)'});
+            });
+        });
+    }
+
+    private _mouseDoubleClickDivision() {
+        var self = this;
+        // var a = jQuery('#' + self.m_myElementID);
+        // var b = jQuery('#' + self.m_myElementID).find('rect');
+
+        jQuery('#' + self.m_myElementID, self.el.nativeElement).find('rect').each(function () {
+            jQuery(this).on('dblclick', function () {
+                var e = jQuery(this).data('campaign_timeline_board_viewer_id');
+                self.onDivisionDoubleClicked.emit(e)
             });
         });
     }

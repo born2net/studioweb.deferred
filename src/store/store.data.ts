@@ -27,6 +27,7 @@ export interface IUiState {
     uiSideProps?:number;
     campaign?: {
         campaignTimelineChannelSelected?: number;
+        campaignTimelineBoardViewerSelected?: number;
         campaignSelected?: number;
         timelineSelected?: number;
     }
@@ -56,6 +57,7 @@ export const INITIAL_APP_DB: IAppDb = {
     uiState: {
         uiSideProps: SideProps.none,
         campaign: {
+            campaignTimelineBoardViewerSelected: -1,
             campaignTimelineChannelSelected: -1,
             campaignSelected: -1,
             timelineSelected: -1
