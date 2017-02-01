@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, QueryList, ViewChildren} from "@angular/core";
+import {Component, ElementRef, Input, QueryList, ViewChild, ViewChildren} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {RedPepperService} from "../../services/redpepper.service";
 import {YellowPepperService} from "../../services/yellowpepper.service";
@@ -9,6 +9,8 @@ import {IUiState} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE} from "../../store/actions/appdb.actions";
 import {List} from "immutable";
 import * as _ from "lodash";
+import {ContextMenuService} from 'angular2-contextmenu/src/contextMenu.service';
+import {ContextMenuComponent} from "angular2-contextmenu";
 
 @Component({
     selector: 'sequencer',
@@ -40,16 +42,58 @@ import * as _ from "lodash";
 
     `],
     template: `
-        <small class="debug">{{me}}</small><h2>timelines: {{m_campaignTimelinesModels?.size}}</h2>
-        <hr class="dottedHR">
-        <div id="dragcontainer">
-            <screen-template #st class="draggableTimeline" *ngFor="let screenTemplate of _screenTemplates | async"
-                             (click)="_onScreenTemplateSelected(screenTemplate, st)" [setTemplate]="screenTemplate">
-            </screen-template>
+        <div (click)="$event.preventDefault()">
+            <small class="debug">{{me}}</small>
+            <h2>timelines: {{m_campaignTimelinesModels?.size}}</h2>
+            <button class="btn btn-default"
+                    (contextmenu)="onOtherContextMenu($event, 'blue')">
+                Right Click
+            </button>
+            <context-menu></context-menu>
+            <hr class="dottedHR">
+            <div id="dragcontainer">
+                <screen-template #st class="draggableTimeline"
+                                 *ngFor="let screenTemplate of _screenTemplates | async"
+                                 (contextmenu)="onContextMenu($event, screenTemplate)"
+                                 (click)="_onScreenTemplateSelected(screenTemplate, st)"
+                                 [setTemplate]="screenTemplate">
+                </screen-template>
+            </div>
+            <context-menu>
+                <template contextMenuItem let-item (execute)="_onContextClicked('load props ',$event.item)">
+                    timeline properties for {{item?.name}}
+                </template>
+                <template contextMenuItem divider="true"></template>
+                <template contextMenuItem (execute)="_onContextClicked('edit',$event.item)">edit layout</template>
+                <template contextMenuItem (execute)="_onContextClicked('first',$event.item)">move to first</template>
+                <template contextMenuItem (execute)="_onContextClicked('last',$event.item)">move to last</template>
+                <template contextMenuItem (execute)="_onContextClicked('ch1',$event.item)">select next channel</template>
+            </context-menu>
         </div>
+
+
     `
 })
 export class Sequencer extends Compbaser {
+
+    _onContextClicked(cmd: string, screenTemplateData: IScreenTemplateData) {
+        console.log(cmd + ' ' + screenTemplateData.campaignTimelineId);
+    }
+
+    public items = [
+        {name: 'John', otherProperty: 'Foo'},
+        {name: 'Joe', otherProperty: 'Bar'}
+    ];
+
+    public onContextMenu($event: MouseEvent, item: any): void {
+        this.contextMenuService.show.next({
+            event: $event,
+            item: item,
+        });
+        $event.preventDefault();
+        $event.stopPropagation();
+    }
+
 
     private m_campaignTimelinesModels: List<CampaignTimelinesModel>;
     private _screenTemplates: Observable<any>;
@@ -62,10 +106,13 @@ export class Sequencer extends Compbaser {
     private m_selectedChannel: number = -1;
     private m_selectedCampaignId: number = -1;
 
-    constructor(private el: ElementRef, private yp: YellowPepperService, private pepper: RedPepperService) {
+    constructor(private el: ElementRef, private yp: YellowPepperService, private pepper: RedPepperService, private contextMenuService: ContextMenuService) {
         super();
         this.m_thumbsContainer = el.nativeElement;
+
+
     }
+
 
     @ViewChildren(ScreenTemplate) tmpScreenTemplates: QueryList<ScreenTemplate>;
 
@@ -301,10 +348,12 @@ export class Sequencer extends Compbaser {
         });
     }
 
+
     ngOnInit() {
     }
 
     destroy() {
     }
 }
+
 

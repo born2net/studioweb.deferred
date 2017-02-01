@@ -14,13 +14,14 @@ import {Props} from "../comps/props/props";
 import {ScreenTemplate} from "../comps/screen-template/screen-template";
 import {CampaignProps} from "../app/campaigns/campaign-props";
 import {BlurForwarder} from "../comps/blurforwarder/BlurForwarder";
+import {ContextMenuModule} from "angular2-contextmenu";
 
 var sharedComponents = [Infobox, Sliderpanel, Slideritem, PanelSplitMain,
     PanelSplitSide, PanelSplitContainer, ListToArrayPipe, MatchBodyHeight, Props, ScreenTemplate, CampaignProps, BlurForwarder];
 
 @NgModule({
-    imports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule],
-    exports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule, ...sharedComponents],
+    imports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule,  ContextMenuModule],
+    exports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule, ContextMenuModule, ...sharedComponents],
     declarations: [...sharedComponents]
 })
 

@@ -9,8 +9,8 @@ import {RedPepperService} from "../services/redpepper.service";
 import {YellowPepperService} from "../services/yellowpepper.service";
 import {MsLibModule} from "ng-mslib/dist/mslib.module";
 import {ToastModule} from "ng2-toastr";
-import {DropdownModule, AccordionModule, AlertModule, ModalModule} from "ng2-bootstrap";
-import {TreeModule, InputTextModule, SelectButtonModule, DropdownModule as DropdownModulePrime} from "primeng/primeng";
+import {AccordionModule, AlertModule, DropdownModule, ModalModule} from "ng2-bootstrap";
+import {DropdownModule as DropdownModulePrime, InputTextModule, SelectButtonModule, TreeModule} from "primeng/primeng";
 import {routing} from "../app-routes";
 import {LoginPanel} from "../comps/entry/LoginPanel";
 import {Logout} from "../comps/logout/Logout";
@@ -40,26 +40,10 @@ import {Dashboard} from "./dashboard/dashboard-navigation";
 import {Appwrap} from "./appwrap";
 import "hammerjs";
 import "fabric";
-
-// import CSSPlugin from 'gsap/CSSPlugin';
-// import TimelineLite from 'gsap/TimelineLite';
-
 import "gsap";
-import 'gsap/CSSPlugin';
-import 'gsap/Draggable';
-import 'gsap/TweenLite';
-// import Draggable from 'gsap/src/minified/pluginsraggable';
-// import TweenLite from 'gsap/TweenLite';
-
-// import TweenLite from 'gsap/TweenLite';
-// import TimelineLite from 'gsap/TimelineLite';
-
-
-
-// import 'gsap/CSSPlugin';
-// import TweenLite from 'gsap/TweenLite';
-// import TimelineLite from 'gsap/TimelineLite';
-//
+import "gsap/CSSPlugin";
+import "gsap/Draggable";
+import "gsap/TweenLite";
 
 
 // import {ScreenTemplate} from "../comps/screen-template/screen-template";
