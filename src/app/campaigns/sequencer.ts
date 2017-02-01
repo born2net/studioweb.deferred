@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, QueryList, ViewChild, ViewChildren} from "@angular/core";
+import {Component, ElementRef, Input, QueryList, ViewChildren} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {RedPepperService} from "../../services/redpepper.service";
 import {YellowPepperService} from "../../services/yellowpepper.service";
@@ -9,8 +9,7 @@ import {IUiState} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE} from "../../store/actions/appdb.actions";
 import {List} from "immutable";
 import * as _ from "lodash";
-import {ContextMenuService} from 'angular2-contextmenu/src/contextMenu.service';
-import {ContextMenuComponent} from "angular2-contextmenu";
+import {ContextMenuService} from "angular2-contextmenu/src/contextMenu.service";
 
 @Component({
     selector: 'sequencer',
@@ -45,10 +44,6 @@ import {ContextMenuComponent} from "angular2-contextmenu";
         <div (click)="$event.preventDefault()">
             <small class="debug">{{me}}</small>
             <h2>timelines: {{m_campaignTimelinesModels?.size}}</h2>
-            <button class="btn btn-default"
-                    (contextmenu)="onOtherContextMenu($event, 'blue')">
-                Right Click
-            </button>
             <context-menu></context-menu>
             <hr class="dottedHR">
             <div id="dragcontainer">
@@ -76,10 +71,10 @@ export class Sequencer extends Compbaser {
 
     _onContextClicked(cmd: string, screenTemplateData: IScreenTemplateData) {
         console.log(cmd + ' ' + screenTemplateData.campaignTimelineId);
-        switch (cmd){
+        switch (cmd) {
             case 'nextch': {
                 this.onSelectNextChannel()
-                 break;
+                break;
             }
         }
     }
@@ -139,7 +134,7 @@ export class Sequencer extends Compbaser {
     _onScreenTemplateSelected(event, screenTemplate: ScreenTemplate) {
         this.tmpScreenTemplates.forEach((i_screenTemplate) => {
             if (i_screenTemplate == screenTemplate) {
-                if (this.m_selectedTimelineId != i_screenTemplate.m_screenTemplateData.campaignTimelineId){
+                if (this.m_selectedTimelineId != i_screenTemplate.m_screenTemplateData.campaignTimelineId) {
                     i_screenTemplate.selectFrame();
                     this.m_selectedScreenTemplate = i_screenTemplate;
                     this.m_selectedTimelineId = i_screenTemplate.m_screenTemplateData.campaignTimelineId;
@@ -354,7 +349,6 @@ export class Sequencer extends Compbaser {
             });
         });
     }
-
 
     ngOnInit() {
     }
