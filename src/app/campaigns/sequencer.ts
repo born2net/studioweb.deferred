@@ -34,32 +34,30 @@ import {ACTION_UISTATE_UPDATE} from "../../store/actions/appdb.actions";
                              (click)="_onScreenTemplateSelected(screenTemplate, st)" [setTemplate]="screenTemplate">
             </screen-template>
         </div>
-
-
-
-
-    `,
+    `
 })
 export class Sequencer extends Compbaser {
 
     private m_campaignTimelinesModels: List<CampaignTimelinesModel>;
-    _screenTemplates: Observable<any>;
-    m_draggables;
-    m_thumbsContainer;
-    target;
-    x;
-    selectedScreenTemplate: ScreenTemplate;
-    selectedTimelineId:number;
-    m_selectedChannel:number;
-    m_selectedTimelineID:number;
+    private _screenTemplates: Observable<any>;
+    private m_draggables;
+    private m_thumbsContainer;
+    private target;
+    private x:number ;
+    private selectedScreenTemplate: ScreenTemplate;
+    private selectedTimelineId:number;
+    private m_selectedChannel:number = -1;
+    private m_selectedTimelineID:number;
 
     constructor(private el: ElementRef, private yp: YellowPepperService, private pepper: RedPepperService) {
         super();
         this.m_thumbsContainer = el.nativeElement;
     }
 
+    @ViewChildren(ScreenTemplate) tmpScreenTemplates: QueryList<ScreenTemplate>;
+
     _onScreenTemplateSelected(event, screenTemplate: ScreenTemplate) {
-        this.m_selectedChannel = -1;
+        this._setSelectedChannel(-1);
         this.tmpScreenTemplates.forEach((i_screenTemplate) => {
             if (i_screenTemplate == screenTemplate) {
                 i_screenTemplate.selectFrame();
@@ -67,8 +65,8 @@ export class Sequencer extends Compbaser {
                 this.selectedTimelineId = i_screenTemplate.m_screenTemplateData.campaignTimelineId;
             } else {
                 i_screenTemplate.deSelectFrame();
+                i_screenTemplate.deselectDivisons();
             }
-
         })
     }
 
@@ -82,20 +80,24 @@ export class Sequencer extends Compbaser {
             })
     }
 
-    @ViewChildren(ScreenTemplate) tmpScreenTemplates: QueryList<ScreenTemplate>;
-
+    private _setSelectedChannel(i_timeline_channel_id){
+        this.m_selectedChannel = i_timeline_channel_id;
+        var uiState: IUiState = {campaign: {campaignTimelineBoardViewerSelected: i_timeline_channel_id}}
+        this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+    }
 
     /**
      Select next channel
      @method selectNextChannel
      **/
-    onSelectNextChannel() {
+    public onSelectNextChannel() {
         if (!this.selectedScreenTemplate)
             return;
 
         var timeline_channel_id, campaign_timeline_board_viewer_id;
         this.yp.getChannelsOfTimeline(this.selectedTimelineId).subscribe((channelsIDs) => {
-            if (_.isUndefined(this.m_selectedChannel)) {
+            console.log('ch ' + this.m_selectedChannel);
+            if (this.m_selectedChannel == -1) {
                 timeline_channel_id = channelsIDs[0];
             } else {
                 for (var ch in channelsIDs) {
@@ -120,8 +122,7 @@ export class Sequencer extends Compbaser {
                 // };
                 this.selectedScreenTemplate.selectDivison(campaign_timeline_board_viewer_id)
 
-                var uiState: IUiState = {campaign: {campaignTimelineBoardViewerSelected: campaign_timeline_board_viewer_id}}
-                this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+                this._setSelectedChannel(this.m_selectedChannel)
 
                 // self._removeBlockSelection();
                 // self._addChannelSelection(timeline_channel_id);
@@ -137,7 +138,7 @@ export class Sequencer extends Compbaser {
         if (!i_campaignTimelinesModels)
             return;
         this.m_campaignTimelinesModels = i_campaignTimelinesModels;
-        var sortedTimelines: Array<CampaignTimelinesModel> = this.sortTimelines();
+        var sortedTimelines: Array<CampaignTimelinesModel> = this._sortTimelines();
         this._screenTemplates = Observable.from(sortedTimelines)
             .map(i_campaignTimelinesModelsOrdered => {
                 return this._getScreenTemplate(i_campaignTimelinesModelsOrdered)
@@ -148,7 +149,7 @@ export class Sequencer extends Compbaser {
 
     }
 
-    private sortTimelines() {
+    private _sortTimelines() {
         var orderedTimelines = []
         this.m_campaignTimelinesModels.forEach((i_campaignTimelinesModel: CampaignTimelinesModel) => {
             this.yp.getCampaignTimelineSequencerIndex(i_campaignTimelinesModel.getCampaignTimelineId()).get((index: number) => {
@@ -168,7 +169,7 @@ export class Sequencer extends Compbaser {
      @method _createSortable
      @param {Element} i_selector
      **/
-    _createSortable(i_selector) {
+    private _createSortable(i_selector) {
         var self = this;
         if (jQuery(i_selector).children().length == 0) return;
         var sortable = document.querySelector(i_selector);
@@ -214,7 +215,7 @@ export class Sequencer extends Compbaser {
      Sortable channel list on press
      @method _sortablePress
      **/
-    _sortablePress() {
+    private _sortablePress() {
         var t = this.target,
             i = 0,
             child = t;
@@ -229,7 +230,7 @@ export class Sequencer extends Compbaser {
      Sortable drag channel list on press
      @method _sortableDragStart
      **/
-    _sortableDragStart() {
+    private _sortableDragStart() {
         TweenLite.set(this.target, {color: "#88CE02"});
     }
 
@@ -237,7 +238,7 @@ export class Sequencer extends Compbaser {
      Sortable drag channel list
      @method _sortableDrag
      **/
-    _sortableDrag() {
+    private _sortableDrag() {
         var t = this.target,
             elements = t.kids.slice(), // clone
             // indexChange = Math.round(this.x / t.currentWidth), // round flawed on large values
@@ -266,7 +267,7 @@ export class Sequencer extends Compbaser {
      snap channels to set rounder values
      @method _sortableSnap
      **/
-    _sortableSnap(y) {
+    private _sortableSnap(y) {
         return y;
         /* enable code below to use live drag snapping */
         // var h = this.target.currentHeight;
