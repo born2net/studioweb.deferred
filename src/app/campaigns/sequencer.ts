@@ -4,12 +4,13 @@ import {RedPepperService} from "../../services/redpepper.service";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 import {IScreenTemplateData, ScreenTemplate} from "../../comps/screen-template/screen-template";
-import {Observable} from "rxjs";
+import {Observable, Subscriber, Subscription} from "rxjs";
 import {IUiState} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
 import {List} from "immutable";
 import * as _ from "lodash";
 import {ContextMenuService} from "angular2-contextmenu/src/contextMenu.service";
+import {once} from "../../decorators/once-decorator";
 
 @Component({
     selector: 'sequencer',
@@ -305,7 +306,7 @@ export class Sequencer extends Compbaser {
     _onDivisionDoubleClicked(i_campaign_timeline_board_viewer_id) {
         this.m_campaignTimelineBoardViewerSelected = i_campaign_timeline_board_viewer_id;
         this.m_selectedScreenTemplate.selectDivison(i_campaign_timeline_board_viewer_id)
-        this.yp.getChannelFromViewer(this.m_selectedTimelineId, i_campaign_timeline_board_viewer_id)
+        return this.yp.getChannelFromViewer(this.m_selectedTimelineId, i_campaign_timeline_board_viewer_id)
             .subscribe((result:any) => {
                 this.m_campaignTimelineChannelSelected = result.channel;
                 this._setAndNotifyIds()

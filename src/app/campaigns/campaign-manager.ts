@@ -12,16 +12,17 @@ import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
 import {SideProps, ACTION_UISTATE_UPDATE} from "../../store/actions/appdb.actions";
 import {IUiState} from "../../store/store.data";
 import {YellowPepperService} from "../../services/yellowpepper.service";
+import {once} from "../../decorators/once-decorator";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'campaign-manager',
     styles: [`
         /*.selectedItem {*/
-             /*background-color: green !important*/
-         /*}*/
-         /*a.list-group-item:focus,  button.list-group-item:focus  {*/
-            /*background-color: pink !important;*/
+        /*background-color: green !important*/
+        /*}*/
+        /*a.list-group-item:focus,  button.list-group-item:focus  {*/
+        /*background-color: pink !important;*/
         /*}*/
 
     `],
@@ -49,10 +50,7 @@ export class CampaignManager extends Compbaser {
         }).subscribe((e) => {
         });
 
-        this.yp.ngrxStore.select(store => store.appDb.uiState.uiSideProps).map((v) => {
-            // console.log(v);
-        }).subscribe((e) => {
-        });
+        this.testListen();
 
 
         this.userModel$ = this.yp.ngrxStore.select(store => store.appDb.userModel);
@@ -68,6 +66,15 @@ export class CampaignManager extends Compbaser {
             // console.log(resourceModels.first().getResourceName());
             // console.log(resourceModels.first().getResourceBytesTotal());
         })
+    }
+
+    @once(6000)
+    private testListen() {
+        return this.yp.ngrxStore.select(store => store.appDb.uiState.uiSideProps).map((v) => {
+            console.log(v);
+        }).subscribe((e) => {
+            console.log(e);
+        });
     }
 
     @Output()
