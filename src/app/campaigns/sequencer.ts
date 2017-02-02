@@ -112,14 +112,20 @@ export class Sequencer extends Compbaser {
             return;
         this.m_campaignTimelinesModels = i_campaignTimelinesModels;
         this.m_selectedCampaignId = this.m_campaignTimelinesModels.first().getCampaignId();
-        var sortedTimelines: Array<CampaignTimelinesModel> = this._sortTimelines();
-        this._screenTemplates = Observable.from(sortedTimelines)
-            .map(i_campaignTimelinesModelsOrdered => {
-                return this._getScreenTemplate(i_campaignTimelinesModelsOrdered)
-            }).combineAll()
-        setTimeout(() => {
-            this._createSortable('#dragcontainer');
-        }, 300)
+
+        this._sortTimelines((sortedTimelines: Array<CampaignTimelinesModel>) => {
+            this._screenTemplates = Observable.from(sortedTimelines)
+                .map(i_campaignTimelinesModelsOrdered => {
+                    return this._getScreenTemplate(i_campaignTimelinesModelsOrdered)
+                }).combineAll();
+
+            setTimeout(() => {
+                this._createSortable('#dragcontainer');
+            }, 300)
+
+        });
+
+
     }
 
     _onScreenTemplateSelected(event, screenTemplate: ScreenTemplate) {
@@ -163,19 +169,29 @@ export class Sequencer extends Compbaser {
         this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 
-    private _sortTimelines() {
-        var orderedTimelines = []
-        this.m_campaignTimelinesModels.forEach((i_campaignTimelinesModel: CampaignTimelinesModel) => {
-            this.yp.getCampaignTimelineSequencerIndex(i_campaignTimelinesModel.getCampaignTimelineId()).subscribe((index: number) => {
-                orderedTimelines.push({index: index, campaign: i_campaignTimelinesModel});
-            });
-        })
-        var orderedTimelines = _.sortBy(orderedTimelines, [function (o) {
-            return o.index;
-        }]);
-        return _.toArray(_.map(orderedTimelines, function (o) {
-            return o.campaign;
-        }));
+    @Once()
+    private _sortTimelines(i_cb: (sortedTimelines: Array<CampaignTimelinesModel>) => void) {
+        return Observable.from(this.m_campaignTimelinesModels.toArray())
+            .switchMap((i_campaignTimelinesModel: CampaignTimelinesModel) => {
+                return this.yp.getCampaignTimelineSequencerIndex(i_campaignTimelinesModel.getCampaignTimelineId())
+                    .map((index) => {
+                        return Observable.of({
+                            index: index,
+                            campaign: i_campaignTimelinesModel
+                        })
+                    })
+            })
+            .combineAll()
+            .subscribe((i_orderedTimelines: any) => {
+                var orderedTimelines = _.sortBy(i_orderedTimelines, [function (o) {
+                    return o.index;
+                }]);
+                i_cb(
+                    _.toArray(_.map(orderedTimelines, function (o) {
+                        return o['campaign'];
+                    }))
+                );
+            })
     }
 
     /**

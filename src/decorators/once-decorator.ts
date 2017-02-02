@@ -7,8 +7,10 @@ export function Once(milliseconds: number = 0) {
             setTimeout(() => {
                 if (sub instanceof Subscriber) {
                     sub.unsubscribe();
-                } else {
+                } else if (sub instanceof Function) {
                     sub()
+                } else {
+                    throw new Error('@Once did not receive something to unsubscribe from, did you forget to return an Observable maybe?');
                 }
             }, milliseconds);
         };
