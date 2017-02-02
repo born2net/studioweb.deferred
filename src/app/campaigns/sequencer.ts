@@ -69,7 +69,7 @@ import {ContextMenuService} from "angular2-contextmenu/src/contextMenu.service";
 export class Sequencer extends Compbaser {
 
     _onContextClicked(cmd: string, screenTemplateData: IScreenTemplateData) {
-        console.log(cmd + ' ' + screenTemplateData.campaignTimelineId);
+        console.log(cmd + '  ' + screenTemplateData.campaignTimelineId);
         switch (cmd) {
             case 'nextch': {
                 this.onSelectNextChannel()
@@ -104,7 +104,6 @@ export class Sequencer extends Compbaser {
         this.m_thumbsContainer = el.nativeElement;
     }
 
-
     @ViewChildren(ScreenTemplate) tmpScreenTemplates: QueryList<ScreenTemplate>;
 
     @Input()
@@ -134,8 +133,7 @@ export class Sequencer extends Compbaser {
                     this.m_campaignTimelineBoardViewerSelected = -1;
                     this._setAndNotifyIds();
                 }
-                var uiState: IUiState = {uiSideProps: SideProps.timeline}
-                this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+                this._notifyPropertySelect(SideProps.timeline);
             } else {
                 i_screenTemplate.deSelectFrame();
                 i_screenTemplate.deselectDivisons();
@@ -312,7 +310,14 @@ export class Sequencer extends Compbaser {
             .subscribe((result:any) => {
                 this.m_campaignTimelineChannelSelected = result.channel;
                 this._setAndNotifyIds()
+                this._notifyPropertySelect(SideProps.channel);
+
             })
+    }
+
+    private _notifyPropertySelect(i_type){
+        var uiState: IUiState = {uiSideProps: i_type}
+        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 
     /**
@@ -346,9 +351,7 @@ export class Sequencer extends Compbaser {
                 this.m_campaignTimelineBoardViewerSelected = i_campaign_timeline_board_viewer_id;
                 this.m_selectedScreenTemplate.selectDivison(i_campaign_timeline_board_viewer_id)
                 this._setAndNotifyIds();
-
-                var uiState: IUiState = {uiSideProps: SideProps.channel}
-                this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+                this._notifyPropertySelect(SideProps.channel);
 
                 // self._removeBlockSelection();
                 // self._addChannelSelection(timeline_channel_id);
