@@ -124,49 +124,6 @@ export class Sequencer extends Compbaser {
             }, 300)
 
         });
-
-
-    }
-
-    _onScreenTemplateSelected(event, screenTemplate: ScreenTemplate) {
-        this.tmpScreenTemplates.forEach((i_screenTemplate) => {
-            if (i_screenTemplate == screenTemplate) {
-                if (this.m_selectedTimelineId != i_screenTemplate.m_screenTemplateData.campaignTimelineId) {
-                    i_screenTemplate.selectFrame();
-                    this.m_selectedScreenTemplate = i_screenTemplate;
-                    this.m_selectedTimelineId = i_screenTemplate.m_screenTemplateData.campaignTimelineId;
-                    this.m_campaignTimelineChannelSelected = -1;
-                    this.m_campaignTimelineBoardViewerSelected = -1;
-                    this._setAndNotifyIds();
-                }
-                this._notifyPropertySelect(SideProps.timeline);
-            } else {
-                i_screenTemplate.deSelectFrame();
-                i_screenTemplate.deselectDivisons();
-            }
-        })
-
-    }
-
-    _getScreenTemplate(i_campaignTimelinesModel: CampaignTimelinesModel): Observable<IScreenTemplateData> {
-        return this.yp.getTemplatesOfTimeline(i_campaignTimelinesModel.getCampaignTimelineId())
-            .map((campaignTimelineBoardTemplateIds: Array<number>) => {
-                // for now return zero as we don't support multiple divisions per single timeline, yet
-                return campaignTimelineBoardTemplateIds[0];
-            }).switchMap((campaignTimelineBoardTemplateId) => {
-                return this.yp.getTemplateViewersScreenProps(i_campaignTimelinesModel.getCampaignTimelineId(), campaignTimelineBoardTemplateId, i_campaignTimelinesModel.getTimelineName());
-            })
-    }
-
-    private _setAndNotifyIds() {
-        var uiState: IUiState = {
-            campaign: {
-                campaignTimelineChannelSelected: this.m_campaignTimelineChannelSelected,
-                campaignTimelineBoardViewerSelected: this.m_campaignTimelineBoardViewerSelected,
-                timelineSelected: this.m_selectedTimelineId
-            }
-        }
-        this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 
     @Once()
@@ -193,6 +150,51 @@ export class Sequencer extends Compbaser {
                 );
             })
     }
+
+    _getScreenTemplate(i_campaignTimelinesModel: CampaignTimelinesModel): Observable<IScreenTemplateData> {
+        return this.yp.getTemplatesOfTimeline(i_campaignTimelinesModel.getCampaignTimelineId())
+            .map((campaignTimelineBoardTemplateIds: Array<number>) => {
+                // for now return zero as we don't support multiple divisions per single timeline, yet
+                return campaignTimelineBoardTemplateIds[0];
+            }).switchMap((campaignTimelineBoardTemplateId) => {
+                return this.yp.getTemplateViewersScreenProps(
+                    i_campaignTimelinesModel.getCampaignTimelineId(), campaignTimelineBoardTemplateId, i_campaignTimelinesModel.getTimelineName()
+                );
+            })
+    }
+
+    _onScreenTemplateSelected(event, screenTemplate: ScreenTemplate) {
+        this.tmpScreenTemplates.forEach((i_screenTemplate) => {
+            if (i_screenTemplate == screenTemplate) {
+                if (this.m_selectedTimelineId != i_screenTemplate.m_screenTemplateData.campaignTimelineId) {
+                    i_screenTemplate.selectFrame();
+                    this.m_selectedScreenTemplate = i_screenTemplate;
+                    this.m_selectedTimelineId = i_screenTemplate.m_screenTemplateData.campaignTimelineId;
+                    this.m_campaignTimelineChannelSelected = -1;
+                    this.m_campaignTimelineBoardViewerSelected = -1;
+                    this._setAndNotifyIds();
+                }
+                this._notifyPropertySelect(SideProps.timeline);
+            } else {
+                i_screenTemplate.deSelectFrame();
+                i_screenTemplate.deselectDivisons();
+            }
+        })
+
+    }
+
+
+    private _setAndNotifyIds() {
+        var uiState: IUiState = {
+            campaign: {
+                campaignTimelineChannelSelected: this.m_campaignTimelineChannelSelected,
+                campaignTimelineBoardViewerSelected: this.m_campaignTimelineBoardViewerSelected,
+                timelineSelected: this.m_selectedTimelineId
+            }
+        }
+        this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+    }
+
 
     /**
      Create a sortable channel list
@@ -346,42 +348,44 @@ export class Sequencer extends Compbaser {
         if (!this.m_selectedScreenTemplate)
             return;
         var timeline_channel_id;
-        return this.yp.getChannelsOfTimeline(this.m_selectedTimelineId).subscribe((channelsIDs) => {
-            if (this.m_campaignTimelineChannelSelected == -1) {
-                timeline_channel_id = channelsIDs[0];
-            } else {
-                for (var ch in channelsIDs) {
-                    if (channelsIDs[ch] == this.m_campaignTimelineChannelSelected) {
-                        if (_.isUndefined(channelsIDs[parseInt(ch) + 1])) {
-                            timeline_channel_id = channelsIDs[0];
-                        } else {
-                            timeline_channel_id = channelsIDs[parseInt(ch) + 1];
+        return this.yp.getChannelsOfTimeline(this.m_selectedTimelineId)
+            .subscribe((channelsIDs) => {
+                if (this.m_campaignTimelineChannelSelected == -1) {
+                    timeline_channel_id = channelsIDs[0];
+                } else {
+                    for (var ch in channelsIDs) {
+                        if (channelsIDs[ch] == this.m_campaignTimelineChannelSelected) {
+                            if (_.isUndefined(channelsIDs[parseInt(ch) + 1])) {
+                                timeline_channel_id = channelsIDs[0];
+                            } else {
+                                timeline_channel_id = channelsIDs[parseInt(ch) + 1];
+                            }
                         }
                     }
                 }
-            }
-            this.m_campaignTimelineChannelSelected = timeline_channel_id;
-            this.getAssignedViewerIdFromChannelId(timeline_channel_id);
-        });
+                this.m_campaignTimelineChannelSelected = timeline_channel_id;
+                this.getAssignedViewerIdFromChannelId(timeline_channel_id);
+            });
     }
 
     @Once()
     private getAssignedViewerIdFromChannelId(timeline_channel_id) {
-        return this.yp.getAssignedViewerIdFromChannelId(timeline_channel_id).subscribe((i_campaign_timeline_board_viewer_id) => {
-            // note: workaround for when viewer is unassigned, need to investigate
-            if (_.isUndefined(i_campaign_timeline_board_viewer_id))
-                return;
-            this.m_campaignTimelineBoardViewerSelected = i_campaign_timeline_board_viewer_id;
-            this.m_selectedScreenTemplate.selectDivison(i_campaign_timeline_board_viewer_id)
-            this._setAndNotifyIds();
-            this._notifyPropertySelect(SideProps.channel);
+        return this.yp.getAssignedViewerIdFromChannelId(timeline_channel_id)
+            .subscribe((i_campaign_timeline_board_viewer_id) => {
+                // note: workaround for when viewer is unassigned, need to investigate
+                if (_.isUndefined(i_campaign_timeline_board_viewer_id))
+                    return;
+                this.m_campaignTimelineBoardViewerSelected = i_campaign_timeline_board_viewer_id;
+                this.m_selectedScreenTemplate.selectDivison(i_campaign_timeline_board_viewer_id)
+                this._setAndNotifyIds();
+                this._notifyPropertySelect(SideProps.channel);
 
-            // self._removeBlockSelection();
-            // self._addChannelSelection(timeline_channel_id);
-            // BB.comBroker.getService(BB.SERVICES['SEQUENCER_VIEW']).selectViewer(screenData.campaign_timeline_id, screenData.campaign_timeline_board_viewer_id);
-            // BB.comBroker.fire(BB.EVENTS.ON_VIEWER_SELECTED, this, screenData);
-            // BB.comBroker.fire(BB.EVENTS.CAMPAIGN_TIMELINE_CHANNEL_SELECTED, this, null, self.m_selectedChannel);
-        });
+                // self._removeBlockSelection();
+                // self._addChannelSelection(timeline_channel_id);
+                // BB.comBroker.getService(BB.SERVICES['SEQUENCER_VIEW']).selectViewer(screenData.campaign_timeline_id, screenData.campaign_timeline_board_viewer_id);
+                // BB.comBroker.fire(BB.EVENTS.ON_VIEWER_SELECTED, this, screenData);
+                // BB.comBroker.fire(BB.EVENTS.CAMPAIGN_TIMELINE_CHANNEL_SELECTED, this, null, self.m_selectedChannel);
+            });
     }
 
     ngOnInit() {

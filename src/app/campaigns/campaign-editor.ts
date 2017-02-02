@@ -30,9 +30,10 @@ export class CampaignEditor extends Compbaser {
 
     @Once()
     private _loadCampaignTimelines() {
-        return this.yp.getCampaignTimelines(this.campaignModel.getCampaignId()).subscribe((campaignTimelinesModels: List<CampaignTimelinesModel>) => {
-            this.campaignTimelinesModels = campaignTimelinesModels;
-        })
+        return this.yp.getCampaignTimelines(this.campaignModel.getCampaignId())
+            .subscribe((campaignTimelinesModels: List<CampaignTimelinesModel>) => {
+                this.campaignTimelinesModels = campaignTimelinesModels;
+            })
     }
 
     ngOnInit() {

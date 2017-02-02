@@ -85,7 +85,7 @@ export class YellowPepperService {
             }).take(1);
     }
 
-    public getChannelFromViewer(i_selectedTimeline_id, i_campaign_timeline_board_viewer_id): Observable<{}> {
+    getChannelFromViewer(i_selectedTimeline_id, i_campaign_timeline_board_viewer_id): Observable<{}> {
         return this.getChannelsOfTimeline(i_selectedTimeline_id).switchMap((timeline_channel_ids:Array<number>) => {
             return Observable.from(timeline_channel_ids).concatMap((channel: number) => {
                 return this.getAssignedViewerIdFromChannelId(channel)
