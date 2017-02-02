@@ -69,7 +69,6 @@ import {ContextMenuService} from "angular2-contextmenu/src/contextMenu.service";
 export class Sequencer extends Compbaser {
 
     _onContextClicked(cmd: string, screenTemplateData: IScreenTemplateData) {
-        console.log(cmd + '  ' + screenTemplateData.campaignTimelineId);
         switch (cmd) {
             case 'nextch': {
                 this.onSelectNextChannel()
