@@ -1,5 +1,5 @@
 import {Subscriber} from "rxjs";
-export function once(milliseconds: number = 0) {
+export function Once(milliseconds: number = 0) {
     return function (target, key, descriptor) {
         var originalMethod = descriptor.value;
         descriptor.value = function (...args) {

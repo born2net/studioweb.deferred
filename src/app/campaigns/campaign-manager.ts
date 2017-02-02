@@ -1,18 +1,14 @@
-import {Component, ChangeDetectionStrategy, ElementRef, EventEmitter, Output} from "@angular/core";
-import {ApplicationState} from "../../store/application.state";
-import {Store} from "@ngrx/store";
+import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Output} from "@angular/core";
 import {Observable} from "rxjs";
 import {List} from "immutable";
 import {Compbaser} from "ng-mslib";
 import {Router} from "@angular/router";
 import {UserModel} from "../../models/UserModel";
-import {ResourcesModel} from "../../store/imsdb.interfaces_auto";
 import {RedPepperService} from "../../services/redpepper.service";
 import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
-import {SideProps, ACTION_UISTATE_UPDATE} from "../../store/actions/appdb.actions";
+import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
 import {IUiState} from "../../store/store.data";
 import {YellowPepperService} from "../../services/yellowpepper.service";
-import {once} from "../../decorators/once-decorator";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -38,19 +34,17 @@ export class CampaignManager extends Compbaser {
     constructor(private el: ElementRef, private yp: YellowPepperService, private redPepperService: RedPepperService, private router: Router) {
         super();
 
-        this.yp.ngrxStore.select(store => store.appDb.uiState.campaign).map((v) => {
-            // console.log(v);
-        }).subscribe((e) => {
-        });
+        // this.yp.ngrxStore.select(store => store.appDb.uiState.campaign).map((v) => {
+        //     // console.log(v);
+        // }).subscribe((e) => {
+        // });
 
         this.timelineSelected$ = this.yp.ngrxStore.select(store => store.appDb.uiState.campaign.timelineSelected).map(v => v);
 
-        this.yp.ngrxStore.select(store => store.appDb.uiState.campaign.campaignSelected).map((v) => {
-            // console.log(v);
-        }).subscribe((e) => {
-        });
-
-        this.testListen();
+        // this.yp.ngrxStore.select(store => store.appDb.uiState.campaign.campaignSelected).map((v) => {
+        //     // console.log(v);
+        // }).subscribe((e) => {
+        // });
 
 
         this.userModel$ = this.yp.ngrxStore.select(store => store.appDb.userModel);
@@ -62,20 +56,20 @@ export class CampaignManager extends Compbaser {
                 return true;
             })
         });
-        this.yp.ngrxStore.select(store => store.msDatabase.sdk.table_resources).subscribe((resourceModels: List<ResourcesModel>) => {
-            // console.log(resourceModels.first().getResourceName());
-            // console.log(resourceModels.first().getResourceBytesTotal());
-        })
+        // this.yp.ngrxStore.select(store => store.msDatabase.sdk.table_resources).subscribe((resourceModels: List<ResourcesModel>) => {
+        //     // console.log(resourceModels.first().getResourceName());
+        //     // console.log(resourceModels.first().getResourceBytesTotal());
+        // })
     }
 
-    @once(6000)
-    private testListen() {
-        return this.yp.ngrxStore.select(store => store.appDb.uiState.uiSideProps).map((v) => {
-            console.log(v);
-        }).subscribe((e) => {
-            console.log(e);
-        });
-    }
+    // @once(6000)
+    // private testListen() {
+    //     return this.yp.ngrxStore.select(store => store.appDb.uiState.uiSideProps).map((v) => {
+    //         console.log(v);
+    //     }).subscribe((e) => {
+    //         console.log(e);
+    //     });
+    // }
 
     @Output()
     slideToCampaignEditor: EventEmitter<any> = new EventEmitter<any>();

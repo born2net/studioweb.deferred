@@ -4,13 +4,13 @@ import {RedPepperService} from "../../services/redpepper.service";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 import {IScreenTemplateData, ScreenTemplate} from "../../comps/screen-template/screen-template";
-import {Observable, Subscriber, Subscription} from "rxjs";
+import {Observable} from "rxjs";
 import {IUiState} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
 import {List} from "immutable";
 import * as _ from "lodash";
 import {ContextMenuService} from "angular2-contextmenu/src/contextMenu.service";
-import {once} from "../../decorators/once-decorator";
+import {Once} from "../../decorators/once-decorator";
 
 @Component({
     selector: 'sequencer',
@@ -166,7 +166,7 @@ export class Sequencer extends Compbaser {
     private _sortTimelines() {
         var orderedTimelines = []
         this.m_campaignTimelinesModels.forEach((i_campaignTimelinesModel: CampaignTimelinesModel) => {
-            this.yp.getCampaignTimelineSequencerIndex(i_campaignTimelinesModel.getCampaignTimelineId()).get((index: number) => {
+            this.yp.getCampaignTimelineSequencerIndex(i_campaignTimelinesModel.getCampaignTimelineId()).subscribe((index: number) => {
                 orderedTimelines.push({index: index, campaign: i_campaignTimelinesModel});
             });
         })
@@ -303,11 +303,12 @@ export class Sequencer extends Compbaser {
         // return Math.round(y / h) * h;
     }
 
+    @Once()
     _onDivisionDoubleClicked(i_campaign_timeline_board_viewer_id) {
         this.m_campaignTimelineBoardViewerSelected = i_campaign_timeline_board_viewer_id;
         this.m_selectedScreenTemplate.selectDivison(i_campaign_timeline_board_viewer_id)
         return this.yp.getChannelFromViewer(this.m_selectedTimelineId, i_campaign_timeline_board_viewer_id)
-            .subscribe((result:any) => {
+            .subscribe((result: any) => {
                 this.m_campaignTimelineChannelSelected = result.channel;
                 this._setAndNotifyIds()
                 this._notifyPropertySelect(SideProps.channel);
@@ -315,7 +316,7 @@ export class Sequencer extends Compbaser {
             })
     }
 
-    private _notifyPropertySelect(i_type){
+    private _notifyPropertySelect(i_type) {
         var uiState: IUiState = {uiSideProps: i_type}
         this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
@@ -324,12 +325,12 @@ export class Sequencer extends Compbaser {
      Select next channel
      @method selectNextChannel
      **/
+    @Once()
     public onSelectNextChannel() {
         if (!this.m_selectedScreenTemplate)
             return;
-
         var timeline_channel_id;
-        this.yp.getChannelsOfTimeline(this.m_selectedTimelineId).subscribe((channelsIDs) => {
+        return this.yp.getChannelsOfTimeline(this.m_selectedTimelineId).subscribe((channelsIDs) => {
             if (this.m_campaignTimelineChannelSelected == -1) {
                 timeline_channel_id = channelsIDs[0];
             } else {
@@ -344,21 +345,26 @@ export class Sequencer extends Compbaser {
                 }
             }
             this.m_campaignTimelineChannelSelected = timeline_channel_id;
-            this.yp.getAssignedViewerIdFromChannelId(timeline_channel_id).subscribe((i_campaign_timeline_board_viewer_id) => {
-                // note: workaround for when viewer is unassigned, need to investigate
-                if (_.isUndefined(i_campaign_timeline_board_viewer_id))
-                    return;
-                this.m_campaignTimelineBoardViewerSelected = i_campaign_timeline_board_viewer_id;
-                this.m_selectedScreenTemplate.selectDivison(i_campaign_timeline_board_viewer_id)
-                this._setAndNotifyIds();
-                this._notifyPropertySelect(SideProps.channel);
+            this.getAssignedViewerIdFromChannelId(timeline_channel_id);
+        });
+    }
 
-                // self._removeBlockSelection();
-                // self._addChannelSelection(timeline_channel_id);
-                // BB.comBroker.getService(BB.SERVICES['SEQUENCER_VIEW']).selectViewer(screenData.campaign_timeline_id, screenData.campaign_timeline_board_viewer_id);
-                // BB.comBroker.fire(BB.EVENTS.ON_VIEWER_SELECTED, this, screenData);
-                // BB.comBroker.fire(BB.EVENTS.CAMPAIGN_TIMELINE_CHANNEL_SELECTED, this, null, self.m_selectedChannel);
-            });
+    @Once()
+    private getAssignedViewerIdFromChannelId(timeline_channel_id) {
+        return this.yp.getAssignedViewerIdFromChannelId(timeline_channel_id).subscribe((i_campaign_timeline_board_viewer_id) => {
+            // note: workaround for when viewer is unassigned, need to investigate
+            if (_.isUndefined(i_campaign_timeline_board_viewer_id))
+                return;
+            this.m_campaignTimelineBoardViewerSelected = i_campaign_timeline_board_viewer_id;
+            this.m_selectedScreenTemplate.selectDivison(i_campaign_timeline_board_viewer_id)
+            this._setAndNotifyIds();
+            this._notifyPropertySelect(SideProps.channel);
+
+            // self._removeBlockSelection();
+            // self._addChannelSelection(timeline_channel_id);
+            // BB.comBroker.getService(BB.SERVICES['SEQUENCER_VIEW']).selectViewer(screenData.campaign_timeline_id, screenData.campaign_timeline_board_viewer_id);
+            // BB.comBroker.fire(BB.EVENTS.ON_VIEWER_SELECTED, this, screenData);
+            // BB.comBroker.fire(BB.EVENTS.CAMPAIGN_TIMELINE_CHANNEL_SELECTED, this, null, self.m_selectedChannel);
         });
     }
 

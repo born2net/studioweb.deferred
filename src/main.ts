@@ -11,7 +11,7 @@ import {hmrBootstrap} from './hmr';
 
 const debuggerOn = true;
 
-Observable.prototype.get = Observable.prototype.subscribe;
+// Observable.prototype.get = Observable.prototype.subscribe;
 
 Observable.prototype.debug = function(message:string) {
     return this.do(
@@ -39,9 +39,9 @@ declare module 'rxjs/Observable' {
     interface Observable<T> {
         debug: (...any) => Observable<T>
     }
-    interface Observable<T> {
-        get(next?: (value: T) => void, error?: (error: any) => void, complete?: () => void): Subscription;
-    }
+    // interface Observable<T> {
+    //     get(next?: (value: T) => void, error?: (error: any) => void, complete?: () => void): Subscription;
+    // }
 }
 
 if (environment.production) {
