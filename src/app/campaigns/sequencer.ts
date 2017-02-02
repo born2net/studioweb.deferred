@@ -61,8 +61,8 @@ import {Once} from "../../decorators/once-decorator";
                     timeline properties for {{item?.name}}
                 </template>
                 <template contextMenuItem divider="true"></template>
-                <template contextMenuItem (execute)="_onContextClicked('edit',$event.item)">edit layout</template>
-                <template contextMenuItem (execute)="_onContextClicked('nextch',$event.item)">select next channel</template>
+                <template contextMenuItem (execute)="_onContextClicked('edit',$event.item)"><span i18n>edit layout</span></template>
+                <template contextMenuItem (execute)="_onContextClicked('nextch',$event.item)"><span i18n>next channel</span></template>
             </context-menu>
         </div>
     `
