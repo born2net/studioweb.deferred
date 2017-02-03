@@ -8,6 +8,8 @@ import {timeout} from "../../decorators/timeout-decorator";
 import * as _ from "lodash";
 import {Observable} from "rxjs";
 import {List} from "immutable";
+import {IUiState} from "../../store/store.data";
+import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
 
 @Component({
     selector: 'campaign-props',
@@ -119,7 +121,7 @@ export class CampaignProps extends Compbaser {
 
     /**
      * In this example we demonstrate two ways we can bind to the store values:
-     * 
+     *
      * 1. campaignModel$ :: via Observable subscription using async into the template: [ngClass]="{faded: ((campaignModel$ | async)?.getCampaignPlaylistMode() == 1)}" ...
      * 2. campaignModel :: direct grabbing the campaignModel from the store and doing a loop over keys: _.forEach(this.formInputs, (value, key: string) => { ...
      *
@@ -185,9 +187,28 @@ export class CampaignProps extends Compbaser {
     }
 
     private removeCampaign() {
-        var campaignId = this.campaignModel.getCampaignId();
-        this.rp.removeCampaignKeepBoards(campaignId);
-        this.rp.reduxCommit();
+        bootbox.confirm({
+            message: "Are you sure you want to delete the campaign, there is NO WAY BACK?",
+            buttons: {
+                confirm: {
+                    label: 'Yes',
+                    className: 'btn-success'
+                },
+                cancel: {
+                    label: 'No',
+                    className: 'btn-danger'
+                }
+            },
+            callback: (result) => {
+                if (result) {
+                    var campaignId = this.campaignModel.getCampaignId();
+                    this.rp.removeCampaignKeepBoards(campaignId);
+                    this.rp.reduxCommit();
+                    var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
+                    this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+                }
+            }
+        });
     }
 
     private renderFormInputs() {

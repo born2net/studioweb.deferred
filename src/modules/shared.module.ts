@@ -19,13 +19,14 @@ import {TimelineProps} from "../app/campaigns/timeline-props";
 import {ChannelProps} from "../app/campaigns/channel-props";
 import {DashboardProps} from "../app/campaigns/dashboard-props";
 import {CampaignEditorProps} from "../app/campaigns/campaign-editor-props";
+import {ChartModule} from "angular2-highcharts";
 
 var sharedComponents = [Infobox, Sliderpanel, Slideritem, PanelSplitMain, PanelSplitSide, PanelSplitContainer, ListToArrayPipe,
     MatchBodyHeight, ScreenTemplate, CampaignProps, BlurForwarder, Props, TimelineProps, ChannelProps, DashboardProps, CampaignEditorProps];
 
 @NgModule({
-    imports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule, ContextMenuModule],
-    exports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule, ContextMenuModule, ...sharedComponents],
+    imports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule, ContextMenuModule, ChartModule],
+    exports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule, ContextMenuModule, ChartModule, ...sharedComponents],
     declarations: [...sharedComponents]
 })
 

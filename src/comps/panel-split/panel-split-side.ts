@@ -16,7 +16,7 @@ import {Component, ChangeDetectionStrategy, ElementRef, Output, EventEmitter} fr
             -moz-transition: width 1s ease, margin 1s ease;
             -o-transition: width 1s ease, margin 1s ease;
             transition: width 1s ease, margin 1s ease;
-            background-color: #e5e5e5;
+            background-color: #ffffff;
             margin: 0;
             z-index: 200;
             border-left: 2px #c9c9c9 solid;
