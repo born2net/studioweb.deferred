@@ -27,14 +27,11 @@ import * as _ from "lodash";
                             </div>
                             <ul class="list-group">
                                 <li class="list-group-item">
-                                    kiosk mode
-                                    <div class="material-switch pull-right">
-                                        <input (change)="onFormChange(customerNetwork2.checked)"
-                                               [formControl]="m_contGroup.controls['kiosk_mode']"
-                                               id="customerNetwork2" #customerNetwork2
-                                               name="customerNetwork2" type="checkbox"/>
-                                        <label for="customerNetwork2" class="label-primary"></label>
-                                    </div>
+                                    Timeline duration:
+                                    <h3>{{duration}}</h3>
+                                </li>
+                                <li class="list-group-item">
+                                    Play mode: <i class="fa fa-plus"></i>
                                 </li>
                                 <li class="list-group-item">
                                     <div class="input-group">
@@ -42,17 +39,10 @@ import * as _ from "lodash";
                                         <input [formControl]="m_contGroup.controls['campaign_name']" required
                                                pattern="[0-9]|[a-z]|[A-Z]+"
                                                type="text" class="form-control" minlength="3" maxlength="15"
-                                               placeholder="campaign name">
+                                               placeholder="timeline name">
                                     </div>
-                                </li>
-                                <li class="list-group-item">
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="fa fa-key"></i></span>
-                                        <input type="number" [formControl]="m_contGroup.controls['campaign_playlist_mode']" min="0"
-                                               class="form-control"
-                                               placeholder="access key">
-                                    </div>
-                                </li>
+                                    <br/>
+                                </li>                             
                             </ul>
                         </div>
                     </div>
@@ -83,14 +73,13 @@ export class TimelineProps extends Compbaser {
 
     private campaignModel: CampaignsModelExt;
     private formInputs = {};
+    private duration:string = '00:00:00'
     m_contGroup: FormGroup;
 
     constructor(private fb: FormBuilder, private ngmslibService: NgmslibService, private yp: YellowPepperService, private rp: RedPepperService) {
         super();
         this.m_contGroup = fb.group({
-            'campaign_name': [''],
-            'campaign_playlist_mode': [0],
-            'kiosk_mode': [0]
+            'campaign_name': ['']
         });
         _.forEach(this.m_contGroup.controls, (value, key: string) => {
             this.formInputs[key] = this.m_contGroup.controls[key] as FormControl;
@@ -118,9 +107,6 @@ export class TimelineProps extends Compbaser {
     private updateSore() {
         console.log(this.m_contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.m_contGroup.value)));
         this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_name', this.m_contGroup.value.campaign_name);
-        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_playlist_mode', this.m_contGroup.value.campaign_playlist_mode);
-        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_timeline_id', 0); //todo: you need to fix this as zero is arbitrary number right now
-        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_mode', this.m_contGroup.value.kiosk_mode);
         this.rp.reduxCommit()
     }
 

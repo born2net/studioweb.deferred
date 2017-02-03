@@ -27,7 +27,7 @@ import * as _ from "lodash";
                             </div>
                             <ul class="list-group">
                                 <li class="list-group-item">
-                                    kiosk mode
+                                    Channels repeat to fit
                                     <div class="material-switch pull-right">
                                         <input (change)="onFormChange(customerNetwork2.checked)"
                                                [formControl]="m_contGroup.controls['kiosk_mode']"
@@ -37,20 +37,13 @@ import * as _ from "lodash";
                                     </div>
                                 </li>
                                 <li class="list-group-item">
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
-                                        <input [formControl]="m_contGroup.controls['campaign_name']" required
-                                               pattern="[0-9]|[a-z]|[A-Z]+"
-                                               type="text" class="form-control" minlength="3" maxlength="15"
-                                               placeholder="campaign name">
-                                    </div>
-                                </li>
-                                <li class="list-group-item">
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="fa fa-key"></i></span>
-                                        <input type="number" [formControl]="m_contGroup.controls['campaign_playlist_mode']" min="0"
-                                               class="form-control"
-                                               placeholder="access key">
+                                    Channels random
+                                    <div class="material-switch pull-right">
+                                        <input (change)="onFormChange(customerNetwork2.checked)"
+                                               [formControl]="m_contGroup.controls['kiosk_mode']"
+                                               id="customerNetwork2" #customerNetwork2
+                                               name="customerNetwork2" type="checkbox"/>
+                                        <label for="customerNetwork2" class="label-primary"></label>
                                     </div>
                                 </li>
                             </ul>

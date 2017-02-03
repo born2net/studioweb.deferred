@@ -91,7 +91,7 @@ import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.action
     `,
     styles: [`
         .faded {
-            opacity: 0.5;
+            opacity: 0.4;
         }
 
         .campaignPlayMode {

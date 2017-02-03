@@ -15,8 +15,7 @@ import * as _ from "lodash";
     },
     template: `
         <div>
-            <h2>Mini Dashboard</h2>
-            <h1></h1>
+            <h3>Mini Dashboard</h3>
             <div>
                 <chart style="position: relative; left: -150px" [options]="options"></chart>
             </div>
@@ -26,7 +25,7 @@ import * as _ from "lodash";
 })
 export class DashboardProps extends Compbaser {
     options: Object;
-    constructor(private fb: FormBuilder, private ngmslibService: NgmslibService, private yp: YellowPepperService, private rp: RedPepperService) {
+    constructor(private yp: YellowPepperService) {
         super();
         this.options = {
             chart: {
