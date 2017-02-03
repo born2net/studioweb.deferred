@@ -90,7 +90,6 @@
     "@types/jasmine": "2.5.38",
     "@types/jquery": "^2.0.34",
     "@types/node": "^6.0.42",
-    "angular-cli": "1.0.0-beta.26",
     "autoprefixer": "^6.6.1",
     "codelyzer": "~1.0.0-beta.3",
     "gulp": "^3.9.1",
