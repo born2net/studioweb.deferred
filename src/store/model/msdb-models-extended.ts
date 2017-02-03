@@ -15,4 +15,5 @@ export class CampaignsModelExt extends CampaignsModel {
             return 'scheduler'
         }
     }
+
 }

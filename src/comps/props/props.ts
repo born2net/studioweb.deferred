@@ -9,6 +9,11 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
 @Component({
     selector: 'props',
     changeDetection: ChangeDetectionStrategy.OnPush,
+    styles: [`
+        ul {
+            padding: 0
+        }
+    `],
     template: `
         <small class="debug">{{me}}</small>
         <ul [ngSwitch]="m_uiUserFocusItem$ | async">

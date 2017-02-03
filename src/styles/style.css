@@ -613,6 +613,11 @@ Software accelerated vertical
     background-color: #c9302c;
 }
 
+.paddingCeilingFloor20 {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
 small {
     font-size: 0.9em;
     display: block;
@@ -620,13 +625,13 @@ small {
 
 small.debug {
     color: red;
-    /*display: none !important;*/
+    display: none !important;
 }
 
 small.release {
     text-transform: lowercase;
     color: #4c4c4c;
-    /*display: none !important;*/
+    display: none !important;
 }
 
 .panel-title {

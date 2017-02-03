@@ -1,77 +1,134 @@
-import {Component, Input, ChangeDetectionStrategy} from "@angular/core";
-import {FormControl, FormGroup, FormBuilder} from "@angular/forms";
+import {Component, Input} from "@angular/core";
+import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
 import {Compbaser, NgmslibService} from "ng-mslib";
 import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {RedPepperService} from "../../services/redpepper.service";
 import {timeout} from "../../decorators/timeout-decorator";
 import * as _ from "lodash";
+import {Observable} from "rxjs";
+import {List} from "immutable";
 
 @Component({
     selector: 'campaign-props',
-    changeDetection: ChangeDetectionStrategy.OnPush,
     host: {
-        '(input-blur)': 'onFormChange($event)'
+        '(input-blur)': '_onFormChange($event)'
     },
-    template: `<div>
-                <form novalidate autocomplete="off" [formGroup]="m_contGroup">
-                    <div class="row">
-                        <div class="inner userGeneral">
-                            <div class="panel panel-default tallPanel">
-                                <div class="panel-heading">
-                                    <small class="release">target properties
-                                        <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
-                                    </small>
+    template: `
+        <div>
+            <form novalidate autocomplete="off" [formGroup]="m_contGroup">
+                <div class="row">
+                    <div class="inner userGeneral">
+                        <div class="panel panel-default tallPanel">
+                            <div class="panel-heading">
+                                <small class="release">target properties
+                                    <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
+                                </small>
                                 <small class="debug">{{me}}</small>
-                                </div>
-                                <ul class="list-group">
-                                    <li class="list-group-item">
-                                        kiosk mode
-                                        <div class="material-switch pull-right">
-                                            <input (change)="onFormChange(customerNetwork2.checked)"
-                                                   [formControl]="m_contGroup.controls['kiosk_mode']"
-                                                   id="customerNetwork2" #customerNetwork2
-                                                   name="customerNetwork2" type="checkbox"/>
-                                            <label for="customerNetwork2" class="label-primary"></label>
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <div class="input-group">
-                                            <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
-                                            <input [formControl]="m_contGroup.controls['campaign_name']" required
-                                                   pattern="[0-9]|[a-z]|[A-Z]+"
-                                                   type="text" class="form-control" minlength="3" maxlength="15"
-                                                   placeholder="campaign name">
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <div class="input-group">
-                                            <span class="input-group-addon"><i class="fa fa-key"></i></span>
-                                            <input type="number" [formControl]="m_contGroup.controls['campaign_playlist_mode']" min="0"
-                                                   class="form-control"
-                                                   placeholder="access key">
-                                        </div>
-                                    </li>
-                                </ul>
                             </div>
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    <span i18n>kiosk mode</span>
+                                    <div class="material-switch pull-right">
+                                        <input (change)="_onFormChange(customerNetwork2.checked)"
+                                               [formControl]="m_contGroup.controls['kiosk_mode']"
+                                               id="customerNetwork2" #customerNetwork2
+                                               name="customerNetwork2" type="checkbox"/>
+                                        <label for="customerNetwork2" class="label-primary"></label>
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
+                                        <input [formControl]="m_contGroup.controls['campaign_name']" required
+                                               pattern="[0-9]|[a-z]|[A-Z]+"
+                                               type="text" class="form-control" minlength="3" maxlength="15"
+                                               placeholder="campaign name">
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <span i18n id="campaignModeLabel">Campaign playback mode:</span>
+                                    <div class="row paddingCeilingFloor20">
+                                        <div class="center-block" style="width: 240px">
+                                            <button type="button" (click)="_onChangePlaylistMode('0')"
+                                                    [ngClass]="{faded: ((campaignModel$ | async)?.getCampaignPlaylistMode() == 1)}"
+                                                    class="campaignPlayMode btn btn-default">
+                                                <span class="fa fa-repeat"></span>
+                                            </button>
+                                            <button type="button" (click)="_onChangePlaylistMode('1')"
+                                                    [ngClass]="{faded: ((campaignModel$ | async)?.getCampaignPlaylistMode() == 0)}"
+                                                    class="campaignPlayMode btn btn-default">
+                                                <span class="fa fa-calendar"></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="(campaignModel$ | async)?.getCampaignPlaylistMode() == 0">
+                                        <p i18n>Sequencer (simple mode):</p>
+                                        <p i18n>Play timelines for this campaign in a continuous loop. It is easy to setup and simple to use</p>
+                                    </div>
+                                    <div *ngIf="(campaignModel$ | async)?.getCampaignPlaylistMode() == 1">
+                                        <p i18n>Scheduler (advanced mode): </p>
+                                        <p i18n>Play timelines for this campaign only on specific times. For example, play Timeline A in the morning and Timeline B at night.</p>
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="center-block row paddingCeilingFloor20" style="width: 144px">
+                                        <button (click)="removeCampaign()" class="btn btn-danger">
+                                            <i class="fa fa-remove"></i>
+                                            delete campaign
+                                        </button>
+                                    </div>
+
+                                </li>
+                            </ul>
                         </div>
                     </div>
-                </form>
-                <button (click)="removeCampaign()"  class="btn">delete campaign</button>
-            </div>
+                </div>
+            </form>
+        </div>
     `,
     styles: [`
-        input.ng-invalid { border-right: 10px solid red;  }
-        .material-switch {  position: relative; padding-top: 10px; }
-        .input-group { padding-top: 10px; } 
-        i { width: 20px; }
+        .faded {
+            opacity: 0.5;
+        }
+
+        .campaignPlayMode {
+            font-size: 4em;
+            width: 118px;
+        }
+
+        input.ng-invalid {
+            border-right: 10px solid red;
+        }
+
+        .material-switch {
+            position: relative;
+            padding-top: 10px;
+        }
+
+        .input-group {
+            padding-top: 10px;
+        }
+
+        i {
+            width: 20px;
+        }
     `]
 })
 export class CampaignProps extends Compbaser {
 
+    /**
+     * In this example we demonstrate two ways we can bind to the store values:
+     * 
+     * 1. campaignModel$ :: via Observable subscription using async into the template: [ngClass]="{faded: ((campaignModel$ | async)?.getCampaignPlaylistMode() == 1)}" ...
+     * 2. campaignModel :: direct grabbing the campaignModel from the store and doing a loop over keys: _.forEach(this.formInputs, (value, key: string) => { ...
+     *
+     **/
+
     private campaignModel: CampaignsModelExt;
+    private campaignModel$: Observable<CampaignsModelExt>;
     private formInputs = {};
-    m_contGroup: FormGroup;
+    private m_contGroup: FormGroup;
 
     constructor(private fb: FormBuilder, private ngmslibService: NgmslibService, private yp: YellowPepperService, private rp: RedPepperService) {
         super();
@@ -85,11 +142,20 @@ export class CampaignProps extends Compbaser {
         })
 
         this.cancelOnDestroy(
-            this.yp.listenCampaignSelected().subscribe((campaign:CampaignsModelExt)=>{
-                this.campaignModel = campaign;
-                this.renderFormInputs();
-            })
+            this.yp.listenCampaignSelected()
+                .subscribe((campaign: CampaignsModelExt) => {
+                    this.campaignModel = campaign;
+                    this.renderFormInputs();
+                })
         );
+
+        var campaignIdSelected$ = this.yp.ngrxStore.select(store => store.appDb.uiState.campaign.campaignSelected)
+        var campaigns$ = this.yp.ngrxStore.select(store => store.msDatabase.sdk.table_campaigns);
+        this.campaignModel$ = campaignIdSelected$.combineLatest(campaigns$, (campaignId: number, campaigns: List<CampaignsModelExt>) => {
+            return campaigns.find((i_campaign: CampaignsModelExt) => {
+                return i_campaign.getCampaignId() == campaignId;
+            });
+        });
     }
 
     @Input()
@@ -98,7 +164,13 @@ export class CampaignProps extends Compbaser {
             this.renderFormInputs();
     }
 
-    private onFormChange(event) {
+    _onChangePlaylistMode(mode: string) {
+        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_playlist_mode', mode);
+        this.rp.reduxCommit();
+    }
+
+
+    private _onFormChange(event) {
         this.updateSore();
     }
 
@@ -112,7 +184,7 @@ export class CampaignProps extends Compbaser {
         this.rp.reduxCommit()
     }
 
-    private removeCampaign(){
+    private removeCampaign() {
         var campaignId = this.campaignModel.getCampaignId();
         this.rp.removeCampaignKeepBoards(campaignId);
         this.rp.reduxCommit();
@@ -132,92 +204,3 @@ export class CampaignProps extends Compbaser {
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-// this.cancelOnDestroy(
-//     this.yp.listenCampaignSelected().subscribe((i_campaignId) => {
-//         this.yp.findCampaignByIdTest(i_campaignId).one((campaign: CampaignsModelExt) => {
-//             this.campaignModel = campaign;
-//             this.renderFormInputs();
-//         })
-//     })
-// )
-// var campaign1$ = this.yellowpepperService.findCampaignObs(0)
-// var campaign2$ = this.yellowpepperService.findCampaignObs(1)
-// var campaign3$ = this.yellowpepperService.findCampaignObs(1)
-// campaign1$.concatMap((x: CampaignsModelExt) => {
-//     return campaign2$;
-// }, (a: CampaignsModelExt, b: CampaignsModelExt) => {
-//     return a;
-// }).concatMap((campaignsModel: CampaignsModelExt) => {
-//     return this.yellowpepperService.findCampaignObs(campaignsModel.getCampaignId())
-// }, (c: CampaignsModelExt, d: CampaignsModelExt) => {
-//     console.log(c, d);
-//     return d;
-// }).concatMap((campaignsModel: CampaignsModelExt) => this.yellowpepperService.findCampaignObs(campaignsModel.getCampaignId()), (e: CampaignsModelExt, f: CampaignsModelExt) => {
-//     console.log(e, f);
-//     return e
-// }).take(1).subscribe((g: CampaignsModelExt) => {
-//     console.log(g);
-// })
-// private findCampaignObs(i_campaignId: number): Observable<CampaignsModelExt> {
-//     return this.store.select(store => store.msDatabase.sdk.table_campaigns)
-//         .take(1)
-//         .map((i_campaigns: List<CampaignsModelExt>) => {
-//             console.log('look up campaign ' + i_campaignId);
-//             return i_campaigns.find((i_campaign: CampaignsModelExt) => {
-//                 var id = i_campaign.getCampaignId();
-//                 return id == i_campaignId;
-//             });
-//         });
-// }
-// private findCampaign(i_campaignId: number) {
-//     let v;
-//     this.store.select(store => store.msDatabase.sdk.table_campaigns).take(1).subscribe((i_campaigns: List<CampaignsModelExt>) => {
-//         console.log('look up campaign ' + i_campaignId);
-//         v = i_campaigns.find((i_campaign: CampaignsModelExt) => {
-//             var id = i_campaign.getCampaignId();
-//             return id == i_campaignId;
-//         })
-//     })
-//     return v;
-// }
-// this.cancelOnDestroy(
-//     this.yellowpepperService.findCampaignObsConcatTest(0).subscribe((camp:CampaignsModelExt)=>{
-//         console.log(camp);
-//     })
-// )
-// import {Subscriber} from "rxjs";
-// private listeners: Subscriber<any> = new Subscriber();
-// this.listeners.add(
-//     this.yp.listenCampaignSelected().subscribe((i_campaignId) => {
-//
-//         this.yp.findCampaignByIdTest(i_campaignId).subscribe((campaign: CampaignsModelExt) => {
-//             this.campaignModel = campaign;
-//             this.renderFormInputs();
-//         })
-//
-//         this.yp.findCampaignByIdTest(i_campaignId).subscribe((campaign: CampaignsModelExt) => {
-//             this.campaignModel = campaign;
-//             this.renderFormInputs();
-//         })
-//
-//         this.yp.findCampaignByIdTest(i_campaignId).subscribe((campaign: CampaignsModelExt) => {
-//             this.campaignModel = campaign;
-//             this.renderFormInputs();
-//         })
-//     })
-// )
-// destroy() {
-//     // this.listeners.unsubscribe();
-// }

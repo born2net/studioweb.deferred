@@ -16,34 +16,38 @@ import {Component, ChangeDetectionStrategy, ElementRef, Output, EventEmitter} fr
             -moz-transition: width 1s ease, margin 1s ease;
             -o-transition: width 1s ease, margin 1s ease;
             transition: width 1s ease, margin 1s ease;
-            background-color: #4c4c4c;
-            padding: 0;
+            background-color: #e5e5e5;
             margin: 0;
             z-index: 200;
-            border-left: 2px #bdbdbd solid;
+            border-left: 2px #c9c9c9 solid;
         }
-        
+
+        .toggleArrow {
+            font-size: 1.5em;
+            color: #313335
+        }
+
         .restorePanel {
             position: absolute;
             right: 0;
             top: 3px;
         }
-        
+
         .fa-arrow-circle-right {
             padding-top: 60px;
         }
     `],
     template: `
-            <!--<div class="hidden-xs hidden-sm restorePanel" *ngIf="!showSidePanel">-->
-            <div class="restorePanel" *ngIf="!showSidePanel">
-                <a style="font-size: 1.5em ; color: #313335" href="#" class="btn fa fa-arrow-circle-left" (click)="_toggle($event)"></a>
-            </div>
-            
-            <!--<div class="hidden-xs hidden-sm col-md-2 col-lg-2 propPanelWrap">-->
-            <div class="col-xs-5 col-sm-4 col-md-3 col-lg-2 propPanelWrap">
-                <a style="font-size: 1.5em ; color: white" href="#" class="btn fa fa-arrow-circle-right" (click)="_toggle($event)"></a>
-                <ng-content></ng-content>
-            </div>
+        <!--<div class="hidden-xs hidden-sm restorePanel" *ngIf="!showSidePanel">-->
+        <div class="restorePanel" *ngIf="!showSidePanel">
+            <a href="#" class="toggleArrow btn fa fa-arrow-circle-left" (click)="_toggle($event)"></a>
+        </div>
+
+        <!--<div class="hidden-xs hidden-sm col-md-2 col-lg-2 propPanelWrap">-->
+        <div class="col-xs-5 col-sm-4 col-md-3 col-lg-2 propPanelWrap">
+            <a href="#" class="toggleArrow btn fa fa-arrow-circle-right" (click)="_toggle($event)"></a>
+            <ng-content></ng-content>
+        </div>
     `
 })
 export class PanelSplitSide {

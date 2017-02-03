@@ -41,11 +41,6 @@ export class CampaignManager extends Compbaser {
 
         this.timelineSelected$ = this.yp.ngrxStore.select(store => store.appDb.uiState.campaign.timelineSelected).map(v => v);
 
-        // this.yp.ngrxStore.select(store => store.appDb.uiState.campaign.campaignSelected).map((v) => {
-        //     // console.log(v);
-        // }).subscribe((e) => {
-        // });
-
 
         this.userModel$ = this.yp.ngrxStore.select(store => store.appDb.userModel);
         this.campaigns$ = this.yp.ngrxStore.select(store => store.msDatabase.sdk.table_campaigns).map((list: List<CampaignsModelExt>) => {
