@@ -150,6 +150,7 @@ export class CampaignProps extends Compbaser {
             this.formInputs[key] = this.m_contGroup.controls[key] as FormControl;
         })
 
+        // example 1: subscribe to store slice via subscription and and set to local member campaignModel
         this.cancelOnDestroy(
             this.yp.listenCampaignSelected()
                 .subscribe((campaign: CampaignsModelExt) => {
@@ -159,8 +160,7 @@ export class CampaignProps extends Compbaser {
                 })
         );
 
-        this.listenUpdatedFormReactive();
-
+        // example 2: hook to store slice observable and pipe to async in template
         var campaignIdSelected$ = this.yp.ngrxStore.select(store => store.appDb.uiState.campaign.campaignSelected)
         var campaigns$ = this.yp.ngrxStore.select(store => store.msDatabase.sdk.table_campaigns);
         this.campaignModel$ = campaignIdSelected$.combineLatest(campaigns$, (campaignId: number, campaigns: List<CampaignsModelExt>) => {
@@ -168,6 +168,8 @@ export class CampaignProps extends Compbaser {
                 return i_campaign.getCampaignId() == campaignId;
             });
         });
+
+        this.listenUpdatedFormReactive();
     }
 
     @Input()

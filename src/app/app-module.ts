@@ -113,7 +113,7 @@ export function appReducer(state: any = INITIAL_APPLICATION_STATE, action: any) 
 export class AppModule {
     constructor(private compiler:Compiler, private ngmslibService: NgmslibService) {
         console.log(`running in dev mode: ${ngmslibService.inDevMode()}`);
-        console.log(`App in ${(compiler instanceof Compiler) ? 'AIT' : 'JIT'} mode`);
+        console.log(`App in ${(compiler instanceof Compiler) ? 'AOT' : 'JIT'} mode`);
         window['jQueryAny'] = jQuery;
         this.ngmslibService.globalizeStringJS();
         console.log(StringJS('app-loaded-and-ready').humanize().s);
