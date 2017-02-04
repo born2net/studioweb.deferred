@@ -1,5 +1,5 @@
 import {Component, Input} from "@angular/core";
-import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
+import {FormBuilder, FormControl, FormGroup, Validator, Validators} from "@angular/forms";
 import {Compbaser, NgmslibService} from "ng-mslib";
 import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
 import {YellowPepperService} from "../../services/yellowpepper.service";
@@ -10,6 +10,8 @@ import {Observable} from "rxjs";
 import {List} from "immutable";
 import {IUiState} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
+import { NGValidators } from 'ng-validators';
+
 
 @Component({
     selector: 'campaign-props',
@@ -142,7 +144,7 @@ export class CampaignProps extends Compbaser {
     constructor(private fb: FormBuilder, private ngmslibService: NgmslibService, private yp: YellowPepperService, private rp: RedPepperService) {
         super();
         this.m_contGroup = fb.group({
-            'campaign_name': [''],
+            'campaign_name': ['', [Validators.required, NGValidators.isAlphanumeric()]],
             'campaign_playlist_mode': [0],
             'kiosk_mode': [0]
         });
@@ -219,7 +221,7 @@ export class CampaignProps extends Compbaser {
                 .withLatestFrom(this.m_contGroup.valueChanges, (valid, value) => value)
                 .debounceTime(100)
                 .subscribe(value => {
-                    // console.log('res ' + JSON.stringify(value) + ' ' + Math.random())
+                    console.log('res ' + JSON.stringify(value) + ' ' + Math.random())
                     this.saveToStore();
                 })
         )
@@ -227,7 +229,7 @@ export class CampaignProps extends Compbaser {
 
     @timeout()
     private saveToStore() {
-        // console.log(this.m_contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.m_contGroup.value)));
+        console.log(this.m_contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.m_contGroup.value)));
         if (this.m_contGroup.status != 'VALID')
             return;
         this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_name', this.m_contGroup.value.campaign_name);

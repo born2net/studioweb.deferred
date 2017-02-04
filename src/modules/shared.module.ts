@@ -25,7 +25,7 @@ var sharedComponents = [Infobox, Sliderpanel, Slideritem, PanelSplitMain, PanelS
     MatchBodyHeight, ScreenTemplate, CampaignProps, BlurForwarder, Props, TimelineProps, ChannelProps, DashboardProps, CampaignEditorProps];
 
 @NgModule({
-    imports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule, ContextMenuModule, ChartModule],
+    imports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule, ContextMenuModule, ChartModule, ReactiveFormsModule],
     exports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule, ContextMenuModule, ChartModule, ...sharedComponents],
     declarations: [...sharedComponents]
 })
