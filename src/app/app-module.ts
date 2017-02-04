@@ -1,5 +1,5 @@
 import {BrowserModule} from "@angular/platform-browser";
-import {NgModule} from "@angular/core";
+import {Compiler, NgModule} from "@angular/core";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {HttpModule, JsonpModule} from "@angular/http";
 import {Ng2Bs3ModalModule} from "ng2-bs3-modal/ng2-bs3-modal";
@@ -111,8 +111,9 @@ export function appReducer(state: any = INITIAL_APPLICATION_STATE, action: any) 
 })
 
 export class AppModule {
-    constructor(private ngmslibService: NgmslibService) {
+    constructor(private compiler:Compiler, private ngmslibService: NgmslibService) {
         console.log(`running in dev mode: ${ngmslibService.inDevMode()}`);
+        console.log(`App in ${(compiler instanceof Compiler) ? 'AIT' : 'JIT'} mode`);
         window['jQueryAny'] = jQuery;
         this.ngmslibService.globalizeStringJS();
         console.log(StringJS('app-loaded-and-ready').humanize().s);

@@ -181,13 +181,35 @@ export class CampaignProps extends Compbaser {
         this.rp.reduxCommit();
     }
 
+    // example 1 on input update via manually for looping
+    private renderFormInputsManual() {
+        if (!this.campaignModel)
+            return;
+        _.forEach(this.formInputs, (value, key: string) => {
+            let data = this.campaignModel.getKey(key);
+            data = StringJS(data).booleanToNumber();
+            this.formInputs[key].setValue(data)
+        });
+    };
 
-    // example 1 blur
+    // example 2 on input update via observable and patch value
+    private renderFormInputsReactive() {
+        this.cancelOnDestroy(
+            this.yp.listenCampaignSelected()
+                .subscribe((i_campaignModel: CampaignsModelExt) => {
+                    this.campaignModel = i_campaignModel;
+                    var bb = this.campaignModel.toPureJs();
+                    // this.m_contGroup.patchValue(bb);
+                })
+        );
+    };
+
+    // example on changes 1 blur
     private listenUpdatedFormBlur(event) {
         this.saveToStore();
     }
 
-    // example 2 observable
+    // example 2 on changes observable
     private listenUpdatedFormReactive() {
         this.cancelOnDestroy(
             this.m_contGroup.statusChanges
@@ -237,29 +259,6 @@ export class CampaignProps extends Compbaser {
             }
         });
     }
-
-    // example 1 update via manually for looping
-    private renderFormInputsManual() {
-        if (!this.campaignModel)
-            return;
-        _.forEach(this.formInputs, (value, key: string) => {
-            let data = this.campaignModel.getKey(key);
-            data = StringJS(data).booleanToNumber();
-            this.formInputs[key].setValue(data)
-        });
-    };
-
-    // example 2 update via observable and patch value
-    private renderFormInputsReactive() {
-        this.cancelOnDestroy(
-            this.yp.listenCampaignSelected()
-                .subscribe((i_campaignModel: CampaignsModelExt) => {
-                    this.campaignModel = i_campaignModel;
-                    var bb = this.campaignModel.toPureJs();
-                    // this.m_contGroup.patchValue(bb);
-                })
-        );
-    };
 
     destroy() {
     }
