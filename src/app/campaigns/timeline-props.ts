@@ -85,7 +85,7 @@ import {Observable} from "rxjs";
 })
 export class TimelineProps extends Compbaser {
 
-    private campaignModel: CampaignsModelExt;
+    private timelineModel: CampaignTimelinesModel;
     private formInputs = {};
     // private duration: string = '00:00:00'
     private m_contGroup: FormGroup;
@@ -95,22 +95,12 @@ export class TimelineProps extends Compbaser {
     constructor(private fb: FormBuilder, private ngmslibService: NgmslibService, private yp: YellowPepperService, private rp: RedPepperService) {
         super();
         this.m_contGroup = fb.group({
-            'campaign_name': [''],
             'timeline_name': ['']
         });
         _.forEach(this.m_contGroup.controls, (value, key: string) => {
             this.formInputs[key] = this.m_contGroup.controls[key] as FormControl;
         })
 
-        this.renderFormInputsReactive();
-
-        this.cancelOnDestroy(
-            this.yp.listenCampaignSelected()
-                .subscribe((campaign: CampaignsModelExt) => {
-                    this.campaignModel = campaign;
-                    // this.renderFormInputs();
-                })
-        )
 
         this.m_totalDuration$ = this.yp.ngrxStore.select(store => store.appDb.uiState.campaign.timelineSelected)
             .switchMap((i_campaignId: number) => {
@@ -119,21 +109,23 @@ export class TimelineProps extends Compbaser {
 
         this.listenUpdatedForm();
 
+        //this.renderFormInputsReactive();
         //this.m_timelineSelected$ = this.yp.getTimeline()
-        // this.m_timelineSelected$ = this.yp.ngrxStore.select(store => store.appDb.uiState.campaign.timelineSelected)
+        //this.m_timelineSelected$ = this.yp.ngrxStore.select(store => store.appDb.uiState.campaign.timelineSelected)
 
         this.cancelOnDestroy(
             this.yp.listenTimelineSelected()
-                .subscribe((timeline: CampaignTimelinesModel) => {
-                    console.log(timeline);
+                .subscribe((i_timelineModel: CampaignTimelinesModel) => {
+                    this.timelineModel = i_timelineModel;
+                    this.renderFormInputs();
                 })
         );
 
     }
 
     // @Input()
-    // set setCampaignModel(i_campaignModel) {
-    //     if (i_campaignModel)
+    // set setTimelineModel(i_timelineModel) {
+    //     if (i_timelineModel)
     //         this.renderFormInputs();
     // }
 
@@ -156,27 +148,27 @@ export class TimelineProps extends Compbaser {
     @timeout()
     private updateSore() {
         console.log(this.m_contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.m_contGroup.value)));
-        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_name', this.m_contGroup.value.campaign_name);
+        this.rp.setCampaignTimelineRecord(this.timelineModel.getCampaignTimelineId(), 'timeline_name', this.m_contGroup.value.timeline_name);
         this.rp.reduxCommit()
     }
 
-    private renderFormInputsReactive() {
-        this.cancelOnDestroy(
-            this.yp.ngrxStore.select(store => store.appDb.uiState.campaign.timelineSelected)
-                .switchMap((i_timelineId: number) => {
-                    return this.yp.getTimeline(i_timelineId)
-                }).subscribe((v: CampaignTimelinesModel) => {
-                var bb = v.toPureJs();
-                this.m_contGroup.patchValue(bb);
-            })
-        )
-    };
+    // private renderFormInputsReactive() {
+    //     this.cancelOnDestroy(
+    //         this.yp.ngrxStore.select(store => store.appDb.uiState.campaign.timelineSelected)
+    //             .switchMap((i_timelineId: number) => {
+    //                 return this.yp.getTimeline(i_timelineId)
+    //             }).subscribe((v: CampaignTimelinesModel) => {
+    //             var bb = v.toPureJs();
+    //             this.m_contGroup.patchValue(bb);
+    //         })
+    //     )
+    // };
 
     private renderFormInputs() {
-        if (!this.campaignModel)
+        if (!this.timelineModel)
             return;
         _.forEach(this.formInputs, (value, key: string) => {
-            let data = this.campaignModel.getKey(key);
+            let data = this.timelineModel.getKey(key);
             data = StringJS(data).booleanToNumber();
             this.formInputs[key].setValue(data)
         });

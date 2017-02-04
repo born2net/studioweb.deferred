@@ -30,6 +30,10 @@ import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.action
                             </div>
                             <ul class="list-group">
                                 <li class="list-group-item">
+                                    <span i18n>campaign id: </span>
+                                    {{campaignModel?.getCampaignId()}}
+                                </li>
+                                <li class="list-group-item">
                                     <span i18n>kiosk mode</span>
                                     <div class="material-switch pull-right">
                                         <input (change)="_onFormChange(customerNetwork2.checked)"
@@ -148,8 +152,11 @@ export class CampaignProps extends Compbaser {
                 .subscribe((campaign: CampaignsModelExt) => {
                     this.campaignModel = campaign;
                     this.renderFormInputs();
+                    this.renderFormInputsReactive();
                 })
         );
+
+        this.listenUpdatedForm();
 
         var campaignIdSelected$ = this.yp.ngrxStore.select(store => store.appDb.uiState.campaign.campaignSelected)
         var campaigns$ = this.yp.ngrxStore.select(store => store.msDatabase.sdk.table_campaigns);
@@ -176,9 +183,24 @@ export class CampaignProps extends Compbaser {
         this.updateSore();
     }
 
+    private listenUpdatedForm() {
+        this.cancelOnDestroy(
+            this.m_contGroup.statusChanges
+                .filter(valid => valid === 'VALID')
+                .withLatestFrom(this.m_contGroup.valueChanges, (valid, value) => value)
+                .debounceTime(100)
+                .subscribe(value => {
+                    console.log('res ' + JSON.stringify(value) + ' ' + Math.random())
+                    this.updateSore();
+                })
+        )
+    }
+
     @timeout()
     private updateSore() {
         console.log(this.m_contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.m_contGroup.value)));
+        if (this.m_contGroup.status!='VALID')
+            return;
         this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_name', this.m_contGroup.value.campaign_name);
         this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_playlist_mode', this.m_contGroup.value.campaign_playlist_mode);
         this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_timeline_id', 0); //todo: you need to fix this as zero is arbitrary number right now
@@ -210,6 +232,18 @@ export class CampaignProps extends Compbaser {
             }
         });
     }
+
+    private renderFormInputsReactive() {
+        this.cancelOnDestroy(
+            this.yp.listenCampaignSelected()
+                .subscribe((i_campaignModel: CampaignsModelExt) => {
+                    this.campaignModel = i_campaignModel;
+                    var bb = this.campaignModel.toPureJs();
+                    // this.m_contGroup.patchValue(bb);
+                })
+        );
+    };
+
 
     private renderFormInputs() {
         if (!this.campaignModel)
