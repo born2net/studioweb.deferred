@@ -14,7 +14,7 @@ import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.action
 @Component({
     selector: 'campaign-props',
     host: {
-        '(input-blur)': '_onFormChange($event)'
+        '(input-blur)': 'listenUpdatedFormBlur($event)'
     },
     template: `
         <div>
@@ -36,7 +36,7 @@ import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.action
                                 <li class="list-group-item">
                                     <span i18n>kiosk mode</span>
                                     <div class="material-switch pull-right">
-                                        <input (change)="_onFormChange(customerNetwork2.checked)"
+                                        <input (change)="listenUpdatedFormBlur(customerNetwork2.checked)"
                                                [formControl]="m_contGroup.controls['kiosk_mode']"
                                                id="customerNetwork2" #customerNetwork2
                                                name="customerNetwork2" type="checkbox"/>
@@ -154,12 +154,12 @@ export class CampaignProps extends Compbaser {
             this.yp.listenCampaignSelected()
                 .subscribe((campaign: CampaignsModelExt) => {
                     this.campaignModel = campaign;
-                    this.renderFormInputs();
+                    this.renderFormInputsManual();
                     this.renderFormInputsReactive();
                 })
         );
 
-        this.listenUpdatedForm();
+        this.listenUpdatedFormReactive();
 
         var campaignIdSelected$ = this.yp.ngrxStore.select(store => store.appDb.uiState.campaign.campaignSelected)
         var campaigns$ = this.yp.ngrxStore.select(store => store.msDatabase.sdk.table_campaigns);
@@ -173,7 +173,7 @@ export class CampaignProps extends Compbaser {
     @Input()
     set setCampaignModel(i_campaignModel) {
         if (i_campaignModel)
-            this.renderFormInputs();
+            this.renderFormInputsManual();
     }
 
     _onChangePlaylistMode(mode: string) {
@@ -182,11 +182,13 @@ export class CampaignProps extends Compbaser {
     }
 
 
-    private _onFormChange(event) {
+    // example 1 blur
+    private listenUpdatedFormBlur(event) {
         this.saveToStore();
     }
 
-    private listenUpdatedForm() {
+    // example 2 observable
+    private listenUpdatedFormReactive() {
         this.cancelOnDestroy(
             this.m_contGroup.statusChanges
                 .filter(valid => valid === 'VALID')
@@ -236,6 +238,18 @@ export class CampaignProps extends Compbaser {
         });
     }
 
+    // example 1 update via manually for looping
+    private renderFormInputsManual() {
+        if (!this.campaignModel)
+            return;
+        _.forEach(this.formInputs, (value, key: string) => {
+            let data = this.campaignModel.getKey(key);
+            data = StringJS(data).booleanToNumber();
+            this.formInputs[key].setValue(data)
+        });
+    };
+
+    // example 2 update via observable and patch value
     private renderFormInputsReactive() {
         this.cancelOnDestroy(
             this.yp.listenCampaignSelected()
@@ -245,16 +259,6 @@ export class CampaignProps extends Compbaser {
                     // this.m_contGroup.patchValue(bb);
                 })
         );
-    };
-
-    private renderFormInputs() {
-        if (!this.campaignModel)
-            return;
-        _.forEach(this.formInputs, (value, key: string) => {
-            let data = this.campaignModel.getKey(key);
-            data = StringJS(data).booleanToNumber();
-            this.formInputs[key].setValue(data)
-        });
     };
 
     destroy() {
