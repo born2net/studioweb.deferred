@@ -16,7 +16,6 @@ export const EFFECT_GET_STATIONS = 'EFFECT_GET_STATIONS';
 export class MsdbEffects {
 
     constructor(private actions$: Actions,
-                @Inject('OFFLINE_ENV') private offlineEnv,
                 private redPepperService: RedPepperService,
                 private http: Http) {
     }

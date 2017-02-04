@@ -22,7 +22,7 @@ export class Sliderpanel {
     private dom: HTMLBodyElement;
     private sliders: Array<any> = [];
 
-    constructor(viewContainer: ViewContainerRef, @Inject(DOCUMENT) private doc) {
+    constructor(viewContainer: ViewContainerRef, @Inject(DOCUMENT) private doc:any) {
         this.dom = doc.body;
         this.viewContainer = viewContainer;
         this.el = viewContainer.element.nativeElement;

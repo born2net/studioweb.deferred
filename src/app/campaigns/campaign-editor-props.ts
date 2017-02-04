@@ -9,7 +9,6 @@ import * as _ from "lodash";
 
 @Component({
     selector: 'campaign-editor-props',
-    changeDetection: ChangeDetectionStrategy.OnPush,
     host: {
         '(input-blur)': 'onFormChange($event)'
     },

@@ -9,7 +9,6 @@ import * as _ from "lodash";
 
 @Component({
     selector: 'channel-props',
-    changeDetection: ChangeDetectionStrategy.OnPush,
     host: {
         '(input-blur)': 'onFormChange($event)'
     },

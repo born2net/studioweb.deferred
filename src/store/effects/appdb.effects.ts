@@ -27,10 +27,13 @@ export class AppDbEffects {
     parseString;
 
     constructor(private actions$: Actions,
-                @Inject('OFFLINE_ENV') private offlineEnv,
                 private store: Store<ApplicationState>,
                 private redPepperService: RedPepperService,
                 private http: Http) {
+
+        // todo: disabled injection as broken in AOT
+        // @Inject('OFFLINE_ENV') private offlineEnv,
+        
         this.parseString = xml2js.parseString;
     }
 

@@ -6,6 +6,9 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
 import {RedPepperService} from "../../services/redpepper.service";
 import {timeout} from "../../decorators/timeout-decorator";
 import * as _ from "lodash";
+import {CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
+import {Map, List} from 'immutable';
+import {Observable} from "rxjs";
 
 @Component({
     selector: 'timeline-props',
@@ -26,13 +29,14 @@ import * as _ from "lodash";
                                 <small class="debug">{{me}}</small>
                             </div>
                             <ul class="list-group">
-                                <li class="list-group-item">
-                                    Timeline duration:
-                                    <h3>{{duration}}</h3>
-                                </li>
+                                <!--<li class="list-group-item">-->
+                                    <!--Timeline duration:-->
+                                    <!--<h3>{{m_totalDuration$ | async }}</h3>-->
+                                <!--</li>-->
                                 <li class="list-group-item">
                                     Play mode: <i class="fa fa-plus"></i>
                                 </li>
+                                <label>{{(m_timelineSelected$ | async).getTimelineName()}}</label>
                                 <li class="list-group-item">
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
@@ -42,7 +46,7 @@ import * as _ from "lodash";
                                                placeholder="timeline name">
                                     </div>
                                     <br/>
-                                </li>                             
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -73,8 +77,10 @@ export class TimelineProps extends Compbaser {
 
     private campaignModel: CampaignsModelExt;
     private formInputs = {};
-    private duration:string = '00:00:00'
-    m_contGroup: FormGroup;
+    // private duration: string = '00:00:00'
+    private m_contGroup: FormGroup;
+    private m_totalDuration$: Observable<string>;
+    private m_timelineSelected$: Observable<CampaignTimelinesModel>;
 
     constructor(private fb: FormBuilder, private ngmslibService: NgmslibService, private yp: YellowPepperService, private rp: RedPepperService) {
         super();
@@ -91,6 +97,17 @@ export class TimelineProps extends Compbaser {
                 this.renderFormInputs();
             })
         )
+
+        //this.m_timelineSelected$ = this.yp.getTimeline()
+        this.m_timelineSelected$ = this.yp.ngrxStore.select(store => store.appDb.uiState.campaign.timelineSelected)
+            .switchMap((i_timelineId: number) => {
+                return this.yp.getTimeline(i_timelineId)
+            })
+
+        this.m_totalDuration$ = this.yp.ngrxStore.select(store => store.appDb.uiState.campaign.timelineSelected)
+            .switchMap((i_campaignId: number) => {
+                return this.yp.getTimelineTotalDuration(i_campaignId)
+            })
     }
 
     @Input()

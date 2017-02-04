@@ -47,7 +47,7 @@ export class YellowPepperService {
     }
 
     /**
-     Get all timeline ids for specified campaign
+     Get all timeline s for specified campaign id
      **/
     getCampaignTimelines(i_campaign_id: number): Observable<List<CampaignTimelinesModel>> {
         return this.store.select(store => store.msDatabase.sdk.table_campaign_timelines)
@@ -117,7 +117,7 @@ export class YellowPepperService {
     /**
      Get the assigned viewer id to the specified channel
      **/
-    getAssignedViewerIdFromChannelId(i_campaign_timeline_channel_id) {
+    getAssignedViewerIdFromChannelId(i_campaign_timeline_channel_id):Observable<number> {
         return this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_board_viewer_chanels)
             .map((campaignTimelineBoardViewerChanelsModel: List<CampaignTimelineBoardViewerChanelsModel>) => {
                 return campaignTimelineBoardViewerChanelsModel.reduce((result: number, campaignTimelineBoardViewerChanelsModel) => {
@@ -128,6 +128,31 @@ export class YellowPepperService {
             }).take(1);
     }
 
+    /**
+     Get a timeline model from timeline id
+     **/
+    getTimeline(i_campaign_timeline_id):Observable<CampaignTimelinesModel> {
+        return this.store.select(store => store.msDatabase.sdk.table_campaign_timelines)
+            .map((campaignTimelinesModels: List<CampaignTimelinesModel>) => {
+                return campaignTimelinesModels.find((campaignTimelineModel) => {
+                    return campaignTimelineModel.getCampaignTimelineId() == i_campaign_timeline_id
+                })
+            }).take(1);
+    }
+
+    /**
+     Get a timeline's duration which is set as the total sum of all blocks within the longest running channel
+     **/
+    getTimelineTotalDuration(i_campaign_timeline_id):Observable<string> {
+        return this.store.select(store => store.msDatabase.sdk.table_campaign_timelines)
+            .map((campaignTimelinesModels: List<CampaignTimelinesModel>) => {
+                return campaignTimelinesModels.reduce((result:string, campaignTimelineModel) => {
+                    if (campaignTimelineModel.getCampaignTimelineId() == i_campaign_timeline_id)
+                        result = campaignTimelineModel.getTimelineDuration();
+                    return result;
+                }, '')
+            }).take(1);
+    }
     /**
      Build screenProps json object with all viewers and all of their respective attributes for the given timeline_id / template_id
      **/

@@ -15,11 +15,21 @@ import {NgmslibService} from "ng-mslib";
 
 @Injectable()
 export class AuthService {
-    constructor(private ngmslibService: NgmslibService, private router: Router,
-                @Inject(forwardRef(() => Store)) private store: Store<ApplicationState>,
-                @Inject(forwardRef(() => LocalStorage)) private localStorage: LocalStorage,
-                @Inject(forwardRef(() => StoreService)) private storeService: StoreService,
+    constructor(private ngmslibService: NgmslibService,
+                private router: Router,
+                private store: Store<ApplicationState>,
+                private localStorage: LocalStorage,
+                private storeService: StoreService,
                 private activatedRoute: ActivatedRoute) {
+
+
+        // todo: disabled injection as broken in AOT
+        // constructor(private ngmslibService: NgmslibService, private router: Router,
+        //     @Inject(forwardRef(() => Store)) private store: Store<ApplicationState>,
+        //     @Inject(forwardRef(() => LocalStorage)) private localStorage: LocalStorage,
+        //     @Inject(forwardRef(() => StoreService)) private storeService: StoreService,
+        //     private activatedRoute: ActivatedRoute) {
+
 
         this.store.select(store => store.appDb.userModel).subscribe((userModel: UserModel) => {
             this.userModel = userModel;
@@ -71,7 +81,7 @@ export class AuthService {
         setTimeout(() => {
             console.log('enter app');
             // this.router.navigate(['/App1/Dashboard']);
-            if (this.ngmslibService.inDevMode()){
+            if (this.ngmslibService.inDevMode()) {
                 this.router.navigate(['/App1/Campaigns']);
             } else {
                 this.router.navigate([this.requestedRoute]);
