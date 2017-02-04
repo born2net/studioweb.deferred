@@ -32,6 +32,13 @@ import {Observable} from "rxjs";
                                 <!--Timeline duration:-->
                                 <!--<h3>{{m_totalDuration$ | async }}</h3>-->
                                 <!--</li>-->
+
+                                <!--<button type="button" (click)="_onChangePlaylistMode('0')"-->
+                                <!--[ngClass]="{faded: ((campaignModel$ | async)?.getCampaignPlaylistMode() == 1)}"-->
+                                <!--class="campaignPlayMode btn btn-default">-->
+                                <!--<span class="fa fa-repeat"></span>-->
+                                <!--</button>-->
+
                                 <li class="list-group-item">
                                     Play mode: <i class="fa fa-plus"></i>
 
