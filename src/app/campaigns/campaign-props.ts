@@ -183,7 +183,7 @@ export class CampaignProps extends Compbaser {
 
 
     private _onFormChange(event) {
-        this.updateSore();
+        this.saveToStore();
     }
 
     private listenUpdatedForm() {
@@ -193,15 +193,15 @@ export class CampaignProps extends Compbaser {
                 .withLatestFrom(this.m_contGroup.valueChanges, (valid, value) => value)
                 .debounceTime(100)
                 .subscribe(value => {
-                    console.log('res ' + JSON.stringify(value) + ' ' + Math.random())
-                    this.updateSore();
+                    // console.log('res ' + JSON.stringify(value) + ' ' + Math.random())
+                    this.saveToStore();
                 })
         )
     }
 
     @timeout()
-    private updateSore() {
-        console.log(this.m_contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.m_contGroup.value)));
+    private saveToStore() {
+        // console.log(this.m_contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.m_contGroup.value)));
         if (this.m_contGroup.status != 'VALID')
             return;
         this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_name', this.m_contGroup.value.campaign_name);
@@ -246,7 +246,6 @@ export class CampaignProps extends Compbaser {
                 })
         );
     };
-
 
     private renderFormInputs() {
         if (!this.campaignModel)
