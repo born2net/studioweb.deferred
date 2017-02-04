@@ -46,6 +46,27 @@ export class YellowPepperService {
             });
     }
 
+
+    /**
+     Listen to when a timeline is selected via the store state uiState.campaign.timelineSelected
+     **/
+    public listenTimelineSelected(): Observable<CampaignTimelinesModel> {
+
+        var timelineSelected$ = this.store.select(
+            store => store.appDb.uiState.campaign.timelineSelected
+        );
+        var timelineList$ = this.store.select(
+            store => store.msDatabase.sdk.table_campaign_timelines
+        );
+        return timelineSelected$.withLatestFrom(
+            timelineList$,
+            (timelineId, timelines) => {
+                return timelines.find((i_timeline: CampaignTimelinesModel) => {
+                    return i_timeline.getCampaignTimelineId() == timelineId;
+                });
+            });
+    }
+
     /**
      Get all timeline s for specified campaign id
      **/
@@ -86,7 +107,7 @@ export class YellowPepperService {
     }
 
     getChannelFromViewer(i_selectedTimeline_id, i_campaign_timeline_board_viewer_id): Observable<{}> {
-        return this.getChannelsOfTimeline(i_selectedTimeline_id).switchMap((timeline_channel_ids:Array<number>) => {
+        return this.getChannelsOfTimeline(i_selectedTimeline_id).switchMap((timeline_channel_ids: Array<number>) => {
             return Observable.from(timeline_channel_ids).concatMap((channel: number) => {
                 return this.getAssignedViewerIdFromChannelId(channel)
                     .map(viewer_id => {
@@ -117,7 +138,7 @@ export class YellowPepperService {
     /**
      Get the assigned viewer id to the specified channel
      **/
-    getAssignedViewerIdFromChannelId(i_campaign_timeline_channel_id):Observable<number> {
+    getAssignedViewerIdFromChannelId(i_campaign_timeline_channel_id): Observable<number> {
         return this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_board_viewer_chanels)
             .map((campaignTimelineBoardViewerChanelsModel: List<CampaignTimelineBoardViewerChanelsModel>) => {
                 return campaignTimelineBoardViewerChanelsModel.reduce((result: number, campaignTimelineBoardViewerChanelsModel) => {
@@ -131,7 +152,7 @@ export class YellowPepperService {
     /**
      Get a timeline model from timeline id
      **/
-    getTimeline(i_campaign_timeline_id):Observable<CampaignTimelinesModel> {
+    getTimeline(i_campaign_timeline_id): Observable<CampaignTimelinesModel> {
         return this.store.select(store => store.msDatabase.sdk.table_campaign_timelines)
             .map((campaignTimelinesModels: List<CampaignTimelinesModel>) => {
                 return campaignTimelinesModels.find((campaignTimelineModel) => {
@@ -143,16 +164,17 @@ export class YellowPepperService {
     /**
      Get a timeline's duration which is set as the total sum of all blocks within the longest running channel
      **/
-    getTimelineTotalDuration(i_campaign_timeline_id):Observable<string> {
+    getTimelineTotalDuration(i_campaign_timeline_id): Observable<string> {
         return this.store.select(store => store.msDatabase.sdk.table_campaign_timelines)
             .map((campaignTimelinesModels: List<CampaignTimelinesModel>) => {
-                return campaignTimelinesModels.reduce((result:string, campaignTimelineModel) => {
+                return campaignTimelinesModels.reduce((result: string, campaignTimelineModel) => {
                     if (campaignTimelineModel.getCampaignTimelineId() == i_campaign_timeline_id)
                         result = campaignTimelineModel.getTimelineDuration();
                     return result;
                 }, '')
             }).take(1);
     }
+
     /**
      Build screenProps json object with all viewers and all of their respective attributes for the given timeline_id / template_id
      **/

@@ -1,5 +1,5 @@
-import {Component, Input, ChangeDetectionStrategy} from "@angular/core";
-import {FormControl, FormGroup, FormBuilder} from "@angular/forms";
+import {ChangeDetectionStrategy, Component} from "@angular/core";
+import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
 import {Compbaser, NgmslibService} from "ng-mslib";
 import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
 import {YellowPepperService} from "../../services/yellowpepper.service";
@@ -7,7 +7,6 @@ import {RedPepperService} from "../../services/redpepper.service";
 import {timeout} from "../../decorators/timeout-decorator";
 import * as _ from "lodash";
 import {CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
-import {Map, List} from 'immutable';
 import {Observable} from "rxjs";
 
 @Component({
@@ -30,20 +29,24 @@ import {Observable} from "rxjs";
                             </div>
                             <ul class="list-group">
                                 <!--<li class="list-group-item">-->
-                                    <!--Timeline duration:-->
-                                    <!--<h3>{{m_totalDuration$ | async }}</h3>-->
+                                <!--Timeline duration:-->
+                                <!--<h3>{{m_totalDuration$ | async }}</h3>-->
                                 <!--</li>-->
                                 <li class="list-group-item">
                                     Play mode: <i class="fa fa-plus"></i>
+
+                                    <input type="text" [formControl]="m_contGroup.controls['timeline_name']"/>
+
                                 </li>
-                                <label>{{(m_timelineSelected$ | async).getTimelineName()}}</label>
+                                <!--<label>{{(m_timelineSelected$ | async).getTimelineName()}}</label>-->
+                                <!--<label>{{(m_timelineSelected$ | async).getTimelineName()}}</label>-->
                                 <li class="list-group-item">
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
-                                        <input [formControl]="m_contGroup.controls['campaign_name']" required
-                                               pattern="[0-9]|[a-z]|[A-Z]+"
-                                               type="text" class="form-control" minlength="3" maxlength="15"
-                                               placeholder="timeline name">
+                                        <!--<input [formControl]="m_contGroup.controls['campaign_name']" required-->
+                                        <!--pattern="[0-9]|[a-z]|[A-Z]+"-->
+                                        <!--type="text" class="form-control" minlength="3" maxlength="15"-->
+                                        <!--placeholder="timeline name">-->
                                     </div>
                                     <br/>
                                 </li>
@@ -80,44 +83,67 @@ export class TimelineProps extends Compbaser {
     // private duration: string = '00:00:00'
     private m_contGroup: FormGroup;
     private m_totalDuration$: Observable<string>;
-    private m_timelineSelected$: Observable<CampaignTimelinesModel>;
+    // private m_timelineSelected$: Observable<CampaignTimelinesModel>;
 
     constructor(private fb: FormBuilder, private ngmslibService: NgmslibService, private yp: YellowPepperService, private rp: RedPepperService) {
         super();
         this.m_contGroup = fb.group({
-            'campaign_name': ['']
+            'campaign_name': [''],
+            'timeline_name': ['']
         });
         _.forEach(this.m_contGroup.controls, (value, key: string) => {
             this.formInputs[key] = this.m_contGroup.controls[key] as FormControl;
         })
 
-        this.cancelOnDestroy(
-            this.yp.listenCampaignSelected().subscribe((campaign: CampaignsModelExt) => {
-                this.campaignModel = campaign;
-                this.renderFormInputs();
-            })
-        )
+        this.renderFormInputsReactive();
 
-        //this.m_timelineSelected$ = this.yp.getTimeline()
-        this.m_timelineSelected$ = this.yp.ngrxStore.select(store => store.appDb.uiState.campaign.timelineSelected)
-            .switchMap((i_timelineId: number) => {
-                return this.yp.getTimeline(i_timelineId)
-            })
+        this.cancelOnDestroy(
+            this.yp.listenCampaignSelected()
+                .subscribe((campaign: CampaignsModelExt) => {
+                    this.campaignModel = campaign;
+                    // this.renderFormInputs();
+                })
+        )
 
         this.m_totalDuration$ = this.yp.ngrxStore.select(store => store.appDb.uiState.campaign.timelineSelected)
             .switchMap((i_campaignId: number) => {
                 return this.yp.getTimelineTotalDuration(i_campaignId)
             })
+
+        this.listenUpdatedForm();
+
+        //this.m_timelineSelected$ = this.yp.getTimeline()
+        // this.m_timelineSelected$ = this.yp.ngrxStore.select(store => store.appDb.uiState.campaign.timelineSelected)
+
+        this.cancelOnDestroy(
+            this.yp.listenTimelineSelected()
+                .subscribe((timeline: CampaignTimelinesModel) => {
+                    console.log(timeline);
+                })
+        );
+
     }
 
-    @Input()
-    set setCampaignModel(i_campaignModel) {
-        if (i_campaignModel)
-            this.renderFormInputs();
-    }
+    // @Input()
+    // set setCampaignModel(i_campaignModel) {
+    //     if (i_campaignModel)
+    //         this.renderFormInputs();
+    // }
 
     private onFormChange(event) {
         this.updateSore();
+    }
+
+    private listenUpdatedForm() {
+        this.cancelOnDestroy(
+            this.m_contGroup.statusChanges
+                .filter(valid => valid === 'VALID')
+                .withLatestFrom(this.m_contGroup.valueChanges, (valid, value) => value)
+                .debounceTime(1000)
+                .subscribe(value => {
+                    console.log('res ' + JSON.stringify(value) + ' ' + Math.random())
+                })
+        )
     }
 
     @timeout()
@@ -126,6 +152,18 @@ export class TimelineProps extends Compbaser {
         this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_name', this.m_contGroup.value.campaign_name);
         this.rp.reduxCommit()
     }
+
+    private renderFormInputsReactive() {
+        this.cancelOnDestroy(
+            this.yp.ngrxStore.select(store => store.appDb.uiState.campaign.timelineSelected)
+                .switchMap((i_timelineId: number) => {
+                    return this.yp.getTimeline(i_timelineId)
+                }).subscribe((v: CampaignTimelinesModel) => {
+                var bb = v.toPureJs();
+                this.m_contGroup.patchValue(bb);
+            })
+        )
+    };
 
     private renderFormInputs() {
         if (!this.campaignModel)
