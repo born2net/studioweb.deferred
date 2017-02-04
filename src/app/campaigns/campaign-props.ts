@@ -126,9 +126,12 @@ export class CampaignProps extends Compbaser {
     /**
      * In this example we demonstrate two ways we can bind to the store values:
      *
-     * 1. campaignModel$ :: via Observable subscription using async into the template: [ngClass]="{faded: ((campaignModel$ | async)?.getCampaignPlaylistMode() == 1)}" ...
-     * 2. campaignModel :: direct grabbing the campaignModel from the store and doing a loop over keys: _.forEach(this.formInputs, (value, key: string) => { ...
+     * 1. campaignModel$ via Observable subscription using async into the template: [ngClass]="{faded: ((campaignModel$ | async)?.getCampaignPlaylistMode() == 1)}" ...
+     * 2. campaignModel direct grabbing the campaignModel from the store and doing a loop over keys: _.forEach(this.formInputs, (value, key: string) => { ...
      *
+     * We also demoing here two ways of upding store:
+     * 1. reacting to input changes both via blur
+     * 2. reacting to the Observable of statusChanges
      **/
 
     private campaignModel: CampaignsModelExt;
@@ -199,7 +202,7 @@ export class CampaignProps extends Compbaser {
     @timeout()
     private updateSore() {
         console.log(this.m_contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.m_contGroup.value)));
-        if (this.m_contGroup.status!='VALID')
+        if (this.m_contGroup.status != 'VALID')
             return;
         this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_name', this.m_contGroup.value.campaign_name);
         this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_playlist_mode', this.m_contGroup.value.campaign_playlist_mode);
