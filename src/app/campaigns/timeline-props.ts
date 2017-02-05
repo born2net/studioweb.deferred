@@ -1,7 +1,6 @@
 import {ChangeDetectionStrategy, Component} from "@angular/core";
 import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
 import {Compbaser, NgmslibService} from "ng-mslib";
-import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {RedPepperService} from "../../services/redpepper.service";
 import {timeout} from "../../decorators/timeout-decorator";
@@ -94,6 +93,8 @@ export class TimelineProps extends Compbaser {
 
     constructor(private fb: FormBuilder, private ngmslibService: NgmslibService, private yp: YellowPepperService, private rp: RedPepperService) {
         super();
+
+
         this.m_contGroup = fb.group({
             'timeline_name': ['']
         });
@@ -151,6 +152,19 @@ export class TimelineProps extends Compbaser {
         this.rp.setCampaignTimelineRecord(this.timelineModel.getCampaignTimelineId(), 'timeline_name', this.m_contGroup.value.timeline_name);
         this.rp.reduxCommit()
     }
+
+    /**
+     Populate the timeline length in its properties box
+     @method _populateTimelineLength
+     **/
+    _populateTimelineLength() {
+        // var self = this;
+        // self.m_xdate = BB.comBroker.getService('XDATE');
+        // var totalDuration = parseInt(pepper.getTimelineTotalDuration(self.m_campaign_timeline_id));
+        // totalDuration = self.m_xdate.clearTime().addSeconds(totalDuration).toString('HH:mm:ss');
+        // $(Elements.TIMELINE_LENGTH).text(totalDuration);
+    }
+
 
     // private renderFormInputsReactive() {
     //     this.cancelOnDestroy(
