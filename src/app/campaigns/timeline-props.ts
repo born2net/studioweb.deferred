@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component} from "@angular/core";
+import {ChangeDetectorRef, Component} from "@angular/core";
 import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
 import {Compbaser, NgmslibService} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
@@ -7,10 +7,10 @@ import {timeout} from "../../decorators/timeout-decorator";
 import * as _ from "lodash";
 import {CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 import {Observable} from "rxjs";
+import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
 
 @Component({
     selector: 'timeline-props',
-    changeDetection: ChangeDetectionStrategy.OnPush,
     host: {
         '(input-blur)': 'onFormChange($event)'
     },
@@ -27,32 +27,24 @@ import {Observable} from "rxjs";
                                 <small class="debug">{{me}}</small>
                             </div>
                             <ul class="list-group">
-                                <!--<li class="list-group-item">-->
-                                <!--Timeline duration:-->
-                                <!--<h3>{{m_totalDuration$ | async }}</h3>-->
-                                <!--</li>-->
-
-                                <!--<button type="button" (click)="_onChangePlaylistMode('0')"-->
-                                <!--[ngClass]="{faded: ((campaignModel$ | async)?.getCampaignPlaylistMode() == 1)}"-->
-                                <!--class="campaignPlayMode btn btn-default">-->
-                                <!--<span class="fa fa-repeat"></span>-->
-                                <!--</button>-->
-
                                 <li class="list-group-item">
-                                    Play mode: <i class="fa fa-plus"></i>
-
-                                    <input type="text" [formControl]="m_contGroup.controls['timeline_name']"/>
-
+                                    <div *ngIf="(campaignModel$ | async)?.getCampaignPlaylistMode() == '1'">
+                                        <h4><i class="fa fa-calendar"></i>playback mode: scheduler</h4>
+                                    </div>
+                                    <div *ngIf="(campaignModel$ | async)?.getCampaignPlaylistMode() == '0'">
+                                        <h4><i class="fa fa fa-repeat"></i>playback mode: sequencer</h4>
+                                    </div>
                                 </li>
-                                <!--<label>{{(m_timelineSelected$ | async).getTimelineName()}}</label>-->
-                                <!--<label>{{(m_timelineSelected$ | async).getTimelineName()}}</label>-->
+                                <li class="list-group-item">
+                                    <h3>{{m_duration}}</h3>
+                                </li>
                                 <li class="list-group-item">
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
-                                        <!--<input [formControl]="m_contGroup.controls['campaign_name']" required-->
-                                        <!--pattern="[0-9]|[a-z]|[A-Z]+"-->
-                                        <!--type="text" class="form-control" minlength="3" maxlength="15"-->
-                                        <!--placeholder="timeline name">-->
+                                        <input [formControl]="m_contGroup.controls['timeline_name']" required
+                                               pattern="[0-9]|[a-z]|[A-Z]+"
+                                               type="text" class="form-control" minlength="3" maxlength="15"
+                                               placeholder="timeline name">
                                     </div>
                                     <br/>
                                 </li>
@@ -86,12 +78,13 @@ export class TimelineProps extends Compbaser {
 
     private timelineModel: CampaignTimelinesModel;
     private formInputs = {};
-    // private duration: string = '00:00:00'
+    private m_duration: string = '00:00:00'
     private m_contGroup: FormGroup;
-    private m_totalDuration$: Observable<string>;
+    private campaignModel$: Observable<CampaignsModelExt>;
+
     // private m_timelineSelected$: Observable<CampaignTimelinesModel>;
 
-    constructor(private fb: FormBuilder, private ngmslibService: NgmslibService, private yp: YellowPepperService, private rp: RedPepperService) {
+    constructor(private fb: FormBuilder, private ngmslibService: NgmslibService, private yp: YellowPepperService, private rp: RedPepperService, private cd: ChangeDetectorRef) {
         super();
 
 
@@ -103,10 +96,7 @@ export class TimelineProps extends Compbaser {
         })
 
 
-        this.m_totalDuration$ = this.yp.ngrxStore.select(store => store.appDb.uiState.campaign.timelineSelected)
-            .switchMap((i_campaignId: number) => {
-                return this.yp.getTimelineTotalDuration(i_campaignId)
-            })
+        this.campaignModel$ = this.yp.listenCampaignValueChanged()
 
         this.listenUpdatedForm();
 
@@ -118,7 +108,11 @@ export class TimelineProps extends Compbaser {
             this.yp.listenTimelineSelected()
                 .subscribe((i_timelineModel: CampaignTimelinesModel) => {
                     this.timelineModel = i_timelineModel;
+                    var totalDuration = parseInt(i_timelineModel.getTimelineDuration())
+                    var xdate = new XDate();
+                    this.m_duration = xdate.clearTime().addSeconds(totalDuration).toString('HH:mm:ss');
                     this.renderFormInputs();
+                    this.cd.markForCheck();
                 })
         );
 
@@ -142,7 +136,7 @@ export class TimelineProps extends Compbaser {
                 .debounceTime(1000)
                 .subscribe(value => {
                     console.log('res ' + JSON.stringify(value) + ' ' + Math.random())
-                })
+                })                            
         )
     }
 
@@ -151,18 +145,6 @@ export class TimelineProps extends Compbaser {
         console.log(this.m_contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.m_contGroup.value)));
         this.rp.setCampaignTimelineRecord(this.timelineModel.getCampaignTimelineId(), 'timeline_name', this.m_contGroup.value.timeline_name);
         this.rp.reduxCommit()
-    }
-
-    /**
-     Populate the timeline length in its properties box
-     @method _populateTimelineLength
-     **/
-    _populateTimelineLength() {
-        // var self = this;
-        // self.m_xdate = BB.comBroker.getService('XDATE');
-        // var totalDuration = parseInt(pepper.getTimelineTotalDuration(self.m_campaign_timeline_id));
-        // totalDuration = self.m_xdate.clearTime().addSeconds(totalDuration).toString('HH:mm:ss');
-        // $(Elements.TIMELINE_LENGTH).text(totalDuration);
     }
 
 
