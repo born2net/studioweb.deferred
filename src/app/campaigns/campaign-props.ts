@@ -158,7 +158,7 @@ export class CampaignProps extends Compbaser {
             this.yp.listenCampaignSelected()
                 .subscribe((campaign: CampaignsModelExt) => {
                     this.campaignModel = campaign;
-                    this.renderFormInputsManual();
+                    this.renderFormInputs();
                     this.renderFormInputsReactive();
                 })
         );
@@ -171,7 +171,7 @@ export class CampaignProps extends Compbaser {
     @Input()
     set setCampaignModel(i_campaignModel) {
         if (i_campaignModel)
-            this.renderFormInputsManual();
+            this.renderFormInputs();
     }
 
     _onChangePlaylistMode(mode: string) {
@@ -180,7 +180,7 @@ export class CampaignProps extends Compbaser {
     }
 
     // example 1 on input update via manually for looping
-    private renderFormInputsManual() {
+    private renderFormInputs() {
         if (!this.campaignModel)
             return;
         _.forEach(this.formInputs, (value, key: string) => {

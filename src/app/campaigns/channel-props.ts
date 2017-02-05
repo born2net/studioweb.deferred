@@ -1,17 +1,13 @@
-import {Component, Input, ChangeDetectionStrategy} from "@angular/core";
-import {FormControl, FormGroup, FormBuilder} from "@angular/forms";
+import {Component} from "@angular/core";
+import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
 import {Compbaser, NgmslibService} from "ng-mslib";
-import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {RedPepperService} from "../../services/redpepper.service";
 import {timeout} from "../../decorators/timeout-decorator";
 import * as _ from "lodash";
+import {CampaignTimelineChanelsModel} from "../../store/imsdb.interfaces_auto";
+import {Observable} from "rxjs";
 
-// var state = $(Elements.RANDOM_PLAYBACK + ' option:selected').val() == "on" ? 'True' : 'False';
-// pepper.setCampaignTimelineChannelRecord(self.m_campaign_timeline_chanel_id, 'random_order', state)
-//
-// var state = $(Elements.REPEAT_TO_FIT + ' option:selected').val() == "on" ? 'True' : 'False';
-// pepper.setCampaignTimelineChannelRecord(self.m_campaign_timeline_chanel_id, 'repeat_to_fit', state)
 
 @Component({
     selector: 'channel-props',
@@ -29,26 +25,27 @@ import * as _ from "lodash";
                                     <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
                                 </small>
                                 <small class="debug">{{me}}</small>
+                                Channel name: {{(channel$ | async)?.getChanelName()}}
                             </div>
                             <ul class="list-group">
                                 <li class="list-group-item">
-                                    <span i18n >Channels repeat to fit</span>
+                                    <span i18n>repeat to fit</span>
                                     <div class="material-switch pull-right">
-                                        <input (change)="onFormChange(customerNetwork2.checked)"
-                                               [formControl]="m_contGroup.controls['kiosk_mode']"
-                                               id="customerNetwork2" #customerNetwork2
-                                               name="customerNetwork2" type="checkbox"/>
-                                        <label for="customerNetwork2" class="label-primary"></label>
+                                        <input (change)="onFormChange(w1.checked)"
+                                               [formControl]="m_contGroup.controls['repeat_to_fit']"
+                                               id="w1" #w1
+                                               name="w1" type="checkbox"/>
+                                        <label for="w1" class="label-primary"></label>
                                     </div>
                                 </li>
                                 <li class="list-group-item">
-                                    <span i18n>Channels random</span>
+                                    <span i18n> random order</span>
                                     <div class="material-switch pull-right">
-                                        <input (change)="onFormChange(customerNetwork2.checked)"
-                                               [formControl]="m_contGroup.controls['kiosk_mode']"
-                                               id="customerNetwork2" #customerNetwork2
-                                               name="customerNetwork2" type="checkbox"/>
-                                        <label for="customerNetwork2" class="label-primary"></label>
+                                        <input (change)="onFormChange(w2.checked)"
+                                               [formControl]="m_contGroup.controls['random_order']"
+                                               id="w2" #w2
+                                               name="w2" type="checkbox"/>
+                                        <label for="w2" class="label-primary"></label>
                                     </div>
                                 </li>
                             </ul>
@@ -79,33 +76,30 @@ import * as _ from "lodash";
 })
 export class ChannelProps extends Compbaser {
 
-    private campaignModel: CampaignsModelExt;
+    private channelModel: CampaignTimelineChanelsModel;
     private formInputs = {};
+    private channel$: Observable<CampaignTimelineChanelsModel>;
     m_contGroup: FormGroup;
 
-    constructor(private fb: FormBuilder, private ngmslibService: NgmslibService, private yp: YellowPepperService, private rp: RedPepperService) {
+    constructor(private fb: FormBuilder, private yp: YellowPepperService, private rp: RedPepperService) {
         super();
         this.m_contGroup = fb.group({
-            'campaign_name': [''],
-            'campaign_playlist_mode': [0],
-            'kiosk_mode': [0]
+            'repeat_to_fit': [0],
+            'random_order': [0]
         });
         _.forEach(this.m_contGroup.controls, (value, key: string) => {
             this.formInputs[key] = this.m_contGroup.controls[key] as FormControl;
         })
 
-        this.cancelOnDestroy(
-            this.yp.listenCampaignSelected().subscribe((campaign: CampaignsModelExt) => {
-                this.campaignModel = campaign;
-                this.renderFormInputs();
-            })
-        )
-    }
+        this.channel$ = this.yp.listenChannelValueChanged();
 
-    @Input()
-    set setCampaignModel(i_campaignModel) {
-        if (i_campaignModel)
-            this.renderFormInputs();
+        this.cancelOnDestroy(
+            this.yp.listenChannelSelected()
+                .subscribe((channel: CampaignTimelineChanelsModel) => {
+                    this.channelModel = channel;
+                    this.renderFormInputs();
+                })
+        );
     }
 
     private onFormChange(event) {
@@ -114,19 +108,17 @@ export class ChannelProps extends Compbaser {
 
     @timeout()
     private updateSore() {
-        console.log(this.m_contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.m_contGroup.value)));
-        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_name', this.m_contGroup.value.campaign_name);
-        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_playlist_mode', this.m_contGroup.value.campaign_playlist_mode);
-        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_timeline_id', 0); //todo: you need to fix this as zero is arbitrary number right now
-        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_mode', this.m_contGroup.value.kiosk_mode);
+        // console.log(this.m_contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.m_contGroup.value)));
+        this.rp.setCampaignTimelineChannelRecord(this.channelModel.getCampaignTimelineChanelId(), 'random_order', this.m_contGroup.value.random_order);
+        this.rp.setCampaignTimelineChannelRecord(this.channelModel.getCampaignTimelineChanelId(), 'repeat_to_fit', this.m_contGroup.value.repeat_to_fit);
         this.rp.reduxCommit()
     }
 
     private renderFormInputs() {
-        if (!this.campaignModel)
+        if (!this.channelModel)
             return;
         _.forEach(this.formInputs, (value, key: string) => {
-            let data = this.campaignModel.getKey(key);
+            let data = this.channelModel.getKey(key);
             data = StringJS(data).booleanToNumber();
             this.formInputs[key].setValue(data)
         });

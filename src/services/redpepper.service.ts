@@ -303,6 +303,21 @@ export class RedPepperService {
     }
 
     /**
+     Set a channel_id record in channels table using key and value
+     The method uses generic key / value fields so it can set any part of the record.
+     @method setCampaignTimelineChannelRecord
+     @param {Number} i_channel_id
+     @param {Number} i_key
+     @param {String} i_value
+     @return none
+     **/
+    setCampaignTimelineChannelRecord(i_channel_id, i_key, i_value) {
+        this.databaseManager.table_campaign_timeline_chanels().openForEdit(i_channel_id);
+        var recChannel = this.databaseManager.table_campaign_timeline_chanels().getRec(i_channel_id);
+        recChannel[i_key] = i_value;
+    }
+
+    /**
      Create a new timeline under the specified campaign_id
      @method createNewTimeline
      @param {Number} i_campaign_id
@@ -2710,22 +2725,6 @@ export class RedPepperService {
     getCampaignTimelineChannelRecord(i_channel_id) {
 
         return this.databaseManager.table_campaign_timeline_chanels().getRec(i_channel_id);
-    }
-
-    /**
-     Set a channel_id record in channels table using key and value
-     The method uses generic key / value fields so it can set any part of the record.
-     @method setCampaignTimelineChannelRecord
-     @param {Number} i_channel_id
-     @param {Number} i_key
-     @param {String} i_value
-     @return none
-     **/
-    setCampaignTimelineChannelRecord(i_channel_id, i_key, i_value) {
-
-        this.databaseManager.table_campaign_timeline_chanels().openForEdit(i_channel_id);
-        var recChannel = this.databaseManager.table_campaign_timeline_chanels().getRec(i_channel_id);
-        recChannel[i_key] = i_value;
     }
 
     /**

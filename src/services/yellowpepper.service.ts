@@ -27,6 +27,35 @@ export class YellowPepperService {
     }
 
     /**
+     Listen to when a campaign timeline channel is selected
+     **/
+    public listenChannelSelected(): Observable<CampaignTimelineChanelsModel> {
+        var channelSelected$ = this.store.select(store => store.appDb.uiState.campaign.campaignTimelineChannelSelected);
+        var channelsList$ = this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_chanels);
+        return channelSelected$.withLatestFrom(
+            channelsList$,
+            (channelId, channels) => {
+                return channels.find((i_channel: CampaignTimelineChanelsModel) => {
+                    return i_channel.getCampaignTimelineChanelId() == channelId;
+                });
+            });
+    }
+
+    /**
+     Listen to when a channel that is selected changed value
+     **/
+    public listenChannelValueChanged(): Observable<CampaignTimelineChanelsModel> {
+        var channelIdSelected$ = this.ngrxStore.select(store => store.appDb.uiState.campaign.campaignTimelineChannelSelected)
+        var channels$ = this.ngrxStore.select(store => store.msDatabase.sdk.table_campaign_timeline_chanels);
+        return channelIdSelected$.combineLatest(channels$, (channelId: number, channels: List<CampaignTimelineChanelsModel>) => {
+            return channels.find((i_channel: CampaignTimelineChanelsModel) => {
+                return i_channel.getCampaignTimelineChanelId() == channelId;
+            });
+        });
+    }
+
+
+    /**
      Listen to when a campaign that is selected changed value
      **/
     public listenCampaignValueChanged(): Observable<CampaignsModelExt> {
@@ -40,7 +69,7 @@ export class YellowPepperService {
     }
 
     /**
-     Listen to when a campaign is selected via the store state uiState.campaign.campaignSelected
+     Listen to ONLY when a campaign is selected via the store state uiState.campaign.campaignSelected and grab latest CampaignModel
      **/
     public listenCampaignSelected(): Observable<CampaignsModelExt> {
         var campaignSelected$ = this.store.select(store => store.appDb.uiState.campaign.campaignSelected);
