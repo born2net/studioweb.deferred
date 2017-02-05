@@ -1,16 +1,16 @@
 import {Component, Input} from "@angular/core";
-import {FormBuilder, FormControl, FormGroup, Validator, Validators} from "@angular/forms";
+import {FormBuilder, FormControl, FormGroup, NgControl, Validator, Validators} from "@angular/forms";
 import {Compbaser, NgmslibService} from "ng-mslib";
 import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {RedPepperService} from "../../services/redpepper.service";
 import {timeout} from "../../decorators/timeout-decorator";
-import * as _ from "lodash";
 import {Observable} from "rxjs";
-import {List} from "immutable";
 import {IUiState} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
-import { NGValidators } from 'ng-validators';
+import * as _ from "lodash";
+import {simpleRegExp} from "../../Lib";
+
 
 
 @Component({
@@ -49,8 +49,7 @@ import { NGValidators } from 'ng-validators';
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
                                         <input [formControl]="m_contGroup.controls['campaign_name']" required
-                                               pattern="[0-9]|[a-z]|[A-Z]+"
-                                               type="text" class="form-control" minlength="3" maxlength="15"
+                                               type="text" class="form-control" maxlength="50"
                                                placeholder="campaign name">
                                     </div>
                                 </li>
@@ -144,13 +143,15 @@ export class CampaignProps extends Compbaser {
     constructor(private fb: FormBuilder, private ngmslibService: NgmslibService, private yp: YellowPepperService, private rp: RedPepperService) {
         super();
         this.m_contGroup = fb.group({
-            'campaign_name': ['', [Validators.required, NGValidators.isAlphanumeric()]],
+            'campaign_name': ['', [Validators.required, Validators.pattern(simpleRegExp)]],
             'campaign_playlist_mode': [0],
             'kiosk_mode': [0]
         });
         _.forEach(this.m_contGroup.controls, (value, key: string) => {
             this.formInputs[key] = this.m_contGroup.controls[key] as FormControl;
         })
+
+        this.listenUpdatedFormReactive();
 
         // example 1: subscribe to store slice via subscription and and set to local member campaignModel
         this.cancelOnDestroy(
@@ -163,15 +164,8 @@ export class CampaignProps extends Compbaser {
         );
 
         // example 2: hook to store slice observable and pipe to async in template
-        var campaignIdSelected$ = this.yp.ngrxStore.select(store => store.appDb.uiState.campaign.campaignSelected)
-        var campaigns$ = this.yp.ngrxStore.select(store => store.msDatabase.sdk.table_campaigns);
-        this.campaignModel$ = campaignIdSelected$.combineLatest(campaigns$, (campaignId: number, campaigns: List<CampaignsModelExt>) => {
-            return campaigns.find((i_campaign: CampaignsModelExt) => {
-                return i_campaign.getCampaignId() == campaignId;
-            });
-        });
+        this.campaignModel$ = this.yp.listenCampaignValueChanged()
 
-        this.listenUpdatedFormReactive();
     }
 
     @Input()
@@ -221,7 +215,7 @@ export class CampaignProps extends Compbaser {
                 .withLatestFrom(this.m_contGroup.valueChanges, (valid, value) => value)
                 .debounceTime(100)
                 .subscribe(value => {
-                    console.log('res ' + JSON.stringify(value) + ' ' + Math.random())
+                    // console.log('res ' + JSON.stringify(value) + ' ' + Math.random())
                     this.saveToStore();
                 })
         )
@@ -229,7 +223,7 @@ export class CampaignProps extends Compbaser {
 
     @timeout()
     private saveToStore() {
-        console.log(this.m_contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.m_contGroup.value)));
+        // console.log(this.m_contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.m_contGroup.value)));
         if (this.m_contGroup.status != 'VALID')
             return;
         this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_name', this.m_contGroup.value.campaign_name);

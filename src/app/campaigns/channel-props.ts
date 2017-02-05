@@ -7,6 +7,12 @@ import {RedPepperService} from "../../services/redpepper.service";
 import {timeout} from "../../decorators/timeout-decorator";
 import * as _ from "lodash";
 
+// var state = $(Elements.RANDOM_PLAYBACK + ' option:selected').val() == "on" ? 'True' : 'False';
+// pepper.setCampaignTimelineChannelRecord(self.m_campaign_timeline_chanel_id, 'random_order', state)
+//
+// var state = $(Elements.REPEAT_TO_FIT + ' option:selected').val() == "on" ? 'True' : 'False';
+// pepper.setCampaignTimelineChannelRecord(self.m_campaign_timeline_chanel_id, 'repeat_to_fit', state)
+
 @Component({
     selector: 'channel-props',
     host: {
@@ -26,7 +32,7 @@ import * as _ from "lodash";
                             </div>
                             <ul class="list-group">
                                 <li class="list-group-item">
-                                    Channels repeat to fit
+                                    <span i18n >Channels repeat to fit</span>
                                     <div class="material-switch pull-right">
                                         <input (change)="onFormChange(customerNetwork2.checked)"
                                                [formControl]="m_contGroup.controls['kiosk_mode']"
@@ -36,7 +42,7 @@ import * as _ from "lodash";
                                     </div>
                                 </li>
                                 <li class="list-group-item">
-                                    Channels random
+                                    <span i18n>Channels random</span>
                                     <div class="material-switch pull-right">
                                         <input (change)="onFormChange(customerNetwork2.checked)"
                                                [formControl]="m_contGroup.controls['kiosk_mode']"

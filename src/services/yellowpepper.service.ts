@@ -27,16 +27,24 @@ export class YellowPepperService {
     }
 
     /**
+     Listen to when a campaign that is selected changed value
+     **/
+    public listenCampaignValueChanged(): Observable<CampaignsModelExt> {
+        var campaignIdSelected$ = this.ngrxStore.select(store => store.appDb.uiState.campaign.campaignSelected)
+        var campaigns$ = this.ngrxStore.select(store => store.msDatabase.sdk.table_campaigns);
+        return campaignIdSelected$.combineLatest(campaigns$, (campaignId: number, campaigns: List<CampaignsModelExt>) => {
+            return campaigns.find((i_campaign: CampaignsModelExt) => {
+                return i_campaign.getCampaignId() == campaignId;
+            });
+        });
+    }
+
+    /**
      Listen to when a campaign is selected via the store state uiState.campaign.campaignSelected
      **/
     public listenCampaignSelected(): Observable<CampaignsModelExt> {
-
-        var campaignSelected$ = this.store.select(
-            store => store.appDb.uiState.campaign.campaignSelected
-        );
-        var campaignsList$ = this.store.select(
-            store => store.msDatabase.sdk.table_campaigns
-        );
+        var campaignSelected$ = this.store.select(store => store.appDb.uiState.campaign.campaignSelected);
+        var campaignsList$ = this.store.select(store => store.msDatabase.sdk.table_campaigns);
         return campaignSelected$.withLatestFrom(
             campaignsList$,
             (campaignId, campaigns) => {
@@ -51,13 +59,8 @@ export class YellowPepperService {
      Listen to when a timeline is selected via the store state uiState.campaign.timelineSelected
      **/
     public listenTimelineSelected(): Observable<CampaignTimelinesModel> {
-
-        var timelineSelected$ = this.store.select(
-            store => store.appDb.uiState.campaign.timelineSelected
-        );
-        var timelineList$ = this.store.select(
-            store => store.msDatabase.sdk.table_campaign_timelines
-        );
+        var timelineSelected$ = this.store.select(store => store.appDb.uiState.campaign.timelineSelected);
+        var timelineList$ = this.store.select(store => store.msDatabase.sdk.table_campaign_timelines);
         return timelineSelected$.withLatestFrom(
             timelineList$,
             (timelineId, timelines) => {

@@ -7,6 +7,8 @@ import * as moment_ from "moment";
 
 export const moment = moment_["default"];
 
+export var simpleRegExp = '[\\[\\]\\-A-Za-z0-9_~=!:@\.|\ ]{3,50}';
+
 @Injectable()
 export class Lib {
     /**
