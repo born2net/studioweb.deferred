@@ -1,4 +1,4 @@
-import {Component} from "@angular/core";
+import {Component, EventEmitter, Output} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
 import {YellowPepperService} from "../../services/yellowpepper.service";
@@ -27,6 +27,10 @@ export class CampaignEditor extends Compbaser {
             })
         );
     }
+
+
+    @Output()
+    onGoBack:EventEmitter<any> = new EventEmitter<any>();
 
     @Once()
     private _loadCampaignTimelines() {

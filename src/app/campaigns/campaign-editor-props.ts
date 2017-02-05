@@ -1,11 +1,9 @@
-import {Component, Input, ChangeDetectionStrategy} from "@angular/core";
-import {FormControl, FormGroup, FormBuilder} from "@angular/forms";
-import {Compbaser, NgmslibService} from "ng-mslib";
-import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
+import {Component} from "@angular/core";
+import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
-import {RedPepperService} from "../../services/redpepper.service";
-import {timeout} from "../../decorators/timeout-decorator";
-import * as _ from "lodash";
+import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
+import {Observable} from "rxjs";
+
 
 @Component({
     selector: 'campaign-editor-props',
@@ -14,19 +12,51 @@ import * as _ from "lodash";
     },
     template: `
         <div>
-            <h3>Campaigns</h3>  
+            <div class="row">
+                <div class="inner userGeneral">
+                    <div class="panel panel-default tallPanel">
+                        <div class="panel-heading">
+                            <small class="release">target properties
+                                <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
+                            </small>
+                            <small class="debug">{{me}}</small>
+                        </div>
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <div *ngIf="(campaignModel$ | async)?.getCampaignPlaylistMode() == '1'">
+                                    <h4><i class="fa fa-calendar"></i>playback mode: scheduler</h4>
+                                </div>
+                                <div *ngIf="(campaignModel$ | async)?.getCampaignPlaylistMode() == '0'">
+                                    <h4><i class="fa fa fa-repeat"></i>playback mode: sequencer</h4>
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <h4>Campaign editor</h4>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-    `
+    `,
+    styles: [`
+        i {
+            width: 20px;
+        }
+    `]
+
 })
 export class CampaignEditorProps extends Compbaser {
+    private campaignModel$: Observable<CampaignsModelExt>;
 
     constructor(private yp: YellowPepperService) {
         super();
-
+        this.campaignModel$ = this.yp.listenCampaignValueChanged()
     }
-
-
 
     destroy() {
     }
 }
+
+
+

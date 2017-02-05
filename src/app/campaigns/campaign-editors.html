@@ -10,7 +10,7 @@
                     <a id="toggleTimelinesCollapsible" data-toggle="collapse" data-parent="#timelinesCollapsible" href="#screenSelectorContainerCollapse">
                         <span style="position: relative; top: 3px" class="glyphicon glyphicon-chevron-down"></span>
                     </a>
-                    <button id="backToCampaigns" type="button" style="margin-left: 8px" title="add new timeline" data-localize="empty" data-localize-tooltip="backToCampaignsTooltip" class="btn btn-default btn-sm">
+                    <button (click)="onGoBack.emit()" type="button" style="margin-left: 8px" title="add new timeline" data-localize="empty" data-localize-tooltip="backToCampaignsTooltip" class="btn btn-default btn-sm">
                         <span class="glyphicon glyphicon-chevron-left"></span>
                     </button>
 
