@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component} from "@angular/core";
-import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
+import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {Compbaser, NgmslibService} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {RedPepperService} from "../../services/redpepper.service";
@@ -8,6 +8,7 @@ import * as _ from "lodash";
 import {CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 import {Observable} from "rxjs";
 import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
+import {simpleRegExp} from "../../Lib";
 
 @Component({
     selector: 'timeline-props',
@@ -36,14 +37,13 @@ import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
                                     </div>
                                 </li>
                                 <li class="list-group-item">
-                                    <h3>{{m_duration}}</h3>
+                                    <h4>timeline length: {{m_duration}}</h4>
                                 </li>
                                 <li class="list-group-item">
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
                                         <input [formControl]="m_contGroup.controls['timeline_name']" required
-                                               pattern="[0-9]|[a-z]|[A-Z]+"
-                                               type="text" class="form-control" minlength="3" maxlength="15"
+                                               type="text" class="form-control" maxlength="50"
                                                placeholder="timeline name">
                                     </div>
                                     <br/>
@@ -86,24 +86,14 @@ export class TimelineProps extends Compbaser {
 
     constructor(private fb: FormBuilder, private ngmslibService: NgmslibService, private yp: YellowPepperService, private rp: RedPepperService, private cd: ChangeDetectorRef) {
         super();
-
-
         this.m_contGroup = fb.group({
-            'timeline_name': ['']
+            'timeline_name': ['', [Validators.required, Validators.pattern(simpleRegExp)]],
         });
         _.forEach(this.m_contGroup.controls, (value, key: string) => {
             this.formInputs[key] = this.m_contGroup.controls[key] as FormControl;
         })
-
-
         this.campaignModel$ = this.yp.listenCampaignValueChanged()
-
         this.listenUpdatedForm();
-
-        //this.renderFormInputsReactive();
-        //this.m_timelineSelected$ = this.yp.getTimeline()
-        //this.m_timelineSelected$ = this.yp.ngrxStore.select(store => store.appDb.uiState.campaign.timelineSelected)
-
         this.cancelOnDestroy(
             this.yp.listenTimelineSelected()
                 .subscribe((i_timelineModel: CampaignTimelinesModel) => {
@@ -136,7 +126,7 @@ export class TimelineProps extends Compbaser {
                 .debounceTime(1000)
                 .subscribe(value => {
                     console.log('res ' + JSON.stringify(value) + ' ' + Math.random())
-                })                            
+                })
         )
     }
 

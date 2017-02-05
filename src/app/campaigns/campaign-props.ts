@@ -1,5 +1,5 @@
 import {Component, Input} from "@angular/core";
-import {FormBuilder, FormControl, FormGroup, NgControl, Validator, Validators} from "@angular/forms";
+import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {Compbaser, NgmslibService} from "ng-mslib";
 import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
 import {YellowPepperService} from "../../services/yellowpepper.service";
@@ -10,7 +10,6 @@ import {IUiState} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
 import * as _ from "lodash";
 import {simpleRegExp} from "../../Lib";
-
 
 
 @Component({
