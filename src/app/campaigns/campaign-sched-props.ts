@@ -8,6 +8,8 @@ import {timeout} from "../../decorators/timeout-decorator";
 import {Observable} from "rxjs";
 import {simpleRegExp} from "../../Lib";
 import * as _ from "lodash";
+import {Once} from "../../decorators/once-decorator";
+import {CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 
 @Component({
     selector: 'campaign-sched-props',
@@ -21,11 +23,12 @@ import * as _ from "lodash";
 export class CampaignSchedProps extends Compbaser {
 
     private campaignModel: CampaignsModelExt;
+    private campaignTimelineModel: CampaignTimelinesModel;
     private formInputs = {};
     private contGroup: FormGroup;
-    private campaignModel$: Observable<CampaignsModelExt>;
+    // private campaignModel$: Observable<CampaignsModelExt>;
 
-    constructor(private fb: FormBuilder, private el:ElementRef, private yp: YellowPepperService, private rp: RedPepperService) {
+    constructor(private fb: FormBuilder, private el: ElementRef, private yp: YellowPepperService, private rp: RedPepperService) {
         super();
 
 
@@ -39,18 +42,24 @@ export class CampaignSchedProps extends Compbaser {
         })
 
         this.cancelOnDestroy(
-            this.yp.listenCampaignSelected().subscribe((campaign: CampaignsModelExt) => {
-                this.campaignModel = campaign;
-                this.renderFormInputs();
-            })
+            this.yp.listenCampaignSelected()
+                .subscribe((campaign: CampaignsModelExt) => {
+                    this.campaignModel = campaign;
+                    this.renderFormInputs();
+                })
         )
 
-        this.campaignModel$ = this.yp.listenCampaignValueChanged()
-
+        this.cancelOnDestroy(
+            this.yp.listenTimelineSelected()
+                .subscribe((timeline: CampaignTimelinesModel) => {
+                    this.campaignTimelineModel = timeline;
+                    this.renderScheduler();
+                })
+        )
     }
 
     ngAfterViewInit() {
-        jQueryAny('#timepickerTimeInput',this.el.nativeElement).timepicker({
+        jQueryAny('#timepickerDurationInput', this.el.nativeElement).timepicker({
             showSeconds: true,
             showMeridian: false,
             defaultTime: false,
@@ -59,10 +68,63 @@ export class CampaignSchedProps extends Compbaser {
         });
     }
 
-    @Input()
-    set setCampaignModel(i_campaignModel) {
-        if (i_campaignModel)
-            this.renderFormInputs();
+    @Once()
+    private renderScheduler() {
+        // if (jQueryAny('#timepickerDurationInput',this.el.nativeElement).timepicker == undefined)
+        //     return;
+        return this.yp.getCampaignsSchedule(this.campaignTimelineModel.getCampaignTimelineId())
+            .subscribe((recSchedule) => {
+                console.log(recSchedule);
+                jQueryAny('#schedulerRepeatMode',this.el.nativeElement).carousel(Number(recSchedule.getRepeatType()));
+                // var duration = pepper.formatSecondsToObject(recSchedule.duration);
+                // var startTime = pepper.formatSecondsToObject(recSchedule.start_time);
+                // jQueryAny(Elements.TIME_PICKER_DURATION_INPUT).timepicker('setTime', duration.hours + ':' + duration.minutes + ':' + duration.seconds);
+                // jQueryAny(Elements.TIME_PICKER_TIME_INPUT).timepicker('setTime', startTime.hours + ':' + startTime.minutes + ':' + startTime.seconds);
+                //
+                // if (recSchedule.priorty == self.m_PRIORITY_LOW) {
+                //     jQueryAny(Elements.SCHEDULE_PRIORITY).find('img').eq(1).fadeTo('fast', 0.5).end().eq(2).fadeTo('fast', 0.5);
+                // } else if (recSchedule.priorty == self.m_PRIORITY_MEDIUM) {
+                //     jQueryAny(Elements.SCHEDULE_PRIORITY).find('img').eq(1).fadeTo('fast', 1).end().eq(2).fadeTo('fast', 0.5);
+                // } else {
+                //     jQueryAny(Elements.SCHEDULE_PRIORITY).find('img').eq(1).fadeTo('fast', 1).end().eq(2).fadeTo('fast', 1);
+                // }
+                //
+                // jQueryAny(Elements.SCHEDULE_PRIORITY)
+                // switch (String(recSchedule.repeat_type)) {
+                //     case self.m_ONCE: {
+                //         var date = recSchedule.start_date.split(' ')[0];
+                //         jQueryAny(Elements.DATE_PICKER_SCHEDULER_ONCE).datepicker('setDate', date);
+                //         break;
+                //     }
+                //     case self.m_DAILY: {
+                //         var startDate = recSchedule.start_date.split(' ')[0];
+                //         var endDate = recSchedule.end_date.split(' ')[0];
+                //         jQueryAny(Elements.DATE_PICKER_SCHEDULER_DAILY_START).datepicker('setDate', startDate);
+                //         jQueryAny(Elements.DATE_PICKER_SCHEDULER_DAILY_END).datepicker('setDate', endDate);
+                //         break;
+                //     }
+                //     case self.m_WEEKLY: {
+                //         var startDate = recSchedule.start_date.split(' ')[0];
+                //         var endDate = recSchedule.end_date.split(' ')[0];
+                //         var weekDays = recSchedule.week_days;
+                //         var elDays = jQueryAny(Elements.SCHEDUALED_DAYS);
+                //         // use bitwise (bitwize) operator << >> to compute days selected
+                //         self.m_WEEKDAYS.forEach(function (v, i) {
+                //             var n = weekDays & v;
+                //             if (n == v) {
+                //                 jQueryAny(elDays).find('input').eq(i).prop('checked', true);
+                //             } else {
+                //                 jQueryAny(elDays).find('input').eq(i).prop('checked', false);
+                //             }
+                //         });
+                //         jQueryAny(Elements.DATE_PICKER_SCHEDULER_WEEK_START).datepicker('setDate', startDate);
+                //         jQueryAny(Elements.DATE_PICKER_SCHEDULER_WEEK_END).datepicker('setDate', endDate);
+                //         break;
+                //     }
+                // }
+
+            });
+
     }
 
     @timeout()

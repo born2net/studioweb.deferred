@@ -4,7 +4,7 @@ import {ApplicationState} from "../store/application.state";
 import {Observable} from "rxjs";
 import {CampaignsModelExt} from "../store/model/msdb-models-extended";
 import {
-    BoardsModel, BoardTemplatesModel, BoardTemplateViewersModel, CampaignTimelineBoardTemplatesModel, CampaignTimelineBoardViewerChanelsModel, CampaignTimelineChanelsModel, CampaignTimelineSequencesModel,
+    BoardsModel, BoardTemplatesModel, BoardTemplateViewersModel, CampaignTimelineBoardTemplatesModel, CampaignTimelineBoardViewerChanelsModel, CampaignTimelineChanelsModel, CampaignTimelineSchedulesModel, CampaignTimelineSequencesModel,
     CampaignTimelinesModel
 } from "../store/imsdb.interfaces_auto";
 import {IScreenTemplateData} from "../comps/screen-template/screen-template";
@@ -121,6 +121,18 @@ export class YellowPepperService {
                     return campaignTimelineSequencesModel.getCampaignTimelineId() == i_campaign_timeline_id
                 });
                 return found.getSequenceIndex();
+            }).take(1);
+    }
+
+    /**
+     Get the sequence index of a timeline in the specified campaign
+     **/
+    getCampaignsSchedule(i_campaign_timeline_id): Observable<CampaignTimelineSchedulesModel> {
+        return this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_schedules)
+            .map((campaignTimelineSchedulesModel: List<CampaignTimelineSchedulesModel>) => {
+                return campaignTimelineSchedulesModel.find((campaignTimelineSchedulesModel: CampaignTimelineSchedulesModel) => {
+                    return campaignTimelineSchedulesModel.getCampaignTimelineId() == i_campaign_timeline_id
+                });
             }).take(1);
     }
 

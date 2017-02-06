@@ -269,6 +269,30 @@ export class RedPepperService {
     }
 
     /**
+     Check that every timeline within a campaign has a scheduler table entry, if not, create one with default values
+     @method checkAndCreateCampaignTimelineScheduler
+     @param {Number} i_campaign_id
+     @return none
+     **/
+    checkAndCreateCampaignTimelineScheduler(i_campaign_id) {
+        $(this.databaseManager.table_campaign_timelines().getAllPrimaryKeys()).each((k, campaign_timeline_id) => {
+            var recCampaignTimeline = this.databaseManager.table_campaign_timelines().getRec(campaign_timeline_id);
+
+            // if found a one timeline that belongs to i_campaign_id
+            if (recCampaignTimeline['campaign_id'] == i_campaign_id) {
+                var schedulerFound = 0;
+                $(this.databaseManager.table_campaign_timeline_schedules().getAllPrimaryKeys()).each((k, campaign_timeline_schedule_id) => {
+                    var recCampaignTimelineSchedule = this.databaseManager.table_campaign_timeline_schedules().getRec(campaign_timeline_schedule_id);
+                    if (recCampaignTimelineSchedule.campaign_timeline_id == campaign_timeline_id)
+                        schedulerFound = 1;
+                });
+                if (!schedulerFound)
+                    this.createCampaignTimelineScheduler(i_campaign_id, campaign_timeline_id);
+            }
+        });
+    }
+
+    /**
      Set a campaign table record for the specified i_campaign_id.
      The method uses generic key / value fields so it can set any part of the record.
      @method setCampaignRecord
@@ -1910,31 +1934,6 @@ export class RedPepperService {
                 this.databaseManager.table_campaign_timeline_schedules().openForEdit(campaign_timeline_schedule_id);
                 var recScheduler = this.databaseManager.table_campaign_timeline_schedules().getRec(campaign_timeline_schedule_id);
                 recScheduler[i_key] = i_value;
-            }
-        });
-    }
-
-    /**
-     Check that every timeline within a campaign has a scheduler table entry, if not, create one with default values
-     @method checkAndCreateCampaignTimelineScheduler
-     @param {Number} i_campaign_id
-     @return none
-     **/
-    checkAndCreateCampaignTimelineScheduler(i_campaign_id) {
-
-        $(this.databaseManager.table_campaign_timelines().getAllPrimaryKeys()).each(function (k, campaign_timeline_id) {
-            var recCampaignTimeline = this.databaseManager.table_campaign_timelines().getRec(campaign_timeline_id);
-
-            // if found a one timeline that belongs to i_campaign_id
-            if (recCampaignTimeline['campaign_id'] == i_campaign_id) {
-                var schedulerFound = 0;
-                $(this.databaseManager.table_campaign_timeline_schedules().getAllPrimaryKeys()).each(function (k, campaign_timeline_schedule_id) {
-                    var recCampaignTimelineSchedule = this.databaseManager.table_campaign_timeline_schedules().getRec(campaign_timeline_schedule_id);
-                    if (recCampaignTimelineSchedule.campaign_timeline_id == campaign_timeline_id)
-                        schedulerFound = 1;
-                });
-                if (!schedulerFound)
-                    this.databaseManager.createCampaignTimelineScheduler(i_campaign_id, campaign_timeline_id);
             }
         });
     }

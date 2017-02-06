@@ -11,6 +11,10 @@ import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.action
 import * as _ from "lodash";
 import {simpleRegExp} from "../../Lib";
 
+enum CampaignPlaylistModeEnum  {
+    SEQUENCER,
+    SCHEDULER
+}
 
 @Component({
     selector: 'campaign-props',
@@ -56,13 +60,13 @@ import {simpleRegExp} from "../../Lib";
                                     <span i18n id="campaignModeLabel">Campaign playback mode:</span>
                                     <div class="row paddingCeilingFloor20">
                                         <div class="center-block" style="width: 240px">
-                                            <button type="button" (click)="_onChangePlaylistMode('0')"
-                                                    [ngClass]="{faded: ((campaignModel$ | async)?.getCampaignPlaylistMode() == 1)}"
+                                            <button type="button" (click)="_onChangePlaylistMode(CampaignPlaylistModeEnum.SEQUENCER)"
+                                                    [ngClass]="{faded: ((campaignModel$ | async)?.getCampaignPlaylistMode() == CampaignPlaylistModeEnum.SCHEDULER)}"
                                                     class="campaignPlayMode btn btn-default">
                                                 <span class="fa fa-repeat"></span>
                                             </button>
-                                            <button type="button" (click)="_onChangePlaylistMode('1')"
-                                                    [ngClass]="{faded: ((campaignModel$ | async)?.getCampaignPlaylistMode() == 0)}"
+                                            <button type="button" (click)="_onChangePlaylistMode(CampaignPlaylistModeEnum.SCHEDULER)"
+                                                    [ngClass]="{faded: ((campaignModel$ | async)?.getCampaignPlaylistMode() == CampaignPlaylistModeEnum.SEQUENCER)}"
                                                     class="campaignPlayMode btn btn-default">
                                                 <span class="fa fa-calendar"></span>
                                             </button>
@@ -138,7 +142,8 @@ export class CampaignProps extends Compbaser {
     private campaignModel$: Observable<CampaignsModelExt>;
     private formInputs = {};
     private m_contGroup: FormGroup;
-
+    private CampaignPlaylistModeEnum = CampaignPlaylistModeEnum;
+    
     constructor(private fb: FormBuilder, private ngmslibService: NgmslibService, private yp: YellowPepperService, private rp: RedPepperService) {
         super();
         this.m_contGroup = fb.group({
@@ -173,9 +178,21 @@ export class CampaignProps extends Compbaser {
             this.renderFormInputs();
     }
 
-    _onChangePlaylistMode(mode: string) {
-        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_playlist_mode', mode);
+    _onChangePlaylistMode(mode: number) {
+        switch (mode) {
+            case CampaignPlaylistModeEnum.SEQUENCER: {
+                this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_playlist_mode', String(mode));
+                break;
+            }
+            case CampaignPlaylistModeEnum.SCHEDULER: {
+                this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_playlist_mode', String(mode));
+                this.rp.checkAndCreateCampaignTimelineScheduler(this.campaignModel.getCampaignId());
+                break;
+            }
+        }
+        
         this.rp.reduxCommit();
+        
     }
 
     // example 1 on input update via manually for looping
