@@ -88,7 +88,6 @@ enum CampaignPlaylistModeEnum  {
                                             delete campaign
                                         </button>
                                     </div>
-
                                 </li>
                             </ul>
                         </div>
@@ -143,7 +142,7 @@ export class CampaignProps extends Compbaser {
     private formInputs = {};
     private m_contGroup: FormGroup;
     private CampaignPlaylistModeEnum = CampaignPlaylistModeEnum;
-    
+
     constructor(private fb: FormBuilder, private ngmslibService: NgmslibService, private yp: YellowPepperService, private rp: RedPepperService) {
         super();
         this.m_contGroup = fb.group({
@@ -172,12 +171,6 @@ export class CampaignProps extends Compbaser {
 
     }
 
-    @Input()
-    set setCampaignModel(i_campaignModel) {
-        if (i_campaignModel)
-            this.renderFormInputs();
-    }
-
     _onChangePlaylistMode(mode: number) {
         switch (mode) {
             case CampaignPlaylistModeEnum.SEQUENCER: {
@@ -190,9 +183,9 @@ export class CampaignProps extends Compbaser {
                 break;
             }
         }
-        
+
         this.rp.reduxCommit();
-        
+
     }
 
     // example 1 on input update via manually for looping

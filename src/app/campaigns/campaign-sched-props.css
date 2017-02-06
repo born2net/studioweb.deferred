@@ -25,16 +25,20 @@
     font-size: 0.8em;
 }
 
+.carousel-control {
+    height: 30px;
+}
+
 .carousel-control.left {
     position: absolute;
     left: -15px;
-    top: -160px;
+    top: 0px;
 
 }
 
 .carousel-control.right {
     position: absolute;
-    top: -160px;
+    top: 0px;
 }
 
 input.ng-invalid {

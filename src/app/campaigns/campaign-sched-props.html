@@ -9,53 +9,36 @@
                         </small>
                         <small class="debug">{{me}}</small>
                     </div>
-                    <!--<ul class="list-group">-->
-                    <!--<li class="list-group-item">-->
-                    <!--kiosk mode-->
-                    <!--<div class="material-switch pull-right">-->
-                    <!--<input (change)="saveToStore(customerNetwork2.checked)"-->
-                    <!--[formControl]="contGroup.controls['kiosk_mode']"-->
-                    <!--id="customerNetwork2" #customerNetwork2-->
-                    <!--name="customerNetwork2" type="checkbox"/>-->
-                    <!--<label for="customerNetwork2" class="label-primary"></label>-->
-                    <!--</div>-->
-                    <!--</li>-->
-                    <!--<li class="list-group-item">-->
-                    <!--<div class="input-group">-->
-                    <!--<span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>-->
-                    <!--<input [formControl]="contGroup.controls['campaign_name']" required-->
-                    <!--pattern="[0-9]|[a-z]|[A-Z]+"-->
-                    <!--type="text" class="form-control" minlength="3" maxlength="15"-->
-                    <!--placeholder="campaign name">-->
-                    <!--</div>-->
-                    <!--</li>-->
-                    <!--<li class="list-group-item">-->
-                    <!--<div class="input-group">-->
-                    <!--<span class="input-group-addon"><i class="fa fa-key"></i></span>-->
-                    <!--<input type="number" [formControl]="contGroup.controls['campaign_playlist_mode']" min="0"-->
-                    <!--class="form-control"-->
-                    <!--placeholder="access key">-->
-                    <!--</div>-->
-                    <!--</li>-->
-                    <!--</ul>-->
                 </div>
             </div>
         </div>
 
+        <span i18n class="schedulerClass">Duration:</span>
+        <div class="input-group">
+            <span class="input-group-addon"><i class="fa fa-key"></i></span>
+            <input style="height: 30px" type="date" name="start_time" placeholder="hh:mm:ss" data-default-time="false">
+        </div>
+
         <span i18n class="schedulerClass">Conflict priority:</span>
-        <div id="schedulePriority" style="width: 155px" class="center-block schedulerClass paddingCeilingFloor20">
+        <div id="schedulePriority" style="width: 155px" class="center-block schedulerClass">
             <img class="schedulePriorities" name="2" src="assets/trip1.png"/>
             <img class="schedulePriorities" name="1" src="assets/trip2.png"/>
             <img class="schedulePriorities" name="0" src="assets/trip3.png"/>
         </div>
+        <hr/>
+
+        <span i18n class="schedulerClass">Duration:</span>
+        <div class="input-group">
+            <span class="input-group-addon"><i class="fa fa-key"></i></span>
+            <input style="height: 30px" type="text" id="timepickerDurationInput" class="schedulerClass" name="start_time" placeholder="hh:mm:ss" data-default-time="false">
+        </div>
+
+
         <span data-localize="startTime" class="schedulerClass">Start time:</span>
         <div>
             <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-key"></i></span>
-                <input id="timepickerDurationInput" class="schedulerClass" name="start_time" placeholder="hh:mm:ss" data-default-time="false"
-                       type="number" [formControl]="contGroup.controls['campaign_playlist_mode']"
-                       class="form-control"
-                       placeholder="start date">
+                <input style="height: 30px" type="text" id="timepickerTimeInput" class="schedulerClass" name="start_time" placeholder="hh:mm:ss" data-default-time="false">
             </div>
         </div>
         <br/>
@@ -95,6 +78,8 @@
                                        class="form-control"
                                        placeholder="end date">
                             </div>
+
+
 
                             <!--<span i18n startDate">Start date:</span>-->
                             <!--<input id="datepickerSchedulerDailyStart" name="start_date" class="datepickerScheduler" type="text" type="text">-->
@@ -170,12 +155,15 @@
                             </div>
                         </div>
                     </div>
-                    <a class="carousel-control left" href="#schedulerRepeatMode" data-slide="prev">
-                        <span class="glyphicon glyphicon-chevron-left"></span>
-                    </a>
-                    <a class="carousel-control right" href="#schedulerRepeatMode" data-slide="next">
-                        <span class="glyphicon glyphicon-chevron-right"></span>
-                    </a>
+                    <div>
+                        <a class="carousel-control left" href="#schedulerRepeatMode" data-slide="prev">
+                            <span class="glyphicon glyphicon-chevron-left"></span>
+                        </a>
+                        <a class="carousel-control right" href="#schedulerRepeatMode" data-slide="next">
+                            <span class="glyphicon glyphicon-chevron-right"></span>
+                        </a>
+                    </div>
+
                 </div>
             </div>
 
