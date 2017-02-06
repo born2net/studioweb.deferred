@@ -82,8 +82,6 @@ export class TimelineProps extends Compbaser {
     private m_contGroup: FormGroup;
     private campaignModel$: Observable<CampaignsModelExt>;
 
-    // private m_timelineSelected$: Observable<CampaignTimelinesModel>;
-
     constructor(private fb: FormBuilder, private ngmslibService: NgmslibService, private yp: YellowPepperService, private rp: RedPepperService, private cd: ChangeDetectorRef) {
         super();
         this.m_contGroup = fb.group({
@@ -108,12 +106,6 @@ export class TimelineProps extends Compbaser {
 
     }
 
-    // @Input()
-    // set setTimelineModel(i_timelineModel) {
-    //     if (i_timelineModel)
-    //         this.renderFormInputs();
-    // }
-
     private onFormChange(event) {
         this.updateSore();
     }
@@ -136,19 +128,6 @@ export class TimelineProps extends Compbaser {
         this.rp.setCampaignTimelineRecord(this.timelineModel.getCampaignTimelineId(), 'timeline_name', this.m_contGroup.value.timeline_name);
         this.rp.reduxCommit()
     }
-
-
-    // private renderFormInputsReactive() {
-    //     this.cancelOnDestroy(
-    //         this.yp.ngrxStore.select(store => store.appDb.uiState.campaign.timelineSelected)
-    //             .switchMap((i_timelineId: number) => {
-    //                 return this.yp.getTimeline(i_timelineId)
-    //             }).subscribe((v: CampaignTimelinesModel) => {
-    //             var bb = v.toPureJs();
-    //             this.m_contGroup.patchValue(bb);
-    //         })
-    //     )
-    // };
 
     private renderFormInputs() {
         if (!this.timelineModel)
