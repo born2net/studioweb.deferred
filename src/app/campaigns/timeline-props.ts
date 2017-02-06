@@ -36,7 +36,7 @@ import {simpleRegExp} from "../../Lib";
                                         <h4><i class="fa fa fa-repeat"></i>playback mode: sequencer</h4>
                                     </div>
                                 </li>
-                                <li class="list-group-item">
+                                <li *ngIf="(campaignModel$ | async)?.getCampaignPlaylistMode() == '0'" class="list-group-item">
                                     <h4>timeline length: {{m_duration}}</h4>
                                 </li>
                                 <li class="list-group-item">
@@ -54,6 +54,9 @@ import {simpleRegExp} from "../../Lib";
                 </div>
             </form>
         </div>
+        <div *ngIf="(campaignModel$ | async)?.getCampaignPlaylistMode() == '1'">
+            <campaign-sched-props></campaign-sched-props>
+        </div>       
     `,
     styles: [`
         input.ng-invalid {
@@ -91,7 +94,7 @@ export class TimelineProps extends Compbaser {
             this.formInputs[key] = this.m_contGroup.controls[key] as FormControl;
         })
         this.campaignModel$ = this.yp.listenCampaignValueChanged()
-        this.listenUpdatedForm();
+
         this.cancelOnDestroy(
             this.yp.listenTimelineSelected()
                 .subscribe((i_timelineModel: CampaignTimelinesModel) => {
@@ -108,18 +111,6 @@ export class TimelineProps extends Compbaser {
 
     private onFormChange(event) {
         this.updateSore();
-    }
-
-    private listenUpdatedForm() {
-        this.cancelOnDestroy(
-            this.m_contGroup.statusChanges
-                .filter(valid => valid === 'VALID')
-                .withLatestFrom(this.m_contGroup.valueChanges, (valid, value) => value)
-                .debounceTime(1000)
-                .subscribe(value => {
-                    console.log('res ' + JSON.stringify(value) + ' ' + Math.random())
-                })
-        )
     }
 
     @timeout()

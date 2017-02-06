@@ -20,9 +20,10 @@ import {ChannelProps} from "../app/campaigns/channel-props";
 import {DashboardProps} from "../app/campaigns/dashboard-props";
 import {CampaignEditorProps} from "../app/campaigns/campaign-editor-props";
 import {ChartModule} from "angular2-highcharts";
+import {CampaignSchedProps} from "../app/campaigns/campaign-sched-props";
 
 var sharedComponents = [Infobox, Sliderpanel, Slideritem, PanelSplitMain, PanelSplitSide, PanelSplitContainer, ListToArrayPipe,
-    MatchBodyHeight, ScreenTemplate, CampaignProps, BlurForwarder, Props, TimelineProps, ChannelProps, DashboardProps, CampaignEditorProps];
+    MatchBodyHeight, ScreenTemplate, CampaignProps, BlurForwarder, Props, TimelineProps, ChannelProps, DashboardProps, CampaignEditorProps, CampaignSchedProps];
 
 @NgModule({
     imports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule, ContextMenuModule, ChartModule, ReactiveFormsModule],
