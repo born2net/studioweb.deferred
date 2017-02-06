@@ -25,11 +25,13 @@
         "../node_modules/ng2-toastr/ng2-toastr.css",
         "../node_modules/primeng/resources/themes/bootstrap/theme.css",
         "../node_modules/primeng/resources/primeng.min.css",
+        "./libs/bootstrap-timepicker/css/bootstrap-timepicker.css",
         "./styles/style.css"
       ],
       "scripts": [
         "../node_modules/jquery/dist/jquery.min.js",
         "./libs/jquery.base64.js",
+        "./libs/bootstrap-timepicker/js/bootstrap-timepicker.min.js",
         "./store/signage_sdk.js",
         "../node_modules/fabric/dist/fabric.js",
         "../node_modules/bootstrap/dist/js/bootstrap.js",

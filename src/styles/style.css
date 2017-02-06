@@ -618,6 +618,11 @@ Software accelerated vertical
     padding-bottom: 20px;
 }
 
+.marginsCeilingFloor20 {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
 small {
     font-size: 0.9em;
     display: block;
@@ -706,6 +711,9 @@ a.list-group-item:focus, button.list-group-item:focus {
     top: 20px;
 }
 
+.bootstrap-timepicker-widget a.btn, .bootstrap-timepicker-widget input {
+    border-radius: 0px;
+}
 
 /*.headerPropIcon {*/
 /*position: fixed !important;*/
