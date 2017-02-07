@@ -11,9 +11,7 @@ import {CampaignTimelineSchedulesModel, CampaignTimelinesModel} from "../../stor
 @Component({
     selector: 'campaign-sched-props',
     //changeDetection: ChangeDetectionStrategy.OnPush,
-    host: {
-        '(input-blur)': 'saveToStore($event)'
-    },
+    host: {'(input-blur)': 'saveToStore($event)'},
     templateUrl: './campaign-sched-props.html',
     styleUrls: ['./campaign-sched-props.css']
 })
