@@ -787,6 +787,25 @@ export class RedPepperService {
     }
 
     /**
+     Get campaign schedule for timeline
+     @method setCampaignsSchedule
+     @param {Number} i_campaign_timeline_id
+     @param {Object} i_key
+     @param {Object} i_value
+     **/
+    setCampaignsSchedule(i_campaign_timeline_id, i_key, i_value) {
+        $(this.databaseManager.table_campaign_timeline_schedules().getAllPrimaryKeys()).each((k, campaign_timeline_schedule_id) => {
+            var recCampaignTimelineSchedule = this.databaseManager.table_campaign_timeline_schedules().getRec(campaign_timeline_schedule_id);
+            if (recCampaignTimelineSchedule.campaign_timeline_id == i_campaign_timeline_id) {
+                this.databaseManager.table_campaign_timeline_schedules().openForEdit(campaign_timeline_schedule_id);
+                var recScheduler = this.databaseManager.table_campaign_timeline_schedules().getRec(campaign_timeline_schedule_id);
+                recScheduler[i_key] = String(i_value);
+            }
+        });
+        this.addPendingTables(['table_campaign_timeline_schedules']);
+    }
+
+    /**
      Remove campaign board_id
      @method removeCampaignBoard
      @param {Number} i_campaign_id
@@ -1918,26 +1937,6 @@ export class RedPepperService {
         });
         return found;
     }
-
-    /**
-     Get campaign schedule for timeline
-     @method setCampaignsSchedule
-     @param {Number} i_campaign_timeline_id
-     @param {Object} i_key
-     @param {Object} i_value
-     **/
-    setCampaignsSchedule(i_campaign_timeline_id, i_key, i_value) {
-
-        $(this.databaseManager.table_campaign_timeline_schedules().getAllPrimaryKeys()).each(function (k, campaign_timeline_schedule_id) {
-            var recCampaignTimelineSchedule = this.databaseManager.table_campaign_timeline_schedules().getRec(campaign_timeline_schedule_id);
-            if (recCampaignTimelineSchedule.campaign_timeline_id == i_campaign_timeline_id) {
-                this.databaseManager.table_campaign_timeline_schedules().openForEdit(campaign_timeline_schedule_id);
-                var recScheduler = this.databaseManager.table_campaign_timeline_schedules().getRec(campaign_timeline_schedule_id);
-                recScheduler[i_key] = i_value;
-            }
-        });
-    }
-
 
     /**
      Get the timeline id of the specific sequencer index offset (0 based) under the specified campaign

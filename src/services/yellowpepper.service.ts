@@ -69,6 +69,19 @@ export class YellowPepperService {
     }
 
     /**
+     Listen to when a scheduler that is selected changed value
+     **/
+    public listenSchedulerValueChanged(): Observable<CampaignTimelineSchedulesModel> {
+        var campaignTimelineIdSelected$ = this.ngrxStore.select(store => store.appDb.uiState.campaign.timelineSelected)
+        var schedules$ = this.ngrxStore.select(store => store.msDatabase.sdk.table_campaign_timeline_schedules);
+        return campaignTimelineIdSelected$.combineLatest(schedules$, (campaignSchedarId: number, schedules: List<CampaignTimelineSchedulesModel>) => {
+            return schedules.find((i_schedules: CampaignTimelineSchedulesModel) => {
+                return i_schedules.getCampaignTimelineId() == campaignSchedarId;
+            });
+        });
+    }
+
+    /**
      Listen to ONLY when a campaign is selected via the store state uiState.campaign.campaignSelected and grab latest CampaignModel
      **/
     public listenCampaignSelected(): Observable<CampaignsModelExt> {

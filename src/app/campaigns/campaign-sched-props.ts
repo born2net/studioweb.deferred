@@ -1,6 +1,6 @@
 import {AfterViewInit, ChangeDetectorRef, Component, ElementRef} from "@angular/core";
 import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
-import {Compbaser} from "ng-mslib";
+import {Compbaser, NgmslibService} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {RedPepperService} from "../../services/redpepper.service";
 import {timeout} from "../../decorators/timeout-decorator";
@@ -11,13 +11,12 @@ import {CampaignTimelineSchedulesModel, CampaignTimelinesModel} from "../../stor
 @Component({
     selector: 'campaign-sched-props',
     //changeDetection: ChangeDetectionStrategy.OnPush,
-    host: {'(input-blur)': 'saveToStore($event)'},
+    // host: {'(input-blur)': 'saveToStore($event)'},
     templateUrl: './campaign-sched-props.html',
     styleUrls: ['./campaign-sched-props.css']
 })
 export class CampaignSchedProps extends Compbaser implements AfterViewInit {
 
-    private m_campaignTimelinesModel: CampaignTimelinesModel;
     private m_campaignTimelineSchedulesModel: CampaignTimelineSchedulesModel;
     private m_days: Array<any> = [];
     private formInputs = {};
@@ -32,7 +31,7 @@ export class CampaignSchedProps extends Compbaser implements AfterViewInit {
     private m_WEEKDAYS_NAME = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     // private campaignModel$: Observable<CampaignsModelExt>;
 
-    constructor(private fb: FormBuilder, private el: ElementRef, private yp: YellowPepperService, private rp: RedPepperService, private cd: ChangeDetectorRef) {
+    constructor(private fb: FormBuilder, private el: ElementRef, private yp: YellowPepperService, private rp: RedPepperService, private cd: ChangeDetectorRef, private ngmslibService: NgmslibService) {
         super();
         this.contGroup = this.fb.group({
             'once': [],
@@ -49,18 +48,12 @@ export class CampaignSchedProps extends Compbaser implements AfterViewInit {
     }
 
     ngAfterViewInit() {
+        this._listenTimepickerChanges();
 
         this.cancelOnDestroy(
-            this.yp.listenTimelineSelected()
-                .map((campaignTimelinesModel: CampaignTimelinesModel) => {
-                    return this.yp.getCampaignsSchedule(campaignTimelinesModel.getCampaignTimelineId())
-                        .map((campaignTimelineSchedulesModel: CampaignTimelineSchedulesModel) => {
-                            return {campaignTimelinesModel, campaignTimelineSchedulesModel}
-                        })
-                }).flatMap(v => v)
-                .subscribe(v => {
-                    this.m_campaignTimelinesModel = v.campaignTimelinesModel;
-                    this.m_campaignTimelineSchedulesModel = v.campaignTimelineSchedulesModel;
+            this.yp.listenSchedulerValueChanged()
+                .subscribe(i_campaignTimelineSchedulesModel => {
+                    this.m_campaignTimelineSchedulesModel = i_campaignTimelineSchedulesModel;
                     this._renderConflictPriority();
                     this._renderCarouselPosition();
                     this._initTimePicker();
@@ -68,6 +61,32 @@ export class CampaignSchedProps extends Compbaser implements AfterViewInit {
                     this._renderFormInputs();
                 })
         )
+    }
+
+    _setPriority(i_priority: number) {
+        this.rp.setCampaignsSchedule(this.m_campaignTimelineSchedulesModel.getCampaignTimelineId(), 'priorty', i_priority);
+        this.rp.reduxCommit();
+    }
+
+    _listenTimepickerChanges() {
+        jQueryAny('#timepickerDurationInput', this.el.nativeElement).on("hide.timepicker", (e) => {
+            var totalSeconds = this.rp.formatObjectToSeconds({
+                hours: e.time.hours,
+                minutes: e.time.minutes,
+                seconds: e.time.seconds
+            });
+            this.rp.setCampaignsSchedule(this.m_campaignTimelineSchedulesModel.getCampaignTimelineId(), 'duration', totalSeconds);
+            this.rp.reduxCommit();
+        });
+        jQueryAny('#timepickerTimeInput', this.el.nativeElement).on("hide.timepicker", (e) => {
+            var totalSeconds = this.rp.formatObjectToSeconds({
+                hours: e.time.hours,
+                minutes: e.time.minutes,
+                seconds: e.time.seconds
+            });
+            this.rp.setCampaignsSchedule(this.m_campaignTimelineSchedulesModel.getCampaignTimelineId(), 'start_time', totalSeconds);
+            this.rp.reduxCommit();
+        });
     }
 
     private _renderCarouselPosition() {
@@ -143,7 +162,6 @@ export class CampaignSchedProps extends Compbaser implements AfterViewInit {
                 checked: n == v ? true : false
             })
         });
-        // this.cd.markForCheck();
         this.cd.detectChanges()
     }
 
@@ -165,10 +183,15 @@ export class CampaignSchedProps extends Compbaser implements AfterViewInit {
     }
 
     @timeout()
-    private saveToStore() {
+    private saveToStore(key) {
+        console.log('zzzz' + key);
+        // jQueryAny('#schedulerRepeatMode', this.el.nativeElement).carousel(Number(this.m_campaignTimelineSchedulesModel.getRepeatType()));
+        var carouselIndex = jQueryAny('#schedulerRepeatMode .active', this.el.nativeElement).index('#schedulerRepeatMode .item', this.el.nativeElement);
+        console.log(carouselIndex);
         // console.log(this.contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.contGroup.value)));
-        if (this.contGroup.status != 'VALID')
-            return;
+        // if (this.contGroup.status != 'VALID')
+        //     return;
+        // this.rp.setCampaignsSchedule(this.m_campaignTimelineSchedulesModel.getCampaignTimelineId(), 'start_time', i_priority);
         // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_name', this.contGroup.value.campaign_name);
         // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_playlist_mode', this.contGroup.value.campaign_playlist_mode);
         // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_timeline_id', 0); //todo: you need to fix this as zero is arbitrary number right now
@@ -178,6 +201,8 @@ export class CampaignSchedProps extends Compbaser implements AfterViewInit {
 
 
     destroy() {
+        jQueryAny('#timepickerDurationInput', this.el.nativeElement).off("hide.timepicker");
+        jQueryAny('#timepickerTimeInput', this.el.nativeElement).off("hide.timepicker");
     }
 }
 
@@ -278,3 +303,16 @@ export class CampaignSchedProps extends Compbaser implements AfterViewInit {
 //
 // @ViewChild('datepickerSchedulerWeekEnd')
 // datepickerSchedulerWeekEnd:HTMLInputElement;
+
+// this.cancelOnDestroy(
+//     this.yp.listenTimelineSelected()
+//         .map((campaignTimelinesModel: CampaignTimelinesModel) => {
+//             return this.yp.getCampaignsSchedule(campaignTimelinesModel.getCampaignTimelineId())
+//                 .map((campaignTimelineSchedulesModel: CampaignTimelineSchedulesModel) => {
+//                     return {campaignTimelinesModel, campaignTimelineSchedulesModel}
+//                 })
+//         }).flatMap(v => v)
+//         .subscribe(v => {
+//
+//         })
+// )
