@@ -47,21 +47,6 @@ export class CampaignSchedProps extends Compbaser implements AfterViewInit {
         })
     }
 
-    // @ViewChild('datepickerSchedulerOnce')
-    // datepickerSchedulerOnce: HTMLInputElement;
-    //
-    // @ViewChild('datepickerSchedulerDailyStart')
-    // datepickerSchedulerDailyStart: HTMLInputElement;
-    //
-    // @ViewChild('datepickerSchedulerDailyEnd')
-    // datepickerSchedulerDailyEnd: HTMLInputElement;
-    //
-    // @ViewChild('datepickerSchedulerWeekStart')
-    // datepickerSchedulerWeekStart: HTMLInputElement;
-    //
-    // @ViewChild('datepickerSchedulerWeekEnd')
-    // datepickerSchedulerWeekEnd: HTMLInputElement;
-
     ngAfterViewInit() {
         this._listenTimepickerChanges();
 
@@ -197,7 +182,21 @@ export class CampaignSchedProps extends Compbaser implements AfterViewInit {
         });
     }
 
-    private _saveDates(key, event: MouseEvent) {
+    _onDaysChanged(checked, day:{}, i:number) {
+        var weekBitsTotal = 0;
+        this.m_days[i] = {
+            day: this.m_WEEKDAYS_NAME[i],
+            checked: checked
+        }
+        this.m_days.forEach((day, i) => {
+            if (day.checked)
+                weekBitsTotal = weekBitsTotal + this.m_WEEKDAYS[i]
+        });
+        this.rp.setCampaignsSchedule(this.m_campaignTimelineSchedulesModel.getCampaignTimelineId(), 'week_days', weekBitsTotal);
+        this.rp.reduxCommit()
+    }
+
+    _saveDates(key, event: MouseEvent) {
         switch (key) {
             case 'daily_start':
             case 'weekly_start':
@@ -215,7 +214,6 @@ export class CampaignSchedProps extends Compbaser implements AfterViewInit {
                 return;
             }
         }
-
         this.rp.reduxCommit()
     }
 

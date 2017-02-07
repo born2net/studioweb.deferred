@@ -95,7 +95,7 @@
                                     <table id="scheduledDays" border="0" width="100%" cellspacing="0" cellpadding="0" align="left">
                                         <tr *ngFor="let day of m_days; let i = index">
                                             <td>
-                                                <input class="scheduleDay" [checked]="day.checked" type="checkbox">
+                                                <input (click)="_onDaysChanged($event.target.checked, day,i)" class="scheduleDay" [checked]="day.checked" type="checkbox">
                                                 <span> {{day.day}} </span>
                                             </td>
                                         </tr>
