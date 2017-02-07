@@ -1,17 +1,17 @@
-import {AfterViewInit, ChangeDetectorRef, Component, ElementRef} from "@angular/core";
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, ViewChild} from "@angular/core";
 import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
 import {Compbaser, NgmslibService} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {RedPepperService} from "../../services/redpepper.service";
 import {timeout} from "../../decorators/timeout-decorator";
 import * as _ from "lodash";
-import {CampaignTimelineSchedulesModel, CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
+import {CampaignTimelineSchedulesModel} from "../../store/imsdb.interfaces_auto";
 
 
 @Component({
     selector: 'campaign-sched-props',
     //changeDetection: ChangeDetectionStrategy.OnPush,
-    // host: {'(input-blur)': 'saveToStore($event)'},
+    // host: {'(input-blur)': '_saveToStore($event)'},
     templateUrl: './campaign-sched-props.html',
     styleUrls: ['./campaign-sched-props.css']
 })
@@ -46,6 +46,21 @@ export class CampaignSchedProps extends Compbaser implements AfterViewInit {
             this.formInputs[key] = this.contGroup.controls[key] as FormControl;
         })
     }
+
+    // @ViewChild('datepickerSchedulerOnce')
+    // datepickerSchedulerOnce: HTMLInputElement;
+    //
+    // @ViewChild('datepickerSchedulerDailyStart')
+    // datepickerSchedulerDailyStart: HTMLInputElement;
+    //
+    // @ViewChild('datepickerSchedulerDailyEnd')
+    // datepickerSchedulerDailyEnd: HTMLInputElement;
+    //
+    // @ViewChild('datepickerSchedulerWeekStart')
+    // datepickerSchedulerWeekStart: HTMLInputElement;
+    //
+    // @ViewChild('datepickerSchedulerWeekEnd')
+    // datepickerSchedulerWeekEnd: HTMLInputElement;
 
     ngAfterViewInit() {
         this._listenTimepickerChanges();
@@ -182,12 +197,39 @@ export class CampaignSchedProps extends Compbaser implements AfterViewInit {
         });
     }
 
+    private _saveDates(key, event: MouseEvent) {
+        switch (key) {
+            case 'daily_start':
+            case 'weekly_start':
+            case 'once': {
+                var value = event.target['value'];
+                var date = new XDate(value).toString('MM/dd/yyyy') + ' 12:00:00 AM'
+                this.rp.setCampaignsSchedule(this.m_campaignTimelineSchedulesModel.getCampaignTimelineId(), 'start_date', date);
+                return;
+            }
+            case 'weekly_end':
+            case 'daily_end': {
+                var value = event.target['value'];
+                var date = new XDate(value).toString('MM/dd/yyyy') + ' 12:00:00 AM'
+                this.rp.setCampaignsSchedule(this.m_campaignTimelineSchedulesModel.getCampaignTimelineId(), 'end_date', date);
+                return;
+            }
+        }
+
+        this.rp.reduxCommit()
+    }
+
+    @timeout(1000)
+    private _saveRepeat() {
+        this._saveToStore();
+    }
+
     @timeout()
-    private saveToStore(key) {
-        console.log('zzzz' + key);
-        // jQueryAny('#schedulerRepeatMode', this.el.nativeElement).carousel(Number(this.m_campaignTimelineSchedulesModel.getRepeatType()));
+    private _saveToStore(key?: string, event?: MouseEvent) {
         var carouselIndex = jQueryAny('#schedulerRepeatMode .active', this.el.nativeElement).index('#schedulerRepeatMode .item', this.el.nativeElement);
-        console.log(carouselIndex);
+        this.rp.setCampaignsSchedule(this.m_campaignTimelineSchedulesModel.getCampaignTimelineId(), 'repeat_type', carouselIndex);
+        this.rp.reduxCommit()
+
         // console.log(this.contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.contGroup.value)));
         // if (this.contGroup.status != 'VALID')
         //     return;
@@ -196,7 +238,7 @@ export class CampaignSchedProps extends Compbaser implements AfterViewInit {
         // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_playlist_mode', this.contGroup.value.campaign_playlist_mode);
         // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_timeline_id', 0); //todo: you need to fix this as zero is arbitrary number right now
         // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_mode', this.contGroup.value.kiosk_mode);
-        // this.rp.reduxCommit()
+
     }
 
 
@@ -288,21 +330,6 @@ export class CampaignSchedProps extends Compbaser implements AfterViewInit {
 //
 // }
 
-//
-// @ViewChild('datepickerSchedulerOnce')
-// datepickerSchedulerOnce:HTMLInputElement;
-//
-// @ViewChild('datepickerSchedulerDailyStart')
-// datepickerSchedulerDailyStart:HTMLInputElement;
-//
-// @ViewChild('datepickerSchedulerDailyEnd')
-// datepickerSchedulerDailyEnd:HTMLInputElement;
-//
-// @ViewChild('datepickerSchedulerWeekStart')
-// datepickerSchedulerWeekStart:HTMLInputElement;
-//
-// @ViewChild('datepickerSchedulerWeekEnd')
-// datepickerSchedulerWeekEnd:HTMLInputElement;
 
 // this.cancelOnDestroy(
 //     this.yp.listenTimelineSelected()

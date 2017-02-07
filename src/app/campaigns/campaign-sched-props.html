@@ -48,7 +48,7 @@
                             </div>
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-key"></i></span>
-                                <input (change)="saveToStore('once')" #datepickerSchedulerOnce type="date" [formControl]="contGroup.controls['once']"
+                                <input (blur)="_saveDates('once',$event)" #datepickerSchedulerOnce type="date" [formControl]="contGroup.controls['once']"
                                        class="form-control"
                                        placeholder="access key">
                             </div>
@@ -59,13 +59,13 @@
                             </div>
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-key"></i></span>
-                                <input #datepickerSchedulerDailyStart type="date" [formControl]="contGroup.controls['daily_start']"
+                                <input (blur)="_saveDates('daily_start',$event)" #datepickerSchedulerDailyStart type="date" [formControl]="contGroup.controls['daily_start']"
                                        class="form-control"
                                        placeholder="start date">
                             </div>
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-key"></i></span>
-                                <input #datepickerSchedulerDailyEnd type="date" [formControl]="contGroup.controls['daily_end']"
+                                <input (blur)="_saveDates('daily_end',$event)" #datepickerSchedulerDailyEnd type="date" [formControl]="contGroup.controls['daily_end']"
                                        class="form-control"
                                        placeholder="end date">
                             </div>
@@ -77,13 +77,13 @@
 
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-key"></i></span>
-                                <input #datepickerSchedulerWeekStart type="date" [formControl]="contGroup.controls['weekly_start']" min="0"
+                                <input (blur)="_saveDates('weekly_start',$event)" #datepickerSchedulerWeekStart type="date" [formControl]="contGroup.controls['weekly_start']" min="0"
                                        class="form-control"
                                        placeholder="start date">
                             </div>
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-key"></i></span>
-                                <input #datepickerSchedulerWeekEnd type="date" [formControl]="contGroup.controls['weekly_end']" min="0"
+                                <input (blur)="_saveDates('weekly_end',$event)" #datepickerSchedulerWeekEnd type="date" [formControl]="contGroup.controls['weekly_end']" min="0"
                                        class="form-control"
                                        placeholder="end date">
                             </div>
@@ -105,10 +105,10 @@
                         </div>
                     </div>
                     <div>
-                        <a (click)="saveToStore('playRange')" class="carousel-control left" href="#schedulerRepeatMode" data-slide="prev">
+                        <a (click)="_saveRepeat()" class="carousel-control left" href="#schedulerRepeatMode" data-slide="prev">
                             <span class="glyphicon glyphicon-chevron-left"></span>
                         </a>
-                        <a (click)="saveToStore('playRange')" class="carousel-control right" href="#schedulerRepeatMode" data-slide="next">
+                        <a (click)="_saveRepeat()" class="carousel-control right" href="#schedulerRepeatMode" data-slide="next">
                             <span class="glyphicon glyphicon-chevron-right"></span>
                         </a>
                     </div>
