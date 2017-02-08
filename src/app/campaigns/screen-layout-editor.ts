@@ -3,14 +3,13 @@ import {Compbaser} from "ng-mslib";
 
 @Component({
     selector: 'screen-layout-editor',
-    changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <small class="release">my component
             <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
         </small>
         <small class="debug">{{me}}</small>
         <div id="screenLayoutEditorView">
-            <button (click)="onGoBack.emit()" id="prev" type="button" class="openPropsButton btn btn-default btn-sm">
+            <button (click)="_goBack()" id="prev" type="button" class="openPropsButton btn btn-default btn-sm">
                 <span class="glyphicon glyphicon-chevron-left"></span>
             </button>
             <h3 data-localize="empty" data-localize="editScreenLayoutTitle">Edit screen layout</h3>
@@ -32,7 +31,9 @@ import {Compbaser} from "ng-mslib";
                     <i style="font-size: 1em" class="fa fa-external-link"> </i>
                 </button>
             </div>
-            <div id="screenLayoutEditorCanvasWrap" align="center" style="width: 100%; height: 100%; -webkit-user-select: none;"></div>
+            <div *ngIf="m_render" id="screenLayoutEditorCanvasWrap" align="center" style="width: 100%; height: 100%; -webkit-user-select: none;">
+                <h1>I am here</h1>
+            </div>
         </div>
     `,
 })
@@ -43,7 +44,7 @@ export class ScreenLayoutEditor extends Compbaser {
     m_canvasID;
     m_selectedViewerID;
     m_dimensionProps;
-
+    m_render:boolean = false;
     constructor() {
         super();
     }
@@ -563,6 +564,16 @@ export class ScreenLayoutEditor extends Compbaser {
 
     @Output()
     onGoBack: EventEmitter<any> = new EventEmitter<any>();
+
+    public show(){
+        console.log('showing');
+        this.m_render = true;
+    }
+    _goBack(){
+        console.log('hiding');
+        this.onGoBack.emit();
+        this.m_render = false;
+    }
 
     ngOnInit() {
     }

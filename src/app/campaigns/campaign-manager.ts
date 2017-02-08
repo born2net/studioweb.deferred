@@ -11,7 +11,7 @@ import {IUiState} from "../../store/store.data";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 
 @Component({
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    // changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'campaign-manager',
     styles: [`
         /*.selectedItem {*/
@@ -144,8 +144,8 @@ export class CampaignManager extends Compbaser {
     }
 
     destroy() {
-        var uiState: IUiState = {uiSideProps: SideProps.none}
-        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+        // var uiState: IUiState = {uiSideProps: SideProps.none}
+        // this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 }
 

@@ -3,7 +3,7 @@ import {Compbaser} from "ng-mslib";
 import {routerTransition} from "../route-animation";
 
 @Component({
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    // changeDetection: ChangeDetectionStrategy.OnPush,
     // new animation, can't add due to aot limitation and angular language service bug
     // host: {
     //     '[@routerTransition]': '',

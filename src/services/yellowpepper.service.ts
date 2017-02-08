@@ -115,6 +115,14 @@ export class YellowPepperService {
     /**
      Get all timeline s for specified campaign id
      **/
+    getNewCampaignParmas(): Observable<{}> {
+        return this.store.select(store => store.appDb.uiState.campaign)
+            .take(1)
+    }
+
+    /**
+     Get all timeline s for specified campaign id
+     **/
     getCampaignTimelines(i_campaign_id: number): Observable<List<CampaignTimelinesModel>> {
         return this.store.select(store => store.msDatabase.sdk.table_campaign_timelines)
             .map((campaignTimelinesModels: List<CampaignTimelinesModel>) => {

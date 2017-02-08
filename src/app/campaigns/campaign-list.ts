@@ -7,7 +7,6 @@ import {SideProps} from "../../store/actions/appdb.actions";
 
 @Component({
     selector: 'campaign-list',
-    changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <small class="debug">{{me}}</small>
         <ul (click)="$event.preventDefault()" class="appList list-group">
@@ -25,7 +24,7 @@ import {SideProps} from "../../store/actions/appdb.actions";
     `,
 })
 export class CampaignList extends Compbaser {
-    selectedIdx = 0;
+    selectedIdx = -1;
     m_campaigns$: List<CampaignsModelExt>;
     m_selectedCampaign: CampaignsModelExt;
 
@@ -48,6 +47,8 @@ export class CampaignList extends Compbaser {
     onCampaignSelected: EventEmitter<any> = new EventEmitter<any>();
 
     _onCampaignSelected(event: MouseEvent, campaign: CampaignsModelExt, index) {
+        event.stopPropagation();
+        event.preventDefault();
         this.selectedIdx = index;
         let uiState: IUiState;
         if (jQuery(event.target).hasClass('props')) {
@@ -75,5 +76,6 @@ export class CampaignList extends Compbaser {
     }
 
     destroy() {
+        console.log('dest camp list');
     }
 }

@@ -23,14 +23,19 @@ export interface IMsDatabase {
     sdk: ISDK
 }
 
+export interface IUiStateCampaign  {
+    campaignTimelineChannelSelected?: number;
+    campaignTimelineBoardViewerSelected?: number;
+    campaignCreateOrientation?:number,
+    campaignCreateResolution?:string,
+    campaignCreateName?:string,
+    campaignSelected?: number;
+    timelineSelected?: number;
+}
+
 export interface IUiState {
     uiSideProps?:number;
-    campaign?: {
-        campaignTimelineChannelSelected?: number;
-        campaignTimelineBoardViewerSelected?: number;
-        campaignSelected?: number;
-        timelineSelected?: number;
-    }
+    campaign?: IUiStateCampaign
 }
 
 export interface IAppDb {
@@ -59,7 +64,10 @@ export const INITIAL_APP_DB: IAppDb = {
             campaignTimelineBoardViewerSelected: -1,
             campaignTimelineChannelSelected: -1,
             campaignSelected: -1,
-            timelineSelected: -1
+            timelineSelected: -1,
+            campaignCreateOrientation: -1,
+            campaignCreateResolution: '',
+            campaignCreateName: ''
         }
     },
     totalStations: '',

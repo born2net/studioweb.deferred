@@ -15,8 +15,8 @@
  The key to remember is that the Factory instance (this) is always created with respect to it's owner (i_owner),
  so when ON_VIEWER_SELECTED is fired, the owner is carried with the event so listeners can act accordingly, and only if the owner
  is of interest to a subscribed listener.
-
  **/
+
 import {Component, ChangeDetectionStrategy, Input, ElementRef, EventEmitter, Output} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import * as _ from "lodash";
@@ -24,8 +24,6 @@ import {Lib} from "../../Lib";
 import {OrientationEnum} from "../../app/campaigns/campaign-orientation";
 
 export interface IScreenTemplateData {
-    // i_selfDestruct: boolean;
-    // i_owner: Object;
     resolution: string;
     screenType: string;
     orientation: OrientationEnum;

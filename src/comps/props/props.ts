@@ -23,9 +23,9 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
             <div *ngSwitchCase="m_uiUserFocusItemEnum.miniDashboard">
                 <dashboard-props></dashboard-props>
             </div>
-            <div *ngSwitchCase="m_uiUserFocusItemEnum.campaignBoard">
-                <h1>NOT USED</h1>
-            </div>
+            <!--<div *ngSwitchCase="m_uiUserFocusItemEnum.campaignBoard">-->
+                <!--<h1>NOT USED</h1>-->
+            <!--</div>-->
             <div *ngSwitchCase="m_uiUserFocusItemEnum.campaignEditor">
                 <campaign-editor-props></campaign-editor-props>
             </div>

@@ -20,7 +20,7 @@ export class CampaignSchedProps extends Compbaser implements AfterViewInit {
     private m_campaignTimelineSchedulesModel: CampaignTimelineSchedulesModel;
     private m_days: Array<any> = [];
     private formInputs = {};
-    private contGroup: FormGroup;
+    contGroup: FormGroup;
     private m_ONCE = '0';
     private m_DAILY = '1';
     private m_WEEKLY = '2';

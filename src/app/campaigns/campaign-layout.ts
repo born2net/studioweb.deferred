@@ -5,17 +5,26 @@ import * as _ from 'lodash';
 import {OrientationEnum} from "./campaign-orientation";
 import {IScreenTemplateData, ScreenTemplate} from "../../comps/screen-template/screen-template";
 import {Observable, Observer} from "rxjs";
+import {Once} from "../../decorators/once-decorator";
+import {IUiStateCampaign} from "../../store/store.data";
+import {YellowPepperService} from "../../services/yellowpepper.service";
 
 @Component({
     selector: 'campaign-layout',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    template: `<small class="debug">{{me}}</small>
-               <h4 i18n>screen layout</h4>
-                <div (click)="_nextClick.next(screenLayout)" style="float: left; padding: 20px" *ngFor="let screenLayout of m_screenLayouts">
-                    <screen-template [setTemplate]="screenLayout"></screen-template>
-                </div>
-                
-           `,
+    // changeDetection: ChangeDetectionStrategy.OnPush,
+    styles: [`
+        :host >>> .svgSD {
+            cursor: pointer;
+        }
+    `],
+    template: `
+        <small class="debug">{{me}}</small>
+        <h4 i18n>screen layout</h4>
+        <div (click)="_nextClick.next(screenLayout)" style="float: left; padding: 20px" *ngFor="let screenLayout of m_screenLayouts">
+            <screen-template [setTemplate]="screenLayout"></screen-template>
+        </div>
+
+    `,
 })
 export class CampaignLayout extends Compbaser {
 
@@ -26,8 +35,10 @@ export class CampaignLayout extends Compbaser {
     private m_screenLayouts: Array<IScreenTemplateData>;
     private m_campainName: string;
 
-    constructor() {
+    constructor(private yp:YellowPepperService) {
         super();
+        this.getNewCampaignParams();
+
         this.cancelOnDestroy(
             Observable.create(observer => {
                 this._nextClick = observer
@@ -42,22 +53,17 @@ export class CampaignLayout extends Compbaser {
         )
     }
 
-    @Input()
-    set setResolution(i_resolution: string) {
-        this.m_resolution = i_resolution;
-        this._render();
+    @Once()
+    private getNewCampaignParams() {
+        return this.yp.getNewCampaignParmas()
+            .subscribe((value: IUiStateCampaign) => {
+                this.m_resolution = value.campaignCreateResolution;
+                this.m_orientation = value.campaignCreateOrientation;
+                this.m_campainName = value.campaignCreateName;
+                this._render();
+            })
     }
 
-    @Input()
-    set setOrientation(i_orientation: OrientationEnum) {
-        this.m_orientation = i_orientation;
-        this._render();
-    }
-
-    @Input()
-    set setCampaignName(i_campaignName:string) {
-        this.m_campainName = i_campaignName;
-    }
 
     @Output()
     onSelection: EventEmitter<IScreenTemplateData> = new EventEmitter<IScreenTemplateData>();

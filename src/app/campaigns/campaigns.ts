@@ -1,47 +1,59 @@
-import {Component, ChangeDetectionStrategy} from "@angular/core";
+import {Component} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {ISliderItemData} from "../../comps/sliderpanel/Slideritem";
-import {Store} from "@ngrx/store";
-import {ApplicationState} from "../../store/application.state";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
-import {IUiState} from "../../store/store.data";
-import {IScreenTemplateData} from "../../comps/screen-template/screen-template";
+import {IUiState, IUiStateCampaign} from "../../store/store.data";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {RedPepperService} from "../../services/redpepper.service";
-import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
+import {Once} from "../../decorators/once-decorator";
+import {IScreenTemplateData} from "../../comps/screen-template/screen-template";
 
 @Component({
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    // changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'campaigns',
     template: `
         <small class="debug" style="padding-right: 25px">{{me}}</small>
         <Sliderpanel>
-            <Slideritem #sliderItemCampaignManager class="page center campaignList selected" [showToButton]="false" [toDirection]="'right'" [to]="'campaignEditor'">
-                <campaign-manager (slideToCampaignName)="sliderItemCampaignManager.slideTo('campaignName','right')" (slideToCampaignEditor)="sliderItemCampaignManager.onNext()"></campaign-manager>
+            <Slideritem [templateRef]="a" #sliderItemCampaignManager class="page center campaignList selected" [showToButton]="false" [toDirection]="'right'" [to]="'campaignEditor'">
+                <template #a>
+                    <campaign-manager (slideToCampaignName)="sliderItemCampaignManager.slideTo('campaignName','right')" (slideToCampaignEditor)="sliderItemCampaignManager.onNext()"></campaign-manager>
+                </template>
             </Slideritem>
-            <Slideritem class="page left campaignName" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignList'" [to]="'campaignOrientation'">
-                <campaign-name #campaignName></campaign-name>
+            <Slideritem [templateRef]="b" class="page left campaignName" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignList'" [to]="'campaignOrientation'">
+                <template #b>
+                    <campaign-name #campaignName></campaign-name>
+                </template>
             </Slideritem>
-            <Slideritem  #sliderItemCampaignOrientation class="page left campaignOrientation" [showToButton]="false" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignName'" [to]="'campaignResolution'">
-                <campaign-orientation #campaignOrientation (onSelection)="sliderItemCampaignOrientation.onNext()"></campaign-orientation>
+            <Slideritem [templateRef]="c" #sliderItemCampaignOrientation class="page left campaignOrientation" [showToButton]="false" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignName'" [to]="'campaignResolution'">
+                <template #c>
+                    <campaign-orientation #campaignOrientation (onSelection)="sliderItemCampaignOrientation.onNext()"></campaign-orientation>
+                </template>
             </Slideritem>
-            <Slideritem #sliderItemCampaignResolution class="page left campaignResolution" [showToButton]="false" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignOrientation'" [to]="'campaignLayout'">
-                <campaign-resolution #campaignResolution (onSelection)="sliderItemCampaignResolution.onNext()" [setOrientation]="campaignOrientation.getOrientationChanged" ></campaign-resolution>
+            <Slideritem [templateRef]="d" #sliderItemCampaignResolution class="page left campaignResolution" [showToButton]="false" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignOrientation'" [to]="'campaignLayout'">
+                <template #d>
+                    <campaign-resolution #campaignResolution (onSelection)="sliderItemCampaignResolution.onNext()"></campaign-resolution>
+                </template>
             </Slideritem>
-            <Slideritem #sliderItemCampaignLayout (onChange)="_onSlideChange($event)" class="page left campaignLayout" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignResolution'" [to]="'campaignEditor'">
-                <campaign-layout (onSelection)="sliderItemCampaignLayout.onNext(); _createCampaign($event, campaignResolution.getResolutionChanged)" [setCampaignName]="campaignName.getCampaignNameChanged" [setOrientation]="campaignOrientation.getOrientationChanged" [setResolution]="campaignResolution.getResolutionChanged"></campaign-layout>
+            <Slideritem [templateRef]="e" #sliderItemCampaignLayout (onChange)="_onSlideChange($event)" class="page left campaignLayout" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignResolution'" [to]="'campaignEditor'">
+                <template #e>
+                    <campaign-layout (onSelection)="sliderItemCampaignLayout.onNext(); _createCampaign($event)"></campaign-layout>
+                </template>
             </Slideritem>
-            <Slideritem #sliderItemCampaignEditor (onChange)="_onSlideChange($event)" [showFromButton]="false" class="page left campaignEditor" [fromDirection]="'left'" [from]="'campaignList'">
-                <campaign-editor (onToScreenLayoutEditor)="sliderCampaignLayoutEditor.slideTo('campaignLayoutEditor','right')" (onGoBack)="sliderItemCampaignEditor.slideTo('campaignList','left')"></campaign-editor>
+            <Slideritem [templateRef]="f" #sliderItemCampaignEditor (onChange)="_onSlideChange($event)" [showFromButton]="false" class="page left campaignEditor" [fromDirection]="'left'" [from]="'campaignList'">
+                <template #f>
+                    <campaign-editor (onToScreenLayoutEditor)="screenLayoutEditor.show() ; sliderScreenLayoutEditor.slideTo('screenLayoutEditor','right')" (onGoBack)="sliderItemCampaignEditor.slideTo('campaignList','left')"></campaign-editor>
+                </template>
             </Slideritem>
-            <Slideritem #sliderCampaignLayoutEditor (onChange)="_onSlideChange($event)" [showFromButton]="false" class="page left campaignLayoutEditor" [fromDirection]="'left'" [from]="'campaignList'">
-                <screen-layout-editor (onGoBack)="sliderItemCampaignEditor.slideTo('campaignEditor','left')"></screen-layout-editor>
+            <Slideritem [templateRef]="g" #sliderScreenLayoutEditor (onChange)="_onSlideChange($event)" [showFromButton]="false" class="page left screenLayoutEditor" [fromDirection]="'left'" [from]="'campaignList'">
+                <template #g>
+                    <screen-layout-editor #screenLayoutEditor (onGoBack)="sliderItemCampaignEditor.slideTo('campaignEditor','left')"></screen-layout-editor>
+                </template>
             </Slideritem>
         </Sliderpanel>
     `
 })
 export class Campaigns extends Compbaser {
-    constructor(private yp:YellowPepperService, private rp:RedPepperService) {
+    constructor(private yp: YellowPepperService, private rp: RedPepperService) {
         super();
         var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
         this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
@@ -56,10 +68,15 @@ export class Campaigns extends Compbaser {
         //     return this._createCampaign();
     }
 
-    private _createCampaign(createCampaign:IScreenTemplateData, resolution){
-        var campaignId = this.rp.createCampaignEntire(createCampaign.screenProps, createCampaign.name, resolution);
-        var uiState: IUiState = {campaign: {campaignSelected: campaignId}}
-        this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+    @Once()
+    private _createCampaign(i_createCampaign) {
+        var createCampaign:IScreenTemplateData = i_createCampaign;
+        return this.yp.getNewCampaignParmas()
+            .subscribe((value: IUiStateCampaign) => {
+                var campaignId = this.rp.createCampaignEntire(createCampaign.screenProps, createCampaign.name, value.campaignCreateResolution);
+                var uiState: IUiState = {campaign: {campaignSelected: campaignId}}
+                this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+            })
     }
 }
 

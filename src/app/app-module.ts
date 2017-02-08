@@ -111,7 +111,7 @@ export function appReducer(state: any = INITIAL_APPLICATION_STATE, action: any) 
 })
 
 export class AppModule {
-    constructor(private compiler:Compiler, private ngmslibService: NgmslibService) {
+    constructor(private compiler:Compiler, private ngmslibService: NgmslibService, private yp:YellowPepperService) {
         console.log(`running in dev mode: ${ngmslibService.inDevMode()}`);
         console.log(`App in ${(compiler instanceof Compiler) ? 'AOT' : 'JIT'} mode`);
         window['jQueryAny'] = jQuery;
