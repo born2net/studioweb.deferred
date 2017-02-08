@@ -32,8 +32,8 @@ export class CampaignLayout extends Compbaser {
     private m_resolution: string;
     private m_screenTemplateData: IScreenTemplateData;
     private m_orientation: OrientationEnum
-    private m_screenLayouts: Array<IScreenTemplateData>;
-    private m_campainName: string;
+    m_screenLayouts: Array<IScreenTemplateData>;
+    m_campaignName: string;
 
     constructor(private yp:YellowPepperService) {
         super();
@@ -59,7 +59,7 @@ export class CampaignLayout extends Compbaser {
             .subscribe((value: IUiStateCampaign) => {
                 this.m_resolution = value.campaignCreateResolution;
                 this.m_orientation = value.campaignCreateOrientation;
-                this.m_campainName = value.campaignCreateName;
+                this.m_campaignName = value.campaignCreateName;
                 this._render();
             })
     }
@@ -80,7 +80,7 @@ export class CampaignLayout extends Compbaser {
                 screenType: screenType,
                 screenProps: screenTemplates[this.m_orientation][this.m_resolution][screenType],
                 scale: 14,
-                name: this.m_campainName
+                name: this.m_campaignName
             };
             this.m_screenLayouts.push(screenTemplateData);
         }

@@ -25,7 +25,7 @@ import {Observable} from "rxjs";
                                     <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
                                 </small>
                                 <small class="debug">{{me}}</small>
-                                Channel name: {{(channel$ | async)?.getChanelName()}}
+                                Channel name: {{(m_channel$ | async)?.getChanelName()}}
                             </div>
                             <ul class="list-group">
                                 <li class="list-group-item">
@@ -78,7 +78,7 @@ export class ChannelProps extends Compbaser {
 
     private channelModel: CampaignTimelineChanelsModel;
     private formInputs = {};
-    private channel$: Observable<CampaignTimelineChanelsModel>;
+    m_channel$: Observable<CampaignTimelineChanelsModel>;
     m_contGroup: FormGroup;
 
     constructor(private fb: FormBuilder, private yp: YellowPepperService, private rp: RedPepperService) {
@@ -91,7 +91,7 @@ export class ChannelProps extends Compbaser {
             this.formInputs[key] = this.m_contGroup.controls[key] as FormControl;
         })
 
-        this.channel$ = this.yp.listenChannelValueChanged();
+        this.m_channel$ = this.yp.listenChannelValueChanged();
 
         this.cancelOnDestroy(
             this.yp.listenChannelSelected()

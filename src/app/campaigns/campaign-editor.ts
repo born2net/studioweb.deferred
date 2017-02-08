@@ -14,7 +14,7 @@ import {Once} from "../../decorators/once-decorator";
 export class CampaignEditor extends Compbaser {
 
     private campaignModel: CampaignsModelExt;
-    private campaignTimelinesModels: List<CampaignTimelinesModel>;
+    m_campaignTimelinesModels: List<CampaignTimelinesModel>;
 
     constructor(private yp: YellowPepperService, private rp: RedPepperService) {
         super();
@@ -41,8 +41,8 @@ export class CampaignEditor extends Compbaser {
     @Once()
     private _loadCampaignTimelines() {
         return this.yp.getCampaignTimelines(this.campaignModel.getCampaignId())
-            .subscribe((campaignTimelinesModels: List<CampaignTimelinesModel>) => {
-                this.campaignTimelinesModels = campaignTimelinesModels;
+            .subscribe((m_campaignTimelinesModels: List<CampaignTimelinesModel>) => {
+                this.m_campaignTimelinesModels = m_campaignTimelinesModels;
             })
     }
 

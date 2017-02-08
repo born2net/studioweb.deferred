@@ -36,7 +36,7 @@ enum CampaignPlaylistModeEnum  {
                             <ul class="list-group">
                                 <li class="list-group-item">
                                     <span i18n>campaign id: </span>
-                                    {{campaignModel?.getCampaignId()}}
+                                    {{m_campaignModel?.getCampaignId()}}
                                 </li>
                                 <li class="list-group-item">
                                     <span i18n>kiosk mode</span>
@@ -61,22 +61,22 @@ enum CampaignPlaylistModeEnum  {
                                     <div class="row paddingCeilingFloor20">
                                         <div class="center-block" style="width: 240px">
                                             <button type="button" (click)="_onChangePlaylistMode(CampaignPlaylistModeEnum.SEQUENCER)"
-                                                    [ngClass]="{faded: ((campaignModel$ | async)?.getCampaignPlaylistMode() == CampaignPlaylistModeEnum.SCHEDULER)}"
+                                                    [ngClass]="{faded: ((m_campaignModel$ | async)?.getCampaignPlaylistMode() == CampaignPlaylistModeEnum.SCHEDULER)}"
                                                     class="campaignPlayMode btn btn-default">
                                                 <span class="fa fa-repeat"></span>
                                             </button>
                                             <button type="button" (click)="_onChangePlaylistMode(CampaignPlaylistModeEnum.SCHEDULER)"
-                                                    [ngClass]="{faded: ((campaignModel$ | async)?.getCampaignPlaylistMode() == CampaignPlaylistModeEnum.SEQUENCER)}"
+                                                    [ngClass]="{faded: ((m_campaignModel$ | async)?.getCampaignPlaylistMode() == CampaignPlaylistModeEnum.SEQUENCER)}"
                                                     class="campaignPlayMode btn btn-default">
                                                 <span class="fa fa-calendar"></span>
                                             </button>
                                         </div>
                                     </div>
-                                    <div *ngIf="(campaignModel$ | async)?.getCampaignPlaylistMode() == 0">
+                                    <div *ngIf="(m_campaignModel$ | async)?.getCampaignPlaylistMode() == 0">
                                         <p i18n>Sequencer (simple mode):</p>
                                         <p i18n>Play timelines for this campaign in a continuous loop. It is easy to setup and simple to use</p>
                                     </div>
-                                    <div *ngIf="(campaignModel$ | async)?.getCampaignPlaylistMode() == 1">
+                                    <div *ngIf="(m_campaignModel$ | async)?.getCampaignPlaylistMode() == 1">
                                         <p i18n>Scheduler (advanced mode): </p>
                                         <p i18n>Play timelines for this campaign only on specific times. For example, play Timeline A in the morning and Timeline B at night.</p>
                                     </div>
@@ -129,7 +129,7 @@ export class CampaignProps extends Compbaser {
     /**
      * In this example we demonstrate two ways we can bind to the store values:
      *
-     * 1. campaignModel$ via Observable subscription using async into the template: [ngClass]="{faded: ((campaignModel$ | async)?.getCampaignPlaylistMode() == 1)}" ...
+     * 1. m_campaignModel$ via Observable subscription using async into the template: [ngClass]="{faded: ((m_campaignModel$ | async)?.getCampaignPlaylistMode() == 1)}" ...
      * 2. campaignModel direct grabbing the campaignModel from the store and doing a loop over keys: _.forEach(this.formInputs, (value, key: string) => { ...
      *
      * We also demoing here two ways of upding store:
@@ -137,11 +137,11 @@ export class CampaignProps extends Compbaser {
      * 2. reacting to the Observable of statusChanges
      **/
 
-    private campaignModel: CampaignsModelExt;
-    private campaignModel$: Observable<CampaignsModelExt>;
+    m_campaignModel: CampaignsModelExt;
+    m_campaignModel$: Observable<CampaignsModelExt>;
     private formInputs = {};
-    private m_contGroup: FormGroup;
-    private CampaignPlaylistModeEnum = CampaignPlaylistModeEnum;
+    m_contGroup: FormGroup;
+    CampaignPlaylistModeEnum = CampaignPlaylistModeEnum;
 
     constructor(private fb: FormBuilder, private ngmslibService: NgmslibService, private yp: YellowPepperService, private rp: RedPepperService) {
         super();
@@ -160,26 +160,26 @@ export class CampaignProps extends Compbaser {
         this.cancelOnDestroy(
             this.yp.listenCampaignSelected()
                 .subscribe((campaign: CampaignsModelExt) => {
-                    this.campaignModel = campaign;
+                    this.m_campaignModel = campaign;
                     this.renderFormInputs();
                     this.renderFormInputsReactive();
                 })
         );
 
         // example 2: hook to store slice observable and pipe to async in template
-        this.campaignModel$ = this.yp.listenCampaignValueChanged()
+        this.m_campaignModel$ = this.yp.listenCampaignValueChanged()
 
     }
 
     _onChangePlaylistMode(mode: number) {
         switch (mode) {
             case CampaignPlaylistModeEnum.SEQUENCER: {
-                this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_playlist_mode', String(mode));
+                this.rp.setCampaignRecord(this.m_campaignModel.getCampaignId(), 'campaign_playlist_mode', String(mode));
                 break;
             }
             case CampaignPlaylistModeEnum.SCHEDULER: {
-                this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_playlist_mode', String(mode));
-                this.rp.checkAndCreateCampaignTimelineScheduler(this.campaignModel.getCampaignId());
+                this.rp.setCampaignRecord(this.m_campaignModel.getCampaignId(), 'campaign_playlist_mode', String(mode));
+                this.rp.checkAndCreateCampaignTimelineScheduler(this.m_campaignModel.getCampaignId());
                 break;
             }
         }
@@ -190,10 +190,10 @@ export class CampaignProps extends Compbaser {
 
     // example 1 on input update via manually for looping
     private renderFormInputs() {
-        if (!this.campaignModel)
+        if (!this.m_campaignModel)
             return;
         _.forEach(this.formInputs, (value, key: string) => {
-            let data = this.campaignModel.getKey(key);
+            let data = this.m_campaignModel.getKey(key);
             data = StringJS(data).booleanToNumber();
             this.formInputs[key].setValue(data)
         });
@@ -204,8 +204,8 @@ export class CampaignProps extends Compbaser {
         this.cancelOnDestroy(
             this.yp.listenCampaignSelected()
                 .subscribe((i_campaignModel: CampaignsModelExt) => {
-                    this.campaignModel = i_campaignModel;
-                    var bb = this.campaignModel.toPureJs();
+                    this.m_campaignModel = i_campaignModel;
+                    var bb = this.m_campaignModel.toPureJs();
                     // this.m_contGroup.patchValue(bb);
                 })
         );
@@ -235,10 +235,10 @@ export class CampaignProps extends Compbaser {
         // console.log(this.m_contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.m_contGroup.value)));
         if (this.m_contGroup.status != 'VALID')
             return;
-        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_name', this.m_contGroup.value.campaign_name);
-        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_playlist_mode', this.m_contGroup.value.campaign_playlist_mode);
-        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_timeline_id', 0); //todo: you need to fix this as zero is arbitrary number right now
-        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_mode', this.m_contGroup.value.kiosk_mode);
+        this.rp.setCampaignRecord(this.m_campaignModel.getCampaignId(), 'campaign_name', this.m_contGroup.value.campaign_name);
+        this.rp.setCampaignRecord(this.m_campaignModel.getCampaignId(), 'campaign_playlist_mode', this.m_contGroup.value.campaign_playlist_mode);
+        this.rp.setCampaignRecord(this.m_campaignModel.getCampaignId(), 'kiosk_timeline_id', 0); //todo: you need to fix this as zero is arbitrary number right now
+        this.rp.setCampaignRecord(this.m_campaignModel.getCampaignId(), 'kiosk_mode', this.m_contGroup.value.kiosk_mode);
         this.rp.reduxCommit()
     }
 
@@ -257,7 +257,7 @@ export class CampaignProps extends Compbaser {
             },
             callback: (result) => {
                 if (result) {
-                    var campaignId = this.campaignModel.getCampaignId();
+                    var campaignId = this.m_campaignModel.getCampaignId();
                     this.rp.removeCampaignKeepBoards(campaignId);
                     this.rp.reduxCommit();
                     var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}

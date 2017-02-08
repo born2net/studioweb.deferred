@@ -29,14 +29,14 @@ import {simpleRegExp} from "../../Lib";
                             </div>
                             <ul class="list-group">
                                 <li class="list-group-item">
-                                    <div *ngIf="(campaignModel$ | async)?.getCampaignPlaylistMode() == '1'">
+                                    <div *ngIf="(m_campaignModel$ | async)?.getCampaignPlaylistMode() == '1'">
                                         <h4><i class="fa fa-calendar"></i>playback mode: scheduler</h4>
                                     </div>
-                                    <div *ngIf="(campaignModel$ | async)?.getCampaignPlaylistMode() == '0'">
+                                    <div *ngIf="(m_campaignModel$ | async)?.getCampaignPlaylistMode() == '0'">
                                         <h4><i class="fa fa fa-repeat"></i>playback mode: sequencer</h4>
                                     </div>
                                 </li>
-                                <li *ngIf="(campaignModel$ | async)?.getCampaignPlaylistMode() == '0'" class="list-group-item">
+                                <li *ngIf="(m_campaignModel$ | async)?.getCampaignPlaylistMode() == '0'" class="list-group-item">
                                     <h4>timeline length: {{m_duration}}</h4>
                                 </li>
                                 <li class="list-group-item">
@@ -54,7 +54,7 @@ import {simpleRegExp} from "../../Lib";
                 </div>
             </form>
         </div>
-        <div *ngIf="(campaignModel$ | async)?.getCampaignPlaylistMode() == '1'">
+        <div *ngIf="(m_campaignModel$ | async)?.getCampaignPlaylistMode() == '1'">
             <campaign-sched-props></campaign-sched-props>
         </div>       
     `,
@@ -81,9 +81,9 @@ export class TimelineProps extends Compbaser {
 
     private timelineModel: CampaignTimelinesModel;
     private formInputs = {};
-    private m_duration: string = '00:00:00'
-    private m_contGroup: FormGroup;
-    private campaignModel$: Observable<CampaignsModelExt>;
+    m_duration: string = '00:00:00'
+    m_contGroup: FormGroup;
+    m_campaignModel$: Observable<CampaignsModelExt>;
 
     constructor(private fb: FormBuilder, private ngmslibService: NgmslibService, private yp: YellowPepperService, private rp: RedPepperService, private cd: ChangeDetectorRef) {
         super();
@@ -93,7 +93,7 @@ export class TimelineProps extends Compbaser {
         _.forEach(this.m_contGroup.controls, (value, key: string) => {
             this.formInputs[key] = this.m_contGroup.controls[key] as FormControl;
         })
-        this.campaignModel$ = this.yp.listenCampaignValueChanged()
+        this.m_campaignModel$ = this.yp.listenCampaignValueChanged()
 
         this.cancelOnDestroy(
             this.yp.listenTimelineSelected()

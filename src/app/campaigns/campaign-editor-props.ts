@@ -23,10 +23,10 @@ import {Observable} from "rxjs";
                         </div>
                         <ul class="list-group">
                             <li class="list-group-item">
-                                <div *ngIf="(campaignModel$ | async)?.getCampaignPlaylistMode() == '1'">
+                                <div *ngIf="(m_campaignModel$ | async)?.getCampaignPlaylistMode() == '1'">
                                     <h4><i class="fa fa-calendar"></i>playback mode: scheduler</h4>
                                 </div>
-                                <div *ngIf="(campaignModel$ | async)?.getCampaignPlaylistMode() == '0'">
+                                <div *ngIf="(m_campaignModel$ | async)?.getCampaignPlaylistMode() == '0'">
                                     <h4><i class="fa fa fa-repeat"></i>playback mode: sequencer</h4>
                                 </div>
                             </li>
@@ -47,11 +47,11 @@ import {Observable} from "rxjs";
 
 })
 export class CampaignEditorProps extends Compbaser {
-    private campaignModel$: Observable<CampaignsModelExt>;
+    m_campaignModel$: Observable<CampaignsModelExt>;
 
     constructor(private yp: YellowPepperService) {
         super();
-        this.campaignModel$ = this.yp.listenCampaignValueChanged()
+        this.m_campaignModel$ = this.yp.listenCampaignValueChanged()
     }
 
     destroy() {

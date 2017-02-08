@@ -18,7 +18,7 @@ import {CampaignTimelineSchedulesModel} from "../../store/imsdb.interfaces_auto"
 export class CampaignSchedProps extends Compbaser implements AfterViewInit {
 
     private m_campaignTimelineSchedulesModel: CampaignTimelineSchedulesModel;
-    private m_days: Array<any> = [];
+    m_days: Array<any> = [];
     private formInputs = {};
     contGroup: FormGroup;
     private m_ONCE = '0';
