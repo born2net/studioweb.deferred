@@ -37,14 +37,14 @@ export class Slideritem implements DoCheck  {
             if (this.render == true)
                 return;
             this.render = true;
-            console.log('added');
+            // console.log('added');
             this.cd.detectChanges();
         } else {
             if (this.render == false)
                 return;
             setTimeout(() => {
                 this.render = false;
-                console.log('removed');
+                // console.log('removed');
                 this.cd.detectChanges();
             }, 500)
         }
