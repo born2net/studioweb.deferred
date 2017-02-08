@@ -9,6 +9,7 @@ export function Once(milliseconds: number = 0) {
                     sub.unsubscribe();
                 } else if (sub instanceof Function) {
                     sub()
+                } else if (sub === null) {
                 } else {
                     throw new Error('@Once did not receive something to unsubscribe from, did you forget to return an Observable maybe?');
                 }
