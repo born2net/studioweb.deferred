@@ -630,7 +630,7 @@ small {
 
 small.debug {
     color: red;
-    display: none !important;
+    /*display: none !important;*/
 }
 
 small.release {

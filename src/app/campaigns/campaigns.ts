@@ -32,7 +32,10 @@ import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
                 <campaign-layout (onSelection)="sliderItemCampaignLayout.onNext(); _createCampaign($event, campaignResolution.getResolutionChanged)" [setCampaignName]="campaignName.getCampaignNameChanged" [setOrientation]="campaignOrientation.getOrientationChanged" [setResolution]="campaignResolution.getResolutionChanged"></campaign-layout>
             </Slideritem>
             <Slideritem #sliderItemCampaignEditor (onChange)="_onSlideChange($event)" [showFromButton]="false" class="page left campaignEditor" [fromDirection]="'left'" [from]="'campaignList'">
-                <campaign-editor (onGoBack)="sliderItemCampaignEditor.slideTo('campaignList','left')"></campaign-editor>
+                <campaign-editor (onToScreenLayoutEditor)="sliderCampaignLayoutEditor.slideTo('campaignLayoutEditor','right')" (onGoBack)="sliderItemCampaignEditor.slideTo('campaignList','left')"></campaign-editor>
+            </Slideritem>
+            <Slideritem #sliderCampaignLayoutEditor (onChange)="_onSlideChange($event)" [showFromButton]="false" class="page left campaignLayoutEditor" [fromDirection]="'left'" [from]="'campaignList'">
+                <campaign-layout-editor (onGoBack)="sliderItemCampaignEditor.slideTo('campaignEditor','left')"></campaign-layout-editor>
             </Slideritem>
         </Sliderpanel>
     `

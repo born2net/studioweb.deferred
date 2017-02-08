@@ -28,9 +28,15 @@ export class CampaignEditor extends Compbaser {
         );
     }
 
+    _onEditScreenLayout() {
+        this.onToScreenLayoutEditor.emit();
+    }
 
     @Output()
-    onGoBack:EventEmitter<any> = new EventEmitter<any>();
+    onToScreenLayoutEditor: EventEmitter<any> = new EventEmitter<any>();
+
+    @Output()
+    onGoBack: EventEmitter<any> = new EventEmitter<any>();
 
     @Once()
     private _loadCampaignTimelines() {
@@ -39,6 +45,7 @@ export class CampaignEditor extends Compbaser {
                 this.campaignTimelinesModels = campaignTimelinesModels;
             })
     }
+
 
     ngOnInit() {
     }
