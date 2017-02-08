@@ -4,7 +4,7 @@ import {RedPepperService} from "../../services/redpepper.service";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 import {IScreenTemplateData, ScreenTemplate} from "../../comps/screen-template/screen-template";
-import {Observable} from "rxjs";
+import {Observable, Subscriber, Subscription} from "rxjs";
 import {IUiState} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
 import {List} from "immutable";
@@ -344,9 +344,9 @@ export class Sequencer extends Compbaser {
      @method selectNextChannel
      **/
     @Once()
-    public onSelectNextChannel() {
+    public onSelectNextChannel():Subscription  {
         if (!this.m_selectedScreenTemplate)
-            return;
+            return null;
         var timeline_channel_id;
         return this.yp.getChannelsOfTimeline(this.m_selectedTimelineId)
             .subscribe((channelsIDs) => {

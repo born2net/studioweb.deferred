@@ -47,8 +47,8 @@ export class CampaignList extends Compbaser {
     onCampaignSelected: EventEmitter<any> = new EventEmitter<any>();
 
     _onCampaignSelected(event: MouseEvent, campaign: CampaignsModelExt, index) {
-        event.stopPropagation();
-        event.preventDefault();
+        // event.stopPropagation();
+        // event.preventDefault();
         this.selectedIdx = index;
         let uiState: IUiState;
         if (jQuery(event.target).hasClass('props')) {

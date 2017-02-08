@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Output} from "@angular/core";
+import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Output} from "@angular/core";
 import {Observable} from "rxjs";
 import {List} from "immutable";
 import {Compbaser} from "ng-mslib";
@@ -26,6 +26,7 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
 })
 export class CampaignManager extends Compbaser {
 
+
     public campaigns$: Observable<List<CampaignsModelExt>>;
     public userModel$: Observable<UserModel>;
     public timelineSelected$: Observable<number>;
@@ -33,14 +34,8 @@ export class CampaignManager extends Compbaser {
 
     constructor(private el: ElementRef, private yp: YellowPepperService, private redPepperService: RedPepperService, private router: Router) {
         super();
-
-        // this.yp.ngrxStore.select(store => store.appDb.uiState.campaign).map((v) => {
-        //     // console.log(v);
-        // }).subscribe((e) => {
-        // });
-
+        this.preventRedirect(true);
         this.timelineSelected$ = this.yp.ngrxStore.select(store => store.appDb.uiState.campaign.timelineSelected).map(v => v);
-
 
         this.userModel$ = this.yp.ngrxStore.select(store => store.appDb.userModel);
         this.campaigns$ = this.yp.ngrxStore.select(store => store.msDatabase.sdk.table_campaigns).map((list: List<CampaignsModelExt>) => {
@@ -162,3 +157,4 @@ export class CampaignManager extends Compbaser {
 //     uiSideProps: _.random(1,1222)
 // }
 // this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: b}))
+
