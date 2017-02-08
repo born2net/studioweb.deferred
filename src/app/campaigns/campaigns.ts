@@ -35,7 +35,7 @@ import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
                 <campaign-editor (onToScreenLayoutEditor)="sliderCampaignLayoutEditor.slideTo('campaignLayoutEditor','right')" (onGoBack)="sliderItemCampaignEditor.slideTo('campaignList','left')"></campaign-editor>
             </Slideritem>
             <Slideritem #sliderCampaignLayoutEditor (onChange)="_onSlideChange($event)" [showFromButton]="false" class="page left campaignLayoutEditor" [fromDirection]="'left'" [from]="'campaignList'">
-                <campaign-layout-editor (onGoBack)="sliderItemCampaignEditor.slideTo('campaignEditor','left')"></campaign-layout-editor>
+                <screen-layout-editor (onGoBack)="sliderItemCampaignEditor.slideTo('campaignEditor','left')"></screen-layout-editor>
             </Slideritem>
         </Sliderpanel>
     `

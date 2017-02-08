@@ -2,7 +2,7 @@ import {Component, ChangeDetectionStrategy, Output, EventEmitter} from "@angular
 import {Compbaser} from "ng-mslib";
 
 @Component({
-    selector: 'campaign-layout-editor',
+    selector: 'screen-layout-editor',
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <small class="release">my component
@@ -36,7 +36,13 @@ import {Compbaser} from "ng-mslib";
         </div>
     `,
 })
-export class CampaignLayoutEditor extends Compbaser {
+export class ScreenLayoutEditor extends Compbaser {
+
+    RATIO = 4;
+    m_canvas;
+    m_canvasID;
+    m_selectedViewerID;
+    m_dimensionProps;
 
     constructor() {
         super();
@@ -46,47 +52,31 @@ export class CampaignLayoutEditor extends Compbaser {
      Constructor
      @method initialize
      **/
-    initialize() {
-        // var self = this;
-        // BB.comBroker.setService(BB.SERVICES['SCREEN_LAYOUT_EDITOR_VIEW'], self);
-        // self.RATIO = 4;
-        // self.m_canvas = undefined;
-        // self.m_canvasID = undefined;
-        // self.m_selectedViewerID = undefined;
-        // self.m_dimensionProps = undefined;
-        //
-        // this.m_property = BB.comBroker.getService(BB.SERVICES['PROPERTIES_VIEW']);
-        // self.m_property.initPanel(Elements.VIEWER_EDIT_PROPERTIES);
-        //
-        // $(this.el).find('#prev').on('click', function (e) {
-        //     self._deSelectView();
-        //     BB.comBroker.fire(BB.EVENTS.CAMPAIGN_TIMELINE_CHANGED, self);
-        //     return false;
-        // });
-        //
-        // self._listenAddDivision();
-        // self._listenRemoveDivision();
-        // self._listenPushToTopDivision();
-        // self._listenPushToBottomDivision();
-        // self._listenSelectNextDivision();
+    afterViewInit() {
 
-        // self.listenTo(self.options.stackView, BB.EVENTS.SELECTED_STACK_VIEW, function (e) {
-        //     if (e == self) {
-        //         if (self.m_dimensionProps == undefined) {
+        // this._listenAddDivision();
+        // this._listenRemoveDivision();
+        // this._listenPushToTopDivision();
+        // this._listenPushToBottomDivision();
+        // this._listenSelectNextDivision();
+
+        // this.listenTo(this.options.stackView, BB.EVENTS.SELECTED_STACK_VIEW, function (e) {
+        //     if (e == this) {
+        //         if (this.m_dimensionProps == undefined) {
         //             require(['DimensionProps'], function (DimensionProps) {
-        //                 self.m_dimensionProps = new DimensionProps({
+        //                 this.m_dimensionProps = new DimensionProps({
         //                     appendTo: Elements.VIEWER_DIMENSIONS,
         //                     showAngle: false
         //                 });
-        //                 $(self.m_dimensionProps).on('changed', function (e) {
+        //                 $(this.m_dimensionProps).on('changed', function (e) {
         //                     var props = e.target.getValues();
-        //                     self._updateDimensionsInDB(self.m_canvas.getActiveObject(), props);
-        //                     self._moveViewer(props);
+        //                     this._updateDimensionsInDB(this.m_canvas.getActiveObject(), props);
+        //                     this._moveViewer(props);
         //                 });
-        //                 self._render();
+        //                 this._render();
         //             });
         //         } else {
-        //             self._render();
+        //             this._render();
         //         }
         //     }
         // });
@@ -97,24 +87,24 @@ export class CampaignLayoutEditor extends Compbaser {
 //      @method  selectView
 //      **/
 //     selectView(i_campaign_timeline_id, i_campaign_timeline_board_template_id) {
-//         var self = this;
-//         self.m_campaign_timeline_id = i_campaign_timeline_id;
-//         self.m_campaign_timeline_board_template_id = i_campaign_timeline_board_template_id;
-//         self.m_global_board_template_id = pepper.getGlobalTemplateIdOfTimeline(i_campaign_timeline_board_template_id);
-//         self.m_screenProps = pepper.getTemplateViewersScreenProps(self.m_campaign_timeline_id, self.m_campaign_timeline_board_template_id);
-//         self.m_orientation = BB.comBroker.getService(BB.SERVICES['ORIENTATION_SELECTOR_VIEW']).getOrientation();
-//         self.m_resolution = BB.comBroker.getService(BB.SERVICES['RESOLUTION_SELECTOR_VIEW']).getResolution();
+//         var this = this;
+//         this.m_campaign_timeline_id = i_campaign_timeline_id;
+//         this.m_campaign_timeline_board_template_id = i_campaign_timeline_board_template_id;
+//         this.m_global_board_template_id = pepper.getGlobalTemplateIdOfTimeline(i_campaign_timeline_board_template_id);
+//         this.m_screenProps = pepper.getTemplateViewersScreenProps(this.m_campaign_timeline_id, this.m_campaign_timeline_board_template_id);
+//         this.m_orientation = BB.comBroker.getService(BB.SERVICES['ORIENTATION_SELECTOR_VIEW']).getOrientation();
+//         this.m_resolution = BB.comBroker.getService(BB.SERVICES['RESOLUTION_SELECTOR_VIEW']).getResolution();
 //
-//         self.options.stackView.slideToPage(self, 'right');
+//         this.options.stackView.slideToPage(this, 'right');
 //
 //         require(['fabric'], function () {
-//             var w = parseInt(self.m_resolution.split('x')[0]) / self.RATIO;
-//             var h = parseInt(self.m_resolution.split('x')[1]) / self.RATIO;
+//             var w = parseInt(this.m_resolution.split('x')[0]) / this.RATIO;
+//             var h = parseInt(this.m_resolution.split('x')[1]) / this.RATIO;
 //
-//             self._canvasFactory(w, h);
-//             self._listenObjectChanged();
-//             self._listenObjectsOverlap();
-//             self._listenBackgroundSelected();
+//             this._canvasFactory(w, h);
+//             this._listenObjectChanged();
+//             this._listenObjectsOverlap();
+//             this._listenBackgroundSelected();
 //         })
 //     }
 //
@@ -123,8 +113,8 @@ export class CampaignLayoutEditor extends Compbaser {
 //      @method _render
 //      **/
 //     _render() {
-//         var self = this;
-//         self.m_property.resetPropertiesView();
+//         var this = this;
+//         this.m_property.resetPropertiesView();
 //     }
 //
 // ,
@@ -134,17 +124,17 @@ export class CampaignLayoutEditor extends Compbaser {
 //      @method (totalViews - i)
 //      **/
 //     _listenAddDivision() {
-//         var self = this;
-//         $(Elements.LAYOUT_EDITOR_ADD_NEW, self.$el).on('click', function () {
+//         var this = this;
+//         $(Elements.LAYOUT_EDITOR_ADD_NEW, this.$el).on('click', function () {
 //             var props = {
 //                 x: 0,
 //                 y: 0,
 //                 w: 100,
 //                 h: 100
 //             }
-//             var board_viewer_id = pepper.createViewer(self.m_global_board_template_id, props);
-//             var campaign_timeline_chanel_id = pepper.createTimelineChannel(self.m_campaign_timeline_id);
-//             pepper.assignViewerToTimelineChannel(self.m_campaign_timeline_board_template_id, board_viewer_id, campaign_timeline_chanel_id);
+//             var board_viewer_id = pepper.createViewer(this.m_global_board_template_id, props);
+//             var campaign_timeline_chanel_id = pepper.createTimelineChannel(this.m_campaign_timeline_id);
+//             pepper.assignViewerToTimelineChannel(this.m_campaign_timeline_board_template_id, board_viewer_id, campaign_timeline_chanel_id);
 //
 //             var viewer = new fabric.Rect({
 //                 left: 0,
@@ -164,15 +154,15 @@ export class CampaignLayoutEditor extends Compbaser {
 //                 lockRotation: true,
 //                 transparentCorners: false
 //             });
-//             self.m_canvas.add(viewer);
+//             this.m_canvas.add(viewer);
 //
 //             var props = {
 //                 x: 0,
 //                 y: 0,
-//                 w: viewer.get('width') * self.RATIO,
-//                 h: viewer.get('height') * self.RATIO
+//                 w: viewer.get('width') * this.RATIO,
+//                 h: viewer.get('height') * this.RATIO
 //             }
-//             self._updateDimensionsInDB(viewer, props);
+//             this._updateDimensionsInDB(viewer, props);
 //         });
 //     }
 //
@@ -181,33 +171,33 @@ export class CampaignLayoutEditor extends Compbaser {
 //      @method _listenRemoveDivision
 //      **/
 //     _listenRemoveDivision() {
-//         var self = this;
-//         $(Elements.LAYOUT_EDITOR_REMOVE, self.$el).on('click', function () {
-//             if (_.isUndefined(self.m_canvas))
+//         var this = this;
+//         $(Elements.LAYOUT_EDITOR_REMOVE, this.$el).on('click', function () {
+//             if (_.isUndefined(this.m_canvas))
 //                 return;
-//             var totalViews = self.m_canvas.getObjects().length;
+//             var totalViews = this.m_canvas.getObjects().length;
 //             if (totalViews < 2) {
 //                 bootbox.alert($(Elements.MSG_BOOTBOX_AT_LEAST_ONE_DIV).text());
 //                 return;
 //             }
-//             var campaign_timeline_chanel_id = pepper.removeTimelineBoardViewerChannel(self.m_selectedViewerID);
-//             pepper.removeBoardTemplateViewer(self.m_campaign_timeline_board_template_id, self.m_selectedViewerID);
+//             var campaign_timeline_chanel_id = pepper.removeTimelineBoardViewerChannel(this.m_selectedViewerID);
+//             pepper.removeBoardTemplateViewer(this.m_campaign_timeline_board_template_id, this.m_selectedViewerID);
 //             pepper.removeChannelFromTimeline(campaign_timeline_chanel_id);
 //             pepper.removeBlocksFromTimelineChannel(campaign_timeline_chanel_id);
-//             self.m_canvas.remove(self.m_canvas.getActiveObject());
-//             self.m_canvas.renderAll();
-//             /*var viewer = self.m_canvas.item(0);
+//             this.m_canvas.remove(this.m_canvas.getActiveObject());
+//             this.m_canvas.renderAll();
+//             /*var viewer = this.m_canvas.item(0);
 //              var props = {
 //              y: viewer.get('top'),
 //              x: viewer.get('left'),
-//              w: viewer.get('width') * self.RATIO,
-//              h: viewer.get('height') * self.RATIO
+//              w: viewer.get('width') * this.RATIO,
+//              h: viewer.get('height') * this.RATIO
 //              };
-//              self._updateDimensionsInDB(viewer, props);*/
+//              this._updateDimensionsInDB(viewer, props);*/
 //             BB.comBroker.fire(BB.EVENTS.VIEWER_REMOVED, this, this, {
 //                 campaign_timeline_chanel_id: campaign_timeline_chanel_id
 //             });
-//             pepper.announceTemplateViewerEdited(self.m_campaign_timeline_board_template_id);
+//             pepper.announceTemplateViewerEdited(this.m_campaign_timeline_board_template_id);
 //         });
 //     }
 //
@@ -216,13 +206,13 @@ export class CampaignLayoutEditor extends Compbaser {
 //      @method _listenPushToTopDivision
 //      **/
 //     _listenPushToTopDivision() {
-//         var self = this;
-//         $(Elements.LAYOUT_EDITOR_PUSH_TOP, self.$el).on('click', function () {
-//             var viewer = self.m_canvas.getActiveObject();
+//         var this = this;
+//         $(Elements.LAYOUT_EDITOR_PUSH_TOP, this.$el).on('click', function () {
+//             var viewer = this.m_canvas.getActiveObject();
 //             if (!viewer)
 //                 return;
-//             self.m_canvas.bringToFront(viewer);
-//             self._updateZorder();
+//             this.m_canvas.bringToFront(viewer);
+//             this._updateZorder();
 //         });
 //     }
 //
@@ -233,13 +223,13 @@ export class CampaignLayoutEditor extends Compbaser {
 //      @method _listenPushToBottomDivision
 //      **/
 //     _listenPushToBottomDivision() {
-//         var self = this;
-//         $(Elements.LAYOUT_EDITOR_PUSH_BOTTOM, self.$el).on('click', function () {
-//             var viewer = self.m_canvas.getActiveObject();
+//         var this = this;
+//         $(Elements.LAYOUT_EDITOR_PUSH_BOTTOM, this.$el).on('click', function () {
+//             var viewer = this.m_canvas.getActiveObject();
 //             if (!viewer)
 //                 return;
-//             self.m_canvas.sendToBack(viewer);
-//             self._updateZorder();
+//             this.m_canvas.sendToBack(viewer);
+//             this._updateZorder();
 //         });
 //     }
 //
@@ -248,14 +238,14 @@ export class CampaignLayoutEditor extends Compbaser {
 //      @method _updateZorder
 //      **/
 //     _updateZorder() {
-//         var self = this;
-//         var viewers = self.m_canvas.getObjects();
+//         var this = this;
+//         var viewers = this.m_canvas.getObjects();
 //         for (var i in viewers) {
 //             // log(viewers[i].get('id') + ' ' + i);
 //             pepper.updateTemplateViewerOrder(viewers[i].get('id'), i);
 //         }
-//         var active = self.m_canvas.getActiveObject();
-//         self.m_canvas.setActiveObject(active);
+//         var active = this.m_canvas.getActiveObject();
+//         this.m_canvas.setActiveObject(active);
 //     }
 //
 //     /**
@@ -263,15 +253,15 @@ export class CampaignLayoutEditor extends Compbaser {
 //      @method _listenSelectNextDivision
 //      **/
 //     _listenSelectNextDivision() {
-//         var self = this;
-//         $(Elements.LAYOUT_EDITOR_NEXT, self.$el).on('click', function () {
-//             var viewer = self.m_canvas.getActiveObject();
-//             var viewIndex = self.m_canvas.getObjects().indexOf(viewer);
-//             var totalViews = self.m_canvas.getObjects().length;
+//         var this = this;
+//         $(Elements.LAYOUT_EDITOR_NEXT, this.$el).on('click', function () {
+//             var viewer = this.m_canvas.getActiveObject();
+//             var viewIndex = this.m_canvas.getObjects().indexOf(viewer);
+//             var totalViews = this.m_canvas.getObjects().length;
 //             if (viewIndex == totalViews - 1) {
-//                 self.m_canvas.setActiveObject(self.m_canvas.item(0));
+//                 this.m_canvas.setActiveObject(this.m_canvas.item(0));
 //             } else {
-//                 self.m_canvas.setActiveObject(self.m_canvas.item(viewIndex + 1));
+//                 this.m_canvas.setActiveObject(this.m_canvas.item(viewIndex + 1));
 //             }
 //         });
 //     }
@@ -281,10 +271,10 @@ export class CampaignLayoutEditor extends Compbaser {
 //      @method  selectView
 //      **/
 //     _deSelectView() {
-//         var self = this;
-//         self._destroy();
-//         self.m_property.resetPropertiesView();
-//         self.options.stackView.slideToPage(self.options.from, 'left');
+//         var this = this;
+//         this._destroy();
+//         this.m_property.resetPropertiesView();
+//         this.options.stackView.slideToPage(this.options.from, 'left');
 //     }
 //
 //     /**
@@ -294,31 +284,31 @@ export class CampaignLayoutEditor extends Compbaser {
 //      @param {Number} i_height
 //      **/
 //     _canvasFactory(i_width, i_height) {
-//         var self = this;
+//         var this = this;
 //
 //         var offsetH = i_height / 2;
 //         var offsetW = (i_width / 2) + 30;
-//         self.m_canvasID = _.uniqueId('screenLayoutEditorCanvas');
+//         this.m_canvasID = _.uniqueId('screenLayoutEditorCanvas');
 //         $('#screenLayoutEditorCanvasWrap').append('' +
 //             '<div>' +
-//             '<span align="center">' + self.m_resolution.split('x')[0] + 'px </span>' +
-//             '<canvas id="' + self.m_canvasID + '" width="' + i_width + 'px" height="' + i_height + 'px" style="border: 1px solid rgb(170, 170, 170);"></canvas>' +
-//             '<span style="position: relative; top: -' + offsetH + 'px; left: -' + offsetW + 'px;">' + self.m_resolution.split('x')[1] + 'px</span>' +
+//             '<span align="center">' + this.m_resolution.split('x')[0] + 'px </span>' +
+//             '<canvas id="' + this.m_canvasID + '" width="' + i_width + 'px" height="' + i_height + 'px" style="border: 1px solid rgb(170, 170, 170);"></canvas>' +
+//             '<span style="position: relative; top: -' + offsetH + 'px; left: -' + offsetW + 'px;">' + this.m_resolution.split('x')[1] + 'px</span>' +
 //             '</div>');
 //
-//         self.m_canvas = new fabric.Canvas(self.m_canvasID);
-//         self.m_canvas.selection = false;
+//         this.m_canvas = new fabric.Canvas(this.m_canvasID);
+//         this.m_canvas.selection = false;
 //
 //         var screenTemplateData = {
-//             orientation: self.m_orientation,
-//             resolution: self.m_resolution,
-//             screenProps: self.m_screenProps,
-//             scale: self.RATIO
+//             orientation: this.m_orientation,
+//             resolution: this.m_resolution,
+//             screenProps: this.m_screenProps,
+//             scale: this.RATIO
 //         };
 //
 //         var screenTemplate = new ScreenTemplateFactory({
 //             i_screenTemplateData: screenTemplateData,
-//             i_selfDestruct: true,
+//             i_thisDestruct: true,
 //             i_owner: this
 //         });
 //
@@ -344,23 +334,23 @@ export class CampaignLayoutEditor extends Compbaser {
 //                 lockRotation: true,
 //                 transparentCorners: false
 //             });
-//             self.m_canvas.add(rect);
+//             this.m_canvas.add(rect);
 //
 //             //rect.on('selected', function () {
 //             //  log('object selected a rectangle');
 //             //});
 //         }
 //
-//         //self.m_canvas.on('object:moving', function (e) {
-//         //    log('savings: ' + self.m_global_board_template_id);
+//         //this.m_canvas.on('object:moving', function (e) {
+//         //    log('savings: ' + this.m_global_board_template_id);
 //         //});
 //
 //         setTimeout(function () {
-//             if (!self.m_canvas)
+//             if (!this.m_canvas)
 //                 return;
-//             self.m_canvas.setHeight(i_height);
-//             self.m_canvas.setWidth(i_width);
-//             self.m_canvas.renderAll();
+//             this.m_canvas.setHeight(i_height);
+//             this.m_canvas.setWidth(i_width);
+//             this.m_canvas.renderAll();
 //         }, 500);
 //     }
 //
@@ -369,11 +359,11 @@ export class CampaignLayoutEditor extends Compbaser {
 //      @method _listenBackgroundSelected
 //      **/
 //     _listenBackgroundSelected() {
-//         var self = this;
-//         self.m_bgSelectedHandler = function (e) {
-//             self.m_property.resetPropertiesView();
+//         var this = this;
+//         this.m_bgSelectedHandler = function (e) {
+//             this.m_property.resetPropertiesView();
 //         };
-//         self.m_canvas.on('selection:cleared', self.m_bgSelectedHandler);
+//         this.m_canvas.on('selection:cleared', this.m_bgSelectedHandler);
 //     }
 //
 //     /**
@@ -381,19 +371,19 @@ export class CampaignLayoutEditor extends Compbaser {
 //      @method _listenObjectsOverlap
 //      **/
 //     _listenObjectsOverlap() {
-//         var self = this;
-//         self.m_onOverlap = function (options) {
+//         var this = this;
+//         this.m_onOverlap = function (options) {
 //             options.target.setCoords();
-//             self.m_canvas.forEachObject(function (obj) {
+//             this.m_canvas.forEachObject(function (obj) {
 //                 if (obj === options.target) return;
 //                 obj.setOpacity(options.target.intersectsWithObject(obj) ? 0.5 : 1);
 //             });
 //         }
 //
-//         self.m_canvas.on({
-//             'object:moving': self.m_onOverlap,
-//             'object:scaling': self.m_onOverlap,
-//             'object:rotating': self.m_onOverlap
+//         this.m_canvas.on({
+//             'object:moving': this.m_onOverlap,
+//             'object:scaling': this.m_onOverlap,
+//             'object:rotating': this.m_onOverlap
 //         });
 //     }
 //
@@ -404,17 +394,17 @@ export class CampaignLayoutEditor extends Compbaser {
 //      @method _enforceViewerVisible
 //      **/
 //     _enforceViewerVisible() {
-//         var self = this;
+//         var this = this;
 //         var pass = 0;
 //         var viewer;
-//         self.m_canvas.forEachObject(function (o) {
+//         this.m_canvas.forEachObject(function (o) {
 //             viewer = o;
 //             if (pass)
 //                 return;
 //             if (o.get('left') < (0 - o.get('width')) + 20) {
-//             } else if (o.get('left') > self.m_canvas.getWidth() - 20) {
+//             } else if (o.get('left') > this.m_canvas.getWidth() - 20) {
 //             } else if (o.get('top') < (0 - o.get('height') + 20)) {
-//             } else if (o.get('top') > self.m_canvas.getHeight() - 20) {
+//             } else if (o.get('top') > this.m_canvas.getHeight() - 20) {
 //             } else {
 //                 pass = 1;
 //             }
@@ -422,7 +412,7 @@ export class CampaignLayoutEditor extends Compbaser {
 //         if (!pass && viewer) {
 //             viewer.set({left: 0, top: 0}).setCoords();
 //             viewer.setCoords();
-//             self.m_canvas.renderAll();
+//             this.m_canvas.renderAll();
 //             bootbox.alert({
 //                 message: $(Elements.MSG_BOOTBOX_AT_LEAST_ONE_DIV).text(),
 //                 title: $(Elements.MSG_BOOTBOX_SCREEN_DIV_POS_RESET).text()
@@ -430,31 +420,31 @@ export class CampaignLayoutEditor extends Compbaser {
 //             var props = {
 //                 x: viewer.get('top'),
 //                 y: viewer.get('left'),
-//                 w: viewer.get('width') * self.RATIO,
-//                 h: viewer.get('height') * self.RATIO
+//                 w: viewer.get('width') * this.RATIO,
+//                 h: viewer.get('height') * this.RATIO
 //             }
-//             self._updateDimensionsInDB(viewer, props);
+//             this._updateDimensionsInDB(viewer, props);
 //         }
 //     }
 //
 //     /**
 //      Enforce minimum x y w h props
-//      @method self._enforceViewerMinimums(i_viewer);
+//      @method this._enforceViewerMinimums(i_viewer);
 //      @param {Object} i_rect
 //      **/
 //     _enforceViewerMinimums(i_viewer) {
-//         var self = this;
+//         var this = this;
 //         var MIN_SIZE = 50;
-//         if ((i_viewer.width * self.RATIO) < MIN_SIZE || (i_viewer.height * self.RATIO) < MIN_SIZE) {
-//             i_viewer.width = MIN_SIZE / self.RATIO;
-//             i_viewer.height = MIN_SIZE / self.RATIO;
+//         if ((i_viewer.width * this.RATIO) < MIN_SIZE || (i_viewer.height * this.RATIO) < MIN_SIZE) {
+//             i_viewer.width = MIN_SIZE / this.RATIO;
+//             i_viewer.height = MIN_SIZE / this.RATIO;
 //             var props = {
 //                 x: i_viewer.get('top'),
 //                 y: i_viewer.get('left'),
 //                 w: MIN_SIZE,
 //                 h: MIN_SIZE
 //             }
-//             self._updateDimensionsInDB(i_viewer, props);
+//             this._updateDimensionsInDB(i_viewer, props);
 //         }
 //     }
 //
@@ -463,8 +453,8 @@ export class CampaignLayoutEditor extends Compbaser {
 //      @method i_props
 //      **/
 //     _listenObjectChanged() {
-//         var self = this;
-//         self.m_objectMovingHandler = _.debounce(function (e) {
+//         var this = this;
+//         this.m_objectMovingHandler = _.debounce(function (e) {
 //             var o = e.target;
 //             if (o.width != o.currentWidth || o.height != o.currentHeight) {
 //                 o.width = o.currentWidth;
@@ -473,13 +463,13 @@ export class CampaignLayoutEditor extends Compbaser {
 //                 o.scaleY = 1;
 //             }
 //
-//             self._enforceViewerMinimums(o);
-//             self._enforceViewerVisible();
+//             this._enforceViewerMinimums(o);
+//             this._enforceViewerVisible();
 //
-//             var x = BB.lib.parseToFloatDouble(o.left) * self.RATIO;
-//             var y = BB.lib.parseToFloatDouble(o.top) * self.RATIO;
-//             var w = BB.lib.parseToFloatDouble(o.currentWidth) * self.RATIO;
-//             var h = BB.lib.parseToFloatDouble(o.currentHeight) * self.RATIO;
+//             var x = BB.lib.parseToFloatDouble(o.left) * this.RATIO;
+//             var y = BB.lib.parseToFloatDouble(o.top) * this.RATIO;
+//             var w = BB.lib.parseToFloatDouble(o.currentWidth) * this.RATIO;
+//             var h = BB.lib.parseToFloatDouble(o.currentHeight) * this.RATIO;
 //             // var a = o.get('angle');
 //             var props = {
 //                 w: w,
@@ -487,18 +477,18 @@ export class CampaignLayoutEditor extends Compbaser {
 //                 x: x,
 //                 y: y
 //             };
-//             self.m_property.viewPanel(Elements.VIEWER_EDIT_PROPERTIES);
-//             self.m_dimensionProps.setValues(props);
-//             self.m_selectedViewerID = o.id;
-//             self._updateDimensionsInDB(o, props);
+//             this.m_property.viewPanel(Elements.VIEWER_EDIT_PROPERTIES);
+//             this.m_dimensionProps.setValues(props);
+//             this.m_selectedViewerID = o.id;
+//             this._updateDimensionsInDB(o, props);
 //
 //         }, 200);
 //
-//         self.m_canvas.on({
-//             'object:moving': self.m_objectMovingHandler,
-//             'object:scaling': self.m_objectMovingHandler,
-//             'object:selected': self.m_objectMovingHandler,
-//             'object:modified': self.m_objectMovingHandler
+//         this.m_canvas.on({
+//             'object:moving': this.m_objectMovingHandler,
+//             'object:scaling': this.m_objectMovingHandler,
+//             'object:selected': this.m_objectMovingHandler,
+//             'object:modified': this.m_objectMovingHandler
 //         });
 //     }
 //
@@ -508,20 +498,20 @@ export class CampaignLayoutEditor extends Compbaser {
 //      @param {Object} i_props
 //      **/
 //     _moveViewer(i_props) {
-//         var self = this;
+//         var this = this;
 //         // log('moving viewer');
-//         var viewer = self.m_canvas.getActiveObject();
+//         var viewer = this.m_canvas.getActiveObject();
 //         if (viewer) {
-//             viewer.setWidth(i_props.w / self.RATIO);
-//             viewer.setHeight(i_props.h / self.RATIO);
-//             viewer.set('left', i_props.x / self.RATIO);
-//             viewer.set('top', i_props.y / self.RATIO);
+//             viewer.setWidth(i_props.w / this.RATIO);
+//             viewer.setHeight(i_props.h / this.RATIO);
+//             viewer.set('left', i_props.x / this.RATIO);
+//             viewer.set('top', i_props.y / this.RATIO);
 //
-//             self._enforceViewerMinimums(viewer);
-//             self._enforceViewerVisible();
+//             this._enforceViewerMinimums(viewer);
+//             this._enforceViewerVisible();
 //
 //             viewer.setCoords();
-//             self.m_canvas.renderAll();
+//             this.m_canvas.renderAll();
 //         }
 //     }
 //
@@ -531,11 +521,11 @@ export class CampaignLayoutEditor extends Compbaser {
 //      @param {Object} i_props
 //      **/
 //     _updateDimensionsInDB(i_viewer, i_props) {
-//         var self = this;
+//         var this = this;
 //         log('Pepper ' + i_viewer.get('id') + ' ' + JSON.stringify(i_props));
-//         pepper.setBoardTemplateViewer(self.m_campaign_timeline_board_template_id, i_viewer.get('id'), i_props);
+//         pepper.setBoardTemplateViewer(this.m_campaign_timeline_board_template_id, i_viewer.get('id'), i_props);
 //         i_viewer.setCoords();
-//         self.m_canvas.renderAll();
+//         this.m_canvas.renderAll();
 //     }
 //
 //     /**
@@ -543,36 +533,36 @@ export class CampaignLayoutEditor extends Compbaser {
 //      @method _destroy
 //      **/
 //     _destroy() {
-//         var self = this;
-//         if (!_.isUndefined(self.m_canvas)) {
-//             self.m_canvas.off('selection:cleared', self.m_bgSelectedHandler);
-//             self.m_canvas.off({
-//                 'object:moving': self.m_objectMovingHandler,
-//                 'object:scaling': self.m_objectMovingHandler,
-//                 'object:selected': self.m_objectMovingHandler,
-//                 'object:modified': self.m_objectMovingHandler
+//         var this = this;
+//         if (!_.isUndefined(this.m_canvas)) {
+//             this.m_canvas.off('selection:cleared', this.m_bgSelectedHandler);
+//             this.m_canvas.off({
+//                 'object:moving': this.m_objectMovingHandler,
+//                 'object:scaling': this.m_objectMovingHandler,
+//                 'object:selected': this.m_objectMovingHandler,
+//                 'object:modified': this.m_objectMovingHandler
 //             });
-//             self.m_canvas.off({
-//                 'object:moving': self.m_onOverlap,
-//                 'object:scaling': self.m_onOverlap,
-//                 'object:rotating': self.m_onOverlap
+//             this.m_canvas.off({
+//                 'object:moving': this.m_onOverlap,
+//                 'object:scaling': this.m_onOverlap,
+//                 'object:rotating': this.m_onOverlap
 //             });
-//             self.m_canvas.clear().renderAll();
+//             this.m_canvas.clear().renderAll();
 //         }
 //         $('#screenLayoutEditorCanvasWrap').empty()
-//         self.m_canvasID = undefined;
-//         self.m_canvas = undefined;
-//         self.m_campaign_timeline_id = undefined;
-//         self.m_campaign_timeline_board_template_id = undefined;
-//         self.m_screenProps = undefined;
-//         self.m_orientation = undefined;
-//         self.m_resolution = undefined;
-//         self.m_global_board_template_id = undefined;
-//         self.m_selectedViewerID = undefined;
+//         this.m_canvasID = undefined;
+//         this.m_canvas = undefined;
+//         this.m_campaign_timeline_id = undefined;
+//         this.m_campaign_timeline_board_template_id = undefined;
+//         this.m_screenProps = undefined;
+//         this.m_orientation = undefined;
+//         this.m_resolution = undefined;
+//         this.m_global_board_template_id = undefined;
+//         this.m_selectedViewerID = undefined;
 //     }
-    
+
     @Output()
-    onGoBack:EventEmitter<any> = new EventEmitter<any>();
+    onGoBack: EventEmitter<any> = new EventEmitter<any>();
 
     ngOnInit() {
     }
