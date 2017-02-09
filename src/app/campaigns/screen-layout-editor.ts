@@ -1,5 +1,8 @@
-import {Component, ChangeDetectionStrategy, Output, EventEmitter} from "@angular/core";
+import {Component, ChangeDetectionStrategy, Output, EventEmitter, AfterViewInit} from "@angular/core";
 import {Compbaser} from "ng-mslib";
+import {YellowPepperService} from "../../services/yellowpepper.service";
+import {Once} from "../../decorators/once-decorator";
+import {CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 
 @Component({
     selector: 'screen-layout-editor',
@@ -31,21 +34,19 @@ import {Compbaser} from "ng-mslib";
                     <i style="font-size: 1em" class="fa fa-external-link"> </i>
                 </button>
             </div>
-            <div *ngIf="m_render" id="screenLayoutEditorCanvasWrap" align="center" style="width: 100%; height: 100%; -webkit-user-select: none;">
-                <h1>I am here</h1>
-            </div>
         </div>
     `,
 })
-export class ScreenLayoutEditor extends Compbaser {
+export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
 
     RATIO = 4;
     m_canvas;
     m_canvasID;
     m_selectedViewerID;
     m_dimensionProps;
-    m_render:boolean = false;
-    constructor() {
+    m_render: boolean = false;
+
+    constructor(private yp: YellowPepperService) {
         super();
     }
 
@@ -53,7 +54,16 @@ export class ScreenLayoutEditor extends Compbaser {
      Constructor
      @method initialize
      **/
-    afterViewInit() {
+    ngAfterViewInit() {
+
+        this.cancelOnDestroy(
+            this.yp.listenTimelineSelected().concatMap((campaignTimelinesModel: CampaignTimelinesModel) => {
+                return this.yp.getTemplatesOfTimeline(campaignTimelinesModel.getCampaignTimelineId())
+            }).subscribe((i_campaign_timeline_board_template_id) => {
+                console.log('selected id ' + i_campaign_timeline_board_template_id[0]);
+            })
+        )
+
 
         // this._listenAddDivision();
         // this._listenRemoveDivision();
@@ -83,31 +93,36 @@ export class ScreenLayoutEditor extends Compbaser {
         // });
     }
 
-//     /**
-//      Load the editor into DOM using the StackView using animation slider
-//      @method  selectView
-//      **/
-//     selectView(i_campaign_timeline_id, i_campaign_timeline_board_template_id) {
-//         var this = this;
-//         this.m_campaign_timeline_id = i_campaign_timeline_id;
-//         this.m_campaign_timeline_board_template_id = i_campaign_timeline_board_template_id;
-//         this.m_global_board_template_id = pepper.getGlobalTemplateIdOfTimeline(i_campaign_timeline_board_template_id);
-//         this.m_screenProps = pepper.getTemplateViewersScreenProps(this.m_campaign_timeline_id, this.m_campaign_timeline_board_template_id);
-//         this.m_orientation = BB.comBroker.getService(BB.SERVICES['ORIENTATION_SELECTOR_VIEW']).getOrientation();
-//         this.m_resolution = BB.comBroker.getService(BB.SERVICES['RESOLUTION_SELECTOR_VIEW']).getResolution();
-//
-//         this.options.stackView.slideToPage(this, 'right');
-//
-//         require(['fabric'], function () {
-//             var w = parseInt(this.m_resolution.split('x')[0]) / this.RATIO;
-//             var h = parseInt(this.m_resolution.split('x')[1]) / this.RATIO;
-//
-//             this._canvasFactory(w, h);
-//             this._listenObjectChanged();
-//             this._listenObjectsOverlap();
-//             this._listenBackgroundSelected();
-//         })
-//     }
+    @Once()
+    private _getSelectedBoard() {
+        // this.yp.getTemplatesOfTimeline()
+        // var boardTemplateIDs = pepper.getTemplatesOfTimeline(self.m_selected_timeline_id);
+        // screenLayoutEditor.selectView(self.m_selected_timeline_id, boardTemplateIDs[0]);
+    }
+
+    /**
+     Load the editor into DOM using the StackView using animation slider
+     @method  selectView
+     **/
+    selectView(i_campaign_timeline_id, i_campaign_timeline_board_template_id) {
+        // this.m_campaign_timeline_id = i_campaign_timeline_id;
+        // this.m_campaign_timeline_board_template_id = i_campaign_timeline_board_template_id;
+        // this.m_global_board_template_id = pepper.getGlobalTemplateIdOfTimeline(i_campaign_timeline_board_template_id);
+        // this.m_screenProps = pepper.getTemplateViewersScreenProps(this.m_campaign_timeline_id, this.m_campaign_timeline_board_template_id);
+        // this.m_orientation = BB.comBroker.getService(BB.SERVICES['ORIENTATION_SELECTOR_VIEW']).getOrientation();
+        // this.m_resolution = BB.comBroker.getService(BB.SERVICES['RESOLUTION_SELECTOR_VIEW']).getResolution();
+        //
+        // this.options.stackView.slideToPage(this, 'right');
+        //
+        // var w = parseInt(this.m_resolution.split('x')[0]) / this.RATIO;
+        // var h = parseInt(this.m_resolution.split('x')[1]) / this.RATIO;
+        //
+        // this._canvasFactory(w, h);
+        // this._listenObjectChanged();
+        // this._listenObjectsOverlap();
+        // this._listenBackgroundSelected();
+    }
+
 //
 //     /**
 //      On render load default dashboard properties
@@ -565,19 +580,14 @@ export class ScreenLayoutEditor extends Compbaser {
     @Output()
     onGoBack: EventEmitter<any> = new EventEmitter<any>();
 
-    public show(){
-        console.log('showing');
-        this.m_render = true;
-    }
-    _goBack(){
-        console.log('hiding');
+    _goBack() {
         this.onGoBack.emit();
-        this.m_render = false;
     }
 
     ngOnInit() {
     }
 
     destroy() {
+        console.log('dest screen-layout-editor');
     }
 }

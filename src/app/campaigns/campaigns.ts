@@ -41,7 +41,7 @@ import {IScreenTemplateData} from "../../comps/screen-template/screen-template";
             </Slideritem>
             <Slideritem [templateRef]="f" #sliderItemCampaignEditor (onChange)="_onSlideChange($event)" [showFromButton]="false" class="page left campaignEditor" [fromDirection]="'left'" [from]="'campaignList'">
                 <template #f>
-                    <campaign-editor (onToScreenLayoutEditor)="screenLayoutEditor.show() ; sliderScreenLayoutEditor.slideTo('screenLayoutEditor','right')" (onGoBack)="sliderItemCampaignEditor.slideTo('campaignList','left')"></campaign-editor>
+                    <campaign-editor (onToScreenLayoutEditor)="_onOpenScreenLayoutEditor() ; sliderScreenLayoutEditor.slideTo('screenLayoutEditor','right')" (onGoBack)="sliderItemCampaignEditor.slideTo('campaignList','left')"></campaign-editor>
                 </template>
             </Slideritem>
             <Slideritem [templateRef]="g" #sliderScreenLayoutEditor (onChange)="_onSlideChange($event)" [showFromButton]="false" class="page left screenLayoutEditor" [fromDirection]="'left'" [from]="'campaignList'">
@@ -59,6 +59,9 @@ export class Campaigns extends Compbaser {
         this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 
+    _onOpenScreenLayoutEditor(){
+
+    }
     _onSlideChange(event: ISliderItemData) {
         if (event.direction == 'left' && event.to == 'campaignList') {
             var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
