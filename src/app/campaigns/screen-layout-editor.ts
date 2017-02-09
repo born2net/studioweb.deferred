@@ -164,10 +164,9 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
         this.m_canvasID = _.uniqueId('screenLayoutEditorCanvas');
         jQuery('#screenLayoutEditorCanvasWrap', this.el.nativeElement).append(`
             <div>
-            <span align="center">${this.m_resolution.split('x')[0]}px</span> 
+            <span align="center">${this.m_resolution.split('x')[0]}px x ${this.m_resolution.split('x')[1]}px</span> 
             <canvas id="${this.m_canvasID}" width="${i_width}px" height="${i_height}px" style="border: 1px solid rgb(170, 170, 170);"></canvas>
             <span style="position: relative; top: "-${offsetH}px" left: "-${offsetW}px">
-                ${this.m_resolution.split('x')[1]}px
             </span>
             </div>`);
         this.m_canvas = new fabric.Canvas(this.m_canvasID);

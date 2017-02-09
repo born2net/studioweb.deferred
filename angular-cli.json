@@ -36,7 +36,7 @@
         "../node_modules/bootstrap/dist/js/bootstrap.js",
         "../node_modules/bootbox/bootbox.js",
         "../node_modules/platform/platform.js",
-        "./libs/fabric.require1-4-12.min.js",
+        "./libs/fabric.require1-4-12.js",
         "../node_modules/xdate/src/xdate.js"
       ],
       "environments": {
