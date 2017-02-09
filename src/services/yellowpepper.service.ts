@@ -4,7 +4,14 @@ import {ApplicationState} from "../store/application.state";
 import {Observable} from "rxjs";
 import {CampaignsModelExt} from "../store/model/msdb-models-extended";
 import {
-    BoardsModel, BoardTemplatesModel, BoardTemplateViewersModel, CampaignTimelineBoardTemplatesModel, CampaignTimelineBoardViewerChanelsModel, CampaignTimelineChanelsModel, CampaignTimelineSchedulesModel, CampaignTimelineSequencesModel,
+    BoardsModel,
+    BoardTemplatesModel,
+    BoardTemplateViewersModel,
+    CampaignTimelineBoardTemplatesModel,
+    CampaignTimelineBoardViewerChanelsModel,
+    CampaignTimelineChanelsModel,
+    CampaignTimelineSchedulesModel,
+    CampaignTimelineSequencesModel,
     CampaignTimelinesModel
 } from "../store/imsdb.interfaces_auto";
 import {IScreenTemplateData} from "../comps/screen-template/screen-template";
@@ -29,7 +36,7 @@ export class YellowPepperService {
     /**
      Listen to when a campaign timeline channel is selected
      **/
-    public listenChannelSelected(): Observable<CampaignTimelineChanelsModel> {
+    public listenChannelSelected(emitOnEmpty: boolean = false): Observable<CampaignTimelineChanelsModel> {
         var channelSelected$ = this.store.select(store => store.appDb.uiState.campaign.campaignTimelineChannelSelected);
         var channelsList$ = this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_chanels);
         return channelSelected$.withLatestFrom(
@@ -38,78 +45,84 @@ export class YellowPepperService {
                 return channels.find((i_channel: CampaignTimelineChanelsModel) => {
                     return i_channel.getCampaignTimelineChanelId() == channelId;
                 });
-            });
+            }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
+    }
+
+    /**
+     Listen to when a timeline is selected via the store state uiState.campaign.timelineSelected
+     **/
+    public listenTimelineSelected(emitOnEmpty: boolean = false): Observable<CampaignTimelinesModel> {
+        var timelineSelected$ = this.store.select(store => store.appDb.uiState.campaign.timelineSelected);
+        var timelineList$ = this.store.select(store => store.msDatabase.sdk.table_campaign_timelines);
+        return timelineSelected$
+            .withLatestFrom(
+                timelineList$,
+                (timelineId, timelines) => {
+                    return timelines.find((i_timeline: CampaignTimelinesModel) => {
+                        return i_timeline.getCampaignTimelineId() == timelineId;
+                    });
+                }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
+
+    }
+
+    /**
+     Listen to ONLY when a campaign is selected via the store state uiState.campaign.campaignSelected and grab latest CampaignModel
+     **/
+    public listenCampaignSelected(emitOnEmpty: boolean = false): Observable<CampaignsModelExt> {
+        var campaignSelected$ = this.store.select(store => store.appDb.uiState.campaign.campaignSelected);
+        var campaignsList$ = this.store.select(store => store.msDatabase.sdk.table_campaigns);
+        return campaignSelected$
+            .withLatestFrom(
+                campaignsList$,
+                (campaignId, campaigns) => {
+                    return campaigns.find((i_campaign: CampaignsModelExt) => {
+                        return i_campaign.getCampaignId() == campaignId;
+                    });
+                }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
     }
 
     /**
      Listen to when a channel that is selected changed value
      **/
-    public listenChannelValueChanged(): Observable<CampaignTimelineChanelsModel> {
+    public listenChannelValueChanged(emitOnEmpty: boolean = false): Observable<CampaignTimelineChanelsModel> {
         var channelIdSelected$ = this.ngrxStore.select(store => store.appDb.uiState.campaign.campaignTimelineChannelSelected)
         var channels$ = this.ngrxStore.select(store => store.msDatabase.sdk.table_campaign_timeline_chanels);
-        return channelIdSelected$.combineLatest(channels$, (channelId: number, channels: List<CampaignTimelineChanelsModel>) => {
-            return channels.find((i_channel: CampaignTimelineChanelsModel) => {
-                return i_channel.getCampaignTimelineChanelId() == channelId;
-            });
-        });
+        return channelIdSelected$
+            .combineLatest(channels$, (channelId: number, channels: List<CampaignTimelineChanelsModel>) => {
+                return channels.find((i_channel: CampaignTimelineChanelsModel) => {
+                    return i_channel.getCampaignTimelineChanelId() == channelId;
+                });
+            }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
     }
 
 
     /**
      Listen to when a campaign that is selected changed value
      **/
-    public listenCampaignValueChanged(): Observable<CampaignsModelExt> {
+    public listenCampaignValueChanged(emitOnEmpty: boolean = false): Observable<CampaignsModelExt> {
         var campaignIdSelected$ = this.ngrxStore.select(store => store.appDb.uiState.campaign.campaignSelected)
         var campaigns$ = this.ngrxStore.select(store => store.msDatabase.sdk.table_campaigns);
-        return campaignIdSelected$.combineLatest(campaigns$, (campaignId: number, campaigns: List<CampaignsModelExt>) => {
-            return campaigns.find((i_campaign: CampaignsModelExt) => {
-                return i_campaign.getCampaignId() == campaignId;
-            });
-        });
+        return campaignIdSelected$
+            .combineLatest(campaigns$, (campaignId: number, campaigns: List<CampaignsModelExt>) => {
+                return campaigns.find((i_campaign: CampaignsModelExt) => {
+                    return i_campaign.getCampaignId() == campaignId;
+                });
+            }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
     }
+
 
     /**
      Listen to when a scheduler that is selected changed value
      **/
-    public listenSchedulerValueChanged(): Observable<CampaignTimelineSchedulesModel> {
+    public listenSchedulerValueChanged(emitOnEmpty: boolean = false): Observable<CampaignTimelineSchedulesModel> {
         var campaignTimelineIdSelected$ = this.ngrxStore.select(store => store.appDb.uiState.campaign.timelineSelected)
         var schedules$ = this.ngrxStore.select(store => store.msDatabase.sdk.table_campaign_timeline_schedules);
-        return campaignTimelineIdSelected$.combineLatest(schedules$, (campaignSchedarId: number, schedules: List<CampaignTimelineSchedulesModel>) => {
-            return schedules.find((i_schedules: CampaignTimelineSchedulesModel) => {
-                return i_schedules.getCampaignTimelineId() == campaignSchedarId;
-            });
-        });
-    }
-
-    /**
-     Listen to ONLY when a campaign is selected via the store state uiState.campaign.campaignSelected and grab latest CampaignModel
-     **/
-    public listenCampaignSelected(): Observable<CampaignsModelExt> {
-        var campaignSelected$ = this.store.select(store => store.appDb.uiState.campaign.campaignSelected);
-        var campaignsList$ = this.store.select(store => store.msDatabase.sdk.table_campaigns);
-        return campaignSelected$.withLatestFrom(
-            campaignsList$,
-            (campaignId, campaigns) => {
-                return campaigns.find((i_campaign: CampaignsModelExt) => {
-                    return i_campaign.getCampaignId() == campaignId;
+        return campaignTimelineIdSelected$
+            .combineLatest(schedules$, (campaignSchedarId: number, schedules: List<CampaignTimelineSchedulesModel>) => {
+                return schedules.find((i_schedules: CampaignTimelineSchedulesModel) => {
+                    return i_schedules.getCampaignTimelineId() == campaignSchedarId;
                 });
-            });
-    }
-
-
-    /**
-     Listen to when a timeline is selected via the store state uiState.campaign.timelineSelected
-     **/
-    public listenTimelineSelected(): Observable<CampaignTimelinesModel> {
-        var timelineSelected$ = this.store.select(store => store.appDb.uiState.campaign.timelineSelected);
-        var timelineList$ = this.store.select(store => store.msDatabase.sdk.table_campaign_timelines);
-        return timelineSelected$.withLatestFrom(
-            timelineList$,
-            (timelineId, timelines) => {
-                return timelines.find((i_timeline: CampaignTimelinesModel) => {
-                    return i_timeline.getCampaignTimelineId() == timelineId;
-                });
-            });
+            }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
     }
 
     /**

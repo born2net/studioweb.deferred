@@ -56,7 +56,7 @@ import {simpleRegExp} from "../../Lib";
         </div>
         <div *ngIf="(m_campaignModel$ | async)?.getCampaignPlaylistMode() == '1'">
             <campaign-sched-props></campaign-sched-props>
-        </div>       
+        </div>
     `,
     styles: [`
         input.ng-invalid {

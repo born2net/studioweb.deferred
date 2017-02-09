@@ -7,6 +7,7 @@ import "rxjs/add/operator/debounceTime";
 import {Store} from "@ngrx/store";
 import {ApplicationState} from "../application.state";
 import {Observable} from "rxjs";
+import {IUiState} from "../store.data";
 
 export const APP_INIT = 'APP_INIT';
 export const ACTION_INJECT_SDK = 'ACTION_INJECT_SDK';
@@ -50,6 +51,18 @@ export class AppdbAction {
             type: APP_INIT,
             payload: Date.now()
         }
+    }
+
+    public resetCampaignSelection(){
+        var uiState: IUiState = {
+            campaign: {
+                timelineSelected: -1,
+                campaignSelected: -1,
+                campaignTimelineChannelSelected: -1,
+                campaignTimelineBoardViewerSelected: -1
+            }
+        }
+        this.store.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 
     public getQrCodeTwoFactor(): Observable<string> {

@@ -6,6 +6,7 @@ import {RedPepperService} from "../../services/redpepper.service";
 import {CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 import {List} from "immutable";
 import {Once} from "../../decorators/once-decorator";
+import {AppdbAction} from "../../store/actions/appdb.actions";
 
 @Component({
     selector: 'campaign-editor',
@@ -14,21 +15,33 @@ import {Once} from "../../decorators/once-decorator";
 export class CampaignEditor extends Compbaser {
 
     private campaignModel: CampaignsModelExt;
+    private campaignTimelinesModel: CampaignTimelinesModel;
     m_campaignTimelinesModels: List<CampaignTimelinesModel>;
 
-    constructor(private yp: YellowPepperService, private rp: RedPepperService) {
+    constructor(private yp: YellowPepperService, private actions:AppdbAction) {
         super();
         this.cancelOnDestroy(
-            this.yp.listenCampaignSelected().subscribe((campaign: CampaignsModelExt) => {
-                if (!campaign)
-                    return;
-                this.campaignModel = campaign;
-                this._loadCampaignTimelines();
-            })
+            this.yp.listenCampaignSelected()
+                .subscribe((i_campaignsModelExt: CampaignsModelExt) => {
+                    if (!i_campaignsModelExt)
+                        return;
+                    this.campaignModel = i_campaignsModelExt;
+                    this._loadCampaignTimelines();
+                })
         );
+        this.cancelOnDestroy(
+            this.yp.listenTimelineSelected(false)
+                .subscribe((i_campaignTimelinesModel: CampaignTimelinesModel) => {
+                    this.campaignTimelinesModel = i_campaignTimelinesModel;
+                })
+        );
+
+
     }
 
     _onEditScreenLayout() {
+        if (!this.campaignTimelinesModel)
+            return bootbox.alert('no timeline selected')
         this.onToScreenLayoutEditor.emit();
     }
 
@@ -46,6 +59,10 @@ export class CampaignEditor extends Compbaser {
             })
     }
 
+    private _onGoBack(){
+        this.actions.resetCampaignSelection();
+        this.onGoBack.emit()
+    }
 
     ngOnInit() {
     }
