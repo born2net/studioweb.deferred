@@ -163,6 +163,24 @@ export class RedPepperService {
     }
 
     /**
+     Assign viewer (screen division) on the timeline to channel
+     @method assignViewerToTimelineChannel
+     @param {Number} i_campaign_timeline_board_template_id
+     @param {Object} i_viewers a json object with all viewers
+     @param {Array} i_channels a json object with all channels
+     @return none
+     **/
+    assignViewerToTimelineChannel(i_campaign_timeline_board_template_id, i_viewer_id, i_channel_id) {
+        var viewerChanels: any = this.databaseManager.table_campaign_timeline_board_viewer_chanels();
+        var viewerChanel = viewerChanels.createRecord();
+        viewerChanel.campaign_timeline_board_template_id = i_campaign_timeline_board_template_id;
+        viewerChanel.board_template_viewer_id = i_viewer_id;
+        viewerChanel.campaign_timeline_chanel_id = i_channel_id;
+        viewerChanels.addRecord(viewerChanel);
+        this.addPendingTables(['table_campaign_timeline_board_viewer_chanels']);
+    }
+
+    /**
      Create a new campaign in the local database
      @method createCampaign
      @param {Number} i_campaginName
@@ -203,9 +221,51 @@ export class RedPepperService {
         return m_selected_campaign_id;
     }
 
+    /**
+     Create channel and assign that channel to the specified timeline
+     @method createTimelineChannel
+     @param {Number} i_campaign_timeline_id the timeline id to assign channel to
+     @return {Array} createdChanels array of channel ids created
+     **/
+    createTimelineChannel(i_campaign_timeline_id) {
+        var chanels: any = this.databaseManager.table_campaign_timeline_chanels();
+        var chanel = chanels.createRecord();
+        chanel.chanel_name = "CH";
+        chanel.campaign_timeline_id = i_campaign_timeline_id;
+        chanels.addRecord(chanel);
+        // this.databaseManager.fire(Pepper['NEW_CHANNEL_ADDED'], this, null, {
+        //     chanel: chanel['campaign_timeline_chanel_id'],
+        //     campaign_timeline_id: i_campaign_timeline_id
+        // });
+        this.addPendingTables(['table_campaign_timeline_chanels']);
+        return chanel['campaign_timeline_chanel_id'];
+    }
+
     renameCampaign(i_campaignId, i_newCampaignName): void {
         this.setCampaignRecord(i_campaignId, 'campaign_name', i_newCampaignName)
         this.addPendingTables(['campaigns']);
+    }
+
+    /**
+     Create a global viewer in an existing board_template
+     @method createViewer
+     @param {Number} board_template_id
+     @param {Number} i_board_template_id
+     @param {Object} i_props
+     @return {Number} viewer id
+     **/
+    createViewer(i_board_template_id, i_props) {
+        var viewers: any = this.databaseManager.table_board_template_viewers();
+        var viewer = viewers.createRecord();
+        viewer.viewer_name = "Viewer";
+        viewer.pixel_width = i_props['w'];
+        viewer.pixel_height = i_props['h'];
+        viewer.pixel_x = i_props['x'];
+        viewer.pixel_y = i_props['y'];
+        viewer.board_template_id = i_board_template_id;
+        viewers.addRecord(viewer);
+        this.addPendingTables(['table_board_template_viewers']);
+        return viewer['board_template_viewer_id'];
     }
 
     /**
@@ -1727,47 +1787,6 @@ export class RedPepperService {
         return found_campaign_board_id;
     }
 
-    /**
-     Create channel and assign that channel to the specified timeline
-     @method createTimelineChannel
-     @param {Number} i_campaign_timeline_id the timeline id to assign channel to
-     @return {Array} createdChanels array of channel ids created
-     **/
-    createTimelineChannel(i_campaign_timeline_id) {
-
-        var chanels: any = this.databaseManager.table_campaign_timeline_chanels();
-        var chanel = chanels.createRecord();
-        chanel.chanel_name = "CH";
-        chanel.campaign_timeline_id = i_campaign_timeline_id;
-        chanels.addRecord(chanel);
-        // this.databaseManager.fire(Pepper['NEW_CHANNEL_ADDED'], this, null, {
-        //     chanel: chanel['campaign_timeline_chanel_id'],
-        //     campaign_timeline_id: i_campaign_timeline_id
-        // });
-        return chanel['campaign_timeline_chanel_id'];
-    }
-
-    /**
-     Create a global viewer in an existing board_template
-     @method createViewer
-     @param {Number} board_template_id
-     @param {Number} i_board_template_id
-     @param {Object} i_props
-     @return {Number} viewer id
-     **/
-    createViewer(i_board_template_id, i_props) {
-
-        var viewers: any = this.databaseManager.table_board_template_viewers();
-        var viewer = viewers.createRecord();
-        viewer.viewer_name = "Viewer";
-        viewer.pixel_width = i_props['w'];
-        viewer.pixel_height = i_props['h'];
-        viewer.pixel_x = i_props['x'];
-        viewer.pixel_y = i_props['y'];
-        viewer.board_template_id = i_board_template_id;
-        viewers.addRecord(viewer);
-        return viewer['board_template_viewer_id'];
-    }
 
     /**
      Change a viewer's (aka screen division) order (layer) z-order
@@ -1901,24 +1920,6 @@ export class RedPepperService {
         var board_id = recBoardTemplate['board_id'];
         var recBoard = this.databaseManager.table_boards().getRec(board_id);
         return recBoard;
-    }
-
-    /**
-     Assign viewer (screen division) on the timeline to channel
-     @method assignViewerToTimelineChannel
-     @param {Number} i_campaign_timeline_board_template_id
-     @param {Object} i_viewers a json object with all viewers
-     @param {Array} i_channels a json object with all channels
-     @return none
-     **/
-    assignViewerToTimelineChannel(i_campaign_timeline_board_template_id, i_viewer_id, i_channel_id) {
-
-        var viewerChanels: any = this.databaseManager.table_campaign_timeline_board_viewer_chanels();
-        var viewerChanel = viewerChanels.createRecord();
-        viewerChanel.campaign_timeline_board_template_id = i_campaign_timeline_board_template_id;
-        viewerChanel.board_template_viewer_id = i_viewer_id;
-        viewerChanel.campaign_timeline_chanel_id = i_channel_id;
-        viewerChanels.addRecord(viewerChanel);
     }
 
     /**

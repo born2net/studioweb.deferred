@@ -3,13 +3,12 @@ import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 import {Observable} from "rxjs";
-import {List} from "immutable";
-import {StoreModel} from "../../store/model/StoreModel";
 import {OrientationEnum} from "./campaign-orientation";
 import {IScreenTemplateData, ScreenTemplate} from "../../comps/screen-template/screen-template";
-import * as _ from 'lodash';
-import Any = jasmine.Any;
+import * as _ from "lodash";
 import {Lib} from "../../Lib";
+import Any = jasmine.Any;
+import {RedPepperService} from "../../services/redpepper.service";
 
 interface selectTimelineBoardIdResult {
     campaignTimelinesModel: CampaignTimelinesModel,
@@ -34,7 +33,7 @@ interface selectTimelineBoardIdResult {
             <h3 data-localize="empty" data-localize="editScreenLayoutTitle">Edit screen layout</h3>
 
             <div class="btn-group">
-                <button id="layoutEditorAddNew" type="button" data-localize-tooltip="addButtonToolTip" title="add" class="btn btn-default btn-sm">
+                <button (click)="_onAddDivision()" id="layoutEditorAddNew" type="button" data-localize-tooltip="addButtonToolTip" title="add" class="btn btn-default btn-sm">
                     <i style="font-size: 1em" class="fa fa-plus"> </i>
                 </button>
                 <button id="layoutEditorRemove" type="button" data-localize-tooltip="removeButtonToolTip" title="remove division" class="btn btn-default btn-sm">
@@ -58,18 +57,22 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
     RATIO = 4;
     m_canvas;
     m_canvasID;
+    m_onOverlap;
     m_selectedViewerID;
     m_dimensionProps;
+    m_bgSelectedHandler;
     m_render: boolean = false;
     m_orientation: OrientationEnum;
     m_objectMovingHandler;
     m_resolution: string;
     m_screenTemplateData: IScreenTemplateData;
     m_global_board_template_id: number = -1;
+    m_campaign_timeline_id: number = -1;
+    m_campaign_timeline_board_template_id:number = -1;
 
     private componentRef: ComponentRef<ScreenTemplate>;
 
-    constructor(private yp: YellowPepperService, private componentFactoryResolver: ComponentFactoryResolver, private el: ElementRef) {
+    constructor(private yp: YellowPepperService, private componentFactoryResolver: ComponentFactoryResolver, private rp:RedPepperService, private el: ElementRef) {
         super();
     }
 
@@ -93,12 +96,13 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
                             })
                         })
                 }).subscribe((result: selectTimelineBoardIdResult) => {
-                this.selectView(result.campaignTimelinesModel.getCampaignTimelineId(), result.campaign_timeline_board_template_ids[0])
+                this.m_campaign_timeline_id = result.campaignTimelinesModel.getCampaignTimelineId();
+                this.m_campaign_timeline_board_template_id = result.campaign_timeline_board_template_ids[0];
+                this.selectView(result.campaignTimelinesModel.getCampaignTimelineId(), this.m_campaign_timeline_board_template_id);
             })
         )
 
 
-        // this._listenAddDivision();
         // this._listenRemoveDivision();
         // this._listenPushToTopDivision();
         // this._listenPushToBottomDivision();
@@ -127,6 +131,51 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
     }
 
     /**
+     Listen to the addition of a new viewer
+     @method (totalViews - i)
+     **/
+    _onAddDivision() {
+        var self = this;
+        var props = {
+            x: 0,
+            y: 0,
+            w: 100,
+            h: 100
+        }
+        var board_viewer_id = this.rp.createViewer(self.m_global_board_template_id, props);
+        var campaign_timeline_chanel_id = this.rp.createTimelineChannel(self.m_campaign_timeline_id);
+        this.rp.assignViewerToTimelineChannel(self.m_campaign_timeline_board_template_id, board_viewer_id, campaign_timeline_chanel_id);
+        var viewer = new fabric.Rect({
+            left: 0,
+            top: 0,
+            fill: '#ececec',
+            id: board_viewer_id,
+            hasRotatingPoint: false,
+            borderColor: '#5d5d5d',
+            stroke: 'black',
+            strokeWidth: 1,
+            borderScaleFactor: 0,
+            lineWidth: 1,
+            width: 100,
+            height: 100,
+            cornerColor: 'black',
+            cornerSize: 5,
+            lockRotation: true,
+            transparentCorners: false
+        });
+        self.m_canvas.add(viewer);
+
+        var props = {
+            x: 0,
+            y: 0,
+            w: viewer.get('width') * self.RATIO,
+            h: viewer.get('height') * self.RATIO
+        }
+        self._updateDimensionsInDB(viewer, props);
+        self.rp.reduxCommit();
+    }
+
+    /**
      Load the editor into DOM using the StackView using animation slider
      @method  selectView
      **/
@@ -145,10 +194,44 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
                     var h = parseInt(this.m_resolution.split('x')[1]) / this.RATIO;
                     this._canvasFactory(w, h);
                     this._listenObjectChanged();
-                    // this._listenObjectsOverlap();
-                    // this._listenBackgroundSelected();
+                    this._listenObjectsOverlap();
+                    this._listenBackgroundSelected();
                 })
         )
+    }
+
+    /**
+     Listen to changes on selecting the background canvas
+     @method _listenBackgroundSelected
+     **/
+    _listenBackgroundSelected() {
+        var self = this;
+        self.m_bgSelectedHandler = function (e) {
+            //todo: property fix
+            // self.m_property.resetPropertiesView();
+        };
+        self.m_canvas.on('selection:cleared', self.m_bgSelectedHandler);
+    }
+
+    /**
+     Listen to changes in viewer overlaps
+     @method _listenObjectsOverlap
+     **/
+    _listenObjectsOverlap() {
+        var self = this;
+        self.m_onOverlap = function (options) {
+            options.target.setCoords();
+            self.m_canvas.forEachObject(function (obj) {
+                if (obj === options.target) return;
+                obj.setOpacity(options.target.intersectsWithObject(obj) ? 0.5 : 1);
+            });
+        }
+
+        self.m_canvas.on({
+            'object:moving': self.m_onOverlap,
+            'object:scaling': self.m_onOverlap,
+            'object:rotating': self.m_onOverlap
+        });
     }
 
     /**
