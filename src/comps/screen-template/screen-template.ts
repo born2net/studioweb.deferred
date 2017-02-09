@@ -17,7 +17,7 @@
  is of interest to a subscribed listener.
  **/
 
-import {Component, ChangeDetectionStrategy, Input, ElementRef, EventEmitter, Output} from "@angular/core";
+import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import * as _ from "lodash";
 import {Lib} from "../../Lib";
@@ -48,7 +48,7 @@ export class ScreenTemplate extends Compbaser {
     }
 
     @Output()
-    onDivisionDoubleClicked:EventEmitter<any> = new EventEmitter<any>();
+    onDivisionDoubleClicked: EventEmitter<any> = new EventEmitter<any>();
 
     @Input()
     set setTemplate(i_screenTemplateData: IScreenTemplateData) {
@@ -165,24 +165,25 @@ export class ScreenTemplate extends Compbaser {
     //     return self.m_owner;
     // }
     //
-    // /**
-    //  Create all the screen divisions (aka viewers) as svg snippets and push them into an array
-    //  @method getDivisions
-    //  @return {array} f array of all svg divisions
-    //  **/
-    // getDivisions(): any {
-    //     var self = this;
-    //     var svg = self._create();
-    //     return jQuery(svg).find('rect');
-    //     // var f = jQuery(svg).find('rect').map(function (k, v) {
-    //     //     return '<svg style="padding: 0px; margin: 15px" width="20px" height="20px" xmlns="http://www.w3.org/2000/svg">  ' +
-    //     //         '<g>' +
-    //     //         v['outerHTML'] +
-    //     //         '</g> ' +
-    //     //         '</svg>';
-    //     // });
-    //     // return f;
-    // }
+    /**
+     Create all the screen divisions (aka viewers) as svg snippets and push them into an array
+     @method getDivisions
+     @return {array} f array of all svg divisions
+     **/
+    getDivisions() {
+        var self = this;
+        var svg = self._create();
+        return $(svg).find('rect');
+
+        // var f = $(svg).find('rect').map(function (k, v) {
+        //     return '<svg style="padding: 0px; margin: 15px" width="20px" height="20px" xmlns="http://www.w3.org/2000/svg">  ' +
+        //         '<g>' +
+        //         v.outerHTML +
+        //         '</g> ' +
+        //         '</svg>';
+        // });
+        // return f;
+    }
 
     /**
      Create will produce the actual SVG based Template (screen) with inner viewers and return HTML snippet to the caller.

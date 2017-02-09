@@ -171,6 +171,20 @@ export class YellowPepperService {
     }
 
     /**
+     Get all the global board template ids of a timeline
+     * **/
+    getGlobalTemplateIdOfTimeline(i_campaign_timeline_id): Observable<Array<number>> {
+        return this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_board_templates)
+            .map((campaignTimelineBoardTemplatesModels: List<CampaignTimelineBoardTemplatesModel>) => {
+                return campaignTimelineBoardTemplatesModels.reduce((result: Array<number>, campaignTimelineBoardTemplatesModel) => {
+                    if (campaignTimelineBoardTemplatesModel.getCampaignTimelineId() == i_campaign_timeline_id)
+                        result.push(campaignTimelineBoardTemplatesModel.getBoardTemplateId());
+                    return result;
+                }, [])
+            }).take(1);
+    }
+
+    /**
      Get all the campaign > timeline > board > template ids of a timeline
      **/
     getTemplatesOfTimeline(i_campaign_timeline_id): Observable<Array<number>> {

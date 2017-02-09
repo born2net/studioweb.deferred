@@ -28,6 +28,7 @@ var sharedComponents = [Infobox, Sliderpanel, Slideritem, PanelSplitMain, PanelS
 @NgModule({
     imports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule, ContextMenuModule, ChartModule, ReactiveFormsModule],
     exports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule, ContextMenuModule, ChartModule, ...sharedComponents],
+    entryComponents: [ScreenTemplate],
     declarations: [...sharedComponents]
 })
 

@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, EventEmitter, Output} from "@angular/core";
+import {AfterViewInit, Component, ComponentFactoryResolver, ComponentRef, ElementRef, EventEmitter, Output, ViewChild, ViewContainerRef} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {Once} from "../../decorators/once-decorator";
@@ -6,6 +6,10 @@ import {CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 import {Observable} from "rxjs";
 import {List} from "immutable";
 import {StoreModel} from "../../store/model/StoreModel";
+import {OrientationEnum} from "./campaign-orientation";
+import {IScreenTemplateData, ScreenTemplate} from "../../comps/screen-template/screen-template";
+import * as _ from 'lodash';
+import Any = jasmine.Any;
 
 interface selectTimelineBoardIdResult {
     campaignTimelinesModel: CampaignTimelinesModel,
@@ -19,6 +23,10 @@ interface selectTimelineBoardIdResult {
             <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
         </small>
         <small class="debug">{{me}}</small>
+        <div [hidden]="true">
+            <ng-container #container></ng-container>
+        </div>
+        <div id="screenLayoutEditorCanvasWrap"></div>
         <div id="screenLayoutEditorView">
             <button (click)="_goBack()" id="prev" type="button" class="openPropsButton btn btn-default btn-sm">
                 <span class="glyphicon glyphicon-chevron-left"></span>
@@ -53,16 +61,26 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
     m_selectedViewerID;
     m_dimensionProps;
     m_render: boolean = false;
+    m_orientation: OrientationEnum;
+    m_resolution: string;
+    m_screenTemplateData: IScreenTemplateData;
+    m_global_board_template_id: number = -1;
 
-    constructor(private yp: YellowPepperService) {
+    private componentRef: ComponentRef<ScreenTemplate>;
+
+    constructor(private yp: YellowPepperService, private componentFactoryResolver: ComponentFactoryResolver, private el: ElementRef) {
         super();
     }
+
+    @ViewChild('container', {read: ViewContainerRef})
+    container: ViewContainerRef;
 
     /**
      Constructor
      @method initialize
      **/
     ngAfterViewInit() {
+
         this.cancelOnDestroy(
             this.yp.listenTimelineSelected()
                 .concatMap((i_campaignTimelinesModel: CampaignTimelinesModel) => {
@@ -119,6 +137,24 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
      @method  selectView
      **/
     selectView(i_campaign_timeline_id, i_campaign_timeline_board_template_id) {
+        this.cancelOnDestroy(
+            this.yp.getGlobalTemplateIdOfTimeline(i_campaign_timeline_board_template_id)
+                .concatMap((i_board_template_id) => {
+                    this.m_global_board_template_id = i_board_template_id[0];
+                    return this.yp.getTemplateViewersScreenProps(i_campaign_timeline_id, i_campaign_timeline_board_template_id)
+                })
+                .subscribe((screenTemplateData: IScreenTemplateData) => {
+                    this.m_orientation = screenTemplateData.orientation;
+                    this.m_resolution = screenTemplateData.resolution;
+                    this.m_screenTemplateData = screenTemplateData;
+                    var w = parseInt(this.m_resolution.split('x')[0]) / this.RATIO;
+                    var h = parseInt(this.m_resolution.split('x')[1]) / this.RATIO;
+                    this._canvasFactory(w, h);
+                })
+        )
+    }
+
+    selectViewOld(i_campaign_timeline_id, i_campaign_timeline_board_template_id) {
         // this.m_global_board_template_id = pepper.getGlobalTemplateIdOfTimeline(i_campaign_timeline_board_template_id);
         // this.m_screenProps = pepper.getTemplateViewersScreenProps(this.m_campaign_timeline_id, this.m_campaign_timeline_board_template_id);
         // this.m_orientation = BB.comBroker.getService(BB.SERVICES['ORIENTATION_SELECTOR_VIEW']).getOrientation();
@@ -304,83 +340,90 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
 //         this.m_property.resetPropertiesView();
 //         this.options.stackView.slideToPage(this.options.from, 'left');
 //     }
-//
-//     /**
-//      Create the canvas to render the screen division
-//      @method _canvasFactory
-//      @param {Number} i_width
-//      @param {Number} i_height
-//      **/
-//     _canvasFactory(i_width, i_height) {
-//         var this = this;
-//
-//         var offsetH = i_height / 2;
-//         var offsetW = (i_width / 2) + 30;
-//         this.m_canvasID = _.uniqueId('screenLayoutEditorCanvas');
-//         $('#screenLayoutEditorCanvasWrap').append('' +
-//             '<div>' +
-//             '<span align="center">' + this.m_resolution.split('x')[0] + 'px </span>' +
-//             '<canvas id="' + this.m_canvasID + '" width="' + i_width + 'px" height="' + i_height + 'px" style="border: 1px solid rgb(170, 170, 170);"></canvas>' +
-//             '<span style="position: relative; top: -' + offsetH + 'px; left: -' + offsetW + 'px;">' + this.m_resolution.split('x')[1] + 'px</span>' +
-//             '</div>');
-//
-//         this.m_canvas = new fabric.Canvas(this.m_canvasID);
-//         this.m_canvas.selection = false;
-//
-//         var screenTemplateData = {
-//             orientation: this.m_orientation,
-//             resolution: this.m_resolution,
-//             screenProps: this.m_screenProps,
-//             scale: this.RATIO
-//         };
-//
-//         var screenTemplate = new ScreenTemplateFactory({
-//             i_screenTemplateData: screenTemplateData,
-//             i_thisDestruct: true,
-//             i_owner: this
-//         });
-//
-//         var rects = screenTemplate.getDivisions();
-//
-//         for (var i = 0; i < rects.length; i++) {
-//             var rectProperties = rects[i];
-//             var rect = new fabric.Rect({
-//                 left: rectProperties.x.baseVal.value,
-//                 top: rectProperties.y.baseVal.value,
-//                 fill: '#ececec',
-//                 id: $(rectProperties).data('campaign_timeline_board_viewer_id'),
-//                 hasRotatingPoint: false,
-//                 borderColor: '#5d5d5d',
-//                 stroke: 'black',
-//                 strokeWidth: 1,
-//                 borderScaleFactor: 0,
-//                 lineWidth: 1,
-//                 width: rectProperties.width.baseVal.value,
-//                 height: rectProperties.height.baseVal.value,
-//                 cornerColor: 'black',
-//                 cornerSize: 5,
-//                 lockRotation: true,
-//                 transparentCorners: false
-//             });
-//             this.m_canvas.add(rect);
-//
-//             //rect.on('selected', function () {
-//             //  log('object selected a rectangle');
-//             //});
-//         }
-//
-//         //this.m_canvas.on('object:moving', function (e) {
-//         //    log('savings: ' + this.m_global_board_template_id);
-//         //});
-//
-//         setTimeout(function () {
-//             if (!this.m_canvas)
-//                 return;
-//             this.m_canvas.setHeight(i_height);
-//             this.m_canvas.setWidth(i_width);
-//             this.m_canvas.renderAll();
-//         }, 500);
-//     }
+
+    /**
+     Create the canvas to render the screen division
+     @method _canvasFactory
+     @param {Number} i_width
+     @param {Number} i_height
+     **/
+    _canvasFactory(i_width, i_height) {
+
+        var offsetH = i_height / 2;
+        var offsetW = (i_width / 2) + 30;
+        this.m_canvasID = _.uniqueId('screenLayoutEditorCanvas');
+        jQuery('#screenLayoutEditorCanvasWrap', this.el.nativeElement).append(`
+            <div>
+            <span align="center"> + this.m_resolution.split(x)[0] + px </span> +
+            <canvas id="${this.m_canvasID}" width="${i_width}px" height="${i_height}px" style="border: 1px solid rgb(170, 170, 170);"></canvas>
+            <span style="position: relative; top: "-${offsetH}px" left: "-${offsetW}px">
+                ${this.m_resolution.split('x')[1]}px
+            </span>
+            </div>`);
+
+        this.m_canvas = new fabric.Canvas(this.m_canvasID);
+        this.m_canvas.selection = false;
+
+        // var screenTemplateData = {
+        //     orientation: this.m_orientation,
+        //     resolution: this.m_resolution,
+        //     screenProps: this.m_screenProps,
+        //     scale: this.RATIO
+        // };
+
+        let factory = this.componentFactoryResolver.resolveComponentFactory(ScreenTemplate);
+        this.componentRef = this.container.createComponent(factory);
+        var a = this.componentRef.instance.setTemplate = this.m_screenTemplateData;
+        console.log(JSON.stringify(a));
+
+
+        // var screenTemplate = new ScreenTemplateFactory({
+        //     i_screenTemplateData: screenTemplateData,
+        //     i_thisDestruct: true,
+        //     i_owner: this
+        // });
+
+        var rects = this.componentRef.instance.getDivisions();
+
+        for (var i = 0; i < rects.length; i++) {
+            var rectProperties: any = rects[i];
+            var rect: any = new fabric.Rect({
+                left: rectProperties.x.baseVal.value,
+                top: rectProperties.y.baseVal.value,
+                fill: '#ececec',
+                hasRotatingPoint: false,
+                borderColor: '#5d5d5d',
+                stroke: 'black',
+                strokeWidth: 1,
+                borderScaleFactor: 0,
+                width: rectProperties.width.baseVal.value,
+                height: rectProperties.height.baseVal.value,
+                cornerColor: 'black',
+                cornerSize: 5,
+                lockRotation: true,
+                transparentCorners: false
+            });
+            this.m_canvas.add(rect);
+
+            //rect.on('selected', function () {
+            //  log('object selected a rectangle');
+            //});
+        }
+
+        //this.m_canvas.on('object:moving', function (e) {
+        //    log('savings: ' + this.m_global_board_template_id);
+        //});
+
+        setTimeout(function () {
+            if (!this.m_canvas)
+                return;
+            this.m_canvas.setHeight(i_height);
+            this.m_canvas.setWidth(i_width);
+            this.m_canvas.renderAll();
+        }, 500);
+
+    }
+
 //
 //     /**
 //      Listen to changes on selecting the background canvas
