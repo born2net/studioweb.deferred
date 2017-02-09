@@ -163,6 +163,52 @@ export class RedPepperService {
     }
 
     /**
+     Remove all blocks (i.e.: players) from campaign > timeline > channel
+     @method removeBlocksFromTimelineChannel
+     @param {Number} i_block_id
+     @return none
+     **/
+    removeBlocksFromTimelineChannel(i_campaign_timeline_chanel_id) {
+        $(this.databaseManager.table_campaign_timeline_chanel_players().getAllPrimaryKeys()).each((k, campaign_timeline_chanel_player_id) => {
+            var recCampaignTimelineChannelPlayer = this.databaseManager.table_campaign_timeline_chanel_players().getRec(campaign_timeline_chanel_player_id);
+            if (recCampaignTimelineChannelPlayer['campaign_timeline_chanel_id'] == i_campaign_timeline_chanel_id) {
+                var status = this.databaseManager.table_campaign_timeline_chanel_players().openForDelete(campaign_timeline_chanel_player_id);
+            }
+        });
+        this.addPendingTables(['table_campaign_timeline_chanel_players']);
+    }
+
+    /**
+     Remove the association between the screen division (aka viewer) and all channels that are assigned with that viewer
+     @method removeTimelineBoardViewerChannel
+     @param {Number} i_campaign_timeline_board_template_id
+     @return {Number} return the channel that was de-associated with viewer
+     **/
+    removeTimelineBoardViewerChannel(i_board_template_viewer_id) {
+        var campaign_timeline_chanel_id = -1;
+        $(this.databaseManager.table_campaign_timeline_board_viewer_chanels().getAllPrimaryKeys()).each((k, campaign_timeline_board_viewer_chanel_id) => {
+            var recCampaignTimelineViewerChanels = this.databaseManager.table_campaign_timeline_board_viewer_chanels().getRec(campaign_timeline_board_viewer_chanel_id);
+            if (recCampaignTimelineViewerChanels['board_template_viewer_id'] == i_board_template_viewer_id) {
+                campaign_timeline_chanel_id = recCampaignTimelineViewerChanels['campaign_timeline_chanel_id'];
+                this.databaseManager.table_campaign_timeline_board_viewer_chanels().openForDelete(campaign_timeline_board_viewer_chanel_id);
+            }
+        });
+        this.addPendingTables(['table_campaign_timeline_board_viewer_chanels']);
+        return campaign_timeline_chanel_id;
+    }
+
+    /**
+     Remove board template viewer
+     @method removeBoardTemplateViewer
+     @param {Number} i_board_template_id
+     @param {Number} i_board_template_viewer_id
+     **/
+    removeBoardTemplateViewer(i_board_template_id, i_board_template_viewer_id) {
+        this.databaseManager.table_board_template_viewers().openForDelete(i_board_template_viewer_id);
+        this.addPendingTables(['table_board_template_viewers']);
+    }
+
+    /**
      Assign viewer (screen division) on the timeline to channel
      @method assignViewerToTimelineChannel
      @param {Number} i_campaign_timeline_board_template_id
@@ -178,6 +224,17 @@ export class RedPepperService {
         viewerChanel.campaign_timeline_chanel_id = i_channel_id;
         viewerChanels.addRecord(viewerChanel);
         this.addPendingTables(['table_campaign_timeline_board_viewer_chanels']);
+    }
+
+    /**
+     Remove a channel from a timeline
+     @method removeChannelFromTimeline
+     @param {Number} i_channel_id
+     @return {Boolean} status
+     **/
+    removeChannelFromTimeline(i_channel_id): number {
+        this.addPendingTables(['table_campaign_timeline_chanels']);
+        return this.databaseManager.table_campaign_timeline_chanels().openForDelete(i_channel_id);
     }
 
     /**
@@ -803,17 +860,6 @@ export class RedPepperService {
         });
         this.addPendingTables(['table_campaign_timeline_chanels']);
         return foundChannelsIDs;
-    }
-
-    /**
-     Remove a channel from a timeline
-     @method removeChannelFromTimeline
-     @param {Number} i_channel_id
-     @return {Boolean} status
-     **/
-    removeChannelFromTimeline(i_channel_id): number {
-        this.addPendingTables(['table_campaign_timeline_chanels']);
-        return this.databaseManager.table_campaign_timeline_chanels().openForDelete(i_channel_id);
     }
 
     /**
@@ -2059,54 +2105,6 @@ export class RedPepperService {
         this.databaseManager.table_resources().openForEdit(i_resource_id);
         var recResource = this.databaseManager.table_resources().getRec(i_resource_id);
         recResource[i_key] = i_value;
-    }
-
-    /**
-     Remove all blocks (i.e.: players) from campaign > timeline > channel
-     @method removeBlocksFromTimelineChannel
-     @param {Number} i_block_id
-     @return none
-     **/
-    removeBlocksFromTimelineChannel(i_campaign_timeline_chanel_id) {
-
-        $(this.databaseManager.table_campaign_timeline_chanel_players().getAllPrimaryKeys()).each(function (k, campaign_timeline_chanel_player_id) {
-            var recCampaignTimelineChannelPlayer = this.databaseManager.table_campaign_timeline_chanel_players().getRec(campaign_timeline_chanel_player_id);
-            if (recCampaignTimelineChannelPlayer['campaign_timeline_chanel_id'] == i_campaign_timeline_chanel_id) {
-                var status = this.databaseManager.table_campaign_timeline_chanel_players().openForDelete(campaign_timeline_chanel_player_id);
-            }
-        });
-    }
-
-
-    /**
-     Remove board template viewer
-     @method removeBoardTemplateViewer
-     @param {Number} i_board_template_id
-     @param {Number} i_board_template_viewer_id
-     **/
-    removeBoardTemplateViewer(i_board_template_id, i_board_template_viewer_id) {
-
-        this.databaseManager.table_board_template_viewers().openForDelete(i_board_template_viewer_id);
-    }
-
-
-    /**
-     Remove the association between the screen division (aka viewer) and all channels that are assigned with that viewer
-     @method removeTimelineBoardViewerChannel
-     @param {Number} i_campaign_timeline_board_template_id
-     @return {Number} return the channel that was de-associated with viewer
-     **/
-    removeTimelineBoardViewerChannel(i_board_template_viewer_id) {
-
-        var campaign_timeline_chanel_id = -1;
-        $(this.databaseManager.table_campaign_timeline_board_viewer_chanels().getAllPrimaryKeys()).each(function (k, campaign_timeline_board_viewer_chanel_id) {
-            var recCampaignTimelineViewerChanels = this.databaseManager.table_campaign_timeline_board_viewer_chanels().getRec(campaign_timeline_board_viewer_chanel_id);
-            if (recCampaignTimelineViewerChanels['board_template_viewer_id'] == i_board_template_viewer_id) {
-                campaign_timeline_chanel_id = recCampaignTimelineViewerChanels['campaign_timeline_chanel_id'];
-                this.databaseManager.table_campaign_timeline_board_viewer_chanels().openForDelete(campaign_timeline_board_viewer_chanel_id);
-            }
-        });
-        return campaign_timeline_chanel_id;
     }
 
     /**

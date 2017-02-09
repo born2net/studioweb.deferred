@@ -7,8 +7,8 @@ import {OrientationEnum} from "./campaign-orientation";
 import {IScreenTemplateData, ScreenTemplate} from "../../comps/screen-template/screen-template";
 import * as _ from "lodash";
 import {Lib} from "../../Lib";
-import Any = jasmine.Any;
 import {RedPepperService} from "../../services/redpepper.service";
+import Any = jasmine.Any;
 
 interface selectTimelineBoardIdResult {
     campaignTimelinesModel: CampaignTimelinesModel,
@@ -36,7 +36,7 @@ interface selectTimelineBoardIdResult {
                 <button (click)="_onAddDivision()" id="layoutEditorAddNew" type="button" data-localize-tooltip="addButtonToolTip" title="add" class="btn btn-default btn-sm">
                     <i style="font-size: 1em" class="fa fa-plus"> </i>
                 </button>
-                <button id="layoutEditorRemove" type="button" data-localize-tooltip="removeButtonToolTip" title="remove division" class="btn btn-default btn-sm">
+                <button (click)="_onRemoveDivision()" id="layoutEditorRemove" type="button" data-localize-tooltip="removeButtonToolTip" title="remove division" class="btn btn-default btn-sm">
                     <i style="font-size: 1em" class="fa fa-minus"> </i>
                 </button>
                 <button id="layoutEditorPushTop" type="button" data-localize-tooltip="pushDivToTopButtonToolTip" title="push division to top" class="btn btn-default btn-sm">
@@ -68,11 +68,11 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
     m_screenTemplateData: IScreenTemplateData;
     m_global_board_template_id: number = -1;
     m_campaign_timeline_id: number = -1;
-    m_campaign_timeline_board_template_id:number = -1;
+    m_campaign_timeline_board_template_id: number = -1;
 
     private componentRef: ComponentRef<ScreenTemplate>;
 
-    constructor(private yp: YellowPepperService, private componentFactoryResolver: ComponentFactoryResolver, private rp:RedPepperService, private el: ElementRef) {
+    constructor(private yp: YellowPepperService, private componentFactoryResolver: ComponentFactoryResolver, private rp: RedPepperService, private el: ElementRef) {
         super();
     }
 
@@ -84,7 +84,6 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
      @method initialize
      **/
     ngAfterViewInit() {
-
         this.cancelOnDestroy(
             this.yp.listenTimelineSelected()
                 .concatMap((i_campaignTimelinesModel: CampaignTimelinesModel) => {
@@ -102,8 +101,6 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
             })
         )
 
-
-        // this._listenRemoveDivision();
         // this._listenPushToTopDivision();
         // this._listenPushToBottomDivision();
         // this._listenSelectNextDivision();
@@ -128,6 +125,41 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
         //         }
         //     }
         // });
+    }
+
+    /**
+     Listen to the removal of an existing screen division
+     @method _listenRemoveDivision
+     **/
+    _onRemoveDivision() {
+        var self = this;
+        if (_.isUndefined(self.m_canvas))
+            return;
+        var totalViews = self.m_canvas.getObjects().length;
+        if (totalViews < 2) {
+            bootbox.alert('you must keep at least one viewable screen division');
+            return;
+        }
+        var campaign_timeline_chanel_id = this.rp.removeTimelineBoardViewerChannel(self.m_selectedViewerID);
+        this.rp.removeBoardTemplateViewer(self.m_campaign_timeline_board_template_id, self.m_selectedViewerID);
+        this.rp.removeChannelFromTimeline(campaign_timeline_chanel_id);
+        this.rp.removeBlocksFromTimelineChannel(campaign_timeline_chanel_id);
+        self.m_canvas.remove(self.m_canvas.getActiveObject());
+        self.m_canvas.renderAll();
+        this.rp.reduxCommit();
+        /*var viewer = self.m_canvas.item(0);
+         var props = {
+         y: viewer.get('top'),
+         x: viewer.get('left'),
+         w: viewer.get('width') * self.RATIO,
+         h: viewer.get('height') * self.RATIO
+         };
+         self._updateDimensionsInDB(viewer, props);
+         BB.comBroker.fire(BB.EVENTS.VIEWER_REMOVED, this, this, {
+         campaign_timeline_chanel_id: campaign_timeline_chanel_id
+         });
+         pepper.announceTemplateViewerEdited(self.m_campaign_timeline_board_template_id);
+         */
     }
 
     /**
