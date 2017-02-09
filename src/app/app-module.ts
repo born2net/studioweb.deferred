@@ -39,13 +39,11 @@ import {SharedModule} from "../modules/shared.module";
 import {Dashboard} from "./dashboard/dashboard-navigation";
 import {Appwrap} from "./appwrap";
 import "hammerjs";
-import "fabric";
 import "gsap";
 import "gsap/CSSPlugin";
 import "gsap/Draggable";
 import "gsap/TweenLite";
-
-
+// import "fabric"; // need to remove if we import via cli
 // import {ScreenTemplate} from "../comps/screen-template/screen-template";
 
 export var providing = [CommBroker, AUTH_PROVIDERS, RedPepperService, YellowPepperService, LocalStorage, StoreService, AppdbAction, CommBroker,

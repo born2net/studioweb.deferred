@@ -43,7 +43,7 @@ Thumbs.db
 !service-worker.js
 !src/store/pepper.helper.lib.js
 !src/store/signage_sdk.js
-!src/libs/bootstrap-timepicker/js/*
+!src/libs/*
 #src/store/application.state.js
 #src/store/imsdb.interfaces.js
 #src/store/imsdb.interfaces_auto.js

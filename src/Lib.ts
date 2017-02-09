@@ -65,6 +65,16 @@ export class Lib {
         }
     }
 
+    /**
+     Convert number or string to float with double precision
+     @method parseToFloatDouble
+     @param {Object} i_value
+     @return {Number}
+     **/
+    static ParseToFloatDouble(i_value: any): number {
+        return parseFloat(parseFloat(i_value).toFixed(2));
+    }
+
     static CleanCharForXml(value: any): any {
         var clean = function (value: string) {
             if (_.isUndefined(value))

@@ -33,10 +33,10 @@
         "./libs/jquery.base64.js",
         "./libs/bootstrap-timepicker/js/bootstrap-timepicker.min.js",
         "./store/signage_sdk.js",
-        "../node_modules/fabric/dist/fabric.js",
         "../node_modules/bootstrap/dist/js/bootstrap.js",
         "../node_modules/bootbox/bootbox.js",
         "../node_modules/platform/platform.js",
+        "./libs/fabric.require1-4-12.min.js",
         "../node_modules/xdate/src/xdate.js"
       ],
       "environments": {

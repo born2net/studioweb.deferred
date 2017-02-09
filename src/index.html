@@ -14,14 +14,20 @@
     <meta name="description" content="DigitalSignage.com FREE Digital Signage for everyone. StudioWeb, an open source Digital Signage editor powered by Angular">
     <meta name="keywords" content="Digital Signage, Kiosk, Digital Kiosk">
 
-    <!--To switch back to fabric js 1.4.2 legacy: -->
-    <!--1. remove import "fabric"; from app-modules.ts-->
-    <!--2. remove form angular-cli.json: "../node_modules/fabric/dist/fabric.js",-->
-    <!--3. bring back line: <script src="https://secure.digitalsignage.com/studioweb/fabric1-4-2.min.js"></script>-->
+    <!--To switch fabrics -->
+    <!-- add/remove import "fabric"; from app-modules.ts-->
+    <!-- add/remove form angular-cli.json:
+    <!-- "../node_modules/fabric/dist/fabric.js"
+    <!-- or -->
+    <!-- angular-cli.json: "./libs/fabric.require1-4-12.js", -->
+    <!-- to load remotely: -->
+    <!-- <script src="https://secure.digitalsignage.com/studioweb/fabric1-4-2.min.js"></script> -->
+    <!-- <script src="https://secure.digitalsignage.com/studioweb/fabric.require1-4-12.min.js"></script> -->
 
-    <script>
-        window['offlineDevMode'] = false;
-    </script>
+    <!--<script src="https://secure.digitalsignage.com/studioweb/fabric.require1-4-12.min.js"></script>-->
+
+    <script>window['offlineDevMode'] = false;</script>
+    
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/shim.min.js"></script>-->
     <!--<script>-->
         <!--(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){-->
