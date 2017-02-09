@@ -354,7 +354,7 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
         this.m_canvasID = _.uniqueId('screenLayoutEditorCanvas');
         jQuery('#screenLayoutEditorCanvasWrap', this.el.nativeElement).append(`
             <div>
-            <span align="center"> + this.m_resolution.split(x)[0] + px </span> +
+            <span align="center">${this.m_resolution.split('x')[0]}px</span> 
             <canvas id="${this.m_canvasID}" width="${i_width}px" height="${i_height}px" style="border: 1px solid rgb(170, 170, 170);"></canvas>
             <span style="position: relative; top: "-${offsetH}px" left: "-${offsetW}px">
                 ${this.m_resolution.split('x')[1]}px
@@ -373,8 +373,8 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
 
         let factory = this.componentFactoryResolver.resolveComponentFactory(ScreenTemplate);
         this.componentRef = this.container.createComponent(factory);
-        var a = this.componentRef.instance.setTemplate = this.m_screenTemplateData;
-        console.log(JSON.stringify(a));
+        this.m_screenTemplateData.scale = 4;
+        this.componentRef.instance.setTemplate = this.m_screenTemplateData;
 
 
         // var screenTemplate = new ScreenTemplateFactory({
@@ -391,11 +391,13 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
                 left: rectProperties.x.baseVal.value,
                 top: rectProperties.y.baseVal.value,
                 fill: '#ececec',
+                id: jQueryAny(rectProperties).data('campaign_timeline_board_viewer_id'),
                 hasRotatingPoint: false,
                 borderColor: '#5d5d5d',
                 stroke: 'black',
                 strokeWidth: 1,
                 borderScaleFactor: 0,
+                lineWidth: 1,
                 width: rectProperties.width.baseVal.value,
                 height: rectProperties.height.baseVal.value,
                 cornerColor: 'black',

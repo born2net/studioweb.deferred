@@ -502,7 +502,7 @@ declare namespace fabric {
          * @param eventName Event name (eg. 'after:render') or object with key/value pairs (eg. {'after:render': handler, 'selection:cleared': handler})
          * @param handler Function to be deleted from EventListeners
          */
-        off(eventName?: string|any, handler?: (e: IEvent) => any): T;
+        off(eventName?: string | any, handler?: (e: IEvent) => any): T;
     }
 
     // animation mixin
@@ -546,7 +546,7 @@ declare namespace fabric {
          * @param value Value to animate property
          * @param options The animation options
          */
-        animate(property: string, value: number|string, options?: IAnimationOptions): IObject;
+        animate(property: string, value: number | string, options?: IAnimationOptions): IObject;
         /**
          * Animates object's properties
          * object.animate({ left: ..., top: ... }, { duration: ... });
@@ -559,7 +559,7 @@ declare namespace fabric {
         /**
          * Allows to specify starting value of animatable property (if we don't want current value to be used).
          */
-            from?: string|number;
+            from?: string | number;
         /**
          * Defaults to 500 (ms). Can be used to change duration of an animation.
          */
@@ -647,7 +647,7 @@ declare namespace fabric {
          * Overlays color with another color
          * @param {String|fabric.Color} otherColor
          */
-        overlayWith(otherColor: string|IColor): IColor;
+        overlayWith(otherColor: string | IColor): IColor;
     }
     interface IColorStatic {
         /**
@@ -831,7 +831,7 @@ declare namespace fabric {
         /**
          * The source for the pattern
          */
-        source: string|HTMLImageElement;
+        source: string | HTMLImageElement;
     }
     interface IPattern extends IPatternOptions {
         new (options?: IPatternOptions): IPattern;
@@ -1049,7 +1049,7 @@ declare namespace fabric {
         offsetY: number;
     }
     interface IShadow extends IShadowOptions {
-        initialize(options?: IShadowOptions|string): IShadow;
+        initialize(options?: IShadowOptions | string): IShadow;
         /**
          * Returns object representation of a shadow
          */
@@ -1126,7 +1126,7 @@ declare namespace fabric {
          * Background color of canvas instance.
          * Should be set via setBackgroundColor
          */
-        backgroundColor?: string|IPattern;
+        backgroundColor?: string | IPattern;
         /**
          * Background image of canvas instance.
          * Should be set via setBackgroundImage
@@ -1154,7 +1154,7 @@ declare namespace fabric {
          * Overlay color of canvas instance.
          * Should be set via setOverlayColor
          */
-        overlayColor?: string|IPattern;
+        overlayColor?: string | IPattern;
         /**
          * Overlay image of canvas instance.
          * Should be set via setOverlayImage
@@ -1187,7 +1187,7 @@ declare namespace fabric {
          * @param {Function} callback callback to invoke when image is loaded and set as an overlay
          * @param {Object} [options] Optional options to set for the {@link fabric.Image|overlay image}.
          */
-        setOverlayImage(image: IImage|string, callback: Function, options?: IObjectOptions): IStaticCanvas;
+        setOverlayImage(image: IImage | string, callback: Function, options?: IObjectOptions): IStaticCanvas;
 
         /**
          * Sets {@link fabric.StaticCanvas#backgroundImage|background image} for this canvas
@@ -1195,21 +1195,21 @@ declare namespace fabric {
          * @param {Function} callback Callback to invoke when image is loaded and set as background
          * @param {Object} [options] Optional options to set for the {@link fabric.Image|background image}.
          */
-        setBackgroundImage(image: IImage|string, callback: Function, options?: IObjectOptions): IStaticCanvas;
+        setBackgroundImage(image: IImage | string, callback: Function, options?: IObjectOptions): IStaticCanvas;
 
         /**
          * Sets {@link fabric.StaticCanvas#overlayColor|background color} for this canvas
          * @param {(String|fabric.Pattern)} overlayColor Color or pattern to set background color to
          * @param {Function} callback Callback to invoke when background color is set
          */
-        setOverlayColor(overlayColor: string|IPattern, callback: Function): IStaticCanvas;
+        setOverlayColor(overlayColor: string | IPattern, callback: Function): IStaticCanvas;
 
         /**
          * Sets {@link fabric.StaticCanvas#backgroundColor|background color} for this canvas
          * @param {(String|fabric.Pattern)} backgroundColor Color or pattern to set background color to
          * @param {Function} callback Callback to invoke when background color is set
          */
-        setBackgroundColor(backgroundColor: string|IPattern, callback: Function): IStaticCanvas;
+        setBackgroundColor(backgroundColor: string | IPattern, callback: Function): IStaticCanvas;
 
         /**
          * Returns canvas width (in px)
@@ -1226,14 +1226,14 @@ declare namespace fabric {
          * @param {Number|String} value                         Value to set width to
          * @param {Object}        [options]                     Options object
          */
-        setWidth(value: number|string, options?: ICanvasDimensionsOptions): IStaticCanvas
+        setWidth(value: number | string, options?: ICanvasDimensionsOptions): IStaticCanvas
 
         /**
          * Sets height of this canvas instance
          * @param {Number|String} value                         Value to set height to
          * @param {Object}        [options]                     Options object
          */
-        setHeight(value: number|string, options?: ICanvasDimensionsOptions): IStaticCanvas;
+        setHeight(value: number | string, options?: ICanvasDimensionsOptions): IStaticCanvas;
 
         /**
          * Sets dimensions (width, height) of this canvas instance. when options.cssOnly flag active you should also supply the unit of measure (px/%/em)
@@ -1451,7 +1451,7 @@ declare namespace fabric {
          *                            are initialized
          * @param {Function} [reviver] Method for further parsing of JSON elements, called after each fabric object created.
          */
-        loadFromJSON(json: string|any, callback: Function, reviver?: Function): ICanvas;
+        loadFromJSON(json: string | any, callback: Function, reviver?: Function): ICanvas;
         /**
          * Clones canvas instance
          * @param {Object} [callback] Receives cloned instance as a first argument
@@ -1493,7 +1493,7 @@ declare namespace fabric {
          * @param {HTMLElement|String} element <canvas> element to initialize instance on
          * @param {Object} [options] Options object
          */
-        new (element: HTMLCanvasElement|string, options?: ICanvasOptions): IStaticCanvas;
+        new (element: HTMLCanvasElement | string, options?: ICanvasOptions): IStaticCanvas;
 
         EMPTY_JSON: string;
         /**
@@ -1996,7 +1996,7 @@ declare namespace fabric {
         filters: IBaseFilter[];
     }
     interface IImage extends IObject, IImageOptions {
-        initialize(element?: string|HTMLImageElement, options?: IImageOptions): void;
+        initialize(element?: string | HTMLImageElement, options?: IImageOptions): void;
         /**
          * Applies filters assigned to this image (from "filters" array)
          * @param {Function} callback Callback is invoked when all filters have been applied and new image is generated
@@ -2333,7 +2333,7 @@ declare namespace fabric {
         /**
          * Shadow object representing shadow of this shape
          */
-        shadow?: IShadow|string;
+        shadow?: IShadow | string;
 
         /**
          * Opacity of object's controlling borders when object is active and moving
@@ -2551,7 +2551,7 @@ declare namespace fabric {
          * @param {String} key Property name
          * @param {Object|Function} value Property value (if function, the value is passed into it and its return value is used as a new one)
          */
-        set(key: string, value: any|Function): IObject;
+        set(key: string, value: any | Function): IObject;
         /**
          * Sets property to a given value.
          * When changing position/dimension -related properties (left, top, scale, angle, etc.) `set` does not update position of object's borders/controls.
@@ -3004,7 +3004,7 @@ declare namespace fabric {
          * @param {Array|String} path Path data (sequence of coordinates and corresponding "command" tokens)
          * @param {Object} [options] Options object
          */
-        new (path?: string|any[], options?: IPathOptions): IPath;
+        new (path?: string | any[], options?: IPathOptions): IPath;
     }
 
     interface IPathGroup extends IObject {
@@ -3198,6 +3198,8 @@ declare namespace fabric {
     }
 
     interface IRectOptions extends IObjectOptions {
+        id?: any;
+        lineWidth?: number;
         x?: number;
         y?: number;
         /**
@@ -3263,7 +3265,7 @@ declare namespace fabric {
         /**
          * Font weight (e.g. bold, normal, 400, 600, 800)
          */
-        fontWeight?: number|string;
+        fontWeight?: number | string;
         /**
          * Font family
          */
@@ -3293,7 +3295,7 @@ declare namespace fabric {
          * Shadow object representing shadow of this shape.
          * <b>Backwards incompatibility note?:</b> This property was named "textShadow" (String) until v1.2.11
          */
-        shadow?: IShadow|string;
+        shadow?: IShadow | string;
         /**
          * Background color of text lines
          */
@@ -3339,12 +3341,12 @@ declare namespace fabric {
         /**
          * Retrieves object's fontWeight
          */
-        getFontWeight(): number|string;
+        getFontWeight(): number | string;
         /**
          * Sets object's fontWeight
          * @param {(Number|String)} fontWeight Font weight
          */
-        setFontWeight(fontWeight: string|number): IText;
+        setFontWeight(fontWeight: string | number): IText;
         /**
          * Retrieves object's fontFamily
          */
@@ -4145,7 +4147,7 @@ declare namespace fabric {
          * <b>Backwards incompatibility note:</b> This property replaces "shadowColor" (String), "shadowOffsetX" (Number),
          * "shadowOffsetY" (Number) and "shadowBlur" (Number) since v1.2.12
          */
-        shadow: IShadow|string;
+        shadow: IShadow | string;
         /**
          * Line endings style of a brush (one of "butt", "round", "square")
          */
@@ -4165,7 +4167,7 @@ declare namespace fabric {
          * Sets shadow of an object
          * @param {Object|String} [options] Options object or string (e.g. "2px 2px 10px rgba(0,0,0,0.2)")
          */
-        setShadow(options: string|any): IBaseBrush;
+        setShadow(options: string | any): IBaseBrush;
 
     }
     interface ICircleBrush extends IBaseBrush {
@@ -4412,7 +4414,7 @@ declare namespace fabric {
          * Takes id and returns an element with that id (if one exists in a document)
          * @param {String|HTMLElement} id
          */
-        getById(id: string|HTMLElement): HTMLElement;
+        getById(id: string | HTMLElement): HTMLElement;
         /**
          * Converts an array-like object (e.g. arguments or NodeList) to an array
          * @param {Object} arrayLike
@@ -4438,7 +4440,7 @@ declare namespace fabric {
          * @param {HTMLElement|String} wrapper Element to wrap with
          * @param {Object} [attributes] Attributes to set on a wrapper
          */
-        wrapElement(element: HTMLElement, wrapper: HTMLElement|string, attributes?: any): HTMLElement;
+        wrapElement(element: HTMLElement, wrapper: HTMLElement | string, attributes?: any): HTMLElement;
         /**
          * Returns element scroll offsets
          * @param {HTMLElement} element Element to operate on
@@ -4636,7 +4638,7 @@ declare namespace fabric {
          * Returns converted pixels or original value not converted.
          * @param {Number|String} value number to operate on
          */
-        parseUnit(value: number|string, fontSize?: number): number|string;
+        parseUnit(value: number | string, fontSize?: number): number | string;
 
         /**
          * Function which always returns `false`.
