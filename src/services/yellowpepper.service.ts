@@ -36,7 +36,7 @@ export class YellowPepperService {
     /**
      Listen to when a campaign timeline channel is selected
      **/
-    public listenChannelSelected(emitOnEmpty: boolean = false): Observable<CampaignTimelineChanelsModel> {
+    listenChannelSelected(emitOnEmpty: boolean = false): Observable<CampaignTimelineChanelsModel> {
         var channelSelected$ = this.store.select(store => store.appDb.uiState.campaign.campaignTimelineChannelSelected);
         var channelsList$ = this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_chanels);
         return channelSelected$.withLatestFrom(
@@ -51,7 +51,7 @@ export class YellowPepperService {
     /**
      Listen to when a timeline is selected via the store state uiState.campaign.timelineSelected
      **/
-    public listenTimelineSelected(emitOnEmpty: boolean = false): Observable<CampaignTimelinesModel> {
+    listenTimelineSelected(emitOnEmpty: boolean = false): Observable<CampaignTimelinesModel> {
         var timelineSelected$ = this.store.select(store => store.appDb.uiState.campaign.timelineSelected);
         var timelineList$ = this.store.select(store => store.msDatabase.sdk.table_campaign_timelines);
         return timelineSelected$
@@ -68,7 +68,7 @@ export class YellowPepperService {
     /**
      Listen to ONLY when a campaign is selected via the store state uiState.campaign.campaignSelected and grab latest CampaignModel
      **/
-    public listenCampaignSelected(emitOnEmpty: boolean = false): Observable<CampaignsModelExt> {
+    listenCampaignSelected(emitOnEmpty: boolean = false): Observable<CampaignsModelExt> {
         var campaignSelected$ = this.store.select(store => store.appDb.uiState.campaign.campaignSelected);
         var campaignsList$ = this.store.select(store => store.msDatabase.sdk.table_campaigns);
         return campaignSelected$
@@ -84,7 +84,7 @@ export class YellowPepperService {
     /**
      Listen to when a channel that is selected changed value
      **/
-    public listenChannelValueChanged(emitOnEmpty: boolean = false): Observable<CampaignTimelineChanelsModel> {
+    listenChannelValueChanged(emitOnEmpty: boolean = false): Observable<CampaignTimelineChanelsModel> {
         var channelIdSelected$ = this.ngrxStore.select(store => store.appDb.uiState.campaign.campaignTimelineChannelSelected)
         var channels$ = this.ngrxStore.select(store => store.msDatabase.sdk.table_campaign_timeline_chanels);
         return channelIdSelected$
@@ -99,7 +99,7 @@ export class YellowPepperService {
     /**
      Listen to when a campaign that is selected changed value
      **/
-    public listenCampaignValueChanged(emitOnEmpty: boolean = false): Observable<CampaignsModelExt> {
+    listenCampaignValueChanged(emitOnEmpty: boolean = false): Observable<CampaignsModelExt> {
         var campaignIdSelected$ = this.ngrxStore.select(store => store.appDb.uiState.campaign.campaignSelected)
         var campaigns$ = this.ngrxStore.select(store => store.msDatabase.sdk.table_campaigns);
         return campaignIdSelected$
@@ -114,7 +114,7 @@ export class YellowPepperService {
     /**
      Listen to when a scheduler that is selected changed value
      **/
-    public listenSchedulerValueChanged(emitOnEmpty: boolean = false): Observable<CampaignTimelineSchedulesModel> {
+    listenSchedulerValueChanged(emitOnEmpty: boolean = false): Observable<CampaignTimelineSchedulesModel> {
         var campaignTimelineIdSelected$ = this.ngrxStore.select(store => store.appDb.uiState.campaign.timelineSelected)
         var schedules$ = this.ngrxStore.select(store => store.msDatabase.sdk.table_campaign_timeline_schedules);
         return campaignTimelineIdSelected$

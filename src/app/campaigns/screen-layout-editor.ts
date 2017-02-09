@@ -1,8 +1,16 @@
-import {Component, ChangeDetectionStrategy, Output, EventEmitter, AfterViewInit} from "@angular/core";
+import {AfterViewInit, Component, EventEmitter, Output} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {Once} from "../../decorators/once-decorator";
 import {CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
+import {Observable} from "rxjs";
+import {List} from "immutable";
+import {StoreModel} from "../../store/model/StoreModel";
+
+interface selectTimelineBoardIdResult {
+    campaignTimelinesModel: CampaignTimelinesModel,
+    campaign_timeline_board_template_ids: number[]
+}
 
 @Component({
     selector: 'screen-layout-editor',
@@ -55,12 +63,18 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
      @method initialize
      **/
     ngAfterViewInit() {
-
         this.cancelOnDestroy(
-            this.yp.listenTimelineSelected().concatMap((campaignTimelinesModel: CampaignTimelinesModel) => {
-                return this.yp.getTemplatesOfTimeline(campaignTimelinesModel.getCampaignTimelineId())
-            }).subscribe((i_campaign_timeline_board_template_id) => {
-                console.log('selected id ' + i_campaign_timeline_board_template_id[0]);
+            this.yp.listenTimelineSelected()
+                .concatMap((i_campaignTimelinesModel: CampaignTimelinesModel) => {
+                    return this.yp.getTemplatesOfTimeline(i_campaignTimelinesModel.getCampaignTimelineId())
+                        .flatMap((i_campaign_timeline_board_template_ids) => {
+                            return Observable.of({
+                                campaign_timeline_board_template_ids: i_campaign_timeline_board_template_ids,
+                                campaignTimelinesModel: i_campaignTimelinesModel
+                            })
+                        })
+                }).subscribe((result: selectTimelineBoardIdResult) => {
+                this.selectView(result.campaignTimelinesModel.getCampaignTimelineId(), result.campaign_timeline_board_template_ids[0])
             })
         )
 
@@ -93,20 +107,18 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
         // });
     }
 
-    @Once()
-    private _getSelectedBoard() {
-        // this.yp.getTemplatesOfTimeline()
-        // var boardTemplateIDs = pepper.getTemplatesOfTimeline(self.m_selected_timeline_id);
-        // screenLayoutEditor.selectView(self.m_selected_timeline_id, boardTemplateIDs[0]);
-    }
+    // @Once()
+    // private _getSelectedBoard() {
+    // this.yp.getTemplatesOfTimeline()
+    // var boardTemplateIDs = pepper.getTemplatesOfTimeline(self.m_selected_timeline_id);
+    // screenLayoutEditor.selectView(self.m_selected_timeline_id, boardTemplateIDs[0]);
+    // }
 
     /**
      Load the editor into DOM using the StackView using animation slider
      @method  selectView
      **/
     selectView(i_campaign_timeline_id, i_campaign_timeline_board_template_id) {
-        // this.m_campaign_timeline_id = i_campaign_timeline_id;
-        // this.m_campaign_timeline_board_template_id = i_campaign_timeline_board_template_id;
         // this.m_global_board_template_id = pepper.getGlobalTemplateIdOfTimeline(i_campaign_timeline_board_template_id);
         // this.m_screenProps = pepper.getTemplateViewersScreenProps(this.m_campaign_timeline_id, this.m_campaign_timeline_board_template_id);
         // this.m_orientation = BB.comBroker.getService(BB.SERVICES['ORIENTATION_SELECTOR_VIEW']).getOrientation();

@@ -35,8 +35,6 @@ export class CampaignEditor extends Compbaser {
                     this.campaignTimelinesModel = i_campaignTimelinesModel;
                 })
         );
-
-
     }
 
     _onEditScreenLayout() {
