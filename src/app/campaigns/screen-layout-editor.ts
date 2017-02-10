@@ -8,9 +8,9 @@ import {IScreenTemplateData, ScreenTemplate} from "../../comps/screen-template/s
 import * as _ from "lodash";
 import {Lib} from "../../Lib";
 import {RedPepperService} from "../../services/redpepper.service";
-import Any = jasmine.Any;
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
 import {IUiState} from "../../store/store.data";
+import Any = jasmine.Any;
 
 interface selectTimelineBoardIdResult {
     campaignTimelinesModel: CampaignTimelinesModel,
@@ -481,8 +481,9 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
      @param {Object} i_props
      **/
     _updateDimensionsInDB(i_viewer, i_props) {
-        var self = this;
-        // log('Pepper ' + i_viewer.get('id') + ' ' + JSON.stringify(i_props));
+        var uiState: IUiState = {campaign: {globalBoardTemplateViewerSelected: i_viewer.get('id')}}
+        this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+        console.log('Pepper ' + i_viewer.get('id') + ' ' + JSON.stringify(i_props));
         this.rp.setBoardTemplateViewer(this.m_campaign_timeline_board_template_id, i_viewer.get('id'), i_props);
         i_viewer.setCoords();
         this.m_canvas.renderAll();

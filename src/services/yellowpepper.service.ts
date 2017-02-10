@@ -66,6 +66,20 @@ export class YellowPepperService {
     }
 
     /**
+     Listen to when a table_board_template_viewers is selected as well as to when it has changed value per the viewer_id selected
+     **/
+    listenGlobalBoardSelectedChanged(emitOnEmpty: boolean = false): Observable<BoardTemplateViewersModel> {
+        var globalBoardTemplateViewerSelected$ = this.ngrxStore.select(store => store.appDb.uiState.campaign.globalBoardTemplateViewerSelected)
+        var tableBoardTemplatesList$ = this.ngrxStore.select(store => store.msDatabase.sdk.table_board_template_viewers);
+        return globalBoardTemplateViewerSelected$
+            .combineLatest(tableBoardTemplatesList$, (globalBoardTemplateViewerId: number, boards: List<BoardTemplateViewersModel>) => {
+                return boards.find((i_board: BoardTemplateViewersModel) => {
+                    return i_board.getBoardTemplateViewerId() == globalBoardTemplateViewerId;
+                });
+            }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
+    }
+
+    /**
      Listen to ONLY when a campaign is selected via the store state uiState.campaign.campaignSelected and grab latest CampaignModel
      **/
     listenCampaignSelected(emitOnEmpty: boolean = false): Observable<CampaignsModelExt> {

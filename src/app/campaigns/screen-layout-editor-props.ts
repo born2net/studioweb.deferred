@@ -8,6 +8,8 @@ import {timeout} from "../../decorators/timeout-decorator";
 import {Observable} from "rxjs";
 import {simpleRegExp} from "../../Lib";
 import * as _ from "lodash";
+import {Map, List} from 'immutable';
+import {BoardTemplatesModel, BoardTemplateViewersModel} from "../../store/imsdb.interfaces_auto";
 
 @Component({
     selector: 'screen-layout-editor-props',
@@ -15,6 +17,16 @@ import * as _ from "lodash";
     host: {
         '(input-blur)': 'saveToStore($event)'
     },
+    styles: [`
+        :host > > > .ui-spinner-input {
+            width: 60px;
+        }
+
+        .spinLabel {
+            display: inline-block;
+            width: 70px;
+        }
+    `],
     template: `
         <div>
             <form novalidate autocomplete="off" [formGroup]="contGroup">
@@ -29,31 +41,20 @@ import * as _ from "lodash";
                             </div>
                             <ul class="list-group">
                                 <li class="list-group-item">
-                                    kiosk mode
-                                    <div class="material-switch pull-right">
-                                        <input (change)="saveToStore(customerNetwork2.checked)"
-                                               [formControl]="contGroup.controls['kiosk_mode']"
-                                               id="customerNetwork2" #customerNetwork2
-                                               name="customerNetwork2" type="checkbox"/>
-                                        <label for="customerNetwork2" class="label-primary"></label>
-                                    </div>
+                                    <div class="spinLabel">top:</div>
+                                    <input class="numStepper" [formControl]="contGroup.controls['pixel_y']">
                                 </li>
                                 <li class="list-group-item">
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
-                                        <input [formControl]="contGroup.controls['campaign_name']" required
-                                               pattern="[0-9]|[a-z]|[A-Z]+"
-                                               type="text" class="form-control" minlength="3" maxlength="15"
-                                               placeholder="campaign name">
-                                    </div>
+                                    <div class="spinLabel">left:</div>
+                                    <input class="numStepper" [formControl]="contGroup.controls['pixel_x']">
                                 </li>
                                 <li class="list-group-item">
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="fa fa-key"></i></span>
-                                        <input type="number" [formControl]="contGroup.controls['campaign_playlist_mode']" min="0"
-                                               class="form-control"
-                                               placeholder="access key">
-                                    </div>
+                                    <div class="spinLabel">width:</div>
+                                    <input class="numStepper" [formControl]="contGroup.controls['pixel_width']">
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="spinLabel">height:</div>
+                                    <input class="numStepper" [formControl]="contGroup.controls['pixel_height']">
                                 </li>
                             </ul>
                         </div>
@@ -62,54 +63,36 @@ import * as _ from "lodash";
             </form>
         </div>
 
-    `,
-    styles: [`
-        input.ng-invalid {
-            border-right: 10px solid red;
-        }
+    `
 
-        .material-switch {
-            position: relative;
-            padding-top: 10px;
-        }
-
-        .input-group {
-            padding-top: 10px;
-        }
-
-        i {
-            width: 20px;
-        }
-    `]
 })
 export class ScreenLayoutEditorProps extends Compbaser {
 
-    private campaignModel: CampaignsModelExt;
+    private boardTemplateModel: BoardTemplateViewersModel;
     private formInputs = {};
     private contGroup: FormGroup;
-    private campaignModel$: Observable<CampaignsModelExt>;
 
     constructor(private fb: FormBuilder, private ngmslibService: NgmslibService, private yp: YellowPepperService, private rp: RedPepperService) {
         super();
 
         this.contGroup = fb.group({
-            'campaign_name': ['', [Validators.required, Validators.pattern(simpleRegExp)]],
-            'campaign_playlist_mode': [0],
-            'kiosk_mode': [0]
+            'pixel_height': [0],
+            'pixel_width': [0],
+            'pixel_x': [0],
+            'pixel_y': [0]
         });
         _.forEach(this.contGroup.controls, (value, key: string) => {
             this.formInputs[key] = this.contGroup.controls[key] as FormControl;
         })
 
+
         this.cancelOnDestroy(
-            this.yp.listenCampaignSelected().subscribe((campaign: CampaignsModelExt) => {
-                this.campaignModel = campaign;
-                this.renderFormInputs();
-            })
+            this.yp.listenGlobalBoardSelectedChanged()
+                .subscribe((boardTemplateModel:BoardTemplateViewersModel) => {
+                    this.boardTemplateModel = boardTemplateModel;
+                    this.renderFormInputs();
+                })
         )
-
-        this.campaignModel$ = this.yp.listenCampaignValueChanged()
-
     }
 
     @timeout()
@@ -117,18 +100,16 @@ export class ScreenLayoutEditorProps extends Compbaser {
         // console.log(this.contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.contGroup.value)));
         if (this.contGroup.status != 'VALID')
             return;
-        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_name', this.contGroup.value.campaign_name);
-        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_playlist_mode', this.contGroup.value.campaign_playlist_mode);
-        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_timeline_id', 0); //todo: you need to fix this as zero is arbitrary number right now
-        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_mode', this.contGroup.value.kiosk_mode);
+        // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_name', this.contGroup.value.campaign_name);
         this.rp.reduxCommit()
     }
 
     private renderFormInputs() {
-        if (!this.campaignModel)
+        if (!this.boardTemplateModel)
             return;
         _.forEach(this.formInputs, (value, key: string) => {
-            let data = this.campaignModel.getKey(key);
+            console.log(key,value);
+            let data = this.boardTemplateModel.getKey(key);
             data = StringJS(data).booleanToNumber();
             this.formInputs[key].setValue(data)
         });
