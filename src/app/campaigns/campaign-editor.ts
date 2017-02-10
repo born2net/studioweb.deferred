@@ -60,7 +60,7 @@ export class CampaignEditor extends Compbaser {
             })
     }
 
-    private _onGoBack(){
+    _onGoBack(){
         this.actions.resetCampaignSelection();
         this.onGoBack.emit()
     }

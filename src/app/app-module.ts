@@ -10,7 +10,7 @@ import {YellowPepperService} from "../services/yellowpepper.service";
 import {MsLibModule} from "ng-mslib/dist/mslib.module";
 import {ToastModule} from "ng2-toastr";
 import {AccordionModule, AlertModule, DropdownModule, ModalModule} from "ng2-bootstrap";
-import {DropdownModule as DropdownModulePrime, InputTextModule, SelectButtonModule, TreeModule} from "primeng/primeng";
+import {DropdownModule as DropdownModulePrime, InputTextModule, SelectButtonModule, TreeModule, SpinnerModule} from "primeng/primeng";
 import {routing} from "../app-routes";
 import {LoginPanel} from "../comps/entry/LoginPanel";
 import {Logout} from "../comps/logout/Logout";

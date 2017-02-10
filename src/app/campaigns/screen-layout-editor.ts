@@ -9,6 +9,8 @@ import * as _ from "lodash";
 import {Lib} from "../../Lib";
 import {RedPepperService} from "../../services/redpepper.service";
 import Any = jasmine.Any;
+import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
+import {IUiState} from "../../store/store.data";
 
 interface selectTimelineBoardIdResult {
     campaignTimelinesModel: CampaignTimelinesModel,
@@ -507,6 +509,8 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
     onGoBack: EventEmitter<any> = new EventEmitter<any>();
 
     _goBack() {
+        var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
+        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
         this.onGoBack.emit();
     }
 
