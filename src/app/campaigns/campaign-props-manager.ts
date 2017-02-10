@@ -7,7 +7,7 @@ import {SideProps} from "../../store/actions/appdb.actions";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 
 @Component({
-    selector: 'props',
+    selector: 'campaign-props-manager',
     changeDetection: ChangeDetectionStrategy.OnPush,
     styles: [`
         ul {
@@ -36,12 +36,15 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
                 <channel-props></channel-props>
             </div>
             <div *ngSwitchCase="m_uiUserFocusItemEnum.screenLayoutEditor">
-                <!--<screen-layout-editor-props></screen-layout-editor-props>-->
+                <screen-layout-editor-props></screen-layout-editor-props>
+            </div>
+            <div *ngSwitchCase="m_uiUserFocusItemEnum.sceneBlock">
+                <block-prop></block-prop>
             </div>
         </ul>
     `,
 })
-export class Props extends Compbaser {
+export class CampaignPropsManager extends Compbaser {
 
     constructor(private yp: YellowPepperService) {
         super();

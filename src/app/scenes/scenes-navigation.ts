@@ -28,12 +28,13 @@ import {RedPepperService} from "../../services/redpepper.service";
         }
     `],
     template: `
-               <h2>Scenes</h2>
-               <div style="display: flex" >
-                   <canvas #canvas1 width="300" height="300"></canvas>
-                   <canvas #canvas2 width="300" height="300"></canvas>
-                </div>
-           `,
+        <h2>Scenes</h2>
+        <div style="display: flex">
+            <canvas #canvas1 width="300" height="300"></canvas>
+            <canvas #canvas2 width="300" height="300"></canvas>
+        </div>
+        <scene-props-manager></scene-props-manager>
+    `,
 })
 export class ScenesNavigation extends Compbaser {
 

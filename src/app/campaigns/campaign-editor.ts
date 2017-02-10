@@ -6,7 +6,8 @@ import {RedPepperService} from "../../services/redpepper.service";
 import {CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 import {List} from "immutable";
 import {Once} from "../../decorators/once-decorator";
-import {AppdbAction} from "../../store/actions/appdb.actions";
+import {ACTION_UISTATE_UPDATE, AppdbAction, SideProps} from "../../store/actions/appdb.actions";
+import {IUiState} from "../../store/store.data";
 
 @Component({
     selector: 'campaign-editor',
@@ -40,6 +41,8 @@ export class CampaignEditor extends Compbaser {
     _onEditScreenLayout() {
         if (!this.campaignTimelinesModel)
             return bootbox.alert('no timeline selected')
+        var uiState: IUiState = {uiSideProps: SideProps.screenLayoutEditor}
+        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
         this.onToScreenLayoutEditor.emit();
     }
 

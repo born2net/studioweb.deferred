@@ -34,7 +34,7 @@ import {routerTransition} from "../route-animation";
                 </campaigns>
             </panel-split-main>
             <panel-split-side>
-                <props></props>
+                <campaign-props-manager></campaign-props-manager>
             </panel-split-side>
         </panel-split-container>
 `

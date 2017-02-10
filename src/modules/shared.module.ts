@@ -10,20 +10,13 @@ import {PanelSplitSide} from "../comps/panel-split/panel-split-side";
 import {PanelSplitContainer} from "../comps/panel-split/panel-split-container";
 import {ListToArrayPipe} from "../pipes/list-to-array-pipe";
 import {MatchBodyHeight} from "../comps/match-body-height/match-body-height";
-import {Props} from "../comps/props/props";
 import {ScreenTemplate} from "../comps/screen-template/screen-template";
-import {CampaignProps} from "../app/campaigns/campaign-props";
 import {BlurForwarder} from "../comps/blurforwarder/BlurForwarder";
 import {ContextMenuModule} from "angular2-contextmenu";
-import {TimelineProps} from "../app/campaigns/timeline-props";
-import {ChannelProps} from "../app/campaigns/channel-props";
-import {DashboardProps} from "../app/campaigns/dashboard-props";
-import {CampaignEditorProps} from "../app/campaigns/campaign-editor-props";
 import {ChartModule} from "angular2-highcharts";
-import {CampaignSchedProps} from "../app/campaigns/campaign-sched-props";
+import {BlockProp} from "../app/blocks/BlockProp";
 
-var sharedComponents = [Infobox, Sliderpanel, Slideritem, PanelSplitMain, PanelSplitSide, PanelSplitContainer, ListToArrayPipe,
-    MatchBodyHeight, ScreenTemplate, CampaignProps, BlurForwarder, Props, TimelineProps, ChannelProps, DashboardProps, CampaignEditorProps, CampaignSchedProps];
+var sharedComponents = [Infobox, Sliderpanel, Slideritem, PanelSplitMain, PanelSplitSide, PanelSplitContainer, ListToArrayPipe, MatchBodyHeight, ScreenTemplate, BlurForwarder, BlockProp];
 
 @NgModule({
     imports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule, ContextMenuModule, ChartModule, ReactiveFormsModule],
