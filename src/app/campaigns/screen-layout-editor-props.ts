@@ -3,7 +3,6 @@ import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {RedPepperService} from "../../services/redpepper.service";
-import {timeout} from "../../decorators/timeout-decorator";
 import * as _ from "lodash";
 import {BoardTemplateViewersModel} from "../../store/imsdb.interfaces_auto";
 
@@ -11,7 +10,7 @@ import {BoardTemplateViewersModel} from "../../store/imsdb.interfaces_auto";
     selector: 'screen-layout-editor-props',
     //changeDetection: ChangeDetectionStrategy.OnPush,
     host: {
-        '(input-blur)': 'saveToStore($event)'
+        '(input-blur)': '_saveToStore($event)'
     },
     styles: [`
         /*:host > > > .ui-spinner-input {*/
@@ -42,19 +41,19 @@ import {BoardTemplateViewersModel} from "../../store/imsdb.interfaces_auto";
                             <ul class="list-group">
                                 <li class="list-group-item">
                                     <div class="spinLabel">top:</div>
-                                    <input type="number" class="numStepper" [formControl]="contGroup.controls['pixel_y']">
+                                    <input (change)="_saveToStore()" type="number" class="numStepper" [formControl]="contGroup.controls['pixel_y']">
                                 </li>
                                 <li class="list-group-item">
                                     <div class="spinLabel">left:</div>
-                                    <input type="number" class="numStepper" [formControl]="contGroup.controls['pixel_x']">
+                                    <input (change)="_saveToStore()" type="number" class="numStepper" [formControl]="contGroup.controls['pixel_x']">
                                 </li>
                                 <li class="list-group-item">
                                     <div class="spinLabel">width:</div>
-                                    <input type="number" type="number" class="numStepper" [formControl]="contGroup.controls['pixel_width']">
+                                    <input (change)="_saveToStore()" type="number" type="number" class="numStepper" [formControl]="contGroup.controls['pixel_width']">
                                 </li>
                                 <li class="list-group-item">
                                     <div class="spinLabel">height:</div>
-                                    <input type="number" class="numStepper" [formControl]="contGroup.controls['pixel_height']">
+                                    <input (change)="_saveToStore()" type="number" class="numStepper" [formControl]="contGroup.controls['pixel_height']">
                                 </li>
                             </ul>
                         </div>
@@ -102,9 +101,8 @@ export class ScreenLayoutEditorProps extends Compbaser {
         )
     }
 
-    @timeout()
-    private saveToStore() {
-        // console.log(this.contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.contGroup.value)));
+    _saveToStore() {
+        // console.log(this.contGroup.status + ' ' + JSON.stringify(this.contGroup.value));
         if (this.contGroup.status != 'VALID' || !this.boardTemplateModel)
             return;
         var props = {

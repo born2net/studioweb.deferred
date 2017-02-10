@@ -167,7 +167,7 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
          w: viewer.get('width') * self.RATIO,
          h: viewer.get('height') * self.RATIO
          };
-         self._updateDimensionsInDB(viewer, props);
+         self._saveToStore(viewer, props);
          BB.comBroker.fire(BB.EVENTS.VIEWER_REMOVED, this, this, {
          campaign_timeline_chanel_id: campaign_timeline_chanel_id
          });
@@ -216,7 +216,7 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
             w: viewer.get('width') * self.RATIO,
             h: viewer.get('height') * self.RATIO
         }
-        self._updateDimensionsInDB(viewer, props);
+        self._saveToStore(viewer, props);
         self.rp.reduxCommit();
     }
 
@@ -421,7 +421,7 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
                 w: viewer.get('width') * self.RATIO,
                 h: viewer.get('height') * self.RATIO
             }
-            self._updateDimensionsInDB(viewer, props);
+            self._saveToStore(viewer, props);
         }
     }
 
@@ -441,7 +441,7 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
                 w: MIN_SIZE,
                 h: MIN_SIZE
             }
-            this._updateDimensionsInDB(i_viewer, props);
+            this._saveToStore(i_viewer, props);
         }
     }
 
@@ -451,7 +451,8 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
      **/
     _listenObjectChanged() {
         var self = this;
-        self.m_objectMovingHandler = _.debounce(function (e) {
+        self.m_objectMovingHandler = function (e) {
+            
             var o = e.target;
             if (o.width != o.currentWidth || o.height != o.currentHeight) {
                 o.width = o.currentWidth;
@@ -478,13 +479,18 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
             //todo: props
             //self.m_dimensionProps.setValues(props);
             self.m_selectedViewerID = o.id;
-            self._updateDimensionsInDB(o, props);
+            self._saveToStore(o, props);
 
-        }, 200);
+        };
+
+        // old code was wrapped in debouncer
+        // self.m_objectMovingHandler = _.debounce(function (e) {
+        // ...
+        // }, 2000);
 
         self.m_canvas.on({
-            'object:moving': self.m_objectMovingHandler,
-            'object:scaling': self.m_objectMovingHandler,
+            // 'object:moving': self.m_objectMovingHandler,
+            // 'object:scaling': self.m_objectMovingHandler,
             'object:selected': self.m_objectMovingHandler,
             'object:modified': self.m_objectMovingHandler
         });
@@ -492,10 +498,10 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
 
     /**
      Update Pepper with latest object dimensions
-     @method _updateDimensionsInDB
+     @method _saveToStore
      @param {Object} i_props
      **/
-    _updateDimensionsInDB(i_viewer, i_props) {
+    _saveToStore(i_viewer, i_props) {
         var uiState: IUiState = {campaign: {globalBoardTemplateViewerSelected: i_viewer.get('id')}}
         this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
         // console.log('Pepper ' + i_viewer.get('id') + ' ' + JSON.stringify(i_props));
@@ -576,7 +582,7 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
 //                 });
 //                 $(this.m_dimensionProps).on('changed', function (e) {
 //                     var props = e.target.getValues();
-//                     this._updateDimensionsInDB(this.m_canvas.getActiveObject(), props);
+//                     this._saveToStore(this.m_canvas.getActiveObject(), props);
 //                     this._moveViewer(props);
 //                 });
 //                 this._render();
