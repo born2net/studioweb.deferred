@@ -15,7 +15,7 @@ import {BoardTemplateViewersModel} from "../../store/imsdb.interfaces_auto";
     },
     styles: [`
         /*:host > > > .ui-spinner-input {*/
-            /*width: 60px;*/
+        /*width: 60px;*/
         /*}*/
 
         input {
@@ -83,10 +83,19 @@ export class ScreenLayoutEditorProps extends Compbaser {
         _.forEach(this.contGroup.controls, (value, key: string) => {
             this.formInputs[key] = this.contGroup.controls[key] as FormControl;
         })
-
         this.cancelOnDestroy(
-            this.yp.listenGlobalBoardSelectedChanged()
+            this.yp.listenGlobalBoardSelectedChanged(true)
                 .subscribe((boardTemplateModel: BoardTemplateViewersModel) => {
+                    if (!boardTemplateModel) {
+                        _.forEach(this.formInputs, (value, key: string) => {
+                            this.formInputs[key].disable();
+                            this.formInputs[key].setValue(0);
+                        });
+                        return;
+                    }
+                    _.forEach(this.formInputs, (value, key: string) => {
+                        this.formInputs[key].enable();
+                    });
                     this.boardTemplateModel = boardTemplateModel;
                     this.renderFormInputs();
                 })
@@ -96,7 +105,7 @@ export class ScreenLayoutEditorProps extends Compbaser {
     @timeout()
     private saveToStore() {
         // console.log(this.contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.contGroup.value)));
-        if (this.contGroup.status != 'VALID')
+        if (this.contGroup.status != 'VALID' || !this.boardTemplateModel)
             return;
         var props = {
             x: this.contGroup.value.pixel_x,

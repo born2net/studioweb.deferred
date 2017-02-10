@@ -294,8 +294,8 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
     _listenBackgroundSelected() {
         var self = this;
         self.m_bgSelectedHandler = function (e) {
-            //todo: property fix
-            // self.m_property.resetPropertiesView();
+            var uiState: IUiState = {campaign: {globalBoardTemplateViewerSelected: -1}}
+            self.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
         };
         self.m_canvas.on('selection:cleared', self.m_bgSelectedHandler);
     }
