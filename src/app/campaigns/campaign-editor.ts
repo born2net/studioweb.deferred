@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Output} from "@angular/core";
+import {animate, Component, EventEmitter, Output, state, style, transition, trigger} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
 import {YellowPepperService} from "../../services/yellowpepper.service";
@@ -8,16 +8,33 @@ import {List} from "immutable";
 import {Once} from "../../decorators/once-decorator";
 import {ACTION_UISTATE_UPDATE, AppdbAction, SideProps} from "../../store/actions/appdb.actions";
 import {IUiState} from "../../store/store.data";
+import {stat} from "fs";
 
 @Component({
     selector: 'campaign-editor',
-    templateUrl: './campaign-editors.html'
+    templateUrl: './campaign-editors.html',
+    animations: [
+        trigger('visibilityChanged1', [
+            state('true' , style({ transform: 'rotate(0deg)' })),
+            state('false', style({ transform: 'rotate(180deg)'  })),
+            transition('1 => 0', animate('300ms')),
+            transition('0 => 1', animate('300ms'))
+        ]),
+        trigger('visibilityChanged2', [
+            state('true' , style({ transform: 'rotate(0deg)' })),
+            state('false', style({ transform: 'rotate(180deg)'  })),
+            transition('1 => 0', animate('300ms')),
+            transition('0 => 1', animate('300ms'))
+        ])
+    ],
 })
 export class CampaignEditor extends Compbaser {
 
     private campaignModel: CampaignsModelExt;
     private campaignTimelinesModel: CampaignTimelinesModel;
     m_campaignTimelinesModels: List<CampaignTimelinesModel>;
+    m_isVisible1 = true;
+    m_isVisible2 = true;
 
     constructor(private yp: YellowPepperService, private actions:AppdbAction) {
         super();
