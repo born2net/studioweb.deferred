@@ -37,6 +37,7 @@ export enum SideProps {
     timeline,
     sceneBlock,
     channel,
+    screenLayoutEditor
 }
 
 

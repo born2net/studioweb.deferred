@@ -24,18 +24,19 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
                 <dashboard-props></dashboard-props>
             </div>
             <!--<div *ngSwitchCase="m_uiUserFocusItemEnum.campaignBoard">-->
-                <!--<h1>NOT USED</h1>-->
+            <!--<h1>NOT USED</h1>-->
             <!--</div>-->
             <div *ngSwitchCase="m_uiUserFocusItemEnum.campaignEditor">
                 <campaign-editor-props></campaign-editor-props>
             </div>
-
             <div *ngSwitchCase="m_uiUserFocusItemEnum.timeline">
                 <timeline-props></timeline-props>
             </div>
-
             <div *ngSwitchCase="m_uiUserFocusItemEnum.channel">
                 <channel-props></channel-props>
+            </div>
+            <div *ngSwitchCase="m_uiUserFocusItemEnum.screenLayoutEditor">
+                <!--<screen-layout-editor-props></screen-layout-editor-props>-->
             </div>
         </ul>
     `,

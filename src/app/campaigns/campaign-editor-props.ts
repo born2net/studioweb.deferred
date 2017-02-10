@@ -23,15 +23,15 @@ import {Observable} from "rxjs";
                         </div>
                         <ul class="list-group">
                             <li class="list-group-item">
+                                <h4>{{(m_campaignModel$ | async)?.getCampaignName() }}</h4>
+                            </li>
+                            <li class="list-group-item">
                                 <div *ngIf="(m_campaignModel$ | async)?.getCampaignPlaylistMode() == '1'">
                                     <h4><i class="fa fa-calendar"></i>playback mode: scheduler</h4>
                                 </div>
                                 <div *ngIf="(m_campaignModel$ | async)?.getCampaignPlaylistMode() == '0'">
                                     <h4><i class="fa fa fa-repeat"></i>playback mode: sequencer</h4>
                                 </div>
-                            </li>
-                            <li class="list-group-item">
-                                <h4>Campaign editor</h4>
                             </li>
                         </ul>
                     </div>
