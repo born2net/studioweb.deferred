@@ -1,15 +1,11 @@
-import {ChangeDetectionStrategy, Component, Input} from "@angular/core";
-import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
-import {Compbaser, NgmslibService} from "ng-mslib";
-import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
+import {Component} from "@angular/core";
+import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
+import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {RedPepperService} from "../../services/redpepper.service";
 import {timeout} from "../../decorators/timeout-decorator";
-import {Observable} from "rxjs";
-import {simpleRegExp} from "../../Lib";
 import * as _ from "lodash";
-import {Map, List} from 'immutable';
-import {BoardTemplatesModel, BoardTemplateViewersModel} from "../../store/imsdb.interfaces_auto";
+import {BoardTemplateViewersModel} from "../../store/imsdb.interfaces_auto";
 
 @Component({
     selector: 'screen-layout-editor-props',
@@ -18,8 +14,12 @@ import {BoardTemplatesModel, BoardTemplateViewersModel} from "../../store/imsdb.
         '(input-blur)': 'saveToStore($event)'
     },
     styles: [`
-        :host > > > .ui-spinner-input {
-            width: 60px;
+        /*:host > > > .ui-spinner-input {*/
+            /*width: 60px;*/
+        /*}*/
+
+        input {
+            width: 70px;
         }
 
         .spinLabel {
@@ -42,19 +42,19 @@ import {BoardTemplatesModel, BoardTemplateViewersModel} from "../../store/imsdb.
                             <ul class="list-group">
                                 <li class="list-group-item">
                                     <div class="spinLabel">top:</div>
-                                    <input class="numStepper" [formControl]="contGroup.controls['pixel_y']">
+                                    <input type="number" class="numStepper" [formControl]="contGroup.controls['pixel_y']">
                                 </li>
                                 <li class="list-group-item">
                                     <div class="spinLabel">left:</div>
-                                    <input class="numStepper" [formControl]="contGroup.controls['pixel_x']">
+                                    <input type="number" class="numStepper" [formControl]="contGroup.controls['pixel_x']">
                                 </li>
                                 <li class="list-group-item">
                                     <div class="spinLabel">width:</div>
-                                    <input class="numStepper" [formControl]="contGroup.controls['pixel_width']">
+                                    <input type="number" type="number" class="numStepper" [formControl]="contGroup.controls['pixel_width']">
                                 </li>
                                 <li class="list-group-item">
                                     <div class="spinLabel">height:</div>
-                                    <input class="numStepper" [formControl]="contGroup.controls['pixel_height']">
+                                    <input type="number" class="numStepper" [formControl]="contGroup.controls['pixel_height']">
                                 </li>
                             </ul>
                         </div>
@@ -62,7 +62,6 @@ import {BoardTemplatesModel, BoardTemplateViewersModel} from "../../store/imsdb.
                 </div>
             </form>
         </div>
-
     `
 
 })
@@ -72,7 +71,7 @@ export class ScreenLayoutEditorProps extends Compbaser {
     private formInputs = {};
     private contGroup: FormGroup;
 
-    constructor(private fb: FormBuilder, private ngmslibService: NgmslibService, private yp: YellowPepperService, private rp: RedPepperService) {
+    constructor(private fb: FormBuilder, private yp: YellowPepperService, private rp: RedPepperService) {
         super();
 
         this.contGroup = fb.group({
@@ -85,10 +84,9 @@ export class ScreenLayoutEditorProps extends Compbaser {
             this.formInputs[key] = this.contGroup.controls[key] as FormControl;
         })
 
-
         this.cancelOnDestroy(
             this.yp.listenGlobalBoardSelectedChanged()
-                .subscribe((boardTemplateModel:BoardTemplateViewersModel) => {
+                .subscribe((boardTemplateModel: BoardTemplateViewersModel) => {
                     this.boardTemplateModel = boardTemplateModel;
                     this.renderFormInputs();
                 })
@@ -100,15 +98,18 @@ export class ScreenLayoutEditorProps extends Compbaser {
         // console.log(this.contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.contGroup.value)));
         if (this.contGroup.status != 'VALID')
             return;
-        // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_name', this.contGroup.value.campaign_name);
+        var props = {
+            x: this.contGroup.value.pixel_x,
+            y: this.contGroup.value.pixel_y,
+            w: this.contGroup.value.pixel_width,
+            h: this.contGroup.value.pixel_height
+        }
+        this.rp.setBoardTemplateViewer(-1, this.boardTemplateModel.getBoardTemplateViewerId(), props);
         this.rp.reduxCommit()
     }
 
     private renderFormInputs() {
-        if (!this.boardTemplateModel)
-            return;
         _.forEach(this.formInputs, (value, key: string) => {
-            console.log(key,value);
             let data = this.boardTemplateModel.getKey(key);
             data = StringJS(data).booleanToNumber();
             this.formInputs[key].setValue(data)

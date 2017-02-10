@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, ComponentFactoryResolver, ComponentRef, ElementRef, EventEmitter, Output, ViewChild, ViewContainerRef} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
-import {CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
+import {BoardTemplateViewersModel, CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 import {Observable} from "rxjs";
 import {OrientationEnum} from "./campaign-orientation";
 import {IScreenTemplateData, ScreenTemplate} from "../../comps/screen-template/screen-template";
@@ -73,6 +73,7 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
     m_campaign_timeline_id: number = -1;
     m_campaign_timeline_board_template_id: number = -1;
 
+    private boardTemplateModel: BoardTemplateViewersModel;
     private componentRef: ComponentRef<ScreenTemplate>;
 
     constructor(private yp: YellowPepperService, private componentFactoryResolver: ComponentFactoryResolver, private rp: RedPepperService, private el: ElementRef) {
@@ -102,6 +103,20 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
                 this.m_campaign_timeline_board_template_id = result.campaign_timeline_board_template_ids[0];
                 this.selectView(result.campaignTimelinesModel.getCampaignTimelineId(), this.m_campaign_timeline_board_template_id);
             })
+        )
+
+        this.cancelOnDestroy(
+            this.yp.listenGlobalBoardSelectedChanged()
+                .subscribe((boardTemplateModel: BoardTemplateViewersModel) => {
+                    this.boardTemplateModel = boardTemplateModel;
+                    var props = {
+                        h: boardTemplateModel.getPixelHeight(),
+                        w: boardTemplateModel.getPixelWidth(),
+                        x: boardTemplateModel.getPixelX(),
+                        y: boardTemplateModel.getPixelY()
+                    }
+                    this._moveViewer(props)
+                })
         )
     }
 
@@ -483,7 +498,7 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
     _updateDimensionsInDB(i_viewer, i_props) {
         var uiState: IUiState = {campaign: {globalBoardTemplateViewerSelected: i_viewer.get('id')}}
         this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
-        console.log('Pepper ' + i_viewer.get('id') + ' ' + JSON.stringify(i_props));
+        // console.log('Pepper ' + i_viewer.get('id') + ' ' + JSON.stringify(i_props));
         this.rp.setBoardTemplateViewer(this.m_campaign_timeline_board_template_id, i_viewer.get('id'), i_props);
         i_viewer.setCoords();
         this.m_canvas.renderAll();

@@ -187,7 +187,7 @@ export class RedPepperService {
         var w = Math.round(i_props.w);
         var h = Math.round(i_props.h);
 
-        console.log('savings: template_id: ' + i_campaign_timeline_board_template_id + ' view_id: ' + i_board_template_viewer_id + ' ' + x + 'x' + y + ' ' + w + '/' + h);
+        // console.log('savings: template_id: ' + i_campaign_timeline_board_template_id + ' view_id: ' + i_board_template_viewer_id + ' ' + x + 'x' + y + ' ' + w + '/' + h);
 
         this.databaseManager.table_board_template_viewers().openForEdit(i_board_template_viewer_id);
         var recEditBoardTemplateViewer = this.databaseManager.table_board_template_viewers().getRec(i_board_template_viewer_id);
