@@ -13,56 +13,38 @@
     <meta name="theme-color" content="#333333">
     <meta name="description" content="DigitalSignage.com FREE Digital Signage for everyone. StudioWeb, an open source Digital Signage editor powered by Angular">
     <meta name="keywords" content="Digital Signage, Kiosk, Digital Kiosk">
-
-    <!--To switch fabrics -->
-    <!-- add/remove import "fabric"; from app-modules.ts-->
-    <!-- add/remove form angular-cli.json:
-    <!-- "../node_modules/fabric/dist/fabric.js"
-    <!-- or -->
-    <!-- angular-cli.json: "./libs/fabric.require1-4-12.js", -->
-    <!-- or -->
-    <!-- to load remotely: -->
-    <!-- <script src="https://secure.digitalsignage.com/studioweb/fabric1-4-2.min.js"></script> -->
-    <!-- <script src="https://secure.digitalsignage.com/studioweb/fabric.require1-4-12.min.js"></script>-->
-
     <script>window['offlineDevMode'] = false;</script>
-    
-    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/shim.min.js"></script>-->
-    <!--<script>-->
-        <!--(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){-->
-                <!--(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),-->
-            <!--m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)-->
-        <!--})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');-->
+    <style>#loading {
+        padding-top: 130px
+    }
 
-        <!--ga('create', 'UA-36671151-9', 'auto');-->
-        <!--ga('send', 'pageview');-->
-    <!--</script>-->
-    <style>
-        #loading {
-            padding-top: 130px;
-        }
-        .spinner {
-            display: inline-block;
-            opacity: 1;
-            border: 3px solid #fff;
-            border-radius: 50%;
-            border-top-color: rgba(0,0,0,.3);
-            animation: spin 1s ease-in-out infinite;
-            -webkit-animation: spin 1.5s ease-in-out infinite;
-            height: 50px;
-            width: 50px;
-        }
-        @keyframes spin {
-            to { -webkit-transform: rotate(360deg); }
-        }
-        @-webkit-keyframes spin {
-            to { -webkit-transform: rotate(360deg); }
-        }
-        .centerSpinner {
-            text-align: center
-        }
-    </style>
+    .spinner {
+        display: inline-block;
+        opacity: 1;
+        border: 3px solid #fff;
+        border-radius: 50%;
+        border-top-color: rgba(0, 0, 0, .3);
+        animation: spin 1s ease-in-out infinite;
+        -webkit-animation: spin 1.5s ease-in-out infinite;
+        height: 50px;
+        width: 50px
+    }
 
+    @keyframes spin {
+        to {
+            -webkit-transform: rotate(360deg)
+        }
+    }
+
+    @-webkit-keyframes spin {
+        to {
+            -webkit-transform: rotate(360deg)
+        }
+    }
+
+    .centerSpinner {
+        text-align: center
+    } </style>
 </head>
 <body>
 <app-root>
@@ -74,9 +56,9 @@
 <script>
 
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker.js').then(function(registration) {
+        navigator.serviceWorker.register('./service-worker.js').then(function (registration) {
             console.log('Service Worker registered');
-        }).catch(function(err) {
+        }).catch(function (err) {
             console.log('Service Worker registration failed: ', err);
         });
     }

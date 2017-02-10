@@ -9,3 +9,31 @@ revert webpack ng tools: npm install --save @ngtools/webpack@1.2.4
 clear cache: npm clear cache
 
 npm install @angular/cli@1.0.0-beta.30 -g
+npm install -g @angular/cli
+
+
+Switching fabric versions:
+
+add/remove import "fabric"; from app-modules.ts
+add/remove form angular-cli.json:
+"../node_modules/fabric/dist/fabric.js"
+or 
+angular-cli.json: "./libs/fabric.require1-4-12.js",
+or
+to load remotely:
+<script src="https://secure.digitalsignage.com/studioweb/fabric1-4-2.min.js"></script>
+<script src="https://secure.digitalsignage.com/studioweb/fabric.require1-4-12.min.js"></script>
+
+
+
+
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/shim.min.js"></script>-->
+<!--<script>-->
+    <!--(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){-->
+            <!--(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),-->
+        <!--m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)-->
+    <!--})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');-->
+
+    <!--ga('create', 'UA-36671151-9', 'auto');-->
+    <!--ga('send', 'pageview');-->
+<!--</script>-->
