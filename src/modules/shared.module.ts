@@ -15,13 +15,12 @@ import {BlurForwarder} from "../comps/blurforwarder/BlurForwarder";
 import {ContextMenuModule} from "angular2-contextmenu";
 import {ChartModule} from "angular2-highcharts";
 import {BlockProp} from "../app/blocks/BlockProp";
-import {SpinnerModule} from "primeng/primeng";
 
 var sharedComponents = [Infobox, Sliderpanel, Slideritem, PanelSplitMain, PanelSplitSide, PanelSplitContainer, ListToArrayPipe, MatchBodyHeight, ScreenTemplate, BlurForwarder, BlockProp];
 
 @NgModule({
-    imports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule, ContextMenuModule, ChartModule, ReactiveFormsModule, SpinnerModule],
-    exports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule, ContextMenuModule, ChartModule, SpinnerModule, ...sharedComponents],
+    imports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule, ContextMenuModule, ChartModule, ReactiveFormsModule],
+    exports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule, ContextMenuModule, ChartModule, ...sharedComponents],
     entryComponents: [ScreenTemplate],
     declarations: [...sharedComponents]
 })
