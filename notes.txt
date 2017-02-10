@@ -1,10 +1,17 @@
 ////////////// NOTES ////////////////
 
-debug reflection: http://127.0.0.1:8080/src/create_reflection.html
+==================================================================================================================
 
+debug reflection: http://127.0.0.1:8080/src/create_reflection.html
 debug local: http://localhost:4208/
 
+==================================================================================================================
+
 revert webpack ng tools: npm install --save @ngtools/webpack@1.2.4
+
+
+==================================================================================================================
+
 
 clear cache: npm clear cache
 
@@ -12,6 +19,7 @@ npm install @angular/cli@1.0.0-beta.30 -g
 npm install -g @angular/cli
 
 
+==================================================================================================================
 Switching fabric versions:
 
 add/remove import "fabric"; from app-modules.ts
@@ -24,7 +32,7 @@ to load remotely:
 <script src="https://secure.digitalsignage.com/studioweb/fabric1-4-2.min.js"></script>
 <script src="https://secure.digitalsignage.com/studioweb/fabric.require1-4-12.min.js"></script>
 
-
+==================================================================================================================
 
 
 <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/shim.min.js"></script>-->

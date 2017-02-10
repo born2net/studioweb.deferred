@@ -163,6 +163,43 @@ export class RedPepperService {
     }
 
     /**
+     Change a viewer's (aka screen division) order (layer) z-order
+     @method updateTemplateViewerOrder
+     @param {number} i_board_template_viewer_id
+     @param {number} i_view_order
+     **/
+    updateTemplateViewerOrder(i_board_template_viewer_id, i_view_order) {
+        this.databaseManager.table_board_template_viewers().openForEdit(i_board_template_viewer_id);
+        var recEditBoardTemplateViewer = this.databaseManager.table_board_template_viewers().getRec(i_board_template_viewer_id);
+        recEditBoardTemplateViewer['viewer_order'] = i_view_order;
+        this.addPendingTables(['table_board_template_viewers']);
+    }
+
+    /**
+     Set a Board Template Viewer props
+     @method setBoardTemplateViewer
+     @param {Number} i_board_template_viewer_id
+     @return {Number} i_props
+     **/
+    setBoardTemplateViewer(i_campaign_timeline_board_template_id, i_board_template_viewer_id, i_props) {
+        var x = Math.round(i_props.x);
+        var y = Math.round(i_props.y);
+        var w = Math.round(i_props.w);
+        var h = Math.round(i_props.h);
+
+        // console.log('savings: template_id: ' + i_campaign_timeline_board_template_id + ' view_id: ' + i_board_template_viewer_id + ' ' + x + 'x' + y + ' ' + w + '/' + h);
+
+        this.databaseManager.table_board_template_viewers().openForEdit(i_board_template_viewer_id);
+        var recEditBoardTemplateViewer = this.databaseManager.table_board_template_viewers().getRec(i_board_template_viewer_id);
+        recEditBoardTemplateViewer['pixel_x'] = x;
+        recEditBoardTemplateViewer['pixel_y'] = y;
+        recEditBoardTemplateViewer['pixel_width'] = w;
+        recEditBoardTemplateViewer['pixel_height'] = h;
+        // this.announceTemplateViewerEdited(i_campaign_timeline_board_template_id);
+        this.addPendingTables(['table_board_template_viewers']);
+    }
+
+    /**
      Remove all blocks (i.e.: players) from campaign > timeline > channel
      @method removeBlocksFromTimelineChannel
      @param {Number} i_block_id
@@ -1748,14 +1785,14 @@ export class RedPepperService {
         return $.parseXML(scene_player_data)
     }
 
-    /**
-     Announce via event that a template view (screen layout) has been edited
-     @method announceTemplateViewerEdited
-     @param {Number} i_campaign_timeline_board_template_id
-     **/
-    announceTemplateViewerEdited(i_campaign_timeline_board_template_id) {
-        // this.databaseManager.fire(Pepper['TEMPLATE_VIEWER_EDITED'], this, null, i_campaign_timeline_board_template_id);
-    }
+    // /**
+    //  Announce via event that a template view (screen layout) has been edited
+    //  @method announceTemplateViewerEdited
+    //  @param {Number} i_campaign_timeline_board_template_id
+    //  **/
+    // announceTemplateViewerEdited(i_campaign_timeline_board_template_id) {
+    //     // this.databaseManager.fire(Pepper['TEMPLATE_VIEWER_EDITED'], this, null, i_campaign_timeline_board_template_id);
+    // }
 
     /**
      Get the first board_id (output) that is assigned to the specified campaign_id
@@ -1835,19 +1872,6 @@ export class RedPepperService {
 
 
     /**
-     Change a viewer's (aka screen division) order (layer) z-order
-     @method updateTemplateViewerOrder
-     @param {number} i_board_template_viewer_id
-     @param {number} i_view_order
-     **/
-    updateTemplateViewerOrder(i_board_template_viewer_id, i_view_order) {
-
-        this.databaseManager.table_board_template_viewers().openForEdit(i_board_template_viewer_id);
-        var recEditBoardTemplateViewer = this.databaseManager.table_board_template_viewers().getRec(i_board_template_viewer_id);
-        recEditBoardTemplateViewer['viewer_order'] = i_view_order;
-    }
-
-    /**
      Create a new player (a.k.a block) and add it to the specified channel_id
      @method createNewChannelPlayer
      @param {Number} i_campaign_timeline_chanel_id is the channel id assign player to
@@ -1880,30 +1904,6 @@ export class RedPepperService {
         // };
         // this.databaseManager.fire(Pepper['NEW_PLAYER_CREATED'], this, null, returnData);
         // return returnData;
-    }
-
-    /**
-     Set a Board Template Viewer props
-     @method setBoardTemplateViewer
-     @param {Number} i_board_template_viewer_id
-     @return {Number} i_props
-     **/
-    setBoardTemplateViewer(i_campaign_timeline_board_template_id, i_board_template_viewer_id, i_props) {
-
-        var x = Math.round(i_props.x);
-        var y = Math.round(i_props.y);
-        var w = Math.round(i_props.w);
-        var h = Math.round(i_props.h);
-
-        // console.log('savings: template_id: ' + i_campaign_timeline_board_template_id + ' view_id: ' + i_board_template_viewer_id + ' ' + x + 'x' + y + ' ' + w + '/' + h);
-
-        this.databaseManager.table_board_template_viewers().openForEdit(i_board_template_viewer_id);
-        var recEditBoardTemplateViewer = this.databaseManager.table_board_template_viewers().getRec(i_board_template_viewer_id);
-        recEditBoardTemplateViewer['pixel_x'] = x;
-        recEditBoardTemplateViewer['pixel_y'] = y;
-        recEditBoardTemplateViewer['pixel_width'] = w;
-        recEditBoardTemplateViewer['pixel_height'] = h;
-        this.announceTemplateViewerEdited(i_campaign_timeline_board_template_id);
     }
 
     /**

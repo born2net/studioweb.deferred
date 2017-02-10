@@ -25,7 +25,6 @@ interface selectTimelineBoardIdResult {
         <div [hidden]="true">
             <ng-container #container></ng-container>
         </div>
-        <div id="screenLayoutEditorCanvasWrap"></div>
         <div id="screenLayoutEditorView">
             <button (click)="_goBack()" id="prev" type="button" class="openPropsButton btn btn-default btn-sm">
                 <span class="glyphicon glyphicon-chevron-left"></span>
@@ -39,15 +38,19 @@ interface selectTimelineBoardIdResult {
                 <button (click)="_onRemoveDivision()" id="layoutEditorRemove" type="button" data-localize-tooltip="removeButtonToolTip" title="remove division" class="btn btn-default btn-sm">
                     <i style="font-size: 1em" class="fa fa-minus"> </i>
                 </button>
-                <button id="layoutEditorPushTop" type="button" data-localize-tooltip="pushDivToTopButtonToolTip" title="push division to top" class="btn btn-default btn-sm">
+                <button (click)="_onPushTop()" id="layoutEditorPushTop" type="button" data-localize-tooltip="pushDivToTopButtonToolTip" title="push division to top" class="btn btn-default btn-sm">
                     <i style="font-size: 1em" class="fa fa-angle-double-up"> </i>
                 </button>
-                <button id="layoutEditorPushBottom" type="button" data-localize-tooltip="pushDivToBottomButtonToolTip" title="push division to bottom" class="btn btn-default btn-sm">
+                <button (click)="_onPushBottom()" id="layoutEditorPushBottom" type="button" data-localize-tooltip="pushDivToBottomButtonToolTip" title="push division to bottom" class="btn btn-default btn-sm">
                     <i style="font-size: 1em" class="fa fa-angle-double-down"> </i>
                 </button>
-                <button id="layoutEditorNext" type="button" data-localize-tooltip="getNextDivButtonToolTip" title="get next division" class="btn btn-default btn-sm">
+                <button (click)="_selectNextDivision()" id="layoutEditorNext" type="button" data-localize-tooltip="getNextDivButtonToolTip" title="get next division" class="btn btn-default btn-sm">
                     <i style="font-size: 1em" class="fa fa-external-link"> </i>
                 </button>
+            </div>
+        </div>
+        <div style="width: 100%; background-color: white; padding-top: 60px; padding-bottom: 60px">
+            <div class="center-block" style="width: 500px" id="screenLayoutEditorCanvasWrap">
             </div>
         </div>
     `,
@@ -59,9 +62,7 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
     m_canvasID;
     m_onOverlap;
     m_selectedViewerID;
-    m_dimensionProps;
     m_bgSelectedHandler;
-    m_render: boolean = false;
     m_orientation: OrientationEnum;
     m_objectMovingHandler;
     m_resolution: string;
@@ -100,31 +101,26 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
                 this.selectView(result.campaignTimelinesModel.getCampaignTimelineId(), this.m_campaign_timeline_board_template_id);
             })
         )
+    }
 
-        // this._listenPushToTopDivision();
-        // this._listenPushToBottomDivision();
-        // this._listenSelectNextDivision();
-
-        // this.listenTo(this.options.stackView, BB.EVENTS.SELECTED_STACK_VIEW, function (e) {
-        //     if (e == this) {
-        //         if (this.m_dimensionProps == undefined) {
-        //             require(['DimensionProps'], function (DimensionProps) {
-        //                 this.m_dimensionProps = new DimensionProps({
-        //                     appendTo: Elements.VIEWER_DIMENSIONS,
-        //                     showAngle: false
-        //                 });
-        //                 $(this.m_dimensionProps).on('changed', function (e) {
-        //                     var props = e.target.getValues();
-        //                     this._updateDimensionsInDB(this.m_canvas.getActiveObject(), props);
-        //                     this._moveViewer(props);
-        //                 });
-        //                 this._render();
-        //             });
-        //         } else {
-        //             this._render();
-        //         }
-        //     }
-        // });
+    /**
+     Move the object / viewer to new set of coords
+     @method _moveViewer
+     @param {Object} i_props
+     **/
+    _moveViewer(i_props) {
+        var self = this;
+        var viewer = self.m_canvas.getActiveObject();
+        if (viewer) {
+            viewer.setWidth(i_props.w / self.RATIO);
+            viewer.setHeight(i_props.h / self.RATIO);
+            viewer.set('left', i_props.x / self.RATIO);
+            viewer.set('top', i_props.y / self.RATIO);
+            self._enforceViewerMinimums(viewer);
+            self._enforceViewerVisible();
+            viewer.setCoords();
+            self.m_canvas.renderAll();
+        }
     }
 
     /**
@@ -230,6 +226,48 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
                     this._listenBackgroundSelected();
                 })
         )
+    }
+
+    /**
+     Listen to re-order of screen division, putting selected on top
+     @method _listenPushToTopDivision
+     **/
+    _onPushTop() {
+        var self = this;
+        var viewer = self.m_canvas.getActiveObject();
+        if (!viewer)
+            return;
+        self.m_canvas.bringToFront(viewer);
+        self._updateZorder();
+    }
+
+    /**
+     Change the z-order of viewers in pepper
+     @method _updateZorder
+     **/
+    _updateZorder() {
+        var self = this;
+        var viewers = self.m_canvas.getObjects();
+        for (var i in viewers) {
+            // log(viewers[i].get('id') + ' ' + i);
+            this.rp.updateTemplateViewerOrder(viewers[i].get('id'), i);
+        }
+        var active = self.m_canvas.getActiveObject();
+        self.m_canvas.setActiveObject(active);
+        this.rp.reduxCommit();
+    }
+
+    /**
+     Listen to re-order of screen division, putting selected at bottom
+     @method _listenPushToBottomDivision
+     **/
+    _onPushBottom() {
+        var self = this;
+        var viewer = self.m_canvas.getActiveObject();
+        if (!viewer)
+            return;
+        self.m_canvas.sendToBack(viewer);
+        self._updateZorder();
     }
 
     /**
@@ -441,13 +479,29 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
      @param {Object} i_props
      **/
     _updateDimensionsInDB(i_viewer, i_props) {
-        // var this = this;
+        var self = this;
         // log('Pepper ' + i_viewer.get('id') + ' ' + JSON.stringify(i_props));
-        // pepper.setBoardTemplateViewer(this.m_campaign_timeline_board_template_id, i_viewer.get('id'), i_props);
-        // i_viewer.setCoords();
-        // this.m_canvas.renderAll();
+        this.rp.setBoardTemplateViewer(this.m_campaign_timeline_board_template_id, i_viewer.get('id'), i_props);
+        i_viewer.setCoords();
+        this.m_canvas.renderAll();
+        this.rp.reduxCommit();
     }
 
+    /**
+     Listen to selection of next viewer
+     @method _listenSelectNextDivision
+     **/
+    _selectNextDivision() {
+        var self = this;
+        var viewer = self.m_canvas.getActiveObject();
+        var viewIndex = self.m_canvas.getObjects().indexOf(viewer);
+        var totalViews = self.m_canvas.getObjects().length;
+        if (viewIndex == totalViews - 1) {
+            self.m_canvas.setActiveObject(self.m_canvas.item(0));
+        } else {
+            self.m_canvas.setActiveObject(self.m_canvas.item(viewIndex + 1));
+        }
+    }
 
     @Output()
     onGoBack: EventEmitter<any> = new EventEmitter<any>();
@@ -461,5 +515,54 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
 
     destroy() {
         console.log('dest screen-layout-editor');
+        var self = this;
+        if (!_.isUndefined(self.m_canvas)) {
+            self.m_canvas.off('selection:cleared', self.m_bgSelectedHandler);
+            self.m_canvas.off({
+                'object:moving': self.m_objectMovingHandler,
+                'object:scaling': self.m_objectMovingHandler,
+                'object:selected': self.m_objectMovingHandler,
+                'object:modified': self.m_objectMovingHandler
+            });
+            self.m_canvas.off({
+                'object:moving': self.m_onOverlap,
+                'object:scaling': self.m_onOverlap,
+                'object:rotating': self.m_onOverlap
+            });
+            self.m_canvas.clear().renderAll();
+        }
+        // $('#screenLayoutEditorCanvasWrap').empty()
+        self.m_canvasID = undefined;
+        self.m_canvas = undefined;
+        self.m_campaign_timeline_id = undefined;
+        self.m_campaign_timeline_board_template_id = undefined;
+        self.m_orientation = undefined;
+        self.m_resolution = undefined;
+        self.m_global_board_template_id = undefined;
+        self.m_selectedViewerID = undefined;
     }
 }
+
+// this._listenPushToTopDivision();
+// this._listenPushToBottomDivision();
+// this._listenSelectNextDivision();
+// this.listenTo(this.options.stackView, BB.EVENTS.SELECTED_STACK_VIEW, function (e) {
+//     if (e == this) {
+//         if (this.m_dimensionProps == undefined) {
+//             require(['DimensionProps'], function (DimensionProps) {
+//                 this.m_dimensionProps = new DimensionProps({
+//                     appendTo: Elements.VIEWER_DIMENSIONS,
+//                     showAngle: false
+//                 });
+//                 $(this.m_dimensionProps).on('changed', function (e) {
+//                     var props = e.target.getValues();
+//                     this._updateDimensionsInDB(this.m_canvas.getActiveObject(), props);
+//                     this._moveViewer(props);
+//                 });
+//                 this._render();
+//             });
+//         } else {
+//             this._render();
+//         }
+//     }
+// });

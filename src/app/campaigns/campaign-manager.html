@@ -53,7 +53,7 @@
                 <li role="menuitem"><a class="dropdown-item" href="#">Separated link</a></li>
             </ul>
         </div>
-        <p-orderList [responsive]="true" [value]="campaigns$ | async | ListToArrayPipe ">
+        <p-orderList [responsive]="true" [value]="campaigns$ | async | ListToArrayPipe">
             <template let-car pTemplate="item">
                 <div class="ui-helper-clearfix">
                     <div style="font-size:14px;float:left;margin:15px 5px 0 0">{{car.getCampaignName()}}</div>
