@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, Component} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {CampaignTimelineBoardViewerChanelsModel, CampaignTimelineChanelsModel, CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
+import {Once} from "../../decorators/once-decorator";
 
 @Component({
     selector: 'campaign-channel-list',
@@ -28,13 +29,13 @@ export class CampaignChannelList extends Compbaser {
                 .combineLatest(this.yp.listenTimelineSelected(),
                     (campaignTimelineBoardViewerChanelsModel: CampaignTimelineBoardViewerChanelsModel, campaignTimelinesModel: CampaignTimelinesModel) => {
 
-                    this.selected_campaign_timeline_id = campaignTimelinesModel.getCampaignTimelineId();
+                        this.selected_campaign_timeline_id = campaignTimelinesModel.getCampaignTimelineId();
                         return {
                             a: campaignTimelineBoardViewerChanelsModel.getCampaignTimelineBoardViewerChanelId(),
                             b: this.selected_campaign_timeline_id
                         };
 
-                    }).mergeMap((ids:any) => this.yp.getChannelFromCampaignTimelineBoardViewer(ids.a, ids.b))
+                    }).mergeMap((ids: any) => this.yp.getChannelFromCampaignTimelineBoardViewer(ids.a, ids.b))
 
                 .subscribe((i_campaignTimelineChanelsModel: CampaignTimelineChanelsModel) => {
                     console.log(i_campaignTimelineChanelsModel.getCampaignTimelineChanelId());
@@ -52,7 +53,10 @@ export class CampaignChannelList extends Compbaser {
      @return none
      **/
     _loadChannelBlocks(i_campaign_timeline_id, i_campaign_timeline_chanel_id) {
-        console.log(i_campaign_timeline_id + ' ' + i_campaign_timeline_chanel_id);
+        this.getBlockChannelIds(i_campaign_timeline_chanel_id, (blockIds) => {
+            console.log(blockIds.length);
+        })
+
         // self.selected_campaign_timeline_chanel_id = i_campaign_timeline_chanel_id;
         //
         // var timeline = BB.comBroker.getService(BB.SERVICES['CAMPAIGN_VIEW']).getTimelineInstance(i_campaign_timeline_id);
@@ -78,6 +82,13 @@ export class CampaignChannelList extends Compbaser {
         // self._createSortable(Elements.SORTABLE);
     }
 
+    @Once()
+    private getBlockChannelIds(i_campaign_timeline_chanel_id, i_cb) {
+        return this.yp.getChannelBlocks(i_campaign_timeline_chanel_id)
+            .subscribe((blockIds: Array<number>) => {
+                i_cb(blockIds)
+            })
+    }
 
     ngOnInit() {
     }

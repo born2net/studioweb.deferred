@@ -8,7 +8,7 @@ import {
     BoardTemplatesModel,
     BoardTemplateViewersModel,
     CampaignTimelineBoardTemplatesModel,
-    CampaignTimelineBoardViewerChanelsModel,
+    CampaignTimelineBoardViewerChanelsModel, CampaignTimelineChanelPlayersModel,
     CampaignTimelineChanelsModel,
     CampaignTimelineSchedulesModel,
     CampaignTimelineSequencesModel,
@@ -188,6 +188,20 @@ export class YellowPepperService {
             }).take(1);
     }
 
+    /**
+     Get all the block IDs of a particular channel.
+     Push them into an array so they are properly sorted by player offset time.
+     **/
+    getChannelBlocks(i_campaign_timeline_chanel_id):Observable<Array<number>> {
+        return this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_chanel_players)
+            .map((campaignTimelineChanelPlayersModels: List<CampaignTimelineChanelPlayersModel>) => {
+                return campaignTimelineChanelPlayersModels.reduce((result: Array<number>, campaignTimelineChanelsModel) => {
+                    if (campaignTimelineChanelsModel.getCampaignTimelineChanelId() == i_campaign_timeline_chanel_id)
+                        result.push(campaignTimelineChanelsModel.getCampaignTimelineChanelPlayerId());
+                    return result;
+                }, [])
+            }).take(1);
+    }
 
     /**
      Get all the campaign > timeline > channels ids of a timeline
