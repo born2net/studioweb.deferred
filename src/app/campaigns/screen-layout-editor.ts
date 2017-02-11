@@ -452,7 +452,7 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
     _listenObjectChanged() {
         var self = this;
         self.m_objectMovingHandler = function (e) {
-            
+
             var o = e.target;
             if (o.width != o.currentWidth || o.height != o.currentHeight) {
                 o.width = o.currentWidth;
@@ -531,7 +531,12 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
     onGoBack: EventEmitter<any> = new EventEmitter<any>();
 
     _goBack() {
-        var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
+        var uiState: IUiState = {
+            uiSideProps: SideProps.miniDashboard,
+            campaign: {
+                globalBoardTemplateViewerSelected: -1
+            }
+        }
         this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
         this.onGoBack.emit();
     }
