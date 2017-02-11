@@ -18,7 +18,6 @@ export class CampaignChannelList extends Compbaser {
     constructor(private yp: YellowPepperService) {
         super();
         this.listenChannelChanged();
-
     }
 
     private listenChannelChanged() {
@@ -35,7 +34,6 @@ export class CampaignChannelList extends Compbaser {
                     console.log(i_campaignTimelineChanelsModel.getChanelName());
                 })
         )
-
     }
 
     ngOnInit() {

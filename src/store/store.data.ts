@@ -24,7 +24,6 @@ export interface IMsDatabase {
 }
 
 export interface IUiStateCampaign  {
-    globalBoardTemplateViewerSelected?:number;
     campaignTimelineChannelSelected?: number;
     campaignTimelineBoardViewerSelected?: number;
     campaignCreateOrientation?:number,
@@ -62,7 +61,6 @@ export const INITIAL_APP_DB: IAppDb = {
     uiState: {
         uiSideProps: SideProps.none,
         campaign: {
-            globalBoardTemplateViewerSelected: -1,
             campaignTimelineBoardViewerSelected: -1,
             campaignTimelineChannelSelected: -1,
             campaignSelected: -1,

@@ -1,4 +1,4 @@
-import {Routes, RouterModule} from "@angular/router";
+import {PreloadAllModules, RouterModule, Routes} from "@angular/router";
 import {LoginPanel} from "./comps/entry/LoginPanel";
 import {Logout} from "./comps/logout/Logout";
 import {AuthService} from "./services/AuthService";
@@ -34,6 +34,6 @@ const routes: Routes = [
     }
 ];
 
-export const routing = RouterModule.forRoot(routes, {enableTracing: false});
+export const routing = RouterModule.forRoot(routes, {enableTracing: false, preloadingStrategy: PreloadAllModules});
 
 

@@ -294,7 +294,7 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
     _listenBackgroundSelected() {
         var self = this;
         self.m_bgSelectedHandler = function (e) {
-            var uiState: IUiState = {campaign: {globalBoardTemplateViewerSelected: -1}}
+            var uiState: IUiState = {campaign: {campaignTimelineBoardViewerSelected: -1}}
             self.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
         };
         self.m_canvas.on('selection:cleared', self.m_bgSelectedHandler);
@@ -502,7 +502,7 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
      @param {Object} i_props
      **/
     _saveToStore(i_viewer, i_props) {
-        var uiState: IUiState = {campaign: {globalBoardTemplateViewerSelected: i_viewer.get('id')}}
+        var uiState: IUiState = {campaign: {campaignTimelineBoardViewerSelected: i_viewer.get('id')}}
         this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
         // console.log('Pepper ' + i_viewer.get('id') + ' ' + JSON.stringify(i_props));
         this.rp.setBoardTemplateViewer(this.m_campaign_timeline_board_template_id, i_viewer.get('id'), i_props);
@@ -534,7 +534,7 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
         var uiState: IUiState = {
             uiSideProps: SideProps.miniDashboard,
             campaign: {
-                globalBoardTemplateViewerSelected: -1
+                campaignTimelineBoardViewerSelected: -1
             }
         }
         this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))

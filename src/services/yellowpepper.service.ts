@@ -82,7 +82,7 @@ export class YellowPepperService {
     }
 
     listenGlobalBoardSelectedChanged(emitOnEmpty: boolean = false): Observable<BoardTemplateViewersModel> {
-        var globalBoardTemplateViewerSelected$ = this.ngrxStore.select(store => store.appDb.uiState.campaign.globalBoardTemplateViewerSelected);
+        var globalBoardTemplateViewerSelected$ = this.ngrxStore.select(store => store.appDb.uiState.campaign.campaignTimelineBoardViewerSelected);
         var tableBoardTemplatesList$ = this.ngrxStore.select(store => store.msDatabase.sdk.table_board_template_viewers);
         return globalBoardTemplateViewerSelected$
             .combineLatest(tableBoardTemplatesList$, (globalBoardTemplateViewerId: number, boards: List<BoardTemplateViewersModel>) => {
@@ -268,6 +268,10 @@ export class YellowPepperService {
             }).take(1);
     }
 
+    /**
+     *
+     * Get a channel associated with the selected viewer
+     */
     getChannelFromViewer(i_selectedTimeline_id, i_campaign_timeline_board_viewer_id): Observable<{}> {
         return this.getChannelsOfTimeline(i_selectedTimeline_id).switchMap((timeline_channel_ids: Array<number>) => {
             return Observable.from(timeline_channel_ids).concatMap((channel: number) => {
