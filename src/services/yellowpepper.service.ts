@@ -66,23 +66,19 @@ export class YellowPepperService {
     }
 
     /**
-     Listen to when a table_board_template_viewers is selected as well as to when it has changed value per the viewer_id selected
+     Listen to when a timeline is selected via the store state uiState.campaign.timelineSelected
      **/
-
-    listenGlobalBoardChanged(emitOnEmpty: boolean = false) {
-        return this.ngrxStore.select(store => store.appDb.uiState.campaign.globalBoardTemplateViewerSelected)
-            .distinct(v=>{
-                return v;
-            }).map(v=>{
-            return v;
-        })
-        // var tableBoardTemplatesList$ = this.ngrxStore.select(store => store.msDatabase.sdk.table_board_template_viewers)
-        // return globalBoardTemplateViewerSelected$
-        //     .combineLatest(tableBoardTemplatesList$, (globalBoardTemplateViewerId: number, boards: List<BoardTemplateViewersModel>) => {
-        //         return boards.find((i_board: BoardTemplateViewersModel) => {
-        //             return i_board.getBoardTemplateViewerId() == globalBoardTemplateViewerId;
-        //         });
-        //     }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
+    listenCampaignTimelineBoardViewerSelected(emitOnEmpty: boolean = false): Observable<CampaignTimelineBoardViewerChanelsModel> {
+        var boardSelected$ = this.store.select(store => store.appDb.uiState.campaign.campaignTimelineBoardViewerSelected);
+        var $viewerChannels$ = this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_board_viewer_chanels);
+        return boardSelected$
+            .withLatestFrom(
+                $viewerChannels$,
+                (boardId, viewerChannels) => {
+                    return viewerChannels.find((i_viewerChannel: CampaignTimelineBoardViewerChanelsModel) => {
+                        return i_viewerChannel.getBoardTemplateViewerId() == boardId;
+                    });
+                }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
     }
 
     listenGlobalBoardSelectedChanged(emitOnEmpty: boolean = false): Observable<BoardTemplateViewersModel> {
@@ -165,6 +161,76 @@ export class YellowPepperService {
     }
 
     /**
+     Use a viewer_id to reverse enumerate over the mapping of viewers to channels via:
+     campaign_timeline_viewer_chanels -> table_campaign_timeline_chanels
+     so we can find the channel assigned to the viewer_id provided.
+     @method getChannelIdFromCampaignTimelineBoardViewer
+     **/
+    getChannelIdFromCampaignTimelineBoardViewer(i_campaign_timeline_board_viewer_id, i_campaign_timeline_id, emitOnEmpty: boolean = false): Observable<any> {
+        return this.ngrxStore.select(store => store.msDatabase.sdk.table_campaign_timeline_board_viewer_chanels)
+            .map((i_campaignTimelineBoardViewerChanels: List<CampaignTimelineBoardViewerChanelsModel>) => {
+                return i_campaignTimelineBoardViewerChanels.find((i_campaignTimelineBoardViewerChanel: CampaignTimelineBoardViewerChanelsModel) => {
+                    return i_campaignTimelineBoardViewerChanel.getCampaignTimelineBoardViewerChanelId() == i_campaign_timeline_board_viewer_id;
+                })
+            }).switchMap((v: CampaignTimelineBoardViewerChanelsModel) => {
+                return this.getChannelOfTimeline(v.getCampaignTimelineChanelId())
+            })
+
+
+        // }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
+
+
+        // var recCampaignTimelineViewerChanelsFound = undefined;
+        //
+        // $(this.databaseManager.table_campaign_timeline_board_viewer_chanels().getAllPrimaryKeys()).each(function (k, campaign_timeline_board_viewer_chanel_id) {
+        //     var recCampaignTimelineViewerChanels = this.databaseManager.table_campaign_timeline_board_viewer_chanels().getRec(campaign_timeline_board_viewer_chanel_id);
+        //
+        //     // if true, we found the viewer selected under table campaign_timeline_viewer_chanels
+        //     if (recCampaignTimelineViewerChanels['board_template_viewer_id'] == i_campaign_timeline_board_viewer_id) {
+        //
+        //         $(this.databaseManager.table_campaign_timeline_chanels().getAllPrimaryKeys()).each(function (k, campaign_timeline_chanel_id) {
+        //             var recCampaignTimelineChannel = this.databaseManager.table_campaign_timeline_chanels().getRec(campaign_timeline_chanel_id);
+        //
+        //             // if true, we found the channel the viewer was assined to as long as it is part of the current selected timeline
+        //             if (recCampaignTimelineViewerChanels['campaign_timeline_chanel_id'] == campaign_timeline_chanel_id && recCampaignTimelineChannel['campaign_timeline_id'] == i_campaign_timeline_id) {
+        //                 // console.log('selected: timeline_id ' + i_campaign_timeline_id + ' view_id ' + i_campaign_timeline_board_viewer_id + ' on channel_id ' + recCampaignTimelineViewerChanels['campaign_timeline_chanel_id']);
+        //                 recCampaignTimelineViewerChanelsFound = recCampaignTimelineViewerChanels;
+        //             }
+        //         });
+        //     }
+        // });
+        //
+        // return recCampaignTimelineViewerChanelsFound;
+    }
+
+    /**
+     Get all the campaign > timeline > channel of a timeline
+     **/
+    getChannelOfTimeline(i_campaign_timeline_chanel_id): Observable<CampaignTimelineChanelsModel> {
+        return this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_chanels)
+            .map((campaignTimelineChanels: List<CampaignTimelineChanelsModel>) => {
+                return campaignTimelineChanels.find((campaignTimelineChanelsModel: CampaignTimelineChanelsModel) => {
+                    return campaignTimelineChanelsModel.getCampaignTimelineChanelId() == i_campaign_timeline_chanel_id
+                })
+            })
+    }
+
+
+    /**
+     Get all the campaign > timeline > channels ids of a timeline
+     **/
+    getChannelsOfTimeline(i_campaign_timeline_id): Observable<any> {
+        return this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_chanels)
+            .map((campaignTimelineChanels: List<CampaignTimelineChanelsModel>) => {
+                return campaignTimelineChanels.reduce((result: Array<number>, campaignTimelineChanelsModel) => {
+                    if (campaignTimelineChanelsModel.getCampaignTimelineId() == i_campaign_timeline_id)
+                        result.push(campaignTimelineChanelsModel.getCampaignTimelineChanelId());
+                    return result;
+                }, [])
+            }).take(1);
+    }
+
+    /**
      Get all timeline s for specified campaign id
      **/
     getCampaignTimelines(i_campaign_id: number): Observable<List<CampaignTimelinesModel>> {
@@ -242,20 +308,6 @@ export class YellowPepperService {
                     }).skipWhile(value => value == null)
             })
         }).take(1);
-    }
-
-    /**
-     Get all the campaign > timeline > channels ids of a timeline
-     **/
-    getChannelsOfTimeline(i_campaign_timeline_id): Observable<any> {
-        return this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_chanels)
-            .map((campaignTimelineChanels: List<CampaignTimelineChanelsModel>) => {
-                return campaignTimelineChanels.reduce((result: Array<number>, campaignTimelineChanelsModel) => {
-                    if (campaignTimelineChanelsModel.getCampaignTimelineId() == i_campaign_timeline_id)
-                        result.push(campaignTimelineChanelsModel.getCampaignTimelineChanelId());
-                    return result;
-                }, [])
-            }).take(1);
     }
 
     /**
