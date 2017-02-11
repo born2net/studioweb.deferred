@@ -4,6 +4,7 @@ import {Store} from "@ngrx/store";
 import {Compbaser} from "ng-mslib";
 import {Router} from "@angular/router";
 import {RedPepperService} from "../../services/redpepper.service";
+import {BlockService} from "../blocks/block-service";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -11,6 +12,12 @@ import {RedPepperService} from "../../services/redpepper.service";
         '[@routeAnimation]': 'true',
         '[style.display]': "'block'"
     },
+    providers: [BlockService,
+        {
+            provide: "BLOCK_PLACEMENT",
+            useValue: 'SCENE'
+        }
+    ],
     animations: [
         trigger('routeAnimation', [
             state('*', style({opacity: 1})),
@@ -47,8 +54,9 @@ export class ScenesNavigation extends Compbaser {
     @ViewChild('canvas2')
     canvas2;
 
-    constructor() {
+    constructor(private blockService:BlockService) {
         super();
+        console.log(this.blockService.getServiceType());
     }
 
     ngOnInit() {

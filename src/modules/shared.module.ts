@@ -14,7 +14,7 @@ import {ScreenTemplate} from "../comps/screen-template/screen-template";
 import {BlurForwarder} from "../comps/blurforwarder/BlurForwarder";
 import {ContextMenuModule} from "angular2-contextmenu";
 import {ChartModule} from "angular2-highcharts";
-import {BlockProp} from "../app/blocks/BlockProp";
+import {BlockProp} from "../app/blocks/block-prop";
 
 var sharedComponents = [Infobox, Sliderpanel, Slideritem, PanelSplitMain, PanelSplitSide, PanelSplitContainer, ListToArrayPipe, MatchBodyHeight, ScreenTemplate, BlurForwarder, BlockProp];
 

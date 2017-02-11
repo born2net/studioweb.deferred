@@ -9,6 +9,7 @@ import {Once} from "../../decorators/once-decorator";
 import {ACTION_UISTATE_UPDATE, AppdbAction, SideProps} from "../../store/actions/appdb.actions";
 import {IUiState} from "../../store/store.data";
 import {stat} from "fs";
+import {BlockService} from "../blocks/block-service";
 
 @Component({
     selector: 'campaign-editor',

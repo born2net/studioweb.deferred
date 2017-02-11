@@ -25,6 +25,7 @@ import {CampaignEditorProps} from "./campaign-editor-props";
 import {CampaignSchedProps} from "./campaign-sched-props";
 import {CampaignPropsManager} from "./campaign-props-manager";
 import {CampaignChannelList} from "./campaign-channel-list";
+import {BlockService} from "../blocks/block-service";
 
 export const LAZY_ROUTES = [
     {path: ':folder', component: CampaignsNavigation},

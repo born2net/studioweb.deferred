@@ -1,6 +1,7 @@
 import {Component, ChangeDetectionStrategy, trigger, transition, animate, state, style} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {routerTransition} from "../route-animation";
+import {BlockService} from "../blocks/block-service";
 
 @Component({
     // changeDetection: ChangeDetectionStrategy.OnPush,
@@ -10,7 +11,12 @@ import {routerTransition} from "../route-animation";
     //     '[style.display]': "'block'"
     // },
     // animations: [routerTransition()],
-
+    providers: [BlockService,
+        {
+            provide: "BLOCK_PLACEMENT",
+            useValue: 'TIMELINE'
+        }
+    ],
     host: {
         '[@routeAnimation]': 'true',
         '[style.display]': "'block'"

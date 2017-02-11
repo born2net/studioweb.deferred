@@ -3,6 +3,7 @@ import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {CampaignTimelineBoardViewerChanelsModel, CampaignTimelineChanelsModel, CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 import {Once} from "../../decorators/once-decorator";
+import {BlockService} from "../blocks/block-service";
 
 @Component({
     selector: 'campaign-channel-list',
@@ -18,8 +19,9 @@ export class CampaignChannelList extends Compbaser {
 
     private selected_campaign_timeline_id: number = -1;
 
-    constructor(private yp: YellowPepperService) {
+    constructor(private yp: YellowPepperService, private blockService:BlockService) {
         super();
+        console.log(blockService.getServiceType());
         this.listenChannelChanged();
     }
 
@@ -55,6 +57,8 @@ export class CampaignChannelList extends Compbaser {
     _loadChannelBlocks(i_campaign_timeline_id, i_campaign_timeline_chanel_id) {
         this.getBlockChannelIds(i_campaign_timeline_chanel_id, (blockIds) => {
             console.log(blockIds.length);
+            this.blockService.getPlayerData(1);
+
         })
 
         // self.selected_campaign_timeline_chanel_id = i_campaign_timeline_chanel_id;
