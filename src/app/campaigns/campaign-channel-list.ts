@@ -1,4 +1,4 @@
-import {Component, ChangeDetectionStrategy} from "@angular/core";
+import {ChangeDetectionStrategy, Component} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {CampaignTimelineBoardViewerChanelsModel, CampaignTimelineChanelsModel, CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
@@ -15,6 +15,8 @@ import {CampaignTimelineBoardViewerChanelsModel, CampaignTimelineChanelsModel, C
 })
 export class CampaignChannelList extends Compbaser {
 
+    private selected_campaign_timeline_id: number = -1;
+
     constructor(private yp: YellowPepperService) {
         super();
         this.listenChannelChanged();
@@ -25,16 +27,57 @@ export class CampaignChannelList extends Compbaser {
             this.yp.listenCampaignTimelineBoardViewerSelected()
                 .combineLatest(this.yp.listenTimelineSelected(),
                     (campaignTimelineBoardViewerChanelsModel: CampaignTimelineBoardViewerChanelsModel, campaignTimelinesModel: CampaignTimelinesModel) => {
-                        var a = campaignTimelineBoardViewerChanelsModel.getCampaignTimelineBoardViewerChanelId()
-                        var b = campaignTimelinesModel.getCampaignTimelineId()
-                        return {a, b}
-                    }).mergeMap((ids) => this.yp.getChannelFromCampaignTimelineBoardViewer(ids.a, ids.b))
+
+                    this.selected_campaign_timeline_id = campaignTimelinesModel.getCampaignTimelineId();
+                        return {
+                            a: campaignTimelineBoardViewerChanelsModel.getCampaignTimelineBoardViewerChanelId(),
+                            b: this.selected_campaign_timeline_id
+                        };
+
+                    }).mergeMap((ids:any) => this.yp.getChannelFromCampaignTimelineBoardViewer(ids.a, ids.b))
+
                 .subscribe((i_campaignTimelineChanelsModel: CampaignTimelineChanelsModel) => {
                     console.log(i_campaignTimelineChanelsModel.getCampaignTimelineChanelId());
                     console.log(i_campaignTimelineChanelsModel.getChanelName());
+                    this._loadChannelBlocks(this.selected_campaign_timeline_id, i_campaignTimelineChanelsModel.getCampaignTimelineChanelId());
                 })
         )
     }
+
+    /**
+     Load the channel list with its own blocks and refresh the UI.
+     @method _loadChannelBlocks
+     @param {Number} i_campaign_timeline_id
+     @param {Number} i_campaign_timeline_chanel_id
+     @return none
+     **/
+    _loadChannelBlocks(i_campaign_timeline_id, i_campaign_timeline_chanel_id) {
+        console.log(i_campaign_timeline_id + ' ' + i_campaign_timeline_chanel_id);
+        // self.selected_campaign_timeline_chanel_id = i_campaign_timeline_chanel_id;
+        //
+        // var timeline = BB.comBroker.getService(BB.SERVICES['CAMPAIGN_VIEW']).getTimelineInstance(i_campaign_timeline_id);
+        // var channel = timeline.getChannelInstance(i_campaign_timeline_chanel_id);
+        // var blocks = channel.getBlocks();
+        // var xdate = BB.comBroker.getService('XDATE');
+        //
+        // for (var block in blocks) {
+        //     var blockData = blocks[block].getBlockData();
+        //     var duration = pepper.getBlockTimelineChannelBlockLength(blockData.blockID).totalInSeconds;
+        //     var durationFormatted = xdate.clearTime().addSeconds(duration).toString('HH:mm:ss');
+        //     $(Elements.SORTABLE).append($('<li class="' + BB.lib.unclass(Elements.CLASS_CHANNEL_LIST_ITEMS) + '  list-group-item" data-block_id="' + blockData.blockID + '">' +
+        //         '<a href="#">' +
+        //         //'<img  class="img-responsive" src="' + blockData.blockIcon + '"/>' +
+        //         '<i class="fa ' + blockData.blockFontAwesome + '"></i>' +
+        //         '<span>' + blockData.blockName + '</span>' +
+        //         '<i style="padding: 0; margin: 0" class="dragch fa fa-arrows-v"></i>' +
+        //         '<span class="' + BB.lib.unclass(Elements.CLASS_BLOCK_LENGTH_TIMER) + ' hidden-xs">' + durationFormatted + '</span>' +
+        //         '</a>' +
+        //         '</li>'));
+        // }
+        // self._listenBlockSelected();
+        // self._createSortable(Elements.SORTABLE);
+    }
+
 
     ngOnInit() {
     }
