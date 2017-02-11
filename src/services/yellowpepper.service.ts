@@ -66,7 +66,7 @@ export class YellowPepperService {
     }
 
     /**
-     Listen to when a timeline is selected via the store state uiState.campaign.timelineSelected
+     listen UI to campaign > timeline > board_viewer selected and return back the associated channel with that board id
      **/
     listenCampaignTimelineBoardViewerSelected(emitOnEmpty: boolean = false): Observable<CampaignTimelineBoardViewerChanelsModel> {
         var boardSelected$ = this.store.select(store => store.appDb.uiState.campaign.campaignTimelineBoardViewerSelected);
@@ -164,43 +164,16 @@ export class YellowPepperService {
      Use a viewer_id to reverse enumerate over the mapping of viewers to channels via:
      campaign_timeline_viewer_chanels -> table_campaign_timeline_chanels
      so we can find the channel assigned to the viewer_id provided.
-     @method getChannelIdFromCampaignTimelineBoardViewer
      **/
-    getChannelIdFromCampaignTimelineBoardViewer(i_campaign_timeline_board_viewer_id, i_campaign_timeline_id, emitOnEmpty: boolean = false): Observable<any> {
+    getChannelFromCampaignTimelineBoardViewer(i_campaign_timeline_board_viewer_id, emitOnEmpty: boolean = false): Observable<CampaignTimelineChanelsModel> {
         return this.ngrxStore.select(store => store.msDatabase.sdk.table_campaign_timeline_board_viewer_chanels)
             .map((i_campaignTimelineBoardViewerChanels: List<CampaignTimelineBoardViewerChanelsModel>) => {
                 return i_campaignTimelineBoardViewerChanels.find((i_campaignTimelineBoardViewerChanel: CampaignTimelineBoardViewerChanelsModel) => {
                     return i_campaignTimelineBoardViewerChanel.getCampaignTimelineBoardViewerChanelId() == i_campaign_timeline_board_viewer_id;
                 })
-            }).switchMap((v: CampaignTimelineBoardViewerChanelsModel) => {
+            }).concatMap((v: CampaignTimelineBoardViewerChanelsModel) => {
                 return this.getChannelOfTimeline(v.getCampaignTimelineChanelId())
-            })
-
-
-        // }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
-
-
-        // var recCampaignTimelineViewerChanelsFound = undefined;
-        //
-        // $(this.databaseManager.table_campaign_timeline_board_viewer_chanels().getAllPrimaryKeys()).each(function (k, campaign_timeline_board_viewer_chanel_id) {
-        //     var recCampaignTimelineViewerChanels = this.databaseManager.table_campaign_timeline_board_viewer_chanels().getRec(campaign_timeline_board_viewer_chanel_id);
-        //
-        //     // if true, we found the viewer selected under table campaign_timeline_viewer_chanels
-        //     if (recCampaignTimelineViewerChanels['board_template_viewer_id'] == i_campaign_timeline_board_viewer_id) {
-        //
-        //         $(this.databaseManager.table_campaign_timeline_chanels().getAllPrimaryKeys()).each(function (k, campaign_timeline_chanel_id) {
-        //             var recCampaignTimelineChannel = this.databaseManager.table_campaign_timeline_chanels().getRec(campaign_timeline_chanel_id);
-        //
-        //             // if true, we found the channel the viewer was assined to as long as it is part of the current selected timeline
-        //             if (recCampaignTimelineViewerChanels['campaign_timeline_chanel_id'] == campaign_timeline_chanel_id && recCampaignTimelineChannel['campaign_timeline_id'] == i_campaign_timeline_id) {
-        //                 // console.log('selected: timeline_id ' + i_campaign_timeline_id + ' view_id ' + i_campaign_timeline_board_viewer_id + ' on channel_id ' + recCampaignTimelineViewerChanels['campaign_timeline_chanel_id']);
-        //                 recCampaignTimelineViewerChanelsFound = recCampaignTimelineViewerChanels;
-        //             }
-        //         });
-        //     }
-        // });
-        //
-        // return recCampaignTimelineViewerChanelsFound;
+            }).take(1);
     }
 
     /**
@@ -212,7 +185,7 @@ export class YellowPepperService {
                 return campaignTimelineChanels.find((campaignTimelineChanelsModel: CampaignTimelineChanelsModel) => {
                     return campaignTimelineChanelsModel.getCampaignTimelineChanelId() == i_campaign_timeline_chanel_id
                 })
-            })
+            }).take(1);
     }
 
 

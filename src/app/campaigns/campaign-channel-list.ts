@@ -1,7 +1,7 @@
 import {Component, ChangeDetectionStrategy} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
-import {CampaignTimelineBoardViewerChanelsModel, CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
+import {CampaignTimelineBoardViewerChanelsModel, CampaignTimelineChanelsModel, CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 
 @Component({
     selector: 'campaign-channel-list',
@@ -17,17 +17,25 @@ export class CampaignChannelList extends Compbaser {
 
     constructor(private yp: YellowPepperService) {
         super();
+        this.listenChannelIdFromCampaignTimelineBoardViewerChanged();
 
-        this.yp.listenCampaignTimelineBoardViewerSelected()
-            .combineLatest(this.yp.listenTimelineSelected(),
-                (campaignTimelineBoardViewerChanelsModel: CampaignTimelineBoardViewerChanelsModel, campaignTimelinesModel: CampaignTimelinesModel) => {
-                    var a = campaignTimelineBoardViewerChanelsModel.getCampaignTimelineBoardViewerChanelId()
-                    var b = campaignTimelinesModel.getCampaignTimelineId()
-                    return {a, b}
-                }).concatMap((ids) => this.yp.getChannelIdFromCampaignTimelineBoardViewer(ids.a, ids.b))
-            .subscribe(aa => {
-                console.log(aa);
-            })
+    }
+
+    private listenChannelIdFromCampaignTimelineBoardViewerChanged() {
+        this.cancelOnDestroy(
+            this.yp.listenCampaignTimelineBoardViewerSelected()
+                .combineLatest(this.yp.listenTimelineSelected(),
+                    (campaignTimelineBoardViewerChanelsModel: CampaignTimelineBoardViewerChanelsModel, campaignTimelinesModel: CampaignTimelinesModel) => {
+                        var a = campaignTimelineBoardViewerChanelsModel.getCampaignTimelineBoardViewerChanelId()
+                        var b = campaignTimelinesModel.getCampaignTimelineId()
+                        return {a, b}
+                    }).mergeMap((ids) => this.yp.getChannelFromCampaignTimelineBoardViewer(ids.a, ids.b))
+                .subscribe((i_campaignTimelineChanelsModel: CampaignTimelineChanelsModel) => {
+                    console.log(i_campaignTimelineChanelsModel.getCampaignTimelineChanelId());
+                    console.log(i_campaignTimelineChanelsModel.getChanelName());
+                })
+        )
+
     }
 
     ngOnInit() {
