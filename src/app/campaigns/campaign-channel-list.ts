@@ -17,11 +17,11 @@ export class CampaignChannelList extends Compbaser {
 
     constructor(private yp: YellowPepperService) {
         super();
-        this.listenChannelIdFromCampaignTimelineBoardViewerChanged();
+        this.listenChannelChanged();
 
     }
 
-    private listenChannelIdFromCampaignTimelineBoardViewerChanged() {
+    private listenChannelChanged() {
         this.cancelOnDestroy(
             this.yp.listenCampaignTimelineBoardViewerSelected()
                 .combineLatest(this.yp.listenTimelineSelected(),
