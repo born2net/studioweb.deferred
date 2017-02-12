@@ -43,12 +43,13 @@ import "gsap";
 import "gsap/CSSPlugin";
 import "gsap/Draggable";
 import "gsap/TweenLite";
+import {HelperPepperService} from "../services/helperpepper-service";
 // import "fabric"; // need to remove if we import via cli
 // import {ScreenTemplate} from "../comps/screen-template/screen-template";
 
 
 
-export var providing = [CommBroker, AUTH_PROVIDERS, RedPepperService, YellowPepperService, LocalStorage, StoreService, AppdbAction, CommBroker,
+export var providing = [CommBroker, AUTH_PROVIDERS, RedPepperService, YellowPepperService, LocalStorage, StoreService, AppdbAction, CommBroker, HelperPepperService,
     {
         provide: "OFFLINE_ENV",
         useValue: window['offlineDevMode']
