@@ -97,7 +97,7 @@ export class ScreenLayoutEditorProps extends Compbaser {
                     });
                     this.boardTemplateModel = boardTemplateModel;
                     this.renderFormInputs();
-                })
+                }, (e) => console.error(e))
         )
     }
 

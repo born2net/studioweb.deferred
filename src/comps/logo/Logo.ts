@@ -47,6 +47,6 @@ export class Logo {
             } else {
                 jQuery(this.elementRef.nativeElement).find('.flipcard').removeClass('flipped');
             }
-        });
+        }, (e) => console.error(e));
     }
 }

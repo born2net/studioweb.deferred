@@ -67,6 +67,8 @@ export class CampaignOrientation extends Compbaser {
                     }
                     this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
                     this.onSelection.emit(this.m_orientation)
+                }, (e) => {
+                    console.error(e)
                 })
         )
     }

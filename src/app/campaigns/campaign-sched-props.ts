@@ -59,6 +59,8 @@ export class CampaignSchedProps extends Compbaser implements AfterViewInit {
                     this._initTimePicker();
                     this._initDays();
                     this._renderFormInputs();
+                }, (e) => {
+                    console.error(e)
                 })
         )
     }

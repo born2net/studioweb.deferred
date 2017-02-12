@@ -258,8 +258,6 @@ define(['jquery', 'backbone', 'jqueryui', 'TouchPunch', 'Timeline', 'SequencerVi
             var channel = timeline.getChannelInstance(i_campaign_timeline_chanel_id);
             var blocks = channel.getBlocks();
             var xdate = BB.comBroker.getService('XDATE');
-
-
             for (var block in blocks) {
                 var blockData = blocks[block].getBlockData();
                 var duration = pepper.getBlockTimelineChannelBlockLength(blockData.blockID).totalInSeconds;

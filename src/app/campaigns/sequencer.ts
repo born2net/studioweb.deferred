@@ -148,6 +148,8 @@ export class Sequencer extends Compbaser {
                         return o['campaign'];
                     }))
                 );
+            }, (e) => {
+                console.error(e)
             })
     }
 
@@ -331,6 +333,8 @@ export class Sequencer extends Compbaser {
                 this._setAndNotifyIds()
                 this._notifyPropertySelect(SideProps.channel);
 
+            }, (e) => {
+                console.error(e)
             })
     }
 
@@ -344,7 +348,7 @@ export class Sequencer extends Compbaser {
      @method selectNextChannel
      **/
     @Once()
-    public onSelectNextChannel():Subscription  {
+    public onSelectNextChannel(): Subscription {
         if (!this.m_selectedScreenTemplate)
             return null;
         var timeline_channel_id;
@@ -365,6 +369,8 @@ export class Sequencer extends Compbaser {
                 }
                 this.m_campaignTimelineChannelSelected = timeline_channel_id;
                 this.getAssignedViewerIdFromChannelId(timeline_channel_id);
+            }, (e) => {
+                console.error(e)
             });
     }
 
@@ -385,7 +391,7 @@ export class Sequencer extends Compbaser {
                 // BB.comBroker.getService(BB.SERVICES['SEQUENCER_VIEW']).selectViewer(screenData.campaign_timeline_id, screenData.campaign_timeline_board_viewer_id);
                 // BB.comBroker.fire(BB.EVENTS.ON_VIEWER_SELECTED, this, screenData);
                 // BB.comBroker.fire(BB.EVENTS.CAMPAIGN_TIMELINE_CHANNEL_SELECTED, this, null, self.m_selectedChannel);
-            });
+            }, (e) => console.error(e));
     }
 
     ngOnInit() {

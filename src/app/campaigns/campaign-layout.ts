@@ -13,7 +13,7 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
     selector: 'campaign-layout',
     // changeDetection: ChangeDetectionStrategy.OnPush,
     styles: [`
-        :host >>> .svgSD {
+        :host > > > .svgSD {
             cursor: pointer;
         }
     `],
@@ -35,7 +35,7 @@ export class CampaignLayout extends Compbaser {
     m_screenLayouts: Array<IScreenTemplateData>;
     m_campaignName: string;
 
-    constructor(private yp:YellowPepperService) {
+    constructor(private yp: YellowPepperService) {
         super();
         this.getNewCampaignParams();
 
@@ -49,7 +49,8 @@ export class CampaignLayout extends Compbaser {
                 .debounceTime(800)
                 .do(() => {
                     this.onSelection.emit(this.m_screenTemplateData)
-                }).subscribe()
+                }).subscribe(() => {
+            }, (e) => console.error(e))
         )
     }
 
@@ -61,7 +62,7 @@ export class CampaignLayout extends Compbaser {
                 this.m_orientation = value.campaignCreateOrientation;
                 this.m_campaignName = value.campaignCreateName;
                 this._render();
-            })
+            }, (e) => console.error(e))
     }
 
 

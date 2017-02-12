@@ -12,41 +12,45 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
 @Component({
     selector: 'Twofactor',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    template: `<div>
-                <form novalidate autocomplete="off" [formGroup]="contGroup">
-                    <div class="row">
-                        <div class="inner userGeneral">
-                            <div class="panel panel-default tallPanel">
-                                <div class="panel-heading">
-                                    <small class="release">target properties
-                                        <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
-                                    </small>
-                                </div>
-                                <ul class="list-group">
-                                    <li *ngIf="twoFactorStatus" class="list-group-item">
-                                        Two factor login with Google Authenticator
-                                        <div class="material-switch pull-right">
-                                            <input (change)="onChangeStatus(customerNetwork2.checked)"
-                                                   [formControl]="contGroup.controls['TwofactorCont']"
-                                                   id="customerNetwork2" #customerNetwork2
-                                                   name="customerNetwork2" type="checkbox"/>
-                                            <label for="customerNetwork2" class="label-primary"></label>
-                                        </div>
-                                    </li>
-                                </ul>
+    template: `
+        <div>
+            <form novalidate autocomplete="off" [formGroup]="contGroup">
+                <div class="row">
+                    <div class="inner userGeneral">
+                        <div class="panel panel-default tallPanel">
+                            <div class="panel-heading">
+                                <small class="release">target properties
+                                    <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
+                                </small>
                             </div>
+                            <ul class="list-group">
+                                <li *ngIf="twoFactorStatus" class="list-group-item">
+                                    Two factor login with Google Authenticator
+                                    <div class="material-switch pull-right">
+                                        <input (change)="onChangeStatus(customerNetwork2.checked)"
+                                               [formControl]="contGroup.controls['TwofactorCont']"
+                                               id="customerNetwork2" #customerNetwork2
+                                               name="customerNetwork2" type="checkbox"/>
+                                        <label for="customerNetwork2" class="label-primary"></label>
+                                    </div>
+                                </li>
+                            </ul>
                         </div>
                     </div>
-                </form>
-            </div>
-            <div>
-                <div *ngIf="!twoFactorStatus">
-                    <input #activate type="text" class="longInput form-control" placeholder="scan with Google Authenticator and enter token">
-                    <button (click)="onActivate()" style="margin-top: 5px" class="btn btn-primary pull-right">activate</button>
                 </div>
+            </form>
+        </div>
+        <div>
+            <div *ngIf="!twoFactorStatus">
+                <input #activate type="text" class="longInput form-control" placeholder="scan with Google Authenticator and enter token">
+                <button (click)="onActivate()" style="margin-top: 5px" class="btn btn-primary pull-right">activate</button>
             </div>
+        </div>
     `,
-    styles: [`.material-switch {position: relative;padding-top: 10px;}`]
+    styles: [`.material-switch {
+        position: relative;
+        padding-top: 10px;
+    }`]
 })
 export class Twofactor extends Compbaser {
     constructor(private fb: FormBuilder,
@@ -65,6 +69,8 @@ export class Twofactor extends Compbaser {
         this.yp.ngrxStore.select(store => store.appDb.userModel).subscribe((userModel: UserModel) => {
             this.twoFactorStatus = userModel.getTwoFactorRequired();
             this.changeTwoFactorStatus();
+        }, (e) => {
+            console.error(e)
         })
         this.renderFormInputs();
         this.listenEvents();
@@ -91,6 +97,8 @@ export class Twofactor extends Compbaser {
                         break;
                     }
                 }
+            }, (e) => {
+                console.error(e)
             }))
     }
 
@@ -130,7 +138,7 @@ export class Twofactor extends Compbaser {
             svg.setAttribute('viewBox', '0 0 ' + 100 + ' ' + 100);
             svg.setAttribute('width', '40%');
             // svg.setAttribute('height', '100%');
-        });
+        }, (e) => console.error(e));
     }
 
     private removeQrCode() {

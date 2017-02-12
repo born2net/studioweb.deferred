@@ -33,7 +33,7 @@ export class AppDbEffects {
 
         // todo: disabled injection as broken in AOT
         // @Inject('OFFLINE_ENV') private offlineEnv,
-        
+
         this.parseString = xml2js.parseString;
     }
 
@@ -87,12 +87,12 @@ export class AppDbEffects {
                     .map(res => {
                         var status = res.json().result;
                         status == true ? this.store.dispatch({
-                                type: EFFECT_AUTH_STATUS,
-                                payload: AuthenticateFlags.TWO_FACTOR_UPDATE_PASS
-                            }) : this.store.dispatch({
-                                type: EFFECT_AUTH_STATUS,
-                                payload: AuthenticateFlags.TWO_FACTOR_UPDATE_FAIL
-                            })
+                            type: EFFECT_AUTH_STATUS,
+                            payload: AuthenticateFlags.TWO_FACTOR_UPDATE_PASS
+                        }) : this.store.dispatch({
+                            type: EFFECT_AUTH_STATUS,
+                            payload: AuthenticateFlags.TWO_FACTOR_UPDATE_FAIL
+                        })
                         this.store.dispatch({
                             type: EFFECT_TWO_FACTOR_UPDATED,
                             payload: status
@@ -137,7 +137,7 @@ export class AppDbEffects {
                 const boundCallback = Observable.bindCallback(this.processXml, (xmlData: any) => xmlData);
                 boundCallback(this, resellerDataString).subscribe((i_resellerDataJson) => {
                     resellerDataJson = i_resellerDataJson;
-                })
+                }, (e) => console.error(e))
                 userModel = userModel.setAuthenticated(true);
                 userModel = userModel.setAccountType(AuthenticateFlags.USER_ACCOUNT);
                 userModel = userModel.setResellerInfo(pepperConnection.loadManager.m_resellerInfo);
@@ -196,7 +196,7 @@ export class AppDbEffects {
                                 payload: AuthenticateFlags.AUTH_PASS_NO_TWO_FACTOR
                             });
                         }
-                    })
+                    }, (e) => console.error(e))
             }
         });
     }

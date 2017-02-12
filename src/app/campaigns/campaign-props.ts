@@ -163,6 +163,8 @@ export class CampaignProps extends Compbaser {
                     this.m_campaignModel = campaign;
                     this.renderFormInputs();
                     this.renderFormInputsReactive();
+                }, (e) => {
+                    console.error(e)
                 })
         );
 
@@ -207,7 +209,7 @@ export class CampaignProps extends Compbaser {
                     this.m_campaignModel = i_campaignModel;
                     var bb = this.m_campaignModel.toPureJs();
                     // this.m_contGroup.patchValue(bb);
-                })
+                }, (e) => console.error(e))
         );
     };
 
@@ -226,7 +228,7 @@ export class CampaignProps extends Compbaser {
                 .subscribe(value => {
                     // console.log('res ' + JSON.stringify(value) + ' ' + Math.random())
                     this.saveToStore();
-                })
+                }, (e) => console.error(e))
         )
     }
 

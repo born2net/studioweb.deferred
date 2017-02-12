@@ -79,6 +79,7 @@ export class YellowPepperService {
                         return i_viewerChannel.getBoardTemplateViewerId() == boardId;
                     });
                 }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
+
     }
 
     listenGlobalBoardSelectedChanged(emitOnEmpty: boolean = false): Observable<BoardTemplateViewersModel> {
@@ -165,7 +166,7 @@ export class YellowPepperService {
      campaign_timeline_viewer_chanels -> table_campaign_timeline_chanels
      so we can find the channel assigned to the viewer_id provided.
      **/
-    getChannelFromCampaignTimelineBoardViewer(i_campaign_timeline_board_viewer_id, emitOnEmpty: boolean = false): Observable<CampaignTimelineChanelsModel> {
+    getChannelFromCampaignTimelineBoardViewer(i_campaign_timeline_board_viewer_id): Observable<CampaignTimelineChanelsModel> {
         return this.ngrxStore.select(store => store.msDatabase.sdk.table_campaign_timeline_board_viewer_chanels)
             .map((i_campaignTimelineBoardViewerChanels: List<CampaignTimelineBoardViewerChanelsModel>) => {
                 return i_campaignTimelineBoardViewerChanels.find((i_campaignTimelineBoardViewerChanel: CampaignTimelineBoardViewerChanelsModel) => {
@@ -430,7 +431,7 @@ export class YellowPepperService {
                                 screenProps['sd' + counter]['y'] = recBoardTemplateViewer.getPixelY();
                                 screenProps['sd' + counter]['w'] = recBoardTemplateViewer.getPixelWidth();
                                 screenProps['sd' + counter]['h'] = recBoardTemplateViewer.getPixelHeight();
-
+                                
                                 // make sure that every view_order we assign is unique and sequential
                                 var viewOrder = recBoardTemplateViewer.getViewerOrder();
                                 if (!_.isUndefined(viewOrderIndexes[viewOrder])) {

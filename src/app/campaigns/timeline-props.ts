@@ -104,7 +104,7 @@ export class TimelineProps extends Compbaser {
                     this.m_duration = xdate.clearTime().addSeconds(totalDuration).toString('HH:mm:ss');
                     this.renderFormInputs();
                     this.cd.markForCheck();
-                })
+                }, (e) => console.error(e))
         );
 
     }

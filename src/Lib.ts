@@ -744,6 +744,7 @@ export class Lib {
                     var xmlString = xmlDoc.xml ? xmlDoc.xml : (new XMLSerializer()).serializeToString(xmlDoc);
                     return xmlString;
                 } catch (err) {
+                    console.log('error ' + err);
                     return null;
                 }
             }
@@ -768,6 +769,7 @@ export class Lib {
                         return xmlDoc;
                     }
                 } catch (e) {
+                    console.log('error stringToXML ' + e);
                     return null;
                 }
             }

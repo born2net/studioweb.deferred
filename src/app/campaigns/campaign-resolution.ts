@@ -47,6 +47,8 @@ export class CampaignResolution extends Compbaser {
                     }
                     this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
                     this.onSelection.emit(this.m_resolution);
+                }, (e) => {
+                    console.error(e)
                 })
         )
     }
@@ -60,6 +62,8 @@ export class CampaignResolution extends Compbaser {
                 for (var screenResolution in screenTemplates[orientation]) {
                     this.m_screens.push(screenResolution)
                 }
+            }, (e) => {
+                console.error(e)
             })
     }
 

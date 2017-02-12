@@ -98,6 +98,8 @@ export class ChannelProps extends Compbaser {
                 .subscribe((channel: CampaignTimelineChanelsModel) => {
                     this.channelModel = channel;
                     this.renderFormInputs();
+                }, (e) => {
+                    console.error(e)
                 })
         );
     }

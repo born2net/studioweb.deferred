@@ -26,7 +26,7 @@ export class PanelSplitContainer implements AfterViewInit {
             throw new Error('panel-split-container requires main and side children');
         this.panelSplitSide.onToggle.subscribe((value: boolean) => {
             this.panelSpiltMain.setFullScreen(value)
-        })
+        }, (e) => console.error(e))
     }
 
 }

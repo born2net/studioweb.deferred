@@ -33,6 +33,8 @@ export class AuthService {
 
         this.store.select(store => store.appDb.userModel).subscribe((userModel: UserModel) => {
             this.userModel = userModel;
+        }, (e) => {
+            console.error(e)
         })
         this.listenEvents();
     }
@@ -70,11 +72,13 @@ export class AuthService {
                     break;
                 }
             }
+        }, (e) => {
+            console.error(e)
         })
         this.router.events.filter(event => event instanceof NavigationStart).take(1).subscribe(event => {
             this.requestedRoute = event.url;
             // this.requestedRoute = event.url == '/' ? '/App1/Campaigns' : event.url;
-        });
+        }, (e) =>  console.error(e));
     }
 
     private enterApplication() {
@@ -114,6 +118,7 @@ export class AuthService {
                     i_pass = credentialsArr[2];
                     i_remember = 'false';
                 } catch (e) {
+                    console.log('error login ' + e);
                 }
             }
         }

@@ -102,6 +102,8 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
                 this.m_campaign_timeline_id = result.campaignTimelinesModel.getCampaignTimelineId();
                 this.m_campaign_timeline_board_template_id = result.campaign_timeline_board_template_ids[0];
                 this.selectView(result.campaignTimelinesModel.getCampaignTimelineId(), this.m_campaign_timeline_board_template_id);
+            }, (e) => {
+                console.error(e)
             })
         )
 
@@ -116,6 +118,8 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
                         y: boardTemplateModel.getPixelY()
                     }
                     this._moveViewer(props)
+                }, (e) => {
+                    console.error(e)
                 })
         )
     }
@@ -241,7 +245,7 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
                     this._listenObjectChanged();
                     this._listenObjectsOverlap();
                     this._listenBackgroundSelected();
-                })
+                }, (e) => console.error(e))
         )
     }
 

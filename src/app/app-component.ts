@@ -39,6 +39,8 @@ export class AppComponent {
         this.listenRouterUpdateTitle();
         Observable.fromEvent(window, 'resize').debounceTime(250).subscribe(() => {
             this.appResized();
+        }, (e) => {
+            console.error(e)
         });
     }
 
@@ -48,7 +50,7 @@ export class AppComponent {
                 this.authService.start();
                 s.unsubscribe();
             }
-        });
+        }, (e) => console.error(e));
     }
 
     private checkPlatform() {
@@ -98,6 +100,6 @@ export class AppComponent {
             .mergeMap(route => route.data)
             .subscribe((event) => {
                 this.titleService.setTitle(event['title'])
-            });
+            }, (e) => console.error(e));
     }
 }
