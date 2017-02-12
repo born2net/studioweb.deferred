@@ -7,7 +7,7 @@ import {CampaignTimelineChanelPlayersModel} from "../../store/imsdb.interfaces_a
 import X2JS from 'x2js';
 
 
-const blockCodes  = {
+const blockCodes = {
     3510: 'BLOCKCODE_SCENE',
     4100: 'BLOCKCODE_COLLECTION',
     4500: 'BLOCKCODE_TWITTER',
@@ -50,7 +50,7 @@ export class BlockService {
             arrayAccessFormPaths: [],
             skipEmptyTextNodesForObj: true
         });
-        
+
     }
 
     public getServiceType(): string {
@@ -73,7 +73,7 @@ export class BlockService {
      @return {object} data
      The entire block data members which can be made public
      **/
-    public getBlockPlayerData(i_block_id) {
+    public getBlockPlayerData(i_block_id, i_cb:(campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModel)=>void) {
 
         switch (this.blockPlacement) {
             case 'CHANNEL': {
@@ -85,6 +85,7 @@ export class BlockService {
                         var blockCode = playerData['Player']['_player'];
                         var blockType = blockCodes[blockCode];
                         console.log(blockCode + ' ' + blockType);
+                        i_cb(campaignTimelineChanelPlayersModel)
                     } else {
                         // Scene
                         // var blockCode = const BLOCKCODE_SCENE;
@@ -129,10 +130,10 @@ export class BlockService {
     }
 
     @Once()
-    private _getPlayerData(i_block_id, i_cb) {
+    private _getPlayerData(i_block_id, i_cb: (campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModel) => void) {
         return this.yp.getBlockRecord(i_block_id)
-            .subscribe((result) => {
-                i_cb(result)
+            .subscribe((v) => {
+                i_cb(v)
             })
     }
 

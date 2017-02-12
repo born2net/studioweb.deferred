@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
-import {CampaignTimelineBoardViewerChanelsModel, CampaignTimelineChanelsModel, CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
+import {CampaignTimelineBoardViewerChanelsModel, CampaignTimelineChanelPlayersModel, CampaignTimelineChanelsModel, CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 import {Once} from "../../decorators/once-decorator";
 import {BlockService} from "../blocks/block-service";
 
@@ -19,7 +19,7 @@ export class CampaignChannelList extends Compbaser {
 
     private selected_campaign_timeline_id: number = -1;
 
-    constructor(private yp: YellowPepperService, private blockService:BlockService) {
+    constructor(private yp: YellowPepperService, private blockService: BlockService) {
         super();
         console.log(blockService.getServiceType());
         this.listenChannelChanged();
@@ -58,10 +58,10 @@ export class CampaignChannelList extends Compbaser {
         this.getBlockChannelIds(i_campaign_timeline_chanel_id, (blockIds) => {
             console.log(blockIds.length);
             for (var blockId in blockIds) {
-                var data = this.blockService.getBlockPlayerData(blockId)
-                console.log(data);
+                this.blockService.getBlockPlayerData(blockId, (campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModel) => {
+                    console.log(campaignTimelineChanelPlayersModel);
+                })
             }
-
         })
 
         // self.selected_campaign_timeline_chanel_id = i_campaign_timeline_chanel_id;
