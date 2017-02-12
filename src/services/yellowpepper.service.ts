@@ -192,7 +192,7 @@ export class YellowPepperService {
      Get all the block IDs of a particular channel.
      Push them into an array so they are properly sorted by player offset time.
      **/
-    getChannelBlocks(i_campaign_timeline_chanel_id):Observable<Array<number>> {
+    getChannelBlocks(i_campaign_timeline_chanel_id): Observable<Array<number>> {
         return this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_chanel_players)
             .map((campaignTimelineChanelPlayersModels: List<CampaignTimelineChanelPlayersModel>) => {
                 return campaignTimelineChanelPlayersModels.reduce((result: Array<number>, campaignTimelineChanelsModel) => {
@@ -201,6 +201,33 @@ export class YellowPepperService {
                     return result;
                 }, [])
             }).take(1);
+    }
+
+    /**
+     Get a player_id record from sdk by player_id primary key.
+     **/
+    getBlockRecord(i_player_id): Observable<CampaignTimelineChanelPlayersModel> {
+        return this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_chanel_players)
+            .map((i_campaignTimelineChanelPlayersModels: List<CampaignTimelineChanelPlayersModel>) => {
+                return i_campaignTimelineChanelPlayersModels
+                    .find((i_campaignTimelineChanelPlayersModel) => {
+                        return i_campaignTimelineChanelPlayersModel.getCampaignTimelineChanelPlayerId() == i_player_id
+                    })
+            }).take(1)
+    }
+
+    /**
+     get a scene block playerdata
+     **/
+    getScenePlayerdataBlock(i_scene_id, i_player_data_id) {
+
+        // i_scene_id = this.sterilizePseudoId(i_scene_id);
+        // this.databaseManager.table_player_data().openForEdit(i_scene_id);
+        // var recPlayerData = this.databaseManager.table_player_data().getRec(i_scene_id);
+        // var player_data = recPlayerData['player_data_value'];
+        // var domPlayerData = $.parseXML(player_data)
+        // var foundSnippet = $(domPlayerData).find('[id="' + i_player_data_id + '"]');
+        // return foundSnippet[0];
     }
 
     /**

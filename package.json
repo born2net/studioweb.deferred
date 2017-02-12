@@ -1,6 +1,6 @@
 {
   "name": "studioweb",
-  "version": "0.1.131",
+  "version": "0.1.132",
   "license": "Modified GPL (see readme.md)",
   "angular-cli": {},
   "scripts": {
@@ -81,6 +81,7 @@
     "string": "^3.3.3",
     "ts-helpers": "^1.1.1",
     "typescript": "^2.1.5",
+    "x2js": "^3.1.0",
     "xdate": "^0.8.0",
     "xml2js": "^0.4.17",
     "zone.js": "^0.7.5"
@@ -94,6 +95,7 @@
     "@types/jasmine": "2.5.38",
     "@types/jquery": "^2.0.34",
     "@types/node": "^6.0.42",
+    "@types/x2js": "0.0.27",
     "autoprefixer": "^6.6.1",
     "codelyzer": "~1.0.0-beta.3",
     "gulp": "^3.9.1",

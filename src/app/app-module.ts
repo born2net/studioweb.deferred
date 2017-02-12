@@ -46,6 +46,8 @@ import "gsap/TweenLite";
 // import "fabric"; // need to remove if we import via cli
 // import {ScreenTemplate} from "../comps/screen-template/screen-template";
 
+
+
 export var providing = [CommBroker, AUTH_PROVIDERS, RedPepperService, YellowPepperService, LocalStorage, StoreService, AppdbAction, CommBroker,
     {
         provide: "OFFLINE_ENV",

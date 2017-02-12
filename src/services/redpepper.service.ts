@@ -1924,17 +1924,6 @@ export class RedPepperService {
     }
 
     /**
-     Get a block's record using it's block_id
-     @method getBlockRecord
-     @param {Object} i_block_id
-     @return {Object} recBlock
-     **/
-    getBlockRecord(i_block_id) {
-
-        return this.databaseManager.table_campaign_timeline_chanel_players().getRec(i_block_id);
-    }
-
-    /**
      Set a block's record using key value pair
      The method uses generic key / value fields so it can set any part of the record.
      @method setBlockRecord
@@ -2693,8 +2682,17 @@ export class RedPepperService {
      @return {Object} player record
      **/
     getCampaignTimelineChannelPlayerRecord(i_player_id) {
-
         return this.databaseManager.table_campaign_timeline_chanel_players().getRec(i_player_id);
+    }
+
+    /**
+     Get a block's record using it's block_id
+     @method getBlockRecord
+     @param {Object} i_block_id
+     @return {Object} recBlock
+     **/
+    getBlockRecord(i_block_id) {
+        return this.databaseManager.table_campaign_timeline_chanel_players().getRec(i_block_id);
     }
 
     /**

@@ -57,7 +57,10 @@ export class CampaignChannelList extends Compbaser {
     _loadChannelBlocks(i_campaign_timeline_id, i_campaign_timeline_chanel_id) {
         this.getBlockChannelIds(i_campaign_timeline_chanel_id, (blockIds) => {
             console.log(blockIds.length);
-            this.blockService.getPlayerData(1);
+            for (var blockId in blockIds) {
+                this.blockService.getBlockPlayerData(blockId)
+                // var blockData = blocks[block].getBlockData();
+            }
 
         })
 

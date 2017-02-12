@@ -14,7 +14,7 @@ import {BlockService} from "../blocks/block-service";
     providers: [BlockService,
         {
             provide: "BLOCK_PLACEMENT",
-            useValue: 'TIMELINE'
+            useValue: 'CHANNEL'
         }
     ],
     host: {
