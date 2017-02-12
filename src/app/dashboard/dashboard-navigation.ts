@@ -18,7 +18,7 @@ import {Compbaser} from "ng-mslib";
             transition('* => void', animate(333, style({opacity: 0})))
         ])
     ],
-    template: `<h2 i18n>account dashboard</h2>
+    template: `<h2 i18n>accoun't dashboard</h2>
                <chart [options]="options"></chart>
     `,
 })
