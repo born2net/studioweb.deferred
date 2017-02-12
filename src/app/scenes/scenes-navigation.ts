@@ -12,11 +12,10 @@ import {BlockService} from "../blocks/block-service";
         '[@routeAnimation]': 'true',
         '[style.display]': "'block'"
     },
-    providers: [BlockService,
-        {
-            provide: "BLOCK_PLACEMENT",
-            useValue: 'SCENE'
-        }
+    providers: [BlockService, {
+        provide: "BLOCK_PLACEMENT",
+        useValue: 'SCENE'
+    }
     ],
     animations: [
         trigger('routeAnimation', [
@@ -54,7 +53,7 @@ export class ScenesNavigation extends Compbaser {
     @ViewChild('canvas2')
     canvas2;
 
-    constructor(private blockService:BlockService) {
+    constructor(private blockService: BlockService) {
         super();
         console.log(this.blockService.getServiceType());
     }

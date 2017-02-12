@@ -11,11 +11,10 @@ import {BlockService} from "../blocks/block-service";
     //     '[style.display]': "'block'"
     // },
     // animations: [routerTransition()],
-    providers: [BlockService,
-        {
-            provide: "BLOCK_PLACEMENT",
-            useValue: 'CHANNEL'
-        }
+    providers: [BlockService, {
+        provide: "BLOCK_PLACEMENT",
+        useValue: 'CHANNEL'
+    }
     ],
     host: {
         '[@routeAnimation]': 'true',
@@ -43,10 +42,10 @@ import {BlockService} from "../blocks/block-service";
                 <campaign-props-manager></campaign-props-manager>
             </panel-split-side>
         </panel-split-container>
-`
+    `
 })
 export class CampaignsNavigation extends Compbaser {
-    constructor(){
+    constructor() {
         super();
     }
 }

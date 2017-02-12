@@ -40,8 +40,8 @@ export class CampaignChannelList extends Compbaser {
                     }).mergeMap((ids: any) => this.yp.getChannelFromCampaignTimelineBoardViewer(ids.a, ids.b))
 
                 .subscribe((i_campaignTimelineChanelsModel: CampaignTimelineChanelsModel) => {
-                    console.log(i_campaignTimelineChanelsModel.getCampaignTimelineChanelId());
-                    console.log(i_campaignTimelineChanelsModel.getChanelName());
+                    // console.log(i_campaignTimelineChanelsModel.getCampaignTimelineChanelId());
+                    // console.log(i_campaignTimelineChanelsModel.getChanelName());
                     this._loadChannelBlocks(this.selected_campaign_timeline_id, i_campaignTimelineChanelsModel.getCampaignTimelineChanelId());
                 })
         )
@@ -58,8 +58,8 @@ export class CampaignChannelList extends Compbaser {
         this.getBlockChannelIds(i_campaign_timeline_chanel_id, (blockIds) => {
             console.log(blockIds.length);
             for (var blockId in blockIds) {
-                this.blockService.getBlockPlayerData(blockId)
-                // var blockData = blocks[block].getBlockData();
+                var data = this.blockService.getBlockPlayerData(blockId)
+                console.log(data);
             }
 
         })

@@ -15,12 +15,6 @@ export const LAZY_ROUTES = [
 
 @NgModule({
     imports: [DropdownModulePrime, SharedModule, CommonModule, RouterModule.forChild(LAZY_ROUTES)],
-    providers: [BlockService,
-        {
-            provide: "BLOCK_PLACEMENT",
-            useValue: 'SCENE'
-        }
-    ],
     declarations: [ScenesNavigation, ScenePropsManager]
 })
 export class ScenesLazyModule {

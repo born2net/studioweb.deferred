@@ -4,14 +4,37 @@ import {getYouTubeData} from "./block-youtube";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {Once} from "../../decorators/once-decorator";
 import {CampaignTimelineChanelPlayersModel} from "../../store/imsdb.interfaces_auto";
-import {Observable} from "rxjs";
-// import * as xml2js from "xml2js";
-// import "X2JS";
-//
-// declare const X2JS: any;
-
 import X2JS from 'x2js';
 
+
+const blockCodes  = {
+    3510: 'BLOCKCODE_SCENE',
+    4100: 'BLOCKCODE_COLLECTION',
+    4500: 'BLOCKCODE_TWITTER',
+    4505: 'BLOCKCODE_TWITTER_ITEM',
+    4300: 'BLOCKCODE_JSON',
+    4310: 'BLOCKCODE_JSON_ITEM',
+    6010: 'BLOCKCODE_WORLD_WEATHER',
+    6022: 'BLOCKCODE_GOOGLE_SHEETS',
+    6020: 'BLOCKCODE_CALENDAR',
+    6230: 'BLOCKCODE_TWITTERV3',
+    6050: 'BLOCKCODE_INSTAGRAM',
+    6000: 'BLOCKCODE_DIGG',
+    3130: 'BLOCKCODE_IMAGE',
+    3140: 'BLOCKCODE_SVG',
+    3100: 'BLOCKCODE_VIDEO',
+    3345: 'RSS',
+    3430: 'QR',
+    4600: 'YOUTUBE',
+    4105: 'LOCATION',
+    6100: 'FASTERQ',
+    3160: 'IMAGE',
+    3150: 'EXTERNAL_VIDEO',
+    3320: 'CLOCK',
+    3235: 'HTML',
+    3241: 'LABEL',
+    3340: 'MRSS'
+}
 
 @Injectable()
 export class BlockService {
@@ -60,10 +83,11 @@ export class BlockService {
                     if (playerData['Player']['_player']) {
                         // Standard block
                         var blockCode = playerData['Player']['_player'];
-                        console.log(blockCode);
+                        var blockType = blockCodes[blockCode];
+                        console.log(blockCode + ' ' + blockType);
                     } else {
                         // Scene
-                        // var blockCode = BB.CONSTS.BLOCKCODE_SCENE;
+                        // var blockCode = const BLOCKCODE_SCENE;
                         // if (_.isUndefined(i_scene_id)) {
                         //     var domPlayerData = $.parseXML(i_player_data);
                         //     i_scene_id = $(domPlayerData).find('Player').attr('hDataSrc');

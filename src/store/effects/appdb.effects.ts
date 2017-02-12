@@ -132,6 +132,7 @@ export class AppDbEffects {
                 var resellerId = jQuery(pepperConnection.loadManager.m_resellerInfo).find('BusinessInfo');//.attr('businessId'));
                 var resellerDataString = jQuery(pepperConnection.loadManager.m_resellerInfo).children()[0].innerHTML;
 
+
                 var resellerDataJson = {};
                 const boundCallback = Observable.bindCallback(this.processXml, (xmlData: any) => xmlData);
                 boundCallback(this, resellerDataString).subscribe((i_resellerDataJson) => {
