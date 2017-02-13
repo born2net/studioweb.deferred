@@ -22,10 +22,10 @@ export class CampaignChannelList extends Compbaser {
 
     constructor(private yp: YellowPepperService, private blockService: BlockService) {
         super();
-        this.listenChannelChanged();
+        this.listenChannelSelected();
     }
 
-    private listenChannelChanged() {
+    private listenChannelSelected() {
         this.cancelOnDestroy(
             this.yp.listenCampaignTimelineBoardViewerSelected()
                 .combineLatest(this.yp.listenTimelineSelected(),
