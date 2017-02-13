@@ -30,6 +30,7 @@ export class CampaignChannelList extends Compbaser {
     }
 
     private listenChannelChanged() {
+
         this.cancelOnDestroy(
             this.yp.listenCampaignTimelineBoardViewerSelected()
                 .combineLatest(this.yp.listenTimelineSelected(),
@@ -40,30 +41,17 @@ export class CampaignChannelList extends Compbaser {
                             a: campaignTimelineBoardViewerChanelsModel.getCampaignTimelineBoardViewerChanelId(),
                             b: this.selected_campaign_timeline_id
                         };
+                    }).mergeMap((ids: any) => {
+                return this.yp.getChannelFromCampaignTimelineBoardViewer(ids.a)
+            }).mergeMap((i_campaignTimelineChanelsModel: CampaignTimelineChanelsModel) => {
 
-                    }
-                ).mergeMap((ids: any) => this.yp.getChannelFromCampaignTimelineBoardViewer(ids.a)
-            ).mergeMap((i_campaignTimelineChanelsModel: CampaignTimelineChanelsModel) => {
+                return this.yp.getChannelBlocks(i_campaignTimelineChanelsModel.getCampaignTimelineChanelId())
 
-                    return this._loadChannelBlocks(i_campaignTimelineChanelsModel.getCampaignTimelineChanelId())
-
-
-                    // /** >>> must Try() here otherwise lost errors **/
-                    // Lib.Try(() =>
-                    //     this._loadChannelBlocks(i_campaignTimelineChanelsModel.getCampaignTimelineChanelId())
-                    // );
-
-                    // console.log(i_campaignTimelineChanelsModel.getCampaignTimelineChanelId());
-                    // console.log(i_campaignTimelineChanelsModel.getChanelName());
-                    // this._loadChannelBlocks(this.selected_campaign_timeline_id, i_campaignTimelineChanelsModel.getCampaignTimelineChanelId());
-
-                }
-            ).mergeMap(blockIds => {
-
+            }).mergeMap(blockIds => {
 
                 return Observable.from(blockIds)
                     .switchMap((blockId) => {
-                        return this.yp.getBlockRecord(blockId)
+                        return this.blockService.getBlockData(blockId)
                             .map((v) => {
                                 return Observable.of(v)
                             })
@@ -82,18 +70,18 @@ export class CampaignChannelList extends Compbaser {
      @param {Number} i_campaign_timeline_chanel_id
      @return none
      **/
-    _loadChannelBlocks(i_campaign_timeline_chanel_id) {
-        return this.yp.getChannelBlocks(i_campaign_timeline_chanel_id)
-
-        // this.getChannelBlocks(i_campaign_timeline_chanel_id, (blockIds) => {
-        //     for (var blockId in blockIds) {
-        //         this.blockService.getBlockData(blockId, (blockData: IBlockData) => {
-        //             console.log(blockData);
-        //             // if (1) throw new Error('test error')
-        //         })
-        //     }
-        // })
-    }
+    // _loadChannelBlocks(i_campaign_timeline_chanel_id) {
+    //     return this.yp.getChannelBlocks(i_campaign_timeline_chanel_id)
+    //
+    //     // this.getChannelBlocks(i_campaign_timeline_chanel_id, (blockIds) => {
+    //     //     for (var blockId in blockIds) {
+    //     //         this.blockService.getBlockData(blockId, (blockData: IBlockData) => {
+    //     //             console.log(blockData);
+    //     //             // if (1) throw new Error('test error')
+    //     //         })
+    //     //     }
+    //     // })
+    // }
 
     // private getBlockChannelIds(i_campaign_timeline_chanel_id, i_cb) {
     //     return this.yp.getChannelBlocks(i_campaign_timeline_chanel_id)
