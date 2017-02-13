@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component} from "@angular/core";
+import {Component} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {CampaignTimelineBoardViewerChanelsModel, CampaignTimelineChanelsModel, CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
@@ -7,22 +7,36 @@ import {Observable} from "rxjs";
 
 @Component({
     selector: 'campaign-channel-list',
-    changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <small class="release">my component
             <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
         </small>
         <small class="debug">{{me}}</small>
+        <li (click)="_onBlockSelected(block)" *ngFor="let block of m_blockList" class=".channelListItems list-group-item">
+            <a href="#">
+                <i class="fa {{block.getFontAwesome}}"></i>
+                <span>{{block.blockName}}</span>
+                <i style="padding: 0; margin: 0" class="dragch fa fa-arrows-v"></i>
+                <span class="blockLengthTimer hidden-xs">  {{block.length}}</span>
+            </a>
+        </li>
+
     `,
 })
 export class CampaignChannelList extends Compbaser {
 
     private selected_campaign_timeline_id: number = -1;
     private selected_campaign_timeline_chanel_id: number = -1;
+    m_blockList: Array<IBlockData> = [];
 
     constructor(private yp: YellowPepperService, private blockService: BlockService) {
         super();
         this.listenChannelSelected();
+        this.preventRedirect(true);
+    }
+
+    private _onBlockSelected(block: IBlockData) {
+        console.log(block.blockID);
     }
 
     private listenChannelSelected() {
@@ -48,8 +62,9 @@ export class CampaignChannelList extends Compbaser {
                             )
                     })
                     .combineAll()
-            }).subscribe((i_blockList: Array<IBlockData>) => {
+            }).sub((i_blockList: Array<IBlockData>) => {
                 console.log('total block in channel ' + i_blockList.length);
+                this.m_blockList = i_blockList;
             }, e => console.error(e))
         )
     }

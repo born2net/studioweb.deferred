@@ -20,7 +20,8 @@ export interface IBlockData {
     blockAcronym: string;
     blockMinWidth: number;
     blockMinHeight: number;
-    blockData: CampaignTimelineChanelPlayersModel
+    blockData: CampaignTimelineChanelPlayersModel,
+    length?:number;
 }
 
 @Injectable()
