@@ -43,8 +43,8 @@ export class CampaignChannelList extends Compbaser {
                     // console.log(i_campaignTimelineChanelsModel.getCampaignTimelineChanelId());
                     // console.log(i_campaignTimelineChanelsModel.getChanelName());
                     // this._loadChannelBlocks(this.selected_campaign_timeline_id, i_campaignTimelineChanelsModel.getCampaignTimelineChanelId());
-                    Lib.Try(
-                        () => this._loadChannelBlocks(this.selected_campaign_timeline_id, i_campaignTimelineChanelsModel.getCampaignTimelineChanelId())
+                    Lib.Try(() =>
+                        this._loadChannelBlocks(this.selected_campaign_timeline_id, i_campaignTimelineChanelsModel.getCampaignTimelineChanelId())
                     );
                 }, (e) => console.error(e))
         )
@@ -59,7 +59,6 @@ export class CampaignChannelList extends Compbaser {
      **/
     _loadChannelBlocks(i_campaign_timeline_id, i_campaign_timeline_chanel_id) {
         this.getBlockChannelIds(i_campaign_timeline_chanel_id, (blockIds) => {
-            console.log(blockIds.length);
             for (var blockId in blockIds) {
                 this.blockService.getBlockData(blockId, (blockData: IBlockData) => {
                     console.log(blockData);

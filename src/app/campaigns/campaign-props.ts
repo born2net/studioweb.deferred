@@ -207,7 +207,7 @@ export class CampaignProps extends Compbaser {
             this.yp.listenCampaignSelected()
                 .subscribe((i_campaignModel: CampaignsModelExt) => {
                     this.m_campaignModel = i_campaignModel;
-                    var bb = this.m_campaignModel.toPureJs();
+                    // var bb = this.m_campaignModel.toPureJs();
                     // this.m_contGroup.patchValue(bb);
                 }, (e) => console.error(e))
         );

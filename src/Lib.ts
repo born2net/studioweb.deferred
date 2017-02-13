@@ -10,11 +10,17 @@ import {AnonymousSubscription} from "rxjs/Subscription";
 import {environment} from "./environments/environment";
 
 export const moment = moment_["default"];
-
 export var simpleRegExp = '[\\[\\]\\-A-Za-z0-9_~=!:@\.|\ ]{3,50}';
 
-
 Observable.prototype.sub = Observable.prototype.subscribe;
+declare module 'rxjs/Observable' {
+    interface Observable<T> {
+        debug: (...any) => Observable<T>
+    }
+    // interface Observable<T> {
+    //     get(next?: (value: T) => void, error?: (error: any) => void, complete?: () => void): Subscription;
+    // }
+}
 
 declare module "rxjs/Observable" {
     interface Observable<T> {
@@ -24,24 +30,23 @@ declare module "rxjs/Observable" {
     }
 }
 
-const debuggerOn = true;
+const rxjsDebugger = true;
 
 Observable.prototype.sub = Observable.prototype.subscribe;
-
 Observable.prototype.debug = function (message: string) {
     return this.do(
         nextValue => {
-            if (debuggerOn) {
+            if (rxjsDebugger) {
                 console.debug('ObsDebug-I: ' + message, (nextValue.type || nextValue))
             }
         },
         error => {
-            if (debuggerOn) {
+            if (rxjsDebugger) {
                 console.error('ObsDebug-E: ' + message, error)
             }
         },
         () => {
-            if (debuggerOn) {
+            if (rxjsDebugger) {
                 console.debug('ObsDebug-C: ' + message);
                 /** for DevTools colors: **/
                 //console.log("%cObsDebug-C %s", "color: red", message);
@@ -50,14 +55,7 @@ Observable.prototype.debug = function (message: string) {
     );
 };
 
-declare module 'rxjs/Observable' {
-    interface Observable<T> {
-        debug: (...any) => Observable<T>
-    }
-    // interface Observable<T> {
-    //     get(next?: (value: T) => void, error?: (error: any) => void, complete?: () => void): Subscription;
-    // }
-}
+
 
 
 @Injectable()

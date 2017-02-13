@@ -14,31 +14,33 @@ import 'rxjs/add/operator/distinctUntilChanged';
 @Component({
     selector: 'Logo',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    styles: [`#logoContainer { padding-left: 10px; }`],
+    styles: [`#logoContainer {
+        padding-left: 10px;
+    }`],
     template: `
-            <div id="logoContainer" class="reshid flip">
-              <div class="flipcard">
+        <div id="logoContainer" class="reshid flip">
+            <div class="flipcard">
                 <div class="face front">
-                  <img class="img-responsive" src="assets/logo_s.png"/>
+                    <img class="img-responsive" src="assets/logo_s.png"/>
                 </div>
                 <div class="face back">
-                  <img class="img-responsive" src="assets/logo_b.png"/>
+                    <img class="img-responsive" src="assets/logo_b.png"/>
                 </div>
-              </div>
             </div>
+        </div>
     `
 })
 
 export class Logo {
-    constructor(private elementRef:ElementRef) {
+    constructor(private elementRef: ElementRef) {
         this.listenMouse();
     }
 
-    listenMouse():void {
-        var over:Observable<any> = Observable.fromEvent(this.elementRef.nativeElement, 'mouseover').map(e=> {
+    listenMouse(): void {
+        var over: Observable<any> = Observable.fromEvent(this.elementRef.nativeElement, 'mouseover').map(e => {
             return Observable.of(1)
         });
-        var out:Observable<any> = Observable.fromEvent(this.elementRef.nativeElement, 'mouseout').map(e=> {
+        var out: Observable<any> = Observable.fromEvent(this.elementRef.nativeElement, 'mouseout').map(e => {
             return Observable.of(0)
         });
         over.merge(out).distinctUntilChanged().subscribe(events => {
