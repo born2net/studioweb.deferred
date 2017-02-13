@@ -10,6 +10,7 @@ import {ACTION_UISTATE_UPDATE, AppdbAction, SideProps} from "../../store/actions
 import {IUiState} from "../../store/store.data";
 import {stat} from "fs";
 import {BlockService} from "../blocks/block-service";
+import {Lib} from "../../Lib";
 
 @Component({
     selector: 'campaign-editor',
@@ -42,10 +43,12 @@ export class CampaignEditor extends Compbaser {
         this.cancelOnDestroy(
             this.yp.listenCampaignSelected()
                 .subscribe((i_campaignsModelExt: CampaignsModelExt) => {
-                    if (!i_campaignsModelExt)
-                        return;
-                    this.campaignModel = i_campaignsModelExt;
-                    this._loadCampaignTimelines();
+                    Lib.Try(() => {
+                        if (!i_campaignsModelExt)
+                            return;
+                        this.campaignModel = i_campaignsModelExt;
+                        this._loadCampaignTimelines();
+                    })
                 }, (e) => console.error(e))
         );
         this.cancelOnDestroy(

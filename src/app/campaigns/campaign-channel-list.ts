@@ -43,6 +43,7 @@ export class CampaignChannelList extends Compbaser {
                     // console.log(i_campaignTimelineChanelsModel.getCampaignTimelineChanelId());
                     // console.log(i_campaignTimelineChanelsModel.getChanelName());
                     // this._loadChannelBlocks(this.selected_campaign_timeline_id, i_campaignTimelineChanelsModel.getCampaignTimelineChanelId());
+                    // must Try here otherwise lost errors
                     Lib.Try(() =>
                         this._loadChannelBlocks(this.selected_campaign_timeline_id, i_campaignTimelineChanelsModel.getCampaignTimelineChanelId())
                     );
