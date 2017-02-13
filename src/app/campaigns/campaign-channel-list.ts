@@ -1,12 +1,9 @@
 import {ChangeDetectionStrategy, Component} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
-import {CampaignTimelineBoardViewerChanelsModel, CampaignTimelineChanelPlayersModel, CampaignTimelineChanelsModel, CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
-import {Once} from "../../decorators/once-decorator";
-import {BlockService, IBlockData} from "../blocks/block-service";
+import {CampaignTimelineBoardViewerChanelsModel, CampaignTimelineChanelsModel, CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
+import {BlockService} from "../blocks/block-service";
 import {Observable} from "rxjs";
-import {Lib} from "../../Lib";
-import {Map, List} from 'immutable';
 
 @Component({
     selector: 'campaign-channel-list',
@@ -30,25 +27,17 @@ export class CampaignChannelList extends Compbaser {
     }
 
     private listenChannelChanged() {
-
         this.cancelOnDestroy(
             this.yp.listenCampaignTimelineBoardViewerSelected()
                 .combineLatest(this.yp.listenTimelineSelected(),
-                    (campaignTimelineBoardViewerChanelsModel: CampaignTimelineBoardViewerChanelsModel, campaignTimelinesModel: CampaignTimelinesModel) => {
-                        this.selected_campaign_timeline_id = campaignTimelinesModel.getCampaignTimelineId();
-
-                        return {
-                            a: campaignTimelineBoardViewerChanelsModel.getCampaignTimelineBoardViewerChanelId(),
-                            b: this.selected_campaign_timeline_id
-                        };
-                    }).mergeMap((ids: any) => {
-                return this.yp.getChannelFromCampaignTimelineBoardViewer(ids.a)
+                    (i_channelModel: CampaignTimelineBoardViewerChanelsModel, i_timelinesModel: CampaignTimelinesModel) => {
+                        this.selected_campaign_timeline_id = i_timelinesModel.getCampaignTimelineId();
+                        return i_channelModel.getCampaignTimelineBoardViewerChanelId()
+                    }).mergeMap(i_boardViewerChanelId => {
+                return this.yp.getChannelFromCampaignTimelineBoardViewer(i_boardViewerChanelId)
             }).mergeMap((i_campaignTimelineChanelsModel: CampaignTimelineChanelsModel) => {
-
                 return this.yp.getChannelBlocks(i_campaignTimelineChanelsModel.getCampaignTimelineChanelId())
-
             }).mergeMap(blockIds => {
-
                 return Observable.from(blockIds)
                     .switchMap((blockId) => {
                         return this.blockService.getBlockData(blockId)
@@ -62,35 +51,6 @@ export class CampaignChannelList extends Compbaser {
             }, e => console.error(e))
         )
     }
-
-    /**
-     Load the channel list with its own blocks and refresh the UI.
-     @method _loadChannelBlocks
-     @param {Number} i_campaign_timeline_id
-     @param {Number} i_campaign_timeline_chanel_id
-     @return none
-     **/
-    // _loadChannelBlocks(i_campaign_timeline_chanel_id) {
-    //     return this.yp.getChannelBlocks(i_campaign_timeline_chanel_id)
-    //
-    //     // this.getChannelBlocks(i_campaign_timeline_chanel_id, (blockIds) => {
-    //     //     for (var blockId in blockIds) {
-    //     //         this.blockService.getBlockData(blockId, (blockData: IBlockData) => {
-    //     //             console.log(blockData);
-    //     //             // if (1) throw new Error('test error')
-    //     //         })
-    //     //     }
-    //     // })
-    // }
-
-    // private getBlockChannelIds(i_campaign_timeline_chanel_id, i_cb) {
-    //     return this.yp.getChannelBlocks(i_campaign_timeline_chanel_id)
-    //         .subscribe((blockIds: Array<number>) => {
-    //             i_cb(blockIds)
-    //         }, (e) => {
-    //             console.error(e)
-    //         })
-    // }
 
     ngOnInit() {
     }
