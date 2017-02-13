@@ -12,6 +12,7 @@ import {AuthenticateFlags} from "../store/actions/appdb.actions";
 import {UserModel} from "../models/UserModel";
 import {EFFECT_AUTH_START, EFFECT_TWO_FACTOR_AUTH} from "../store/effects/appdb.effects";
 import {NgmslibService} from "ng-mslib";
+import {Lib} from "../Lib";
 
 @Injectable()
 export class AuthService {
@@ -85,12 +86,12 @@ export class AuthService {
         setTimeout(() => {
             console.log('enter app');
             // this.router.navigate(['/App1/Dashboard']);
-            if (this.ngmslibService.inDevMode()) {
+            if (Lib.DevMode()) {
                 this.router.navigate(['/App1/Campaigns']);
             } else {
+                alert('go')
                 this.router.navigate([this.requestedRoute]);
             }
-
             this.storeService.loadServices();
         }, 10)
     }

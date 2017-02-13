@@ -5,6 +5,7 @@ import {CampaignTimelineBoardViewerChanelsModel, CampaignTimelineChanelPlayersMo
 import {Once} from "../../decorators/once-decorator";
 import {BlockService, IBlockData} from "../blocks/block-service";
 import {Observable} from "rxjs";
+import {Lib} from "../../Lib";
 
 @Component({
     selector: 'campaign-channel-list',
@@ -38,10 +39,13 @@ export class CampaignChannelList extends Compbaser {
                             b: this.selected_campaign_timeline_id
                         };
                     }).mergeMap((ids: any) => this.yp.getChannelFromCampaignTimelineBoardViewer(ids.a))
-                .subscribe((i_campaignTimelineChanelsModel: CampaignTimelineChanelsModel) => {
-                    console.log(i_campaignTimelineChanelsModel.getCampaignTimelineChanelId());
-                    console.log(i_campaignTimelineChanelsModel.getChanelName());
-                    this._loadChannelBlocks(this.selected_campaign_timeline_id, i_campaignTimelineChanelsModel.getCampaignTimelineChanelId());
+                .sub((i_campaignTimelineChanelsModel: CampaignTimelineChanelsModel) => {
+                    // console.log(i_campaignTimelineChanelsModel.getCampaignTimelineChanelId());
+                    // console.log(i_campaignTimelineChanelsModel.getChanelName());
+                    // this._loadChannelBlocks(this.selected_campaign_timeline_id, i_campaignTimelineChanelsModel.getCampaignTimelineChanelId());
+                    Lib.Try(
+                        () => this._loadChannelBlocks(this.selected_campaign_timeline_id, i_campaignTimelineChanelsModel.getCampaignTimelineChanelId())
+                    );
                 }, (e) => console.error(e))
         )
     }
@@ -54,18 +58,14 @@ export class CampaignChannelList extends Compbaser {
      @return none
      **/
     _loadChannelBlocks(i_campaign_timeline_id, i_campaign_timeline_chanel_id) {
-        try {
-            this.getBlockChannelIds(i_campaign_timeline_chanel_id, (blockIds) => {
-                console.log(blockIds.length);
-                for (var blockId in blockIds) {
-                    this.blockService.getBlockData(blockId, (blockData: IBlockData) => {
-                        console.log(blockData);
-                    })
-                }
-            })
-        } catch (e) {
-            console.error('sub sub err ' + e)
-        }
+        this.getBlockChannelIds(i_campaign_timeline_chanel_id, (blockIds) => {
+            console.log(blockIds.length);
+            for (var blockId in blockIds) {
+                this.blockService.getBlockData(blockId, (blockData: IBlockData) => {
+                    console.log(blockData);
+                })
+            }
+        })
 
 
         // self.selected_campaign_timeline_chanel_id = i_campaign_timeline_chanel_id;

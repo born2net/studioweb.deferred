@@ -4,10 +4,61 @@ import * as Immutable from "immutable";
 import {List, Map} from "immutable";
 import * as _ from "lodash";
 import * as moment_ from "moment";
+import {Observable} from "rxjs";
+import {PartialObserver} from "rxjs/Observer";
+import {AnonymousSubscription} from "rxjs/Subscription";
+import {environment} from "./environments/environment";
 
 export const moment = moment_["default"];
 
 export var simpleRegExp = '[\\[\\]\\-A-Za-z0-9_~=!:@\.|\ ]{3,50}';
+
+
+Observable.prototype.sub = Observable.prototype.subscribe;
+
+declare module "rxjs/Observable" {
+    interface Observable<T> {
+        sub: (observerOrNext: PartialObserver<T> | ((value: T) => void),
+              error: (error: any) => void,
+              complete?: () => void) => AnonymousSubscription;
+    }
+}
+
+const debuggerOn = true;
+
+Observable.prototype.sub = Observable.prototype.subscribe;
+
+Observable.prototype.debug = function (message: string) {
+    return this.do(
+        nextValue => {
+            if (debuggerOn) {
+                console.debug('ObsDebug-I: ' + message, (nextValue.type || nextValue))
+            }
+        },
+        error => {
+            if (debuggerOn) {
+                console.error('ObsDebug-E: ' + message, error)
+            }
+        },
+        () => {
+            if (debuggerOn) {
+                console.debug('ObsDebug-C: ' + message);
+                /** for DevTools colors: **/
+                //console.log("%cObsDebug-C %s", "color: red", message);
+            }
+        }
+    );
+};
+
+declare module 'rxjs/Observable' {
+    interface Observable<T> {
+        debug: (...any) => Observable<T>
+    }
+    // interface Observable<T> {
+    //     get(next?: (value: T) => void, error?: (error: any) => void, complete?: () => void): Subscription;
+    // }
+}
+
 
 @Injectable()
 export class Lib {
@@ -38,6 +89,15 @@ export class Lib {
              console.log(moment().format('dddd'));
              console.log(moment().startOf('day').fromNow());
              **/
+        }
+    }
+
+    static Try(i_fn: () => void) {
+        try {
+            i_fn();
+        } catch (e) {
+            if (Lib.DevMode())
+                console.error('Exception in function: ' + i_fn + ' ' + e);
         }
     }
 
@@ -412,12 +472,15 @@ export class Lib {
         return result
     };
 
+    /**
+     this.ngmslibService.inDevMode() uses url localhost (window.location.href.indexOf('localhost') > -1)
+     while Lib.DevMode uses environment var
+     */
     static DevMode(): boolean {
-        if (window.location.href.indexOf('localhost') > -1) {
-            return true;
-        } else {
+        if (environment.production) {
             return false;
         }
+        return true;
     }
 
     static GetSamples(): Object {

@@ -1,57 +1,18 @@
-import './polyfills.ts';
-
-import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
-import {enableProdMode} from '@angular/core';
-import {environment} from './environments/environment';
+import "./polyfills.ts";
+import {platformBrowserDynamic} from "@angular/platform-browser-dynamic";
+import {enableProdMode} from "@angular/core";
+import {environment} from "./environments/environment";
 import {AppModule} from "./app/app-module";
-import {Observable, Subscription} from "rxjs";
+import {hmrBootstrap} from "./hmr";
 // import { AppModule } from './app/';
 
-import {hmrBootstrap} from './hmr';
-
-const debuggerOn = true;
-
-// Observable.prototype.get = Observable.prototype.subscribe;
-
-Observable.prototype.debug = function(message:string) {
-    return this.do(
-        nextValue => {
-            if (debuggerOn) {
-                console.debug('ObsDebug-I: ' + message, (nextValue.type || nextValue))
-            }
-        },
-        error => {
-            if (debuggerOn) {
-                console.error('ObsDebug-E: ' + message, error)
-            }
-        },
-        () => {
-            if (debuggerOn) {
-                console.debug('ObsDebug-C: ' + message);
-                /** for DevTools colors: **/
-                //console.log("%cObsDebug-C %s", "color: red", message);
-            }
-        }
-    );
-};
-
-declare module 'rxjs/Observable' {
-    interface Observable<T> {
-        debug: (...any) => Observable<T>
-    }
-    // interface Observable<T> {
-    //     get(next?: (value: T) => void, error?: (error: any) => void, complete?: () => void): Subscription;
-    // }
-}
-
-if (environment.production) {
+if (environment.production)
     enableProdMode();
-}
+
 
 const bootstrap = () => {
     return platformBrowserDynamic().bootstrapModule(AppModule);
 };
-
 
 if (environment.hmr) {
     if (module['hot']) {

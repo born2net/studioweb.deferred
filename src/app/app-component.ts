@@ -37,20 +37,22 @@ export class AppComponent {
         this.checkPlatform();
         this.toastr.setRootViewContainerRef(vRef);
         this.listenRouterUpdateTitle();
-        Observable.fromEvent(window, 'resize').debounceTime(250).subscribe(() => {
-            this.appResized();
-        }, (e) => {
-            console.error(e)
-        });
+        Observable.fromEvent(window, 'resize').debounceTime(250)
+            .subscribe(() => {
+                this.appResized();
+            }, (e) => {
+                console.error(e)
+            });
     }
 
     ngOnInit() {
-        let s = this.router.events.subscribe((val) => {
-            if (val instanceof NavigationEnd) {
-                this.authService.start();
-                s.unsubscribe();
-            }
-        }, (e) => console.error(e));
+        let s = this.router.events
+            .subscribe((val) => {
+                if (val instanceof NavigationEnd) {
+                    this.authService.start();
+                    s.unsubscribe();
+                }
+            }, (e) => console.error(e));
     }
 
     private checkPlatform() {
