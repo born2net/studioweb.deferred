@@ -11,8 +11,9 @@ import {environment} from "./environments/environment";
 
 export const moment = moment_["default"];
 export var simpleRegExp = '[\\[\\]\\-A-Za-z0-9_~=!:@\.|\ ]{3,50}';
-
+const rxjsDebugger = true;
 Observable.prototype.sub = Observable.prototype.subscribe;
+
 declare module 'rxjs/Observable' {
     interface Observable<T> {
         debug: (...any) => Observable<T>
@@ -30,9 +31,6 @@ declare module "rxjs/Observable" {
     }
 }
 
-const rxjsDebugger = true;
-
-Observable.prototype.sub = Observable.prototype.subscribe;
 Observable.prototype.debug = function (message: string) {
     return this.do(
         nextValue => {
@@ -54,9 +52,6 @@ Observable.prototype.debug = function (message: string) {
         }
     );
 };
-
-
-
 
 @Injectable()
 export class Lib {
