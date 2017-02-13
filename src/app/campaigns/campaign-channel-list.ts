@@ -47,7 +47,7 @@ export class CampaignChannelList extends Compbaser {
                     })
                     .combineAll()
             }).subscribe((i_blockList: Array<IBlockData>) => {
-                console.log(i_blockList.length);
+                console.log('total block in channel ' + i_blockList.length);
             }, e => console.error(e))
         )
     }
