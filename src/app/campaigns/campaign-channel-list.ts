@@ -70,31 +70,6 @@ export class CampaignChannelList extends Compbaser {
                 })
             }
         })
-
-
-        // self.selected_campaign_timeline_chanel_id = i_campaign_timeline_chanel_id;
-        //
-        // var timeline = BB.comBroker.getService(BB.SERVICES['CAMPAIGN_VIEW']).getTimelineInstance(i_campaign_timeline_id);
-        // var channel = timeline.getChannelInstance(i_campaign_timeline_chanel_id);
-        // var blocks = channel.getBlocks();
-        // var xdate = BB.comBroker.getService('XDATE');
-        //
-        // for (var block in blocks) {
-        //     var blockData = blocks[block].getBlockData();
-        //     var duration = pepper.getBlockTimelineChannelBlockLength(blockData.blockID).totalInSeconds;
-        //     var durationFormatted = xdate.clearTime().addSeconds(duration).toString('HH:mm:ss');
-        //     $(Elements.SORTABLE).append($('<li class="' + BB.lib.unclass(Elements.CLASS_CHANNEL_LIST_ITEMS) + '  list-group-item" data-block_id="' + blockData.blockID + '">' +
-        //         '<a href="#">' +
-        //         //'<img  class="img-responsive" src="' + blockData.blockIcon + '"/>' +
-        //         '<i class="fa ' + blockData.blockFontAwesome + '"></i>' +
-        //         '<span>' + blockData.blockName + '</span>' +
-        //         '<i style="padding: 0; margin: 0" class="dragch fa fa-arrows-v"></i>' +
-        //         '<span class="' + BB.lib.unclass(Elements.CLASS_BLOCK_LENGTH_TIMER) + ' hidden-xs">' + durationFormatted + '</span>' +
-        //         '</a>' +
-        //         '</li>'));
-        // }
-        // self._listenBlockSelected();
-        // self._createSortable(Elements.SORTABLE);
     }
 
     @Once()
@@ -113,3 +88,28 @@ export class CampaignChannelList extends Compbaser {
     destroy() {
     }
 }
+
+
+// self.selected_campaign_timeline_chanel_id = i_campaign_timeline_chanel_id;
+//
+// var timeline = BB.comBroker.getService(BB.SERVICES['CAMPAIGN_VIEW']).getTimelineInstance(i_campaign_timeline_id);
+// var channel = timeline.getChannelInstance(i_campaign_timeline_chanel_id);
+// var blocks = channel.getBlocks();
+// var xdate = BB.comBroker.getService('XDATE');
+//
+// for (var block in blocks) {
+//     var blockData = blocks[block].getBlockData();
+//     var duration = pepper.getBlockTimelineChannelBlockLength(blockData.blockID).totalInSeconds;
+//     var durationFormatted = xdate.clearTime().addSeconds(duration).toString('HH:mm:ss');
+//     $(Elements.SORTABLE).append($('<li class="' + BB.lib.unclass(Elements.CLASS_CHANNEL_LIST_ITEMS) + '  list-group-item" data-block_id="' + blockData.blockID + '">' +
+//         '<a href="#">' +
+//         //'<img  class="img-responsive" src="' + blockData.blockIcon + '"/>' +
+//         '<i class="fa ' + blockData.blockFontAwesome + '"></i>' +
+//         '<span>' + blockData.blockName + '</span>' +
+//         '<i style="padding: 0; margin: 0" class="dragch fa fa-arrows-v"></i>' +
+//         '<span class="' + BB.lib.unclass(Elements.CLASS_BLOCK_LENGTH_TIMER) + ' hidden-xs">' + durationFormatted + '</span>' +
+//         '</a>' +
+//         '</li>'));
+// }
+// self._listenBlockSelected();
+// self._createSortable(Elements.SORTABLE);
