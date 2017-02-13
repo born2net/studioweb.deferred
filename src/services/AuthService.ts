@@ -89,7 +89,6 @@ export class AuthService {
             if (Lib.DevMode()) {
                 this.router.navigate(['/App1/Campaigns']);
             } else {
-                alert('go')
                 this.router.navigate([this.requestedRoute]);
             }
             this.storeService.loadServices();
