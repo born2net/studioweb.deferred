@@ -70,7 +70,7 @@ export class CampaignChannelList extends Compbaser {
                     })
                     .combineAll()
             }).subscribe((res) => {
-                console.log();(res)
+                console.log(res);
             }, e => console.error(e))
         )
     }
