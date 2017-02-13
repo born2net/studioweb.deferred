@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {CampaignTimelineBoardViewerChanelsModel, CampaignTimelineChanelsModel, CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
-import {BlockService} from "../blocks/block-service";
+import {BlockService, IBlockData} from "../blocks/block-service";
 import {Observable} from "rxjs";
 
 @Component({
@@ -22,7 +22,6 @@ export class CampaignChannelList extends Compbaser {
 
     constructor(private yp: YellowPepperService, private blockService: BlockService) {
         super();
-        console.log(blockService.getServiceType());
         this.listenChannelChanged();
     }
 
@@ -31,6 +30,7 @@ export class CampaignChannelList extends Compbaser {
             this.yp.listenCampaignTimelineBoardViewerSelected()
                 .combineLatest(this.yp.listenTimelineSelected(),
                     (i_channelModel: CampaignTimelineBoardViewerChanelsModel, i_timelinesModel: CampaignTimelinesModel) => {
+                        this.selected_campaign_timeline_chanel_id = i_channelModel.getCampaignTimelineChanelId();
                         this.selected_campaign_timeline_id = i_timelinesModel.getCampaignTimelineId();
                         return i_channelModel.getCampaignTimelineBoardViewerChanelId()
                     }).mergeMap(i_boardViewerChanelId => {
@@ -38,16 +38,16 @@ export class CampaignChannelList extends Compbaser {
             }).mergeMap((i_campaignTimelineChanelsModel: CampaignTimelineChanelsModel) => {
                 return this.yp.getChannelBlocks(i_campaignTimelineChanelsModel.getCampaignTimelineChanelId())
             }).mergeMap(blockIds => {
+                if (blockIds.length == 0)
+                    return Observable.of([])
                 return Observable.from(blockIds)
                     .switchMap((blockId) => {
                         return this.blockService.getBlockData(blockId)
-                            .map((v) => {
-                                return Observable.of(v)
-                            })
+                            .map((v) => Observable.of(v))
                     })
                     .combineAll()
-            }).subscribe((res) => {
-                console.log(res);
+            }).subscribe((i_blockList: Array<IBlockData>) => {
+                console.log(i_blockList.length);
             }, e => console.error(e))
         )
     }

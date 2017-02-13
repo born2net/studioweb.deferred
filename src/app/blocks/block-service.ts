@@ -46,15 +46,6 @@ export class BlockService {
         return this.blockPlacement;
     }
 
-    // getPlayerData = (i_type) => {
-    //     if (i_type == '1') {
-    //         return getDiggData();
-    //     } else {
-    //         return getYouTubeData();
-    //     }
-    //
-    // }
-
     /**
      Get block data as a json formatted object literal and return to caller
      @method getBlockData
@@ -102,70 +93,14 @@ export class BlockService {
                 return Observable.of(data)
             })
     }
-
-    // /**
-    //  Get the XML player data of a block, depending where its placed
-    //  If you like to view XML raw data, be sure to debug domPlayerData.children[0].outerHTML
-    //  @method _getBlockPlayerData
-    //  @return {Object} player data of block (aka player) parsed as DOM
-    //  **/
-    // private _getBlockPlayerData(i_block_id, i_cb: (campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModel) => void) {
-    //
-    //     switch (this.blockPlacement) {
-    //         case 'CHANNEL': {
-    //             this._getPlayerData(i_block_id, (campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModel) => {
-    //                 var xml = campaignTimelineChanelPlayersModel.getPlayerData();
-    //                 let playerData = this.parser.xml2js(xml);
-    //                 if (playerData['Player']['_player']) {
-    //                     // Standard block
-    //                     var blockCode = playerData['Player']['_player'];
-    //                     var blockType = blockCodes[blockCode];
-    //                     console.log(blockCode + ' ' + blockType);
-    //                     i_cb(campaignTimelineChanelPlayersModel)
-    //                 } else {
-    //                     // Scene
-    //                     // var blockCode = const BLOCKCODE_SCENE;
-    //                     // if (_.isUndefined(i_scene_id)) {
-    //                     //     var domPlayerData = $.parseXML(i_player_data);
-    //                     //     i_scene_id = $(domPlayerData).find('Player').attr('hDataSrc');
-    //                 }
-    //             })
-    //
-    //             // recBlock = pepper.getCampaignTimelineChannelPlayerRecord(self.m_block_id);
-    //             // return $.parseXML(recBlock['player_data']);
-    //             // to view data debug domPlayerData.children[0].outerHTML
-    //             break;
-    //         }
-    //         case 'SCENE': {
-    //             // return pepper.getScenePlayerdataBlock(self.m_sceneID, self.m_block_id);
-    //             // to view data debug domPlayerData.children[0].outerHTML
-    //             break;
-    //         }
-    //     }
-    // }
-
-    private _getPlayerDataV2(i_block_id): Observable<CampaignTimelineChanelPlayersModel> {
-        return this.yp.getBlockRecord(i_block_id);
-    }
-
-    /**
-     *  get player data from store for block id
-     * @param i_block_id
-     * @param i_cb
-     * @returns {Subscription}
-     * @private
-     */
-    @Once()
-    private _getPlayerData(i_block_id, i_cb: (campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModel) => void) {
-        return this.yp.getBlockRecord(i_block_id)
-            .catch((e) => {
-                alert('e2' + e);
-                return Observable.of(e);
-            })
-            .subscribe((v) => {
-                console.log(v + ' ' + i_block_id);
-                i_cb(v)
-            }, (e) => console.error(e))
-    }
-
 }
+
+
+// getPlayerData = (i_type) => {
+//     if (i_type == '1') {
+//         return getDiggData();
+//     } else {
+//         return getYouTubeData();
+//     }
+//
+// }
