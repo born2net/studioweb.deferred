@@ -61,42 +61,78 @@ export class BlockService {
      @return {object} data
      The entire block data members which can be made public
      **/
-    public getBlockData(i_block_id, i_cb: (blockData: IBlockData) => void): void {
+    public getBlockData(i_block_id): any {
+        return this._getPlayerDataV2(i_block_id)
+            .map((i_campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModel) => {
 
-        this._getPlayerData(i_block_id, (campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModel) => {
-            var xml = campaignTimelineChanelPlayersModel.getPlayerData();
-            let playerData = this.parser.xml2js(xml);
+                var xml = i_campaignTimelineChanelPlayersModel.getPlayerData();
+                let playerData = this.parser.xml2js(xml);
 
-            if (playerData['Player']['_player']) {
-                /** Standard block **/
-                var code = playerData['Player']['_player'];
-                var blockType = blockCodes[code]
-                if (_.isUndefined(blockType)) {
-                    var e = `Panic using a component / block which is not supported yet ${code} ${blockType}`;
-                    throw new Error(e)
+                if (playerData['Player']['_player']) {
+                    /** Standard block **/
+                    var code = playerData['Player']['_player'];
+                    var blockType = blockCodes[code]
+                    if (_.isUndefined(blockType)) {
+                        var e = `Panic using a component / block which is not supported yet ${code} ${blockType}`;
+                        throw new Error(e)
+                    }
+
+                } else {
+                    /** Scene **/
+                    var blockCode = blockCode['BLOCKCODE_SCENE'];
+                    // if (_.isUndefined(i_scene_id)) {
+                    //     var domPlayerData = $.parseXML(i_player_data);
+                    //     i_scene_id = $(domPlayerData).find('Player').attr('hDataSrc');
                 }
 
-            } else {
-                /** Scene **/
-                var blockCode = blockCode['BLOCKCODE_SCENE'];
-                // if (_.isUndefined(i_scene_id)) {
-                //     var domPlayerData = $.parseXML(i_player_data);
-                //     i_scene_id = $(domPlayerData).find('Player').attr('hDataSrc');
-            }
-            var data = {
-                blockID: i_block_id,
-                blockType: blockType,
-                blockName: this.hp.getBlockBoilerplate(code).name,
-                blockDescription: this.hp.getBlockBoilerplate(code).description,
-                blockIcon: this.hp.getBlockBoilerplate(code).icon,
-                blockFontAwesome: this.hp.getBlockBoilerplate(code).fontAwesome,
-                blockAcronym: this.hp.getBlockBoilerplate(code).acronym,
-                blockMinWidth: this.m_minSize.w,
-                blockMinHeight: this.m_minSize.h,
-                blockData: campaignTimelineChanelPlayersModel
-            };
-            i_cb(data);
-        });
+                return Observable.of({
+                    blockID: i_block_id,
+                    blockType: blockType,
+                    blockName: this.hp.getBlockBoilerplate(code).name,
+                    blockDescription: this.hp.getBlockBoilerplate(code).description,
+                    blockIcon: this.hp.getBlockBoilerplate(code).icon,
+                    blockFontAwesome: this.hp.getBlockBoilerplate(code).fontAwesome,
+                    blockAcronym: this.hp.getBlockBoilerplate(code).acronym,
+                    blockMinWidth: this.m_minSize.w,
+                    blockMinHeight: this.m_minSize.h,
+                    blockData: i_campaignTimelineChanelPlayersModel
+                });
+            });
+
+        // this._getPlayerData(i_block_id, (campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModel) => {
+        //     var xml = campaignTimelineChanelPlayersModel.getPlayerData();
+        //     let playerData = this.parser.xml2js(xml);
+        //
+        //     if (playerData['Player']['_player']) {
+        //         /** Standard block **/
+        //         var code = playerData['Player']['_player'];
+        //         var blockType = blockCodes[code]
+        //         if (_.isUndefined(blockType)) {
+        //             var e = `Panic using a component / block which is not supported yet ${code} ${blockType}`;
+        //             throw new Error(e)
+        //         }
+        //
+        //     } else {
+        //         /** Scene **/
+        //         var blockCode = blockCode['BLOCKCODE_SCENE'];
+        //         // if (_.isUndefined(i_scene_id)) {
+        //         //     var domPlayerData = $.parseXML(i_player_data);
+        //         //     i_scene_id = $(domPlayerData).find('Player').attr('hDataSrc');
+        //     }
+        //     var data = {
+        //         blockID: i_block_id,
+        //         blockType: blockType,
+        //         blockName: this.hp.getBlockBoilerplate(code).name,
+        //         blockDescription: this.hp.getBlockBoilerplate(code).description,
+        //         blockIcon: this.hp.getBlockBoilerplate(code).icon,
+        //         blockFontAwesome: this.hp.getBlockBoilerplate(code).fontAwesome,
+        //         blockAcronym: this.hp.getBlockBoilerplate(code).acronym,
+        //         blockMinWidth: this.m_minSize.w,
+        //         blockMinHeight: this.m_minSize.h,
+        //         blockData: campaignTimelineChanelPlayersModel
+        //     };
+        //     i_cb(data);
+        // });
     }
 
     // /**
@@ -139,6 +175,10 @@ export class BlockService {
     //         }
     //     }
     // }
+
+    private _getPlayerDataV2(i_block_id): Observable<CampaignTimelineChanelPlayersModel> {
+        return this.yp.getBlockRecord(i_block_id);
+    }
 
     /**
      *  get player data from store for block id

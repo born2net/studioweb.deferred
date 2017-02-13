@@ -207,7 +207,7 @@ export class YellowPepperService {
     /**
      Get a player_id record from sdk by player_id primary key.
      **/
-    getBlockRecord(i_player_id): Observable<CampaignTimelineChanelPlayersModel> {
+    getBlockRecord(i_player_id) {
         return this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_chanel_players)
             .map((i_campaignTimelineChanelPlayersModels: List<CampaignTimelineChanelPlayersModel>) => {
                 return i_campaignTimelineChanelPlayersModels
@@ -431,7 +431,7 @@ export class YellowPepperService {
                                 screenProps['sd' + counter]['y'] = recBoardTemplateViewer.getPixelY();
                                 screenProps['sd' + counter]['w'] = recBoardTemplateViewer.getPixelWidth();
                                 screenProps['sd' + counter]['h'] = recBoardTemplateViewer.getPixelHeight();
-                                
+
                                 // make sure that every view_order we assign is unique and sequential
                                 var viewOrder = recBoardTemplateViewer.getViewerOrder();
                                 if (!_.isUndefined(viewOrderIndexes[viewOrder])) {
