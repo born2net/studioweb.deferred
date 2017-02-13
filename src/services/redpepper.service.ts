@@ -216,6 +216,41 @@ export class RedPepperService {
     }
 
     /**
+     Update a timeline's duration which is set as the total sum of all blocks within the longest running channel
+     @method calcTimelineTotalDuration
+     @param {Number} i_campaign_timeline_id
+     @return none
+     **/
+    calcTimelineTotalDuration(i_campaign_timeline_id) {
+        var longestChannelDuration = 0;
+        // Get all timelines
+        $(this.databaseManager.table_campaign_timelines().getAllPrimaryKeys()).each((k, campaign_timeline_id) => {
+            if (campaign_timeline_id == i_campaign_timeline_id) {
+                // get all channels that belong to timeline
+                $(this.databaseManager.table_campaign_timeline_chanels().getAllPrimaryKeys()).each((k, campaign_timeline_chanel_id) => {
+                    var recCampaignTimelineChannel = this.databaseManager.table_campaign_timeline_chanels().getRec(campaign_timeline_chanel_id);
+                    if (campaign_timeline_id == recCampaignTimelineChannel['campaign_timeline_id']) {
+                        var timelineDuration = 0;
+                        // get all players / resources that belong timeline
+                        $(this.databaseManager.table_campaign_timeline_chanel_players().getAllPrimaryKeys()).each((k, campaign_timeline_chanel_player_id) => {
+                            var recCampaignTimelineChannelPlayer = this.databaseManager.table_campaign_timeline_chanel_players().getRec(campaign_timeline_chanel_player_id);
+                            if (campaign_timeline_chanel_id == recCampaignTimelineChannelPlayer['campaign_timeline_chanel_id']) {
+                                // console.log(campaign_timeline_chanel_player_id + ' ' + recCampaignTimelineChannelPlayer['player_duration']);
+                                timelineDuration += parseFloat(recCampaignTimelineChannelPlayer['player_duration']);
+                                if (timelineDuration > longestChannelDuration)
+                                    longestChannelDuration = timelineDuration;
+                            }
+                        });
+                    }
+                });
+            }
+        });
+        this.setCampaignTimelineRecord(i_campaign_timeline_id, 'timeline_duration', longestChannelDuration);
+        this.addPendingTables(['table_campaign_timelines','table_campaign_timeline_chanels','table_campaign_timeline_chanel_players']);
+        // this.databaseManager.fire(Pepper['TIMELINE_LENGTH_CHANGED'], this, null, longestChannelDuration);
+    }
+
+    /**
      Remove the association between the screen division (aka viewer) and all channels that are assigned with that viewer
      @method removeTimelineBoardViewerChannel
      @param {Number} i_campaign_timeline_board_template_id
@@ -2548,42 +2583,6 @@ export class RedPepperService {
             });
         }
         return totalChannelLength;
-    }
-
-    /**
-     Update a timeline's duration which is set as the total sum of all blocks within the longest running channel
-     @method calcTimelineTotalDuration
-     @param {Number} i_campaign_timeline_id
-     @return none
-     **/
-    calcTimelineTotalDuration(i_campaign_timeline_id) {
-
-        var longestChannelDuration = 0;
-        // Get all timelines
-        $(this.databaseManager.table_campaign_timelines().getAllPrimaryKeys()).each(function (k, campaign_timeline_id) {
-            if (campaign_timeline_id == i_campaign_timeline_id) {
-                // get all channels that belong to timeline
-                $(this.databaseManager.table_campaign_timeline_chanels().getAllPrimaryKeys()).each(function (k, campaign_timeline_chanel_id) {
-                    var recCampaignTimelineChannel = this.databaseManager.table_campaign_timeline_chanels().getRec(campaign_timeline_chanel_id);
-                    if (campaign_timeline_id == recCampaignTimelineChannel['campaign_timeline_id']) {
-
-                        var timelineDuration = 0;
-                        // get all players / resources that belong timeline
-                        $(this.databaseManager.table_campaign_timeline_chanel_players().getAllPrimaryKeys()).each(function (k, campaign_timeline_chanel_player_id) {
-                            var recCampaignTimelineChannelPlayer = this.databaseManager.table_campaign_timeline_chanel_players().getRec(campaign_timeline_chanel_player_id);
-                            if (campaign_timeline_chanel_id == recCampaignTimelineChannelPlayer['campaign_timeline_chanel_id']) {
-                                // console.log(campaign_timeline_chanel_player_id + ' ' + recCampaignTimelineChannelPlayer['player_duration']);
-                                timelineDuration += parseFloat(recCampaignTimelineChannelPlayer['player_duration']);
-                                if (timelineDuration > longestChannelDuration)
-                                    longestChannelDuration = timelineDuration;
-                            }
-                        });
-                    }
-                });
-            }
-        });
-        this.setCampaignTimelineRecord(i_campaign_timeline_id, 'timeline_duration', longestChannelDuration);
-        // this.databaseManager.fire(Pepper['TIMELINE_LENGTH_CHANGED'], this, null, longestChannelDuration);
     }
 
     /**
