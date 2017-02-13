@@ -258,6 +258,20 @@ export class YellowPepperService {
     }
 
     /**
+     Get a block's (a.k.a player) total hours / minutes / seconds playback length on the timeline_channel.
+     **/
+    getBlockTimelineChannelBlockLength(i_campaign_timeline_chanel_player_id):Observable<number> {
+        return this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_chanel_players)
+            .map((i_players: List<CampaignTimelineChanelPlayersModel>) => {
+                return i_players.reduce((result: number, i_player) => {
+                    if (i_player.getCampaignTimelineChanelPlayerId() == i_campaign_timeline_chanel_player_id)
+                        result = i_player.getPlayerDuration();
+                    return result;
+                }, 0)
+            }).take(1);
+    }
+
+    /**
      Get the sequence index of a timeline in the specified campaign
      **/
     getCampaignTimelineSequencerIndex(i_campaign_timeline_id): Observable<number> {

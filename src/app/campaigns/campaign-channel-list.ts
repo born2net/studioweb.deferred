@@ -43,7 +43,9 @@ export class CampaignChannelList extends Compbaser {
                 return Observable.from(blockIds)
                     .switchMap((blockId) => {
                         return this.blockService.getBlockData(blockId)
-                            .map((v) => Observable.of(v))
+                            .map((blockData: IBlockData) => this.yp.getBlockTimelineChannelBlockLength(blockData.blockID)
+                                .map(length => Object.assign(blockData, {length: length}))
+                            )
                     })
                     .combineAll()
             }).subscribe((i_blockList: Array<IBlockData>) => {
