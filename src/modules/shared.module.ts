@@ -15,8 +15,9 @@ import {BlurForwarder} from "../comps/blurforwarder/BlurForwarder";
 import {ContextMenuModule} from "angular2-contextmenu";
 import {ChartModule} from "angular2-highcharts";
 import {BlockProp} from "../app/blocks/block-prop";
+import {FormatSecondsPipe} from "../pipes/format-seconds-pipe";
 
-var sharedComponents = [Infobox, Sliderpanel, Slideritem, PanelSplitMain, PanelSplitSide, PanelSplitContainer, ListToArrayPipe, MatchBodyHeight, ScreenTemplate, BlurForwarder, BlockProp];
+var sharedComponents = [Infobox, Sliderpanel, Slideritem, PanelSplitMain, PanelSplitSide, PanelSplitContainer, ListToArrayPipe, FormatSecondsPipe, MatchBodyHeight, ScreenTemplate, BlurForwarder, BlockProp];
 
 @NgModule({
     imports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule, ContextMenuModule, ChartModule, ReactiveFormsModule],

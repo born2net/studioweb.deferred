@@ -167,16 +167,12 @@ export class YellowPepperService {
         return Observable.combineLatest(table_campaign_timeline_chanels$, table_campaign_timeline_chanel_players$,
             (table_campaign_timeline_chanels: List<CampaignTimelineChanelsModel>,
              table_campaign_timeline_chanel_players: List<CampaignTimelineChanelPlayersModel>) => {
-
                 var longestChannelDuration = 0;
-
                 // loop over channels of timeline and sum up lengths
                 table_campaign_timeline_chanels.forEach(i_campaignTimelineChanelsModel => {
                     if (i_campaignTimelineChanelsModel.getCampaignTimelineId() == i_campaign_timeline_id) {
-                        console.log('found channel ' + i_campaignTimelineChanelsModel.getChanelName());
-
+                        // console.log('found channel ' + i_campaignTimelineChanelsModel.getChanelName());
                         var timelineDuration = 0;
-
                         table_campaign_timeline_chanel_players.forEach(i_campaignTimelineChanelPlayersModel => {
                             if (i_campaignTimelineChanelPlayersModel.getCampaignTimelineChanelId() == i_campaignTimelineChanelsModel.getCampaignTimelineChanelId()) {
                                 timelineDuration += parseFloat(i_campaignTimelineChanelPlayersModel.getPlayerDuration());
@@ -184,10 +180,10 @@ export class YellowPepperService {
                                     longestChannelDuration = timelineDuration;
                             }
                         })
-                        console.log('total ' + timelineDuration + ' longest so far ' + longestChannelDuration);
+                        // console.log('total ' + timelineDuration + ' longest so far ' + longestChannelDuration);
                     }
                 })
-                console.log('winner ' + longestChannelDuration);
+                // console.log('winner ' + longestChannelDuration);
                 return longestChannelDuration;
             })
 

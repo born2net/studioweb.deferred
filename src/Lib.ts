@@ -102,6 +102,36 @@ export class Lib {
     }
 
     /**
+     Format a seconds value into an object broken into hours / minutes / seconds
+     @method formatSecondsToObject
+     @param {Number} i_totalSeconds
+     @return {Object}
+     **/
+    static FormatSecondsToObject(i_totalSeconds) {
+        var seconds:any = 0;
+        var minutes:any = 0;
+        var hours:any = 0;
+        var totalInSeconds = i_totalSeconds;
+        if (i_totalSeconds >= 3600) {
+            hours = Math.floor(i_totalSeconds / 3600);
+            i_totalSeconds = i_totalSeconds - (hours * 3600);
+        }
+        if (i_totalSeconds >= 60) {
+            minutes = Math.floor(i_totalSeconds / 60);
+            seconds = i_totalSeconds - (minutes * 60);
+        }
+        if (hours == 0 && minutes == 0)
+            seconds = i_totalSeconds;
+        var playbackLength = {
+            hours: parseInt(hours),
+            minutes: parseInt(minutes),
+            seconds: parseInt(seconds),
+            totalInSeconds: parseInt(totalInSeconds)
+        };
+        return playbackLength;
+    }
+
+    /**
      *
      * @param dateString format of date + time: /Date(1469923200000+0000)/"
      * @returns {any}

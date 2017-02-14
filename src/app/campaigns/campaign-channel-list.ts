@@ -5,6 +5,7 @@ import {BlockService, IBlockData} from "../blocks/block-service";
 import {Observable} from "rxjs";
 import {RedPepperService} from "../../services/redpepper.service";
 import {YellowPepperService} from "../../services/yellowpepper.service";
+import * as _ from 'lodash';
 
 @Component({
     selector: 'campaign-channel-list',
@@ -15,10 +16,14 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
 
         .dragch {
             float: right;
-            margin: 30px;
+            padding-right: 10px;
             position: relative;
-            right: 30px;
+            top: 5px;
+        }
 
+        .blockLengthTimer {
+            float: right;
+            padding-right: 10px;
         }
 
         .channelListItems {
@@ -48,8 +53,10 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
                 <a href="#">
                     <i class="fa {{block.blockFontAwesome}}"></i>
                     <span>{{block.blockName}}</span>
-                    <i style="padding: 0; margin: 0" class="dragch fa fa-arrows-v"></i>
-                    <span class="blockLengthTimer hidden-xs">  {{block.length}}</span>
+                    <i class="dragch fa fa-arrows-v"></i>
+                    <span class="blockLengthTimer hidden-xs"> 
+                        {{block.length | FormatSecondsPipe}}
+                    </span>
                 </a>
             </li>
         </div>
@@ -98,37 +105,30 @@ export class CampaignChannelList extends Compbaser {
                             )
                     })
                     .combineAll()
-            }).mergeMap((i_blockList: Array<IBlockData>) => {
-                return this.yp.calcTimelineTotalDuration(this.selected_campaign_timeline_id).map(longestTimeline => {
-                    return {
-                        longestTimeline, i_blockList
-                    }
-                })
-            }).subscribe(a => {
-                console.log('total block in channel ' + a);
-
-
-                // todo: sort properly
-                // for (var block_id in self.m_blocks) {
-                //     var recBlock = pepper.getBlockRecord(block_id);
-                //     var player_data = pepper.getBlockRecord(block_id)['player_data'];
-                //     var domPlayerData = $.parseXML(player_data);
-                //     var sceneHandle = $(domPlayerData).find('Player').attr('player');
-                //     // workaround to remove scenes listed inside table campaign_timeline_chanel_players
-                //     if (sceneHandle == '3510')
-                //         continue;
-                //     var offsetTime = parseInt(recBlock['player_offset_time']);
-                //     blocksSorted[offsetTime] = self.m_blocks[block_id];
-                // }
-
-
-                // this.m_blockList = i_blockList;
-                // setTimeout(() => {
-                //     this._createSortable('#sortableChannel');
-                // }, 300)
+            }).sub((i_blockList: Array<IBlockData>) => {
+                console.log('total block in channel ' + i_blockList.length);
+                this.m_blockList = this._sortBlock(i_blockList);
+                setTimeout(() => {
+                    this._createSortable('#sortableChannel');
+                }, 300)
 
             }, e => console.error(e))
         )
+    }
+
+    private _sortBlock(i_blockList: Array<IBlockData>): Array<IBlockData> {
+        var blocksSorted = {};
+        _.forEach(i_blockList, (i_block: IBlockData) => {
+            var player_data = i_block.blockData.getPlayerData();
+            var domPlayerData = $.parseXML(player_data);
+            var sceneHandle = jQuery(domPlayerData).find('Player').attr('player');
+            // workaround to remove scenes listed inside table campaign_timeline_chanel_players
+            if (sceneHandle == '3510')
+                return;
+            var offsetTime = parseInt(i_block.blockData.getPlayerOffsetTime());
+            blocksSorted[offsetTime] = i_block;
+        });
+        return _.values(blocksSorted) as Array<IBlockData>;
     }
 
     /**
