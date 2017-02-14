@@ -699,6 +699,10 @@ a.list-group-item:focus, button.list-group-item:focus {
     background-color: #c4c4c4;
 }
 
+.offline {
+    color: red;
+}
+
 .selectedItem {
     background-color: #c4c4c4 !important;
 }
