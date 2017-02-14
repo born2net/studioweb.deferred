@@ -82,15 +82,19 @@ export class YellowPepperService {
 
     }
 
-    listenTimelineDurationChanged(emitOnEmpty: boolean = false) {
+    listenTimelineDurationChanged(emitOnEmpty: boolean = false):Observable<number> {
         var $timelinesList$ = this.store.select(store => store.msDatabase.sdk.table_campaign_timelines);
         return this.listenCampaignSelected()
             .combineLatest($timelinesList$, (campaign, timelines) => {
                 return campaign
             }).mergeMap(campaign => {
                 return this.getCampaignTimelines(campaign.getCampaignId())
-            }).map(v => {
-                return v
+            }).mergeMap((i_timelines: List<CampaignTimelinesModel>) => {
+                var total = 0;
+                i_timelines.forEach((v) => {
+                    total = total + parseInt(v.getTimelineDuration());
+                })
+                return Observable.of(total);
             })
     }
 

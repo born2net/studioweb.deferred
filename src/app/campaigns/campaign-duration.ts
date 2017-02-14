@@ -1,7 +1,6 @@
 import {AfterViewInit, Component} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
-import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
 
 @Component({
     selector: 'campaign-duration',
@@ -18,18 +17,18 @@ import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
 })
 export class CampaignDuration extends Compbaser implements AfterViewInit {
 
-    m_duration = '00:00:00'
+    m_duration: any = '00:00:00'
 
     constructor(private yp: YellowPepperService) {
         super();
     }
 
     ngAfterViewInit() {
-
         this.cancelOnDestroy(
             this.yp.listenTimelineDurationChanged()
-                .subscribe((v) => {
-                    console.log(v);
+                .subscribe((totalDuration) => {
+                    var xdate = new XDate();
+                    this.m_duration = xdate.clearTime().addSeconds(totalDuration).toString('HH:mm:ss');
                 })
         )
     }
