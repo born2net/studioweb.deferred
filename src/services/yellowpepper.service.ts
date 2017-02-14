@@ -82,6 +82,18 @@ export class YellowPepperService {
 
     }
 
+    listenTimelineDurationChanged(emitOnEmpty: boolean = false) {
+        var $timelinesList$ = this.store.select(store => store.msDatabase.sdk.table_campaign_timelines);
+        return this.listenCampaignSelected()
+            .combineLatest($timelinesList$, (campaign, timelines) => {
+                return campaign
+            }).mergeMap(campaign => {
+                return this.getCampaignTimelines(campaign.getCampaignId())
+            }).map(v => {
+                return v
+            })
+    }
+
     listenGlobalBoardSelectedChanged(emitOnEmpty: boolean = false): Observable<BoardTemplateViewersModel> {
         var globalBoardTemplateViewerSelected$ = this.ngrxStore.select(store => store.appDb.uiState.campaign.campaignTimelineBoardViewerSelected);
         var tableBoardTemplatesList$ = this.ngrxStore.select(store => store.msDatabase.sdk.table_board_template_viewers);
@@ -154,16 +166,11 @@ export class YellowPepperService {
     }
 
     /**
-     Update a timeline's duration which is set as the total sum of all blocks within the longest running channel
-     @method calcTimelineTotalDuration
-     @param {Number} i_campaign_timeline_id
-     @return none
+     get time line total duration by channel
      **/
-    calcTimelineTotalDuration(i_campaign_timeline_id):Observable<number> {
-
+    getTimelineTotalDurationByChannel(i_campaign_timeline_id): Observable<number> {
         var table_campaign_timeline_chanels$ = this.ngrxStore.select(store => store.msDatabase.sdk.table_campaign_timeline_chanels)
         var table_campaign_timeline_chanel_players$ = this.ngrxStore.select(store => store.msDatabase.sdk.table_campaign_timeline_chanel_players)
-
         return Observable.combineLatest(table_campaign_timeline_chanels$, table_campaign_timeline_chanel_players$,
             (table_campaign_timeline_chanels: List<CampaignTimelineChanelsModel>,
              table_campaign_timeline_chanel_players: List<CampaignTimelineChanelPlayersModel>) => {
@@ -186,10 +193,20 @@ export class YellowPepperService {
                 // console.log('winner ' + longestChannelDuration);
                 return longestChannelDuration;
             })
+    }
 
-
-        // this.setCampaignTimelineRecord(i_campaign_timeline_id, 'timeline_duration', longestChannelDuration);
-        // this.addPendingTables(['table_campaign_timelines','table_campaign_timeline_chanels','table_campaign_timeline_chanel_players']);
+    /**
+     Get a timeline's duration which is set as the total sum of all blocks within the longest running channel
+     **/
+    getTimelineTotalDuration(i_campaign_timeline_id): Observable<string> {
+        return this.store.select(store => store.msDatabase.sdk.table_campaign_timelines)
+            .map((campaignTimelinesModels: List<CampaignTimelinesModel>) => {
+                return campaignTimelinesModels.reduce((result: string, campaignTimelineModel) => {
+                    if (campaignTimelineModel.getCampaignTimelineId() == i_campaign_timeline_id)
+                        result = campaignTimelineModel.getTimelineDuration();
+                    return result;
+                }, '')
+            }).take(1);
     }
 
     /**
@@ -246,7 +263,7 @@ export class YellowPepperService {
     /**
      Get a player_id record from sdk by player_id primary key.
      **/
-    getBlockRecord(i_player_id):Observable<CampaignTimelineChanelPlayersModel> {
+    getBlockRecord(i_player_id): Observable<CampaignTimelineChanelPlayersModel> {
         return this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_chanel_players)
             .map((i_campaignTimelineChanelPlayersModels: List<CampaignTimelineChanelPlayersModel>) => {
                 return i_campaignTimelineChanelPlayersModels
@@ -405,20 +422,6 @@ export class YellowPepperService {
                 return campaignTimelinesModels.find((campaignTimelineModel) => {
                     return campaignTimelineModel.getCampaignTimelineId() == i_campaign_timeline_id
                 })
-            }).take(1);
-    }
-
-    /**
-     Get a timeline's duration which is set as the total sum of all blocks within the longest running channel
-     **/
-    getTimelineTotalDuration(i_campaign_timeline_id): Observable<string> {
-        return this.store.select(store => store.msDatabase.sdk.table_campaign_timelines)
-            .map((campaignTimelinesModels: List<CampaignTimelinesModel>) => {
-                return campaignTimelinesModels.reduce((result: string, campaignTimelineModel) => {
-                    if (campaignTimelineModel.getCampaignTimelineId() == i_campaign_timeline_id)
-                        result = campaignTimelineModel.getTimelineDuration();
-                    return result;
-                }, '')
             }).take(1);
     }
 

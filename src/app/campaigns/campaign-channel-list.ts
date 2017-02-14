@@ -84,7 +84,7 @@ export class CampaignChannelList extends Compbaser {
         this.preventRedirect(true);
     }
 
-    private _onBlockSelected(block: IBlockData,event, i) {
+    private _onBlockSelected(block: IBlockData, event, i) {
         this.m_selectedIdx = i;
         console.log(block.blockID);
         var uiState: IUiState = {uiSideProps: SideProps.channelBlock}
@@ -117,6 +117,8 @@ export class CampaignChannelList extends Compbaser {
             }).sub((i_blockList: Array<IBlockData>) => {
                 // console.log('total block in channel ' + i_blockList.length);
                 this.m_blockList = this._sortBlock(i_blockList);
+                this.m_selectedIdx = -1;
+
                 setTimeout(() => {
                     this._createSortable('#sortableChannel');
                 }, 300)
@@ -191,7 +193,7 @@ export class CampaignChannelList extends Compbaser {
         var playerOffsetTime: any = 0;
         jQuery(blocks).each(function (i) {
             var block_id = jQuery(this).data('block_id');
-            self._getBlockRecord(block_id,(i_campaignTimelineChanelPlayersModel:CampaignTimelineChanelPlayersModel)=>{
+            self._getBlockRecord(block_id, (i_campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModel) => {
                 var playerDuration = i_campaignTimelineChanelPlayersModel.getPlayerDuration();
                 self.rp.setBlockRecord(block_id, 'player_offset_time', playerOffsetTime);
                 console.log('player ' + block_id + ' offset ' + playerOffsetTime + ' playerDuration ' + playerDuration);
@@ -207,7 +209,7 @@ export class CampaignChannelList extends Compbaser {
         return this.yp.getBlockRecord(i_blockId)
             .subscribe((block: CampaignTimelineChanelPlayersModel) => {
                 i_cb(block);
-            });
+            }, (e) => console.error(e));
     }
 
     /**

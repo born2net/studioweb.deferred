@@ -25,8 +25,8 @@ import {CampaignEditorProps} from "./campaign-editor-props";
 import {CampaignSchedProps} from "./campaign-sched-props";
 import {CampaignPropsManager} from "./campaign-props-manager";
 import {CampaignChannelList} from "./campaign-channel-list";
-import {BlockService} from "../blocks/block-service";
 import {ChannelBlockProps} from "./channel-block-props";
+import {CampaignDuration} from "./campaign-duration";
 
 export const LAZY_ROUTES = [
     {path: ':folder', component: CampaignsNavigation},
@@ -37,7 +37,7 @@ export const LAZY_ROUTES = [
 @NgModule({
     imports: [DropdownModulePrime, SharedModule, CommonModule, DropdownModule, OrderListModule, RouterModule.forChild(LAZY_ROUTES)],
     declarations: [CampaignsNavigation, Campaigns, CampaignManager, CampaignName, CampaignOrientation, CampaignLayout,
-        CampaignEditor, CampaignResolution, CampaignList, Sequencer, ScreenLayoutEditor, ScreenLayoutEditorProps, CampaignChannelList,
+        CampaignEditor, CampaignResolution, CampaignList, Sequencer, ScreenLayoutEditor, ScreenLayoutEditorProps, CampaignChannelList, CampaignDuration,
         CampaignPropsManager, CampaignProps, TimelineProps, ChannelProps, DashboardProps, CampaignEditorProps, CampaignSchedProps, ChannelBlockProps]
 })
 export class CampaignsLazyModule {
