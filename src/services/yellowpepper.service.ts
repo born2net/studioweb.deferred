@@ -246,7 +246,7 @@ export class YellowPepperService {
     /**
      Get a player_id record from sdk by player_id primary key.
      **/
-    getBlockRecord(i_player_id) {
+    getBlockRecord(i_player_id):Observable<CampaignTimelineChanelPlayersModel> {
         return this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_chanel_players)
             .map((i_campaignTimelineChanelPlayersModels: List<CampaignTimelineChanelPlayersModel>) => {
                 return i_campaignTimelineChanelPlayersModels

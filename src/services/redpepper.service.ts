@@ -217,11 +217,11 @@ export class RedPepperService {
 
     /**
      Update a timeline's duration which is set as the total sum of all blocks within the longest running channel
-     @method calcTimelineTotalDuration
+     @method updateTotalTimelineDuration
      @param {Number} i_campaign_timeline_id
      @return none
      **/
-    calcTimelineTotalDuration(i_campaign_timeline_id) {
+    updateTotalTimelineDuration(i_campaign_timeline_id):void {
         var longestChannelDuration = 0;
         // Get all timelines
         $(this.databaseManager.table_campaign_timelines().getAllPrimaryKeys()).each((k, campaign_timeline_id) => {
@@ -247,7 +247,6 @@ export class RedPepperService {
         });
         this.setCampaignTimelineRecord(i_campaign_timeline_id, 'timeline_duration', longestChannelDuration);
         this.addPendingTables(['table_campaign_timelines','table_campaign_timeline_chanels','table_campaign_timeline_chanel_players']);
-        // this.databaseManager.fire(Pepper['TIMELINE_LENGTH_CHANGED'], this, null, longestChannelDuration);
     }
 
     /**
@@ -882,6 +881,22 @@ export class RedPepperService {
         });
         this.addPendingTables(['table_board_template_viewers']);
         return boardTemplateViewerIDs;
+    }
+
+    /**
+     Set a block's record using key value pair
+     The method uses generic key / value fields so it can set any part of the record.
+     @method setBlockRecord
+     @param {Number} i_block_id
+     @param {String} i_key
+     @param {Number} i_value
+     @return none
+     **/
+    setBlockRecord(i_block_id, i_key, i_value) {
+        this.databaseManager.table_campaign_timeline_chanel_players().openForEdit(i_block_id);
+        var recEditBlock = this.databaseManager.table_campaign_timeline_chanel_players().getRec(i_block_id);
+        recEditBlock[i_key] = i_value;
+        this.addPendingTables(['table_campaign_timeline_chanel_players']);
     }
 
     /**
@@ -1958,21 +1973,6 @@ export class RedPepperService {
         };
     }
 
-    /**
-     Set a block's record using key value pair
-     The method uses generic key / value fields so it can set any part of the record.
-     @method setBlockRecord
-     @param {Number} i_block_id
-     @param {String} i_key
-     @param {Number} i_value
-     @return none
-     **/
-    setBlockRecord(i_block_id, i_key, i_value) {
-
-        this.databaseManager.table_campaign_timeline_chanel_players().openForEdit(i_block_id);
-        var recEditBlock = this.databaseManager.table_campaign_timeline_chanel_players().getRec(i_block_id);
-        recEditBlock[i_key] = i_value;
-    }
 
     /**
      Get a global board record (not the board that assigned to a campaign, but global).

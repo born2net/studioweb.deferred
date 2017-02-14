@@ -149,6 +149,7 @@ export class HelperPepperService {
                 color: '#E5E5E5',
                 acronym: 'Image',
                 description: 'Bitmap file',
+                fontAwesome: self.getFontAwesome('jpg'),
                 svg: new String('<svg width="50" height="50" xmlns="http://www.w3.org/2000/svg"><g><title>background</title><rect x="-1" y="-1" width="52" height="52" id="canvas_background" fill="none"/></g> <g><title>Layer 1</title><g id="svg_1"><g id="svg_2"><path id="svg_1" d="m9,7.5625l0,28.4375l36,0l0,-28.4375l-36,0zm33.75,26.25l-31.5,0l0,-24.0625l31.5,0l0,24.0625zm-9,-18.59375c0,1.812195 1.511017,3.28125 3.375,3.28125s3.375,-1.469055 3.375,-3.28125s-1.511017,-3.28125 -3.375,-3.28125s-3.375,1.469055 -3.375,3.28125zm6.75,16.40625l-27,0l6.75,-17.5l9,10.9375l4.5,-3.28125l6.75,9.84375z"/></g></g></g></svg>'),
                 getDefaultPlayerData: function (i_placement, i_resourceID) {
                     return '<Player player="3130" label="" interactive="0">' +

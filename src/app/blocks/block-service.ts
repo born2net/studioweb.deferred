@@ -78,6 +78,8 @@ export class BlockService {
                     //     i_scene_id = $(domPlayerData).find('Player').attr('hDataSrc');
                 }
 
+                var a = this.hp.getBlockBoilerplate(code).fontAwesome;
+
                 var data = {
                     blockID: blockId,
                     blockType: blockType,

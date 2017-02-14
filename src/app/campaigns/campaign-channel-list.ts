@@ -1,11 +1,12 @@
 import {Component, ElementRef} from "@angular/core";
 import {Compbaser} from "ng-mslib";
-import {CampaignTimelineBoardViewerChanelsModel, CampaignTimelineChanelsModel, CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
+import {CampaignTimelineBoardViewerChanelsModel, CampaignTimelineChanelPlayersModel, CampaignTimelineChanelsModel, CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 import {BlockService, IBlockData} from "../blocks/block-service";
 import {Observable} from "rxjs";
 import {RedPepperService} from "../../services/redpepper.service";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import * as _ from 'lodash';
+import {Once} from "../../decorators/once-decorator";
 
 @Component({
     selector: 'campaign-channel-list',
@@ -171,7 +172,6 @@ export class CampaignChannelList extends Compbaser {
         });
     }
 
-
     /**
      Update the blocks offset times according to current order of LI elements and reorder accordingly in msdb.
      @method _reOrderChannelBlocks
@@ -181,21 +181,25 @@ export class CampaignChannelList extends Compbaser {
         var self = this
         var blocks = jQuery('#sortableChannel', this.el.nativeElement).children();
         var playerOffsetTime: any = 0;
-        $(blocks).each(function (i) {
-            var block_id = $(this).data('block_id');
-            //todo: fix to read from yp not rp
-            var recBlock = self.rp.getBlockRecord(block_id);
-            var playerDuration = recBlock['player_duration']
-            self.rp.setBlockRecord(block_id, 'player_offset_time', playerOffsetTime);
-            console.log('player ' + block_id + ' offset ' + playerOffsetTime + ' playerDuration ' + playerDuration);
-            playerOffsetTime = parseFloat(playerOffsetTime) + parseFloat(playerDuration);
+        jQuery(blocks).each(function (i) {
+            var block_id = jQuery(this).data('block_id');
+            self._getBlockRecord(block_id,(i_campaignTimelineChanelPlayersModel:CampaignTimelineChanelPlayersModel)=>{
+                var playerDuration = i_campaignTimelineChanelPlayersModel.getPlayerDuration();
+                self.rp.setBlockRecord(block_id, 'player_offset_time', playerOffsetTime);
+                console.log('player ' + block_id + ' offset ' + playerOffsetTime + ' playerDuration ' + playerDuration);
+                playerOffsetTime = parseFloat(playerOffsetTime) + parseFloat(playerDuration);
+            })
         });
-        //todo: fix to read from yp not rp
-        self.rp.calcTimelineTotalDuration(this.selected_campaign_timeline_id);
+        self.rp.updateTotalTimelineDuration(this.selected_campaign_timeline_id);
         self.rp.reduxCommit();
+    }
 
-        // BB.comBroker.fire(BB.EVENTS.CAMPAIGN_TIMELINE_CHANGED, self);
-        // BB.comBroker.fire(BB.EVENTS.BLOCK_SELECTED, this, null, self.selected_block_id);
+    @Once()
+    private _getBlockRecord(i_blockId, i_cb: (i_blockId: CampaignTimelineChanelPlayersModel) => void) {
+        return this.yp.getBlockRecord(i_blockId)
+            .subscribe((block: CampaignTimelineChanelPlayersModel) => {
+                i_cb(block);
+            });
     }
 
     /**
