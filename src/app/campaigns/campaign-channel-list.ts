@@ -98,8 +98,15 @@ export class CampaignChannelList extends Compbaser {
                             )
                     })
                     .combineAll()
-            }).sub((i_blockList: Array<IBlockData>) => {
-                console.log('total block in channel ' + i_blockList.length);
+            }).mergeMap((i_blockList: Array<IBlockData>) => {
+                return this.yp.calcTimelineTotalDuration(this.selected_campaign_timeline_id).map(longestTimeline => {
+                    return {
+                        longestTimeline, i_blockList
+                    }
+                })
+            }).subscribe(a => {
+                console.log('total block in channel ' + a);
+
 
                 // todo: sort properly
                 // for (var block_id in self.m_blocks) {
@@ -115,10 +122,10 @@ export class CampaignChannelList extends Compbaser {
                 // }
 
 
-                this.m_blockList = i_blockList;
-                setTimeout(() => {
-                    this._createSortable('#sortableChannel');
-                }, 300)
+                // this.m_blockList = i_blockList;
+                // setTimeout(() => {
+                //     this._createSortable('#sortableChannel');
+                // }, 300)
 
             }, e => console.error(e))
         )
