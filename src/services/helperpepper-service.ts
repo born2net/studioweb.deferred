@@ -126,6 +126,7 @@ export class HelperPepperService {
                 acronym: 'video',
                 description: 'Movie file',
                 svg: new String('<svg width="50" height="50" xmlns="http://www.w3.org/2000/svg"><g><title>background</title><rect fill="none" id="canvas_background" height="52" width="52" y="-1" x="-1"/></g><g><title>Layer 1</title><g id="svg_1"><g id="svg_2"><path id="svg_3" d="m36.6875,10l-24.375,0c-4.02187,0 -7.3125,3.17812 -7.3125,7.0625l0,14.125c0,3.88438 3.29063,7.0625 7.3125,7.0625l24.375,0c4.02188,0 7.3125,-3.17812 7.3125,-7.0625l0,-14.125c0,-3.88438 -3.29062,-7.0625 -7.3125,-7.0625zm4.875,21.1875c0,1.24984 -0.50944,2.43002 -1.43409,3.32328c-0.92488,0.89304 -2.14676,1.38506 -3.44091,1.38506l-24.375,0c-1.29408,0 -2.51603,-0.49202 -3.44084,-1.38506c-0.9248,-0.89326 -1.43416,-2.07343 -1.43416,-3.32328l0,-14.125c0,-1.24984 0.50936,-2.43001 1.43416,-3.3232c0.9248,-0.89319 2.14675,-1.38514 3.44084,-1.38514l24.375,0c1.29409,0 2.51603,0.49195 3.44091,1.38514c0.9248,0.89319 1.43409,2.07336 1.43409,3.3232l0,14.125zm-21.9375,2.35417l12.1875,-9.41667l-12.1875,-9.41667l0,18.83334z"/></g></g></g></svg>'),
+                fontAwesome: self.getFontAwesome('mp4'),
                 getDefaultPlayerData: function (i_placement, i_resourceID) {
                     return '<Player player="3100" label="Video" interactive="0">' +
                         '<Data>' +
