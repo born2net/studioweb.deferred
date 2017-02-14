@@ -41,6 +41,9 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
             <div *ngSwitchCase="m_uiUserFocusItemEnum.sceneBlock">
                 <block-prop></block-prop>
             </div>
+            <div *ngSwitchCase="m_uiUserFocusItemEnum.channelBlock">
+                <channel-block-props></channel-block-props>
+            </div>
         </ul>
     `,
 })

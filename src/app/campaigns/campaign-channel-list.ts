@@ -7,6 +7,8 @@ import {RedPepperService} from "../../services/redpepper.service";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import * as _ from 'lodash';
 import {Once} from "../../decorators/once-decorator";
+import {IUiState} from "../../store/store.data";
+import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
 
 @Component({
     selector: 'campaign-channel-list',
@@ -50,7 +52,9 @@ import {Once} from "../../decorators/once-decorator";
         </small>
         <small class="debug">{{me}}</small>
         <div id="sortableChannel">
-            <li (click)="_onBlockSelected(block)" *ngFor="let block of m_blockList" [attr.data-block_id]="block.blockID" class=".channelListItems list-group-item">
+            <li (click)="_onBlockSelected(block, $event, i)"
+                *ngFor="let block of m_blockList; let i = index" [attr.data-block_id]="block.blockID" class=".channelListItems list-group-item"
+                [ngClass]="{'selectedItem': m_selectedIdx == i}">
                 <a href="#">
                     <i class="fa {{block.blockFontAwesome}}"></i>
                     <span>{{block.blockName}}</span>
@@ -65,6 +69,7 @@ import {Once} from "../../decorators/once-decorator";
 })
 export class CampaignChannelList extends Compbaser {
 
+    m_selectedIdx = -1;
     private selected_campaign_timeline_id: number = -1;
     private selected_campaign_timeline_chanel_id: number = -1;
     private m_draggables;
@@ -79,8 +84,11 @@ export class CampaignChannelList extends Compbaser {
         this.preventRedirect(true);
     }
 
-    private _onBlockSelected(block: IBlockData) {
+    private _onBlockSelected(block: IBlockData,event, i) {
+        this.m_selectedIdx = i;
         console.log(block.blockID);
+        var uiState: IUiState = {uiSideProps: SideProps.channelBlock}
+        this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 
     private listenChannelSelected() {
@@ -107,7 +115,7 @@ export class CampaignChannelList extends Compbaser {
                     })
                     .combineAll()
             }).sub((i_blockList: Array<IBlockData>) => {
-                console.log('total block in channel ' + i_blockList.length);
+                // console.log('total block in channel ' + i_blockList.length);
                 this.m_blockList = this._sortBlock(i_blockList);
                 setTimeout(() => {
                     this._createSortable('#sortableChannel');
