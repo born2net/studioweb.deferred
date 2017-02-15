@@ -175,6 +175,8 @@ export class Sequencer extends Compbaser {
                     this.m_campaignTimelineChannelSelected = -1;
                     this.m_campaignTimelineBoardViewerSelected = -1;
                     this._setAndNotifyIds();
+                } else {
+                    i_screenTemplate.deselectDivisons();
                 }
                 var uiState: IUiState = {campaign: {
                     campaignTimelineBoardViewerSelected: -1
