@@ -1,6 +1,5 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output} from "@angular/core";
+import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output, TemplateRef} from "@angular/core";
 import {Compbaser} from "ng-mslib";
-import {YellowPepperService} from "../../services/yellowpepper.service";
 import {List} from "immutable";
 import {timeout} from "../../decorators/timeout-decorator";
 
@@ -8,10 +7,6 @@ import {timeout} from "../../decorators/timeout-decorator";
     selector: 'campaign-channels-list',
     changeDetection: ChangeDetectionStrategy.OnPush,
     styles: [`
-        * {
-            font-size: 1.1em !important;
-        }
-
         .dragch {
             float: right;
             padding-right: 10px;
@@ -46,19 +41,24 @@ import {timeout} from "../../decorators/timeout-decorator";
             <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
         </small>
         <small class="debug">{{me}}</small>
-        <div id="sortableList">
-            <li (click)="_onItemSelected(item, $event, i)"
-                *ngFor="let item of m_items; let i = index" [attr.data-block_id]="item.blockID" class=".listItems list-group-item"
-                [ngClass]="{'selectedItem': m_selectedIdx == i}">
-                <a href="#">
-                    <i class="fa {{item.blockFontAwesome}}"></i>
-                    <span>{{item.blockName}}</span>
-                    <i class="dragch fa fa-arrows-v"></i>
-                    <span class="lengthTimer hidden-xs"> 
-                        {{item.length | FormatSecondsPipe}}
-                    </span>
-                </a>
-            </li>
+        <div>
+            <div *ngIf="customTemplate">
+                <div class="sortableList">
+                    <li (click)="_onItemSelected(item, $event, i)" *ngFor="let item of m_items; let i = index" class="listItems list-group-item" [ngClass]="{'selectedItem': m_selectedIdx == i}">
+                        <template [ngTemplateOutlet]="customTemplate" [ngOutletContext]="{$implicit: item}">
+                        </template>
+                    </li>
+                </div>
+            </div>
+            <div *ngIf="!customTemplate">
+                <div class="sortableList">
+                    <li (click)="_onItemSelected(item, $event, i)" *ngFor="let item of m_items; let i = index" class=".listItems list-group-item" [ngClass]="{'selectedItem': m_selectedIdx == i}">
+                        <a href="#">
+                            {{item}}
+                        </a>
+                    </li>
+                </div>
+            </div>
         </div>
     `,
 })
@@ -68,12 +68,14 @@ export class CampaignChannelsList extends Compbaser implements AfterViewInit {
     private target;
     private y;
 
-    constructor(private yp: YellowPepperService, private el: ElementRef) {
+    constructor(private el: ElementRef) {
         super();
     }
 
     m_items: List<any>
     m_selectedIdx = -1;
+
+    @Input() customTemplate: TemplateRef <Object>;
 
     @Input()
     set items(i_items: List<any>) {
@@ -99,7 +101,7 @@ export class CampaignChannelsList extends Compbaser implements AfterViewInit {
     @timeout(300)
     public createSortable() {
         var self = this;
-        var selector = '#sortableList';
+        var selector = '.sortableList';
         if (jQuery(selector).children().length == 0) return;
         var sortable = document.querySelector(selector);
         self.m_draggables = Draggable.create(sortable.children, {
@@ -123,7 +125,7 @@ export class CampaignChannelsList extends Compbaser implements AfterViewInit {
                 }
                 TweenLite.set(t.kids, {yPercent: 0, overwrite: "all"});
                 TweenLite.set(t, {y: 0, color: ""});
-                var items = jQuery('#sortableList', self.el.nativeElement).children();
+                var items = jQuery('.sortableList', self.el.nativeElement).children();
                 self.onDragComplete.emit(items)
 
                 //_.each(self.m_draggables, function(i){

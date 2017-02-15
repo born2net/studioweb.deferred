@@ -14,12 +14,61 @@ import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.action
 
 @Component({
     selector: 'campaign-channels',
+    styles: [`
+        * {
+            font-size: 1.1em !important;
+        }
+
+        .dragch {
+            float: right;
+            padding-right: 10px;
+            position: relative;
+            top: 5px;
+        }
+
+        .lengthTimer {
+            float: right;
+            padding-right: 10px;
+        }
+
+        .listItems {
+            cursor: pointer;
+        }
+
+        .listItems a i {
+            display: inline;
+            font-size: 40px;
+            padding-right: 20px;
+        }
+
+        .listItems a span {
+            display: inline;
+            font-size: 1.5em;
+            position: relative;
+            top: -12px;
+        }
+    `],
     template: `
         <small class="release">my component
             <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
         </small>
         <small class="debug">{{me}}</small>
-        <campaign-channels-list (onItemSelected)="_onItemSelected($event)" (onDragComplete)="_onDragComplete($event)" [items]="m_blockList"></campaign-channels-list>
+        <campaign-channels-list (onItemSelected)="_onItemSelected($event)" [customTemplate]="customTemplate" (onDragComplete)="_onDragComplete($event)" [items]="m_blockList"></campaign-channels-list>
+        <template #customTemplate let-item>
+            <a href="#" [attr.data-block_id]="item.blockID">
+                <i class="fa {{item.blockFontAwesome}}"></i>
+                <span>{{item.blockName}}</span>
+                <i class="dragch fa fa-arrows-v"></i>
+                <span class="lengthTimer hidden-xs"> 
+                    {{item.length | FormatSecondsPipe}}
+                </span>
+            </a>
+        </template>
+
+
+        <!--<li (click)="_onItemSelected(item, $event, i)"        *ngFor="let item of m_items; let i = index" [attr.data-block_id]="item.blockID" class=".listItems list-group-item"     [ngClass]="{'selectedItem': m_selectedIdx == i}">-->
+        <!---->
+        <!--</li>-->
     `
 })
 
@@ -108,7 +157,7 @@ export class CampaignChannels extends Compbaser {
         var blocks = i_blocks; //jQuery('#sortableChannel', this.el.nativeElement).children();
         var playerOffsetTime: any = 0;
         jQuery(blocks).each(function (i) {
-            var block_id = jQuery(this).data('block_id');
+            var block_id = jQuery('[data-block_id]',this).data('block_id');
             self._getBlockRecord(block_id, (i_campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModel) => {
                 var playerDuration = i_campaignTimelineChanelPlayersModel.getPlayerDuration();
                 self.rp.setBlockRecord(block_id, 'player_offset_time', playerOffsetTime);
