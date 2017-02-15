@@ -1,9 +1,13 @@
 import {Component, ChangeDetectionStrategy, ElementRef, AfterViewInit} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
-import {CampaignTimelineChanelPlayersModel} from "../../store/imsdb.interfaces_auto";
+import {CampaignTimelineChanelPlayersModel, CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 import {Lib} from "../../Lib";
 import {RedPepperService} from "../../services/redpepper.service";
+import {Map, List} from 'immutable';
+import {timeout} from "../../decorators/timeout-decorator";
+import {IUiState} from "../../store/store.data";
+import {ACTION_UISTATE_UPDATE} from "../../store/actions/appdb.actions";
 
 @Component({
     selector: 'channel-block-props',
@@ -26,18 +30,26 @@ export class ChannelBlockProps extends Compbaser implements AfterViewInit {
     m_blockLengthMinutes = 0;
     m_blockLengthSeconds = 0;
 
-    private m_campaignTimelineChanelPlayersModel:CampaignTimelineChanelPlayersModel 
-    
-    constructor(private rp:RedPepperService, private yp: YellowPepperService, private el: ElementRef) {
+    private m_selectedCampaignTimelinesModel: CampaignTimelinesModel;
+    private m_campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModel
+
+    constructor(private rp: RedPepperService, private yp: YellowPepperService, private el: ElementRef) {
         super();
     }
 
     ngAfterViewInit() {
 
         this.cancelOnDestroy(
+            this.yp.listenTimelineSelected()
+                .subscribe((i_selectedCampaignTimelinesModel) => {
+                    this.m_selectedCampaignTimelinesModel = i_selectedCampaignTimelinesModel;
+                }, (e) => console.error(e))
+        )
+
+        this.cancelOnDestroy(
             this.yp.listenBlockChannelSelected()
                 .subscribe((i_campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModel) => {
-                    this.m_campaignTimelineChanelPlayersModel = i_campaignTimelineChanelPlayersModel; 
+                    this.m_campaignTimelineChanelPlayersModel = i_campaignTimelineChanelPlayersModel;
                     var totalSeconds = this.m_campaignTimelineChanelPlayersModel.getPlayerDuration()
                     var totalSecondsObj = Lib.FormatSecondsToObject(totalSeconds);
                     this.m_blockLengthHours = totalSecondsObj.hours;
@@ -50,6 +62,45 @@ export class ChannelBlockProps extends Compbaser implements AfterViewInit {
         )
         this._propLengthKnobsInit()
     }
+
+    /**
+     Update the blocks offset times according to current order of LI elements and reorder accordingly in msdb.
+     @method _reOrderChannelBlocks
+     @return none
+     **/
+    _reOrderChannelBlocks() {
+        var self = this
+        this.cancelOnDestroy(
+            this.yp.getChannelBlockModels(this.m_campaignTimelineChanelPlayersModel.getCampaignTimelineChanelId())
+                .subscribe((i_campaignTimelineChanelPlayersModels: List<CampaignTimelineChanelPlayersModel>) => {
+                    var sorted = i_campaignTimelineChanelPlayersModels.sort((a, b) => {
+                        if (a.getPlayerOffsetTime() < b.getPlayerOffsetTime())
+                            return -1;
+                        if (a.getPlayerOffsetTime() > b.getPlayerOffsetTime())
+                            return 1;
+                        if (a.getPlayerOffsetTime() === b.getPlayerOffsetTime())
+                            return 0;
+                    })
+                    var playerOffsetTime: any = 0;
+                    sorted.forEach((i_campaignTimelineChanelPlayersModel) => {
+                        console.log(i_campaignTimelineChanelPlayersModel.getPlayerDuration() + ' ' + i_campaignTimelineChanelPlayersModel.getPlayerOffsetTime());
+                        var playerDuration = i_campaignTimelineChanelPlayersModel.getPlayerDuration();
+                        self.rp.setBlockRecord(i_campaignTimelineChanelPlayersModel.getCampaignTimelineChanelPlayerId(), 'player_offset_time', playerOffsetTime);
+                        console.log('player ' + i_campaignTimelineChanelPlayersModel.getCampaignTimelineChanelPlayerId() + ' offset ' + playerOffsetTime + ' playerDuration ' + playerDuration);
+                        playerOffsetTime = parseFloat(playerOffsetTime) + parseFloat(playerDuration);
+                    })
+                    self.rp.updateTotalTimelineDuration(this.m_selectedCampaignTimelinesModel.getCampaignTimelineId());
+                    self.rp.reduxCommit();
+
+                    // var uiState: IUiState = {campaign: {campaignTimelineBoardViewerSelected: -1}}
+                    // this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+                    // var uiState: IUiState = {campaign: {campaignTimelineBoardViewerSelected: 122}}
+                    // this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+
+                }, (e) => console.error(e))
+        )
+    }
+
 
     /**
      Create the block length knobs so a user can set the length of the block with respect to timeline_channel
@@ -83,12 +134,13 @@ export class ChannelBlockProps extends Compbaser implements AfterViewInit {
                         break;
                     }
                 }
-                
+
                 // log('upd: ' + self.m_block_id + ' ' + hours + ' ' + minutes + ' ' + seconds);
                 if (self.m_blockLengthHours == 0 && self.m_blockLengthMinutes == 0 && self.m_blockLengthSeconds < 5)
                     return;
                 self.rp.setBlockTimelineChannelBlockLength(self.m_campaignTimelineChanelPlayersModel.getCampaignTimelineChanelPlayerId(), self.m_blockLengthHours, self.m_blockLengthMinutes, self.m_blockLengthSeconds);
                 self.rp.reduxCommit();
+                self._reOrderChannelBlocks();
 
             },
             /*cancel: function () {

@@ -83,7 +83,7 @@ export class YellowPepperService {
      listen UI campaign > timeline > board_viewer selected and return back the associated channel with that board id
      **/
     listenCampaignTimelineBoardViewerSelected(emitOnEmpty: boolean = false): Observable<CampaignTimelineBoardViewerChanelsModel> {
-    // listenCampaignTimelineBoardViewerSelected(): Observable<CampaignTimelineBoardViewerChanelsModel> {
+        // listenCampaignTimelineBoardViewerSelected(): Observable<CampaignTimelineBoardViewerChanelsModel> {
         var boardSelected$ = this.store.select(store => store.appDb.uiState.campaign.campaignTimelineBoardViewerSelected);
         var $viewerChannels$ = this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_board_viewer_chanels);
         return boardSelected$
@@ -277,6 +277,19 @@ export class YellowPepperService {
                         result.push(campaignTimelineChanelsModel.getCampaignTimelineChanelPlayerId());
                     return result;
                 }, [])
+            }).take(1);
+    }
+
+    /**
+     Get all the block IDs of a particular channel.
+     Push them into an array so they are properly sorted by player offset time.
+     **/
+    getChannelBlockModels(i_campaign_timeline_chanel_id): Observable<List<CampaignTimelineChanelPlayersModel>> {
+        return this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_chanel_players)
+            .map((campaignTimelineChanelPlayersModels: List<CampaignTimelineChanelPlayersModel>) => {
+                return campaignTimelineChanelPlayersModels.filter(campaignTimelineChanelsModel => {
+                    return campaignTimelineChanelsModel.getCampaignTimelineChanelId() == i_campaign_timeline_chanel_id;
+                })
             }).take(1);
     }
 
