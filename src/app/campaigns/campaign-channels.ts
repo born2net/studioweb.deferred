@@ -119,8 +119,13 @@ export class CampaignChannels extends Compbaser {
     }
 
     _onItemSelected(event) {
-        var blockData:IBlockData = event.item;
-        var uiState: IUiState = {uiSideProps: SideProps.channelBlock}
+        var blockData: IBlockData = event.item;
+        var uiState: IUiState = {
+            campaign: {
+                blockChannelSelected: blockData.blockID
+            },
+            uiSideProps: SideProps.channelBlock
+        }
         this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 
@@ -153,7 +158,7 @@ export class CampaignChannels extends Compbaser {
         var blocks = i_blocks; //jQuery('#sortableChannel', this.el.nativeElement).children();
         var playerOffsetTime: any = 0;
         jQuery(blocks).each(function (i) {
-            var block_id = jQuery('[data-block_id]',this).data('block_id');
+            var block_id = jQuery('[data-block_id]', this).data('block_id');
             self._getBlockRecord(block_id, (i_campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModel) => {
                 var playerDuration = i_campaignTimelineChanelPlayersModel.getPlayerDuration();
                 self.rp.setBlockRecord(block_id, 'player_offset_time', playerOffsetTime);

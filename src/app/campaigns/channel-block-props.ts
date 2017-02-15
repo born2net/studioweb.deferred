@@ -1,5 +1,9 @@
-import {Component, ChangeDetectionStrategy, ElementRef} from "@angular/core";
+import {Component, ChangeDetectionStrategy, ElementRef, AfterViewInit} from "@angular/core";
 import {Compbaser} from "ng-mslib";
+import {YellowPepperService} from "../../services/yellowpepper.service";
+import {CampaignTimelineChanelPlayersModel} from "../../store/imsdb.interfaces_auto";
+import {Lib} from "../../Lib";
+import {RedPepperService} from "../../services/redpepper.service";
 
 @Component({
     selector: 'channel-block-props',
@@ -10,27 +14,41 @@ import {Compbaser} from "ng-mslib";
         <small class="debug">{{me}}</small>
         <div class="center-block" style="width: 240px">
             <h5 i18n>hours / minutes /seconds</h5>
-            <input id="blockLengthHours"   data-displayPrevious="false" data-min="0" data-max="23" data-skin="tron" data-width="60" data-height="60" data-thickness=".2" type="text" class="knob" data-fgColor="gray">
+            <input id="blockLengthHours" data-displayPrevious="false" data-min="0" data-max="23" data-skin="tron" data-width="60" data-height="60" data-thickness=".2" type="text" class="knob" data-fgColor="gray">
             <input id="blockLengthMinutes" data-displayPrevious="false" data-min="0" data-max="59" data-skin="tron" data-width="60" data-height="60" data-thickness=".2" type="text" class="knob" data-fgColor="gray">
             <input id="blockLengthSeconds" data-displayPrevious="false" data-min="0" data-max="59" data-skin="tron" data-width="60" data-height="60" data-thickness=".2" type="text" class="knob" data-fgColor="gray">
         </div>
     `,
 })
-export class ChannelBlockProps extends Compbaser {
+export class ChannelBlockProps extends Compbaser implements AfterViewInit {
 
-    _blockLengthHours = 3;
-    _blockLengthMinutes = 4;
-    _blockLengthSeconds = 5;
+    m_blockLengthHours = 0;
+    m_blockLengthMinutes = 0;
+    m_blockLengthSeconds = 0;
 
-    constructor(private el: ElementRef) {
+    private m_campaignTimelineChanelPlayersModel:CampaignTimelineChanelPlayersModel 
+    
+    constructor(private rp:RedPepperService, private yp: YellowPepperService, private el: ElementRef) {
         super();
     }
 
     ngAfterViewInit() {
+
+        this.cancelOnDestroy(
+            this.yp.listenBlockChannelSelected()
+                .subscribe((i_campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModel) => {
+                    this.m_campaignTimelineChanelPlayersModel = i_campaignTimelineChanelPlayersModel; 
+                    var totalSeconds = this.m_campaignTimelineChanelPlayersModel.getPlayerDuration()
+                    var totalSecondsObj = Lib.FormatSecondsToObject(totalSeconds);
+                    this.m_blockLengthHours = totalSecondsObj.hours;
+                    this.m_blockLengthMinutes = totalSecondsObj.minutes;
+                    this.m_blockLengthSeconds = totalSecondsObj.seconds;
+                    jQuery('#blockLengthHours', this.el.nativeElement).val(this.m_blockLengthHours).trigger('change');
+                    jQuery('#blockLengthMinutes', this.el.nativeElement).val(this.m_blockLengthMinutes).trigger('change');
+                    jQuery('#blockLengthSeconds', this.el.nativeElement).val(this.m_blockLengthSeconds).trigger('change');
+                }, (e) => console.error(e))
+        )
         this._propLengthKnobsInit()
-        jQuery('#blockLengthHours',this.el.nativeElement).val(11).trigger('change');
-        jQuery('#blockLengthMinutes',this.el.nativeElement).val(12).trigger('change');
-        jQuery('#blockLengthSeconds',this.el.nativeElement).val(13).trigger('change');
     }
 
     /**
@@ -51,29 +69,26 @@ export class ChannelBlockProps extends Compbaser {
                 // console.log("release : " + value + ' ' + this['i'][0].id);
                 var caller = this['i'][0].id;
 
-
                 switch (caller) {
-                    case 'blockLengthHours':
-                    {
-                        self._blockLengthHours = value
+                    case 'blockLengthHours': {
+                        self.m_blockLengthHours = parseInt(value)
                         break;
                     }
-                    case 'blockLengthMinutes':
-                    {
-                        self._blockLengthMinutes = value;
+                    case 'blockLengthMinutes': {
+                        self.m_blockLengthMinutes = parseInt(value)
                         break;
                     }
-                    case 'blockLengthSeconds':
-                    {
-                        self._blockLengthSeconds = value;
+                    case 'blockLengthSeconds': {
+                        self.m_blockLengthSeconds = parseInt(value)
                         break;
                     }
                 }
-
-
-                console.log(self._blockLengthMinutes);
-                console.log(self._blockLengthSeconds);
-
+                
+                // log('upd: ' + self.m_block_id + ' ' + hours + ' ' + minutes + ' ' + seconds);
+                if (self.m_blockLengthHours == 0 && self.m_blockLengthMinutes == 0 && self.m_blockLengthSeconds < 5)
+                    return;
+                self.rp.setBlockTimelineChannelBlockLength(self.m_campaignTimelineChanelPlayersModel.getCampaignTimelineChanelPlayerId(), self.m_blockLengthHours, self.m_blockLengthMinutes, self.m_blockLengthSeconds);
+                self.rp.reduxCommit();
 
             },
             /*cancel: function () {
@@ -127,5 +142,6 @@ export class ChannelBlockProps extends Compbaser {
     }
 
     destroy() {
+        console.log('done');
     }
 }

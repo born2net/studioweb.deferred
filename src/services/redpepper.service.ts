@@ -916,6 +916,36 @@ export class RedPepperService {
     }
 
     /**
+     Set a block (a.k.a player) on the timeline_channel to a specified length in total seconds.
+     @method setBlockTimelineChannelBlockLength
+     @param {Number} i_campaign_timeline_chanel_player_id {string} plyer / block id
+     @param {Number} i_hours total hours to play
+     @param {Number} i_minutes total minutes to play
+     @param {Number} i_seconds total seconds to play
+     @return none
+     **/
+    setBlockTimelineChannelBlockLength(i_campaign_timeline_chanel_player_id, i_hours, i_minutes, i_seconds) {
+        var totalSecInMin = 60;
+        var totalSecInHour = totalSecInMin * 60;
+        var totalSeconds = parseInt(i_seconds) + (parseInt(i_minutes) * totalSecInMin) + (parseInt(i_hours) * totalSecInHour)
+
+        $(this.databaseManager.table_campaign_timeline_chanel_players().getAllPrimaryKeys()).each((k, campaign_timeline_chanel_player_id) => {
+            // var recCampaignTimelineChannelPlayer = this.databaseManager.table_campaign_timeline_chanel_players().getRec(campaign_timeline_chanel_player_id);
+            if (campaign_timeline_chanel_player_id == i_campaign_timeline_chanel_player_id) {
+                this.databaseManager.table_campaign_timeline_chanel_players().openForEdit(campaign_timeline_chanel_player_id);
+                var recPlayer = this.databaseManager.table_campaign_timeline_chanel_players().getRec(campaign_timeline_chanel_player_id);
+                recPlayer.player_duration = totalSeconds;
+            }
+        });
+        this.addPendingTables(['table_campaign_timeline_chanel_players']);
+        // var returnData = {
+        //     campaignTimelineChanelPlayerID: i_campaign_timeline_chanel_player_id,
+        //     totalSeconds: totalSeconds
+        // }
+        // this.databaseManager.fire(Pepper['BLOCK_LENGTH_CHANGED'], this, null, returnData);
+    }
+
+    /**
      Remove a schedule from timeline
      @method removeSchedulerFromTime
      @param {Number} i_campaign_timeline_id
@@ -2583,37 +2613,6 @@ export class RedPepperService {
             });
         }
         return totalChannelLength;
-    }
-
-    /**
-     Set a block (a.k.a player) on the timeline_channel to a specified length in total seconds.
-     @method setBlockTimelineChannelBlockLength
-     @param {Number} i_campaign_timeline_chanel_player_id {string} plyer / block id
-     @param {Number} i_hours total hours to play
-     @param {Number} i_minutes total minutes to play
-     @param {Number} i_seconds total seconds to play
-     @return none
-     **/
-    setBlockTimelineChannelBlockLength(i_campaign_timeline_chanel_player_id, i_hours, i_minutes, i_seconds) {
-
-
-        var totalSecInMin = 60;
-        var totalSecInHour = totalSecInMin * 60;
-        var totalSeconds = parseInt(i_seconds) + (parseInt(i_minutes) * totalSecInMin) + (parseInt(i_hours) * totalSecInHour)
-
-        $(this.databaseManager.table_campaign_timeline_chanel_players().getAllPrimaryKeys()).each(function (k, campaign_timeline_chanel_player_id) {
-            var recCampaignTimelineChannelPlayer = this.databaseManager.table_campaign_timeline_chanel_players().getRec(campaign_timeline_chanel_player_id);
-            if (campaign_timeline_chanel_player_id == i_campaign_timeline_chanel_player_id) {
-                this.databaseManager.table_campaign_timeline_chanel_players().openForEdit(campaign_timeline_chanel_player_id);
-                var recPlayer = this.databaseManager.table_campaign_timeline_chanel_players().getRec(campaign_timeline_chanel_player_id);
-                recPlayer.player_duration = totalSeconds;
-            }
-        });
-        var returnData = {
-            campaignTimelineChanelPlayerID: i_campaign_timeline_chanel_player_id,
-            totalSeconds: totalSeconds
-        }
-        // this.databaseManager.fire(Pepper['BLOCK_LENGTH_CHANGED'], this, null, returnData);
     }
 
     /**

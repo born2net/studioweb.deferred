@@ -49,6 +49,21 @@ export class YellowPepperService {
     }
 
     /**
+     Listen to when a campaign timeline channel block (player) that is selected
+     **/
+    listenBlockChannelSelected(emitOnEmpty: boolean = false): Observable<CampaignTimelineChanelPlayersModel> {
+        var blockSelected$ = this.store.select(store => store.appDb.uiState.campaign.blockChannelSelected);
+        var channelBlocksList$ = this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_chanel_players);
+        return blockSelected$.withLatestFrom(
+            channelBlocksList$,
+            (blockId, blocks) => {
+                return blocks.find((i_block: CampaignTimelineChanelPlayersModel) => {
+                    return i_block.getCampaignTimelineChanelPlayerId() == blockId
+                });
+            }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
+    }
+
+    /**
      Listen to when a timeline is selected via the store state uiState.campaign.timelineSelected
      **/
     listenTimelineSelected(emitOnEmpty: boolean = false): Observable<CampaignTimelinesModel> {
