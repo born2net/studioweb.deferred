@@ -75,7 +75,7 @@ export class CampaignChannelList extends Compbaser {
     private m_draggables;
     private target;
     private y;
-    m_show = false;
+    m_show = true;
     m_blockList: Array<IBlockData> = [];
 
     constructor(private yp: YellowPepperService, private rp: RedPepperService, private el: ElementRef, private blockService: BlockService, private cd: ChangeDetectorRef) {
@@ -93,10 +93,11 @@ export class CampaignChannelList extends Compbaser {
     private listenChannelSelected() {
         this.cancelOnDestroy(
             this.yp.listenCampaignTimelineBoardViewerSelected()
-                .filter((v) => {
-                    v == null ? this.m_show = false : this.m_show = true;
-                    return v != null;
-                }).combineLatest(this.yp.listenTimelineSelected(),
+                // .filter((v) => {
+                //     v == null ? this.m_show = false : this.m_show = true;
+                //     return v != null;
+                //    })
+            .combineLatest(this.yp.listenTimelineSelected(),
                 (i_channelModel: CampaignTimelineBoardViewerChanelsModel, i_timelinesModel: CampaignTimelinesModel) => {
                     this.selected_campaign_timeline_chanel_id = i_channelModel.getCampaignTimelineChanelId();
                     this.selected_campaign_timeline_id = i_timelinesModel.getCampaignTimelineId();

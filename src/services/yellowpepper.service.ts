@@ -67,8 +67,8 @@ export class YellowPepperService {
     /**
      listen UI campaign > timeline > board_viewer selected and return back the associated channel with that board id
      **/
-    // listenCampaignTimelineBoardViewerSelected(emitOnEmpty: boolean = false): Observable<CampaignTimelineBoardViewerChanelsModel> {
-    listenCampaignTimelineBoardViewerSelected(): Observable<CampaignTimelineBoardViewerChanelsModel> {
+    listenCampaignTimelineBoardViewerSelected(emitOnEmpty: boolean = false): Observable<CampaignTimelineBoardViewerChanelsModel> {
+    // listenCampaignTimelineBoardViewerSelected(): Observable<CampaignTimelineBoardViewerChanelsModel> {
         var boardSelected$ = this.store.select(store => store.appDb.uiState.campaign.campaignTimelineBoardViewerSelected);
         var $viewerChannels$ = this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_board_viewer_chanels);
         return boardSelected$
@@ -79,7 +79,7 @@ export class YellowPepperService {
                     return viewerChannels.find((i_viewerChannel: CampaignTimelineBoardViewerChanelsModel) => {
                         return i_viewerChannel.getBoardTemplateViewerId() == boardId;
                     });
-                })//.mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
+                }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
 
     }
 
