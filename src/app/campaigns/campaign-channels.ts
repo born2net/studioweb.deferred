@@ -118,7 +118,8 @@ export class CampaignChannels extends Compbaser {
         )
     }
 
-    _onItemSelected() {
+    _onItemSelected(event) {
+        var blockData:IBlockData = event.item;
         var uiState: IUiState = {uiSideProps: SideProps.channelBlock}
         this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }

@@ -80,7 +80,6 @@ export class YellowPepperService {
                         return i_viewerChannel.getBoardTemplateViewerId() == boardId;
                     });
                 }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
-
     }
 
     listenTimelineDurationChanged(emitOnEmpty: boolean = false) {

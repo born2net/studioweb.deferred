@@ -31,6 +31,7 @@ export interface IUiStateCampaign  {
     campaignCreateName?:string,
     campaignSelected?: number;
     timelineSelected?: number;
+    blockChannelSelected?:number;
 }
 
 export interface IUiState {
@@ -66,8 +67,9 @@ export const INITIAL_APP_DB: IAppDb = {
             campaignSelected: -1,
             timelineSelected: -1,
             campaignCreateOrientation: -1,
+            blockChannelSelected: -1,
             campaignCreateResolution: '',
-            campaignCreateName: ''
+            campaignCreateName: '',
         }
     },
     totalStations: '',

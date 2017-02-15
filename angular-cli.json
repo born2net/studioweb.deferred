@@ -31,6 +31,7 @@
       "scripts": [
         "../node_modules/jquery/dist/jquery.min.js",
         "./libs/jquery.base64.js",
+        "./libs/jquery.knob.min.js",
         "./libs/bootstrap-timepicker/js/bootstrap-timepicker.min.js",
         "./store/signage_sdk.js",
         "../node_modules/bootstrap/dist/js/bootstrap.js",
