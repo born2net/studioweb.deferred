@@ -66,7 +66,7 @@ export class YellowPepperService {
     }
 
     /**
-     listen UI to campaign > timeline > board_viewer selected and return back the associated channel with that board id
+     listen UI campaign > timeline > board_viewer selected and return back the associated channel with that board id
      **/
     listenCampaignTimelineBoardViewerSelected(emitOnEmpty: boolean = false): Observable<CampaignTimelineBoardViewerChanelsModel> {
         var boardSelected$ = this.store.select(store => store.appDb.uiState.campaign.campaignTimelineBoardViewerSelected);
@@ -75,6 +75,7 @@ export class YellowPepperService {
             .withLatestFrom(
                 $viewerChannels$,
                 (boardId, viewerChannels) => {
+                    if (emitOnEmpty && (!boardId || boardId == -1)) return null;
                     return viewerChannels.find((i_viewerChannel: CampaignTimelineBoardViewerChanelsModel) => {
                         return i_viewerChannel.getBoardTemplateViewerId() == boardId;
                     });

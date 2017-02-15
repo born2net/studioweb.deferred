@@ -1,4 +1,4 @@
-import {Component, ElementRef} from "@angular/core";
+import {ChangeDetectorRef, Component, ElementRef} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {CampaignTimelineBoardViewerChanelsModel, CampaignTimelineChanelPlayersModel, CampaignTimelineChanelsModel, CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 import {BlockService, IBlockData} from "../blocks/block-service";
@@ -51,7 +51,7 @@ import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.action
             <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
         </small>
         <small class="debug">{{me}}</small>
-        <div id="sortableChannel">
+        <div id="sortableChannel" *ngIf="show">
             <li (click)="_onBlockSelected(block, $event, i)"
                 *ngFor="let block of m_blockList; let i = index" [attr.data-block_id]="block.blockID" class=".channelListItems list-group-item"
                 [ngClass]="{'selectedItem': m_selectedIdx == i}">
@@ -75,10 +75,10 @@ export class CampaignChannelList extends Compbaser {
     private m_draggables;
     private target;
     private y;
-
+    show = false;
     m_blockList: Array<IBlockData> = [];
 
-    constructor(private yp: YellowPepperService, private rp: RedPepperService, private el: ElementRef, private blockService: BlockService) {
+    constructor(private yp: YellowPepperService, private rp: RedPepperService, private el: ElementRef, private blockService: BlockService, private cd: ChangeDetectorRef) {
         super();
         this.listenChannelSelected();
         this.preventRedirect(true);
@@ -93,13 +93,16 @@ export class CampaignChannelList extends Compbaser {
 
     private listenChannelSelected() {
         this.cancelOnDestroy(
-            this.yp.listenCampaignTimelineBoardViewerSelected()
-                .combineLatest(this.yp.listenTimelineSelected(),
-                    (i_channelModel: CampaignTimelineBoardViewerChanelsModel, i_timelinesModel: CampaignTimelinesModel) => {
-                        this.selected_campaign_timeline_chanel_id = i_channelModel.getCampaignTimelineChanelId();
-                        this.selected_campaign_timeline_id = i_timelinesModel.getCampaignTimelineId();
-                        return i_channelModel.getCampaignTimelineBoardViewerChanelId()
-                    }).mergeMap(i_boardViewerChanelId => {
+            this.yp.listenCampaignTimelineBoardViewerSelected(true)
+                .filter((v) => {
+                    v == null ? this.show = false : this.show = true;
+                    return v != null;
+                }).combineLatest(this.yp.listenTimelineSelected(),
+                (i_channelModel: CampaignTimelineBoardViewerChanelsModel, i_timelinesModel: CampaignTimelinesModel) => {
+                    this.selected_campaign_timeline_chanel_id = i_channelModel.getCampaignTimelineChanelId();
+                    this.selected_campaign_timeline_id = i_timelinesModel.getCampaignTimelineId();
+                    return i_channelModel.getCampaignTimelineBoardViewerChanelId()
+                }).mergeMap(i_boardViewerChanelId => {
                 return this.yp.getChannelFromCampaignTimelineBoardViewer(i_boardViewerChanelId)
             }).mergeMap((i_campaignTimelineChanelsModel: CampaignTimelineChanelsModel) => {
                 return this.yp.getChannelBlocks(i_campaignTimelineChanelsModel.getCampaignTimelineChanelId())

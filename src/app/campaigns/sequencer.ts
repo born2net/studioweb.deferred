@@ -176,6 +176,10 @@ export class Sequencer extends Compbaser {
                     this.m_campaignTimelineBoardViewerSelected = -1;
                     this._setAndNotifyIds();
                 }
+                var uiState: IUiState = {campaign: {
+                    campaignTimelineBoardViewerSelected: -1
+                }}
+                this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
                 this._notifyPropertySelect(SideProps.timeline);
             } else {
                 i_screenTemplate.deSelectFrame();
