@@ -30,6 +30,7 @@ import {Lib} from "../../Lib";
         ])
     ],
 })
+
 export class CampaignEditor extends Compbaser {
 
     private campaignModel: CampaignsModelExt;

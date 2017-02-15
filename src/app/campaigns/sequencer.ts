@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, QueryList, ViewChildren} from "@angular/core";
+import {Component, ElementRef, EventEmitter, Input, Output, QueryList, ViewChildren} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {RedPepperService} from "../../services/redpepper.service";
 import {YellowPepperService} from "../../services/yellowpepper.service";
@@ -71,6 +71,10 @@ export class Sequencer extends Compbaser {
 
     _onContextClicked(cmd: string, screenTemplateData: IScreenTemplateData) {
         switch (cmd) {
+            case 'edit': {
+                this.onEditLayout.emit();
+                break;
+            }
             case 'nextch': {
                 this.onSelectNextChannel()
                 break;
@@ -125,6 +129,9 @@ export class Sequencer extends Compbaser {
 
         });
     }
+
+    @Output()
+    onEditLayout:EventEmitter<any> = new EventEmitter<any>();
 
     @Once()
     private _sortTimelines(i_cb: (sortedTimelines: Array<CampaignTimelinesModel>) => void) {

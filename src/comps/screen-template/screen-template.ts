@@ -313,7 +313,8 @@ export class ScreenTemplate extends Compbaser {
         var self = this;
         self._deselectViewers();
         var selectedElement = jQuery('#' + self.m_myElementID, self.el.nativeElement).find('[data-campaign_timeline_board_viewer_id="' + i_campaign_timeline_board_viewer_id + '"]');
-        jQuery(selectedElement).css({'fill': Lib.GetThemeColor()});
+        // jQuery(selectedElement).css({'fill': Lib.GetThemeColor()});
+        jQuery(selectedElement).css({'fill': '#aed0ed'});
     }
 
     destroy() {
