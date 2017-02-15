@@ -75,7 +75,7 @@ export class YellowPepperService {
             .withLatestFrom(
                 $viewerChannels$,
                 (boardId, viewerChannels) => {
-                    // if (emitOnEmpty && (!boardId || boardId == -1)) return null;
+                    if (emitOnEmpty && (!boardId || boardId == -1)) return null;
                     return viewerChannels.find((i_viewerChannel: CampaignTimelineBoardViewerChanelsModel) => {
                         return i_viewerChannel.getBoardTemplateViewerId() == boardId;
                     });
