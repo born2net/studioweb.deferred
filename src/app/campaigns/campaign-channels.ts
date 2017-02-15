@@ -5,12 +5,12 @@ import {BlockService, IBlockData} from "../blocks/block-service";
 import {Observable} from "rxjs";
 import {RedPepperService} from "../../services/redpepper.service";
 import {YellowPepperService} from "../../services/yellowpepper.service";
-import {CampaignChannelsList} from "./campaign-channels-list";
 import * as _ from "lodash";
 import {Once} from "../../decorators/once-decorator";
 import {List} from "immutable";
 import {IUiState} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
+import {DraggableList} from "../../comps/draggable-list";
 
 @Component({
     selector: 'campaign-channels',
@@ -53,8 +53,7 @@ import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.action
             <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
         </small>
         <small class="debug">{{me}}</small>
-        <campaign-channels-list (onItemSelected)="_onItemSelected($event)" [customTemplate]="customTemplate" (onDragComplete)="_onDragComplete($event)" [items]="m_blockList"></campaign-channels-list>
-        <!-- pass custom template to campaign-channel-list -->
+        <draggable-list (onItemSelected)="_onItemSelected($event)" [customTemplate]="customTemplate" (onDragComplete)="_onDragComplete($event)" [items]="m_blockList"></draggable-list>
         <template #customTemplate let-item>
             <a href="#" [attr.data-block_id]="item.blockID">
                 <i class="fa {{item.blockFontAwesome}}"></i>
@@ -81,8 +80,8 @@ export class CampaignChannels extends Compbaser {
         this.preventRedirect(true);
     }
 
-    @ViewChild(CampaignChannelsList)
-    campaignChannelsList: CampaignChannelsList;
+    @ViewChild(DraggableList)
+    draggableList: DraggableList;
 
     private listenChannelSelected() {
         this.cancelOnDestroy(
@@ -113,7 +112,7 @@ export class CampaignChannels extends Compbaser {
                 // console.log('total block in channel ' + i_blockList.length);
                 this.m_blockList = List(this._sortBlock(i_blockList));
                 this.m_selectedIdx = -1;
-                this.campaignChannelsList.createSortable()
+                this.draggableList.createSortable()
 
             }, e => console.error(e))
         )
