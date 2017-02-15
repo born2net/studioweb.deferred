@@ -62,7 +62,6 @@ export class YellowPepperService {
                         return i_timeline.getCampaignTimelineId() == timelineId;
                     });
                 }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
-
     }
 
     /**
