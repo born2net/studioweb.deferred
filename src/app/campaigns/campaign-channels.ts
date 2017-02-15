@@ -54,6 +54,7 @@ import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.action
         </small>
         <small class="debug">{{me}}</small>
         <campaign-channels-list (onItemSelected)="_onItemSelected($event)" [customTemplate]="customTemplate" (onDragComplete)="_onDragComplete($event)" [items]="m_blockList"></campaign-channels-list>
+        <!-- pass custom template to campaign-channel-list -->
         <template #customTemplate let-item>
             <a href="#" [attr.data-block_id]="item.blockID">
                 <i class="fa {{item.blockFontAwesome}}"></i>
@@ -64,11 +65,6 @@ import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.action
                 </span>
             </a>
         </template>
-
-
-        <!--<li (click)="_onItemSelected(item, $event, i)"        *ngFor="let item of m_items; let i = index" [attr.data-block_id]="item.blockID" class=".listItems list-group-item"     [ngClass]="{'selectedItem': m_selectedIdx == i}">-->
-        <!---->
-        <!--</li>-->
     `
 })
 
