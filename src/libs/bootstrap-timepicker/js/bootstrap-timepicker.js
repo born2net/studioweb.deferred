@@ -383,7 +383,7 @@
       $(document).off('mousedown.timepicker, touchend.timepicker', this.handleDocumentClick);
 
       this.isOpen = false;
-      // show/hide approach taken by datepicker
+      // m_show/hide approach taken by datepicker
       this.$widget.detach();
     },
 
@@ -917,7 +917,7 @@
         return;
       }
 
-      // show/hide approach taken by datepicker
+      // m_show/hide approach taken by datepicker
       this.$widget.appendTo(this.appendWidgetTo);
       $(document).on('mousedown.timepicker, touchend.timepicker', {scope: this}, this.handleDocumentClick);
 
@@ -1169,7 +1169,7 @@
         return;
       }
       e.preventDefault();
-      // component click requires us to explicitly show it
+      // component click requires us to explicitly m_show it
       $this.timepicker();
     }
   );

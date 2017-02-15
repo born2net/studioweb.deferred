@@ -51,7 +51,7 @@ import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.action
             <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
         </small>
         <small class="debug">{{me}}</small>
-        <div id="sortableChannel" *ngIf="show">
+        <div id="sortableChannel" *ngIf="m_show">
             <li (click)="_onBlockSelected(block, $event, i)"
                 *ngFor="let block of m_blockList; let i = index" [attr.data-block_id]="block.blockID" class=".channelListItems list-group-item"
                 [ngClass]="{'selectedItem': m_selectedIdx == i}">
@@ -75,7 +75,7 @@ export class CampaignChannelList extends Compbaser {
     private m_draggables;
     private target;
     private y;
-    show = false;
+    m_show = false;
     m_blockList: Array<IBlockData> = [];
 
     constructor(private yp: YellowPepperService, private rp: RedPepperService, private el: ElementRef, private blockService: BlockService, private cd: ChangeDetectorRef) {
@@ -86,16 +86,15 @@ export class CampaignChannelList extends Compbaser {
 
     private _onBlockSelected(block: IBlockData, event, i) {
         this.m_selectedIdx = i;
-        console.log(block.blockID);
         var uiState: IUiState = {uiSideProps: SideProps.channelBlock}
         this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 
     private listenChannelSelected() {
         this.cancelOnDestroy(
-            this.yp.listenCampaignTimelineBoardViewerSelected(true)
+            this.yp.listenCampaignTimelineBoardViewerSelected()
                 .filter((v) => {
-                    v == null ? this.show = false : this.show = true;
+                    v == null ? this.m_show = false : this.m_show = true;
                     return v != null;
                 }).combineLatest(this.yp.listenTimelineSelected(),
                 (i_channelModel: CampaignTimelineBoardViewerChanelsModel, i_timelinesModel: CampaignTimelinesModel) => {
