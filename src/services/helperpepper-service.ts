@@ -1,34 +1,36 @@
 import {Injectable} from "@angular/core";
 import * as _ from 'lodash';
 
-export const blockCodes = {
-    3510: 'BLOCKCODE_SCENE',
-    4100: 'BLOCKCODE_COLLECTION',
-    4500: 'BLOCKCODE_TWITTER',
-    4505: 'BLOCKCODE_TWITTER_ITEM',
-    4300: 'BLOCKCODE_JSON',
-    4310: 'BLOCKCODE_JSON_ITEM',
-    6010: 'BLOCKCODE_WORLD_WEATHER',
-    6022: 'BLOCKCODE_GOOGLE_SHEETS',
-    6020: 'BLOCKCODE_CALENDAR',
-    6230: 'BLOCKCODE_TWITTERV3',
-    6050: 'BLOCKCODE_INSTAGRAM',
-    6000: 'BLOCKCODE_DIGG',
-    3130: 'BLOCKCODE_IMAGE',
-    3140: 'BLOCKCODE_SVG',
-    3100: 'BLOCKCODE_VIDEO',
-    3345: 'RSS',
-    3430: 'QR',
-    4600: 'YOUTUBE',
-    4105: 'LOCATION',
-    6100: 'FASTERQ',
-    3160: 'IMAGE',
-    3150: 'EXTERNAL_VIDEO',
-    3320: 'CLOCK',
-    3235: 'HTML',
-    3241: 'LABEL',
-    3340: 'MRSS'
+export const BlockLabels = {
+    'BLOCKCODE_SCENE': 3510,
+    'BLOCKCODE_COLLECTION': 4100,
+    'BLOCKCODE_TWITTER': 4500,
+    'BLOCKCODE_TWITTER_ITEM': 4505,
+    'BLOCKCODE_JSON': 4300,
+    'BLOCKCODE_JSON_ITEM': 4310,
+    'BLOCKCODE_WORLD_WEATHER': 6010,
+    'BLOCKCODE_GOOGLE_SHEETS': 6022,
+    'BLOCKCODE_CALENDAR': 6020,
+    'BLOCKCODE_TWITTERV3': 6230,
+    'BLOCKCODE_INSTAGRAM': 6050,
+    'BLOCKCODE_DIGG': 6000,
+    'BLOCKCODE_IMAGE': 3130,
+    'BLOCKCODE_SVG': 3140,
+    'BLOCKCODE_VIDEO': 3100,
+    'RSS': 3345,
+    'QR': 3430,
+    'YOUTUBE': 4600,
+    'LOCATION': 4105,
+    'FASTERQ': 6100,
+    'IMAGE': 3160,
+    'EXTERNAL_VIDEO': 3150,
+    'CLOCK': 3320,
+    'HTML': 3235,
+    'LABEL': 3241,
+    'MRSS': 3340
+
 }
+
 
 /**
  All blocks and related property modules loaded by require.js
@@ -78,15 +80,16 @@ export const PLACEMENT_IS_SCENE = 'PLACEMENT_IS_SCENE';
 export const PLACEMENT_LISTS = 'PLACEMENT_LISTS';
 
 
-
 @Injectable()
 export class HelperPepperService {
 
     private m_components = {};
     private m_fontAwesome = {};
+    private m_blockCodes = {};
 
     constructor() {
         var self = this;
+        this.m_blockCodes = _.invert(BlockLabels);
         this.m_fontAwesome = {
             'scene': {image: 'fa-pencil-square-o'},
             'qr': {image: 'fa-qrcode'},
@@ -702,6 +705,9 @@ export class HelperPepperService {
 
     }
 
+    getBlockNameByCode(i_blockCode: number): string {
+        return this.m_blockCodes[i_blockCode];
+    }
 
     /**
      Get the common layout which only applies when block is inside a scene
@@ -784,7 +790,7 @@ export class HelperPepperService {
         var self = this;
         var foundMimeIcon = 'fa-star';
         var blocks = self.getBlocks();
-        _.forEach(blocks, function (block:any) {
+        _.forEach(blocks, function (block: any) {
             if (block.mimeType && block.mimeType == i_mimeType)
                 foundMimeIcon = block.fontAwesome;
         });
@@ -796,7 +802,7 @@ export class HelperPepperService {
      @method getBlocks
      @return {Object} return all data structure
      **/
-    getBlocks () {
+    getBlocks() {
         var self = this;
         return self.m_components;
     }
@@ -807,7 +813,7 @@ export class HelperPepperService {
      @param {String} i_fileExtension
      @return {Number} return component code
      **/
-    getBlockCodeFromFileExt (i_fileExtension) {
+    getBlockCodeFromFileExt(i_fileExtension) {
         var self = this;
         for (var code in self.m_components) {
             if (self.m_components[code]['ext'] != undefined) {
@@ -827,7 +833,7 @@ export class HelperPepperService {
      @param {String} i_fontName
      @return {String} url path
      **/
-    getFontAwesome (i_fontName) {
+    getFontAwesome(i_fontName) {
         var self = this;
         if (_.isUndefined((self.m_fontAwesome[i_fontName])))
             return undefined;
@@ -839,7 +845,7 @@ export class HelperPepperService {
      @method getFontsAwesome
      @return {Object} data set
      **/
-    getFontsAwesome () {
+    getFontsAwesome() {
         var self = this;
         return self.m_fontAwesome;
     }
@@ -850,7 +856,7 @@ export class HelperPepperService {
      @param {String} i_playerData
      @return {Json} jPlayerData
      **/
-    playerDataTojson (i_playerData) {
+    playerDataTojson(i_playerData) {
         // var x2js = BB.comBroker.getService('compX2JS');
         // var jPlayerData = x2js.xml_str2json(i_playerData);
         // return jPlayerData;
@@ -862,7 +868,7 @@ export class HelperPepperService {
      @param {String} i_playerData
      @return {XML} xml data
      **/
-    playerDataToxml (i_playerData) {
+    playerDataToxml(i_playerData) {
         // var x2js = BB.comBroker.getService('compX2JS');
         // var xPlayerData = x2js.json2xml_str(i_playerData);
         // return xPlayerData;

@@ -1,18 +1,15 @@
 import {Inject, Injectable} from "@angular/core";
-import {getDiggData} from "./block-digg";
-import {getYouTubeData} from "./block-youtube";
 import {YellowPepperService} from "../../services/yellowpepper.service";
-import {Once} from "../../decorators/once-decorator";
 import {CampaignTimelineChanelPlayersModel} from "../../store/imsdb.interfaces_auto";
-import X2JS from 'x2js';
-import {StoreModel} from "../../store/model/StoreModel";
-import {blockCodes, HelperPepperService} from "../../services/helperpepper-service";
-import * as _ from 'lodash';
+import X2JS from "x2js";
+import {BlockLabels, HelperPepperService} from "../../services/helperpepper-service";
+import * as _ from "lodash";
 import {Observable} from "rxjs";
 
 export interface IBlockData {
     blockID: number;
     blockType: string;
+    blockCode: string;
     blockName: string;
     blockDescription: string;
     blockIcon: string;
@@ -21,7 +18,7 @@ export interface IBlockData {
     blockMinWidth: number;
     blockMinHeight: number;
     blockData: CampaignTimelineChanelPlayersModel,
-    length?:number;
+    length?: number;
 }
 
 @Injectable()
@@ -64,7 +61,8 @@ export class BlockService {
                 if (playerData['Player']['_player']) {
                     /** Standard block **/
                     var code = playerData['Player']['_player'];
-                    var blockType = blockCodes[code]
+
+                    var blockType = this.hp.getBlockNameByCode(code)
                     if (_.isUndefined(blockType)) {
                         var e = `Panic using a component / block which is not supported yet ${code} ${blockType}`;
                         throw new Error(e)
@@ -83,6 +81,7 @@ export class BlockService {
                 var data = {
                     blockID: blockId,
                     blockType: blockType,
+                    blockCode: code,
                     blockName: this.hp.getBlockBoilerplate(code).name,
                     blockDescription: this.hp.getBlockBoilerplate(code).description,
                     blockIcon: this.hp.getBlockBoilerplate(code).icon,

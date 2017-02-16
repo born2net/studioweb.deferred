@@ -8,7 +8,7 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
 
 @Component({
     selector: 'campaign-props-manager',
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    // changeDetection: ChangeDetectionStrategy.OnPush,
     styles: [`
         ul {
             padding: 0
@@ -38,9 +38,9 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
             <div *ngSwitchCase="m_uiUserFocusItemEnum.screenLayoutEditor">
                 <screen-layout-editor-props></screen-layout-editor-props>
             </div>
-            <div *ngSwitchCase="m_uiUserFocusItemEnum.sceneBlock">
-                <block-prop></block-prop>
-            </div>
+            <!--<div *ngSwitchCase="m_uiUserFocusItemEnum.sceneBlock">-->
+                <!--<block-prop></block-prop>-->
+            <!--</div>-->
             <div *ngSwitchCase="m_uiUserFocusItemEnum.channelBlock">
                 <channel-block-props></channel-block-props>
             </div>
