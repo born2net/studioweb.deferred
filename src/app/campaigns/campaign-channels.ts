@@ -131,7 +131,6 @@ export class CampaignChannels extends Compbaser {
     private listenDurationChanged(){
         this.cancelOnDestroy(
             this.yp.listenTimelineDurationChanged()
-                // .distinctUntilChanged()
                 .subscribe((totalDuration) => {
                     this.durationChanged$.next(totalDuration);
                 })

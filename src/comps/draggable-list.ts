@@ -83,6 +83,11 @@ export class DraggableList extends Compbaser implements AfterViewInit {
         this.m_items = i_items;
     }
 
+    @Input()
+    set deselect(v) {
+        this.m_selectedIdx = -1;
+    }
+
     @Output()
     onDragComplete: EventEmitter<any> = new EventEmitter<any>();
 
