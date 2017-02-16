@@ -165,13 +165,13 @@ export class CampaignChannels extends Compbaser implements AfterViewInit {
     private _sortBlock(i_blockList: Array<IBlockData>): Array<IBlockData> {
         var blocksSorted = {};
         _.forEach(i_blockList, (i_block: IBlockData) => {
-            var player_data = i_block.blockData.getPlayerData();
+            var player_data = i_block.campaignTimelineChanelPlayersModelExt.getPlayerData();
             var domPlayerData = $.parseXML(player_data);
             var sceneHandle = jQuery(domPlayerData).find('Player').attr('player');
             // workaround to remove scenes listed inside table campaign_timeline_chanel_players
             if (sceneHandle == '3510')
                 return;
-            var offsetTime = parseInt(i_block.blockData.getPlayerOffsetTime());
+            var offsetTime = parseInt(i_block.campaignTimelineChanelPlayersModelExt.getPlayerOffsetTime());
             blocksSorted[offsetTime] = i_block;
         });
         return _.values(blocksSorted) as Array<IBlockData>;

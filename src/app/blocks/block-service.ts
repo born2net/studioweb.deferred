@@ -5,6 +5,7 @@ import X2JS from "x2js";
 import {BlockLabels, HelperPepperService} from "../../services/helperpepper-service";
 import * as _ from "lodash";
 import {Observable} from "rxjs";
+import {CampaignTimelineChanelPlayersModelExt} from "../../store/model/msdb-models-extended";
 
 export interface IBlockData {
     blockID: number;
@@ -17,7 +18,7 @@ export interface IBlockData {
     blockAcronym: string;
     blockMinWidth: number;
     blockMinHeight: number;
-    blockData: CampaignTimelineChanelPlayersModel,
+    campaignTimelineChanelPlayersModelExt: CampaignTimelineChanelPlayersModelExt,
     length?: number;
 }
 
@@ -53,7 +54,7 @@ export class BlockService {
     public getBlockData(blockId): Observable<IBlockData> {
 
         return this.yp.getBlockRecord(blockId)
-            .mergeMap((i_campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModel) => {
+            .mergeMap((i_campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModelExt) => {
 
                 var xml = i_campaignTimelineChanelPlayersModel.getPlayerData();
                 let playerData = this.parser.xml2js(xml);
@@ -89,7 +90,7 @@ export class BlockService {
                     blockAcronym: this.hp.getBlockBoilerplate(code).acronym,
                     blockMinWidth: this.m_minSize.w,
                     blockMinHeight: this.m_minSize.h,
-                    blockData: i_campaignTimelineChanelPlayersModel
+                    campaignTimelineChanelPlayersModelExt: i_campaignTimelineChanelPlayersModel
                 };
 
                 return Observable.of(data)

@@ -4,7 +4,7 @@
  */
 
 
-import {CampaignsModel} from "../imsdb.interfaces_auto";
+import {CampaignsModel, CampaignTimelineChanelPlayersModel} from "../imsdb.interfaces_auto";
 
 export class CampaignsModelExt extends CampaignsModel {
 
@@ -15,5 +15,10 @@ export class CampaignsModelExt extends CampaignsModel {
             return 'scheduler'
         }
     }
+
+}
+
+export class CampaignTimelineChanelPlayersModelExt extends CampaignTimelineChanelPlayersModel {
+
 
 }
