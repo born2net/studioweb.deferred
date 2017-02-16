@@ -26,6 +26,7 @@
         "../node_modules/primeng/resources/themes/bootstrap/theme.css",
         "../node_modules/primeng/resources/primeng.min.css",
         "./libs/bootstrap-timepicker/css/bootstrap-timepicker.css",
+        "./libs/minicolors/jquery.minicolors.css",
         "./styles/style.css"
       ],
       "scripts": [
@@ -38,6 +39,9 @@
         "../node_modules/bootbox/bootbox.js",
         "../node_modules/platform/platform.js",
         "./libs/fabric.require1-4-12.js",
+        "./libs/minicolors/jquery.minicolors.js",
+        "./libs/gradient/jquery.gradientpicker.js",
+        "./libs/gradient/colorpicker.js",
         "../node_modules/xdate/src/xdate.js"
       ],
       "environments": {

@@ -18,6 +18,7 @@ import {IBlockData} from "./block-service";
     },
     template: `
         <div>
+
             <form novalidate autocomplete="off" [formGroup]="contGroup">
                 <div class="row">
                     <div class="inner userGeneral">
@@ -30,23 +31,11 @@ import {IBlockData} from "./block-service";
                             </div>
                             <ul class="list-group">
                                 <li class="list-group-item">
-                                    kiosk mode
-                                    <div class="material-switch pull-right">
-                                        <input (change)="saveToStore(customerNetwork2.checked)"
-                                               [formControl]="contGroup.controls['kiosk_mode']"
-                                               id="customerNetwork2" #customerNetwork2
-                                               name="customerNetwork2" type="checkbox"/>
-                                        <label for="customerNetwork2" class="label-primary"></label>
-                                    </div>
+                                    Alpha
+                                    <input id="slider1" type="range" min="100" max="500" step="10"/>
                                 </li>
                                 <li class="list-group-item">
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
-                                        <input [formControl]="contGroup.controls['campaign_name']" required
-                                               pattern="[0-9]|[a-z]|[A-Z]+"
-                                               type="text" class="form-control" minlength="3" maxlength="15"
-                                               placeholder="campaign name">
-                                    </div>
+                                    <input id="sceneBorderColorSelector" type="text" name="colorSelect" class="fontSelectorMiniColor fontFormatter form-control minicolor-mini" data-control="hue">
                                 </li>
                                 <li class="list-group-item">
                                     <div class="input-group">
@@ -64,7 +53,13 @@ import {IBlockData} from "./block-service";
         </div>
         <input [(colorPicker)]="m_color" [cpPosition]="'bottom'" [style.background]="m_color" [value]="m_color"/>
         <hr/>
+        <div id="bgColorGradientSelector"></div>
+        <input id="sceneBackgroundSelector" type="text" name="colorSelect" class="fontSelectorMiniColor fontFormatter form-control minicolor-mini" data-control="hue">
+        <hr/>
         <h5>block id {{m_blockData.blockID}}</h5>
+
+
+
 
     `,
     styles: [`
@@ -92,10 +87,10 @@ export class BlockPropCommon extends Compbaser {
     private formInputs = {};
     private contGroup: FormGroup;
     private campaignModel$: Observable<CampaignsModelExt>;
-    private m_blockData:IBlockData;
+    private m_blockData: IBlockData;
     m_color;
 
-    
+
     constructor(private fb: FormBuilder, private ngmslibService: NgmslibService, private yp: YellowPepperService, private rp: RedPepperService) {
         super();
 
@@ -119,6 +114,166 @@ export class BlockPropCommon extends Compbaser {
 
     }
 
+    ngAfterViewInit() {
+        this._bgGradientInit();
+        this._bgSceneInit();
+        this._bgFasterQColorInit();
+    }
+
+
+    /**
+     Load jquery gradient component once
+     @method _bgGradientInit
+     **/
+    _bgGradientInit() {
+        var self = this;
+
+        var lazyUpdateBgColor = _.debounce(function (points, styles) {
+            if (points.length == 0)
+                return;
+            // BB.comBroker.fire(BB.EVENTS.GRADIENT_COLOR_CHANGED, self, null, {points: points, styles: styles});
+        }, 50);
+
+        var gradientColorPickerClosed = function () {
+            // BB.comBroker.fire(BB.EVENTS.GRADIENT_COLOR_CLOSED, self, null);
+        };
+
+        $('#bgColorGradientSelector').gradientPicker({
+            change: lazyUpdateBgColor,
+            closed: gradientColorPickerClosed,
+            fillDirection: "90deg"
+        });
+
+        // always close gradient color picker on mouseout
+        $('.colorpicker').on('mouseleave', function (e) {
+            $(document).trigger('mousedown');
+            // BB.comBroker.fire(BB.EVENTS.GRADIENT_COLOR_CLOSED, self, self);
+        });
+
+        // to destroy the plugin instance
+        // gradient = {}; $(Elements.BG_COLOR_GRADIENT_SELECTOR).remove();
+    }
+
+    /**
+     Init the scene background selector
+     @method _bgSceneInit
+     **/
+    _bgSceneInit() {
+        var self = this;
+        var colorSettings = {
+            animationSpeed: 50,
+            animationEasing: 'swing',
+            change: $.proxy(self._onSceneBgColorSelected, self),
+            changeDelay: 100,
+            control: 'hue',
+            value: '#ffffff',
+            defaultValue: '#428bca',
+            show: $.proxy(self._onSceneColorToggle, self),
+            hide: $.proxy(self._onSceneColorToggle, self),
+            hideSpeed: 100,
+            inline: false,
+            letterCase: 'lowercase',
+            opacity: false,
+            position: 'bottom left',
+            showSpeed: 100,
+            theme: 'bootstrap'
+        };
+        $('#sceneBackgroundSelector').minicolors(colorSettings);
+    }
+
+    /**
+     Init the fasterq background color selector
+     @method _bgFasterQColorInit
+     **/
+    _bgFasterQColorInit() {
+        var self = this;
+        // show: $.proxy(self._onSceneColorToggle, self),
+        // hide: $.proxy(self._onSceneColorToggle, self),
+        var colorSettings = {
+            animationSpeed: 50,
+            animationEasing: 'swing',
+            change: $.proxy(self._onFasterQBgColorSelected, self),
+            changeDelay: 100,
+            control: 'hue',
+            value: '#ffffff',
+            defaultValue: '#428bca',
+            hideSpeed: 100,
+            inline: false,
+            letterCase: 'lowercase',
+            opacity: false,
+            position: 'bottom left',
+            showSpeed: 100,
+            theme: 'bootstrap'
+        };
+        // $(Elements.FASTERQ_BLOCK_COLOR_SELECTOR).minicolors(colorSettings);
+    }
+
+    /**
+     Init the scene backgroud selector
+     @method _bgSceneInit
+     **/
+    _borderSceneColorInit() {
+        var self = this;
+        var colorSettings = {
+            animationSpeed: 50,
+            animationEasing: 'swing',
+            change: $.proxy(self._onSceneBorderColorSelected, self),
+            changeDelay: 100,
+            control: 'hue',
+            value: '#ffffff',
+            defaultValue: '#428bca',
+            show: $.proxy(self._onSceneColorToggle, self),
+            hide: $.proxy(self._onSceneColorToggle, self),
+            hideSpeed: 100,
+            inline: false,
+            letterCase: 'lowercase',
+            opacity: false,
+            position: 'bottom left',
+            showSpeed: 100,
+            theme: 'bootstrap'
+        };
+        $('#sceneBorderColorSelector').minicolors(colorSettings);
+    }
+
+    /**
+     On fasterQ background color selected by minicolors
+     @method _onFasterQBgColorSelected
+     @param {String} i_color
+     **/
+    _onFasterQBgColorSelected(i_color) {
+        var self = this;
+        // BB.comBroker.fire(BB.EVENTS.FASTERQ_BG_COLOR_CHANGE, self, self, i_color);
+    }
+
+    /**
+     On scene block border color selected by minicolors
+     @method _onSceneBorderColorSelected
+     @param {String} i_color
+     **/
+    _onSceneBorderColorSelected(i_color) {
+        var self = this;
+        // if (self.m_showBorderOn)
+        // BB.comBroker.fire(BB.EVENTS.BLOCK_BORDER_CHANGE, self, self, i_color);
+    }
+
+    _onSceneColorToggle(e) {
+        var self = this;
+        // if (self.m_showBorderOn) {
+        //     self.m_showBorderOn = undefined;
+        // } else {
+        //     self.m_showBorderOn = 1;
+        // }
+    }
+
+    /**
+     On scene background color selected by minicolors
+     @method _onSceneBgColorSelected
+     @param {String} i_color
+     **/
+    _onSceneBgColorSelected(i_color) {
+        var self = this;
+        // BB.comBroker.fire(BB.EVENTS.SCENE_BG_COLOR_CHANGED, self, self, i_color);
+    }
 
     @Input()
     set setBlockData(i_blockData) {
