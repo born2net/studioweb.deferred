@@ -171,7 +171,7 @@ export class CampaignChannels extends Compbaser implements AfterViewInit {
             // workaround to remove scenes listed inside table campaign_timeline_chanel_players
             if (sceneHandle == '3510')
                 return;
-            var offsetTime = parseInt(i_block.campaignTimelineChanelPlayersModelExt.getPlayerOffsetTime());
+            var offsetTime = i_block.campaignTimelineChanelPlayersModelExt.getPlayerOffsetTimeInt();
             blocksSorted[offsetTime] = i_block;
         });
         return _.values(blocksSorted) as Array<IBlockData>;

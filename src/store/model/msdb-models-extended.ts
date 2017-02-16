@@ -19,6 +19,8 @@ export class CampaignsModelExt extends CampaignsModel {
 }
 
 export class CampaignTimelineChanelPlayersModelExt extends CampaignTimelineChanelPlayersModel {
-
+    public getPlayerOffsetTimeInt() {
+        return parseFloat(this.getKey('player_offset_time'));
+    }
 
 }

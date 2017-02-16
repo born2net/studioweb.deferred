@@ -8,6 +8,7 @@ import {Map, List} from 'immutable';
 import {timeout} from "../../decorators/timeout-decorator";
 import {IUiState} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE} from "../../store/actions/appdb.actions";
+import {CampaignTimelineChanelPlayersModelExt} from "../../store/model/msdb-models-extended";
 
 @Component({
     selector: 'channel-block-props',
@@ -73,13 +74,13 @@ export class ChannelBlockProps extends Compbaser implements AfterViewInit {
         var self = this
         this.cancelOnDestroy(
             this.yp.getChannelBlockModels(this.m_campaignTimelineChanelPlayersModel.getCampaignTimelineChanelId())
-                .subscribe((i_campaignTimelineChanelPlayersModels: List<CampaignTimelineChanelPlayersModel>) => {
+                .subscribe((i_campaignTimelineChanelPlayersModels: List<CampaignTimelineChanelPlayersModelExt>) => {
                     var sorted = i_campaignTimelineChanelPlayersModels.sort((a, b) => {
-                        if (parseFloat(a.getPlayerOffsetTime()) < parseFloat(b.getPlayerOffsetTime()))
+                        if (a.getPlayerOffsetTimeInt() < b.getPlayerOffsetTimeInt())
                             return -1;
-                        if (parseFloat(a.getPlayerOffsetTime()) > parseFloat(b.getPlayerOffsetTime()))
+                        if (a.getPlayerOffsetTimeInt() > b.getPlayerOffsetTimeInt())
                             return 1;
-                        if (parseFloat(a.getPlayerOffsetTime()) === parseFloat(b.getPlayerOffsetTime()))
+                        if (a.getPlayerOffsetTimeInt() === b.getPlayerOffsetTimeInt())
                             return 0;
                     })
                     var playerOffsetTime: any = 0;
