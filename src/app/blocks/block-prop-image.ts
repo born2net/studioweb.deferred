@@ -8,6 +8,7 @@ import {timeout} from "../../decorators/timeout-decorator";
 import {Observable} from "rxjs";
 import {simpleRegExp} from "../../Lib";
 import * as _ from "lodash";
+import {IBlockData} from "./block-service";
 
 @Component({
     selector: 'block-prop-image',
@@ -61,7 +62,7 @@ import * as _ from "lodash";
                 </div>
             </form>
             <hr/>
-            <h5>block id {{m_blockId}}</h5>
+            <h5>block id {{m_blockData.blockID}}</h5>
         </div>
 
     `,
@@ -90,7 +91,7 @@ export class BlockPropImage extends Compbaser {
     private formInputs = {};
     private contGroup: FormGroup;
     private campaignModel$: Observable<CampaignsModelExt>;
-    private m_blockId:number = -1;
+    private m_blockData:IBlockData;
 
 
     constructor(private fb: FormBuilder, private ngmslibService: NgmslibService, private yp: YellowPepperService, private rp: RedPepperService) {
@@ -117,8 +118,8 @@ export class BlockPropImage extends Compbaser {
     }
 
     @Input()
-    set setBlockId(i_blockId) {
-        this.m_blockId = i_blockId;
+    set setBlockData(i_blockData) {
+        this.m_blockData = i_blockData;
     }
 
     @timeout()

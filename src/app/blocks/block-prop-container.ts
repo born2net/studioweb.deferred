@@ -14,12 +14,12 @@ import {ColorPickerService} from "ngx-color-picker";
         <small class="debug">{{me}}</small>
         <tabs>
             <tab [tabtitle]="'style'" >
-                <block-prop-common [setBlockId]="m_blockId"></block-prop-common>
+                <block-prop-common [setBlockData]="m_blockData"></block-prop-common>
             </tab>
             <tab [tabtitle]="m_tabTitle" >
                 <ul [ngSwitch]="m_blockTypeSelected">
                     <div *ngSwitchCase="m_blockLabels.BLOCKCODE_IMAGE">
-                        <block-prop-image [setBlockId]="m_blockId"></block-prop-image>
+                        <block-prop-image [setBlockData]="m_blockData"></block-prop-image>
                     </div>
                     <div *ngSwitchCase="m_blockLabels.LABEL">
                         <h1>label</h1>
@@ -46,7 +46,7 @@ export class BlockPropContainer extends Compbaser implements AfterViewInit {
 
     m_blockTypeSelected: string = 'none';
     m_blockLabels = BlockLabels;
-    m_blockId: number;
+    m_blockData:IBlockData;
     m_tabTitle: string = 'none';
     m_color;
 
@@ -63,7 +63,7 @@ export class BlockPropContainer extends Compbaser implements AfterViewInit {
                 .subscribe((blockData: IBlockData) => {
                     this.m_blockTypeSelected = blockData.blockCode;
                     this.m_tabTitle = blockData.blockAcronym;
-                    this.m_blockId = blockData.blockID;
+                    this.m_blockData = blockData;
                 }, (e) => console.error(e))
         )
 
