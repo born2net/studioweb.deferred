@@ -13,22 +13,34 @@ import {ColorPickerService} from "ngx-color-picker";
     // changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <small class="debug">{{me}}</small>
-        <ul [ngSwitch]="m_blockTypeSelected">
-            <div *ngSwitchCase="m_blockLabels.BLOCKCODE_IMAGE">
-                <h1>Image</h1>
-            </div>
-            <div *ngSwitchCase="m_blockLabels.LABEL">
-                <h1>label</h1>
-            </div>
-            <div *ngSwitchCase="m_blockLabels.QR">
-                <h1>QR</h1>
-            </div>
-            <div *ngSwitchDefault>
-                <h3>no block prop found, new?</h3>
-            </div>
-        </ul>
-        <input [(colorPicker)]="color" [cpPosition]="'bottom'" [style.background]="color" [value]="color"/>
-        {{m_blockId}}
+        <tabs>
+            <tab [tabtitle]="'style'" >
+                <input [(colorPicker)]="m_color" [cpPosition]="'bottom'" [style.background]="m_color" [value]="m_color"/>
+            </tab>
+            <tab [tabtitle]="m_tabTitle" >
+                <ul [ngSwitch]="m_blockTypeSelected">
+                    <div *ngSwitchCase="m_blockLabels.BLOCKCODE_IMAGE">
+                        <h1>Image</h1>
+                    </div>
+                    <div *ngSwitchCase="m_blockLabels.LABEL">
+                        <h1>label</h1>
+                    </div>
+                    <div *ngSwitchCase="m_blockLabels.QR">
+                        <h1>QR</h1>
+                    </div>
+                    <div *ngSwitchCase="m_blockLabels.CLOCK">
+                        <h1>Clock</h1>
+                    </div>
+                    <div *ngSwitchCase="m_blockLabels.HTML">
+                        <h1>HTML</h1>
+                    </div>
+                    <div *ngSwitchDefault>
+                        <h3>no block prop found, new?</h3>
+                        {{m_blockTypeSelected}}
+                    </div>
+                </ul>
+            </tab>
+        </tabs>
     `,
 })
 export class BlockProp extends Compbaser implements AfterViewInit {
@@ -36,7 +48,8 @@ export class BlockProp extends Compbaser implements AfterViewInit {
     m_blockTypeSelected: string = 'none';
     m_blockLabels = BlockLabels;
     m_blockId: number;
-    color;
+    m_tabTitle: string = 'none';
+    m_color;
 
     constructor(private yp: YellowPepperService, private rp: RedPepperService, private bs: BlockService, private hp: HelperPepperService, private cpService: ColorPickerService) {
         super();
@@ -50,6 +63,7 @@ export class BlockProp extends Compbaser implements AfterViewInit {
                 })
                 .subscribe((blockData: IBlockData) => {
                     this.m_blockTypeSelected = blockData.blockCode;
+                    this.m_tabTitle = blockData.blockAcronym;
                     console.log(this.m_blockTypeSelected);
                     this.m_blockId = blockData.blockID;
                 }, (e) => console.error(e))

@@ -18,8 +18,10 @@ import {BlockProp} from "../app/blocks/block-prop";
 import {FormatSecondsPipe} from "../pipes/format-seconds-pipe";
 import {DraggableList} from "../comps/draggable-list";
 import {ColorPickerModule} from "ngx-color-picker";
+import {Tabs} from "../comps/tabs/tabs";
+import {Tab} from "../comps/tabs/tab";
 
-var sharedComponents = [Infobox, Sliderpanel, Slideritem, PanelSplitMain, PanelSplitSide, PanelSplitContainer, ListToArrayPipe, FormatSecondsPipe, MatchBodyHeight, ScreenTemplate, BlurForwarder, DraggableList,
+var sharedComponents = [Tabs, Tab, Infobox, Sliderpanel, Slideritem, PanelSplitMain, PanelSplitSide, PanelSplitContainer, ListToArrayPipe, FormatSecondsPipe, MatchBodyHeight, ScreenTemplate, BlurForwarder, DraggableList,
     BlockProp];
 
 @NgModule({

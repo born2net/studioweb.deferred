@@ -1,6 +1,7 @@
 import {AfterViewInit, Component} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
+import {Observable} from "rxjs";
 
 @Component({
     selector: 'campaign-duration',
@@ -11,26 +12,20 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
         </small>
         <small class="debug">{{me}}</small>
         <span style="font-size: 1em" data-localize="campaignLength">campaign length:</span>
-        <span id="timelinesTotalLength" style="font-size: 1em">{{m_duration}} </span>
+        <span id="timelinesTotalLength" style="font-size: 1em">{{m_duration$ | async | FormatSecondsPipe}} </span>
 
     `,
 })
 export class CampaignDuration extends Compbaser implements AfterViewInit {
 
-    m_duration: any = '00:00:00'
+    m_duration$:Observable<number>;
 
     constructor(private yp: YellowPepperService) {
         super();
     }
 
     ngAfterViewInit() {
-        this.cancelOnDestroy(
-            this.yp.listenTimelineDurationChanged()
-                .subscribe((totalDuration) => {
-                    var xdate = new XDate();
-                    this.m_duration = xdate.clearTime().addSeconds(totalDuration).toString('HH:mm:ss');
-                })
-        )
+        this.m_duration$ = this.yp.listenTimelineDurationChanged()
     }
 
     ngOnInit() {

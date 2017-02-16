@@ -97,7 +97,7 @@ export class YellowPepperService {
                 }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
     }
 
-    listenTimelineDurationChanged(emitOnEmpty: boolean = false) {
+    listenTimelineDurationChanged(emitOnEmpty: boolean = false):Observable<number> {
         var $timelinesList$ = this.store.select(store => store.msDatabase.sdk.table_campaign_timelines);
         return this.listenCampaignSelected()
             .combineLatest($timelinesList$, (campaign, timelines) => {
