@@ -75,11 +75,11 @@ export class ChannelBlockProps extends Compbaser implements AfterViewInit {
             this.yp.getChannelBlockModels(this.m_campaignTimelineChanelPlayersModel.getCampaignTimelineChanelId())
                 .subscribe((i_campaignTimelineChanelPlayersModels: List<CampaignTimelineChanelPlayersModel>) => {
                     var sorted = i_campaignTimelineChanelPlayersModels.sort((a, b) => {
-                        if (a.getPlayerOffsetTime() < b.getPlayerOffsetTime())
+                        if (parseFloat(a.getPlayerOffsetTime()) < parseFloat(b.getPlayerOffsetTime()))
                             return -1;
-                        if (a.getPlayerOffsetTime() > b.getPlayerOffsetTime())
+                        if (parseFloat(a.getPlayerOffsetTime()) > parseFloat(b.getPlayerOffsetTime()))
                             return 1;
-                        if (a.getPlayerOffsetTime() === b.getPlayerOffsetTime())
+                        if (parseFloat(a.getPlayerOffsetTime()) === parseFloat(b.getPlayerOffsetTime()))
                             return 0;
                     })
                     var playerOffsetTime: any = 0;
