@@ -14,7 +14,7 @@ import {ColorPickerService} from "ngx-color-picker";
         <small class="debug">{{me}}</small>
         <tabs>
             <tab [tabtitle]="'style'" >
-                <input [(colorPicker)]="m_color" [cpPosition]="'bottom'" [style.background]="m_color" [value]="m_color"/>
+                <block-prop-common [setBlockId]="m_blockId"></block-prop-common>
             </tab>
             <tab [tabtitle]="m_tabTitle" >
                 <ul [ngSwitch]="m_blockTypeSelected">

@@ -64,7 +64,7 @@ import {IBlockData} from "./block-service";
         </div>
         <input [(colorPicker)]="m_color" [cpPosition]="'bottom'" [style.background]="m_color" [value]="m_color"/>
         <hr/>
-        <h5>block id {{m_blockData.blockID}}</h5>
+        <h5>block id {{m_blockId}}</h5>
 
     `,
     styles: [`
@@ -92,7 +92,7 @@ export class BlockPropCommon extends Compbaser {
     private formInputs = {};
     private contGroup: FormGroup;
     private campaignModel$: Observable<CampaignsModelExt>;
-    private m_blockData:IBlockData;
+    private m_blockId:number;
     m_color;
 
     
@@ -119,9 +119,10 @@ export class BlockPropCommon extends Compbaser {
 
     }
 
+
     @Input()
-    set setBlockData(i_blockData) {
-        this.m_blockData = i_blockData;
+    set setBlockId(i_blockId) {
+        this.m_blockId = i_blockId;
     }
 
     @timeout()

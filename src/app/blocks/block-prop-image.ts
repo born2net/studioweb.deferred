@@ -60,6 +60,8 @@ import * as _ from "lodash";
                     </div>
                 </div>
             </form>
+            <hr/>
+            <h5>block id {{m_blockId}}</h5>
         </div>
 
     `,
