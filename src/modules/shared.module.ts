@@ -17,13 +17,14 @@ import {ChartModule} from "angular2-highcharts";
 import {BlockProp} from "../app/blocks/block-prop";
 import {FormatSecondsPipe} from "../pipes/format-seconds-pipe";
 import {DraggableList} from "../comps/draggable-list";
+import {ColorPickerModule} from "ngx-color-picker";
 
 var sharedComponents = [Infobox, Sliderpanel, Slideritem, PanelSplitMain, PanelSplitSide, PanelSplitContainer, ListToArrayPipe, FormatSecondsPipe, MatchBodyHeight, ScreenTemplate, BlurForwarder, DraggableList,
     BlockProp];
 
 @NgModule({
-    imports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule, ContextMenuModule, ChartModule, ReactiveFormsModule],
-    exports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule, ContextMenuModule, ChartModule, ...sharedComponents],
+    imports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule, ContextMenuModule, ChartModule, ReactiveFormsModule, ColorPickerModule],
+    exports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule, ContextMenuModule, ChartModule, ColorPickerModule, ...sharedComponents],
     entryComponents: [ScreenTemplate],
     declarations: [...sharedComponents]
 })

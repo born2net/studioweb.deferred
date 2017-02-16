@@ -5,6 +5,7 @@ import {RedPepperService} from "../../services/redpepper.service";
 import {BlockService, IBlockData} from "./block-service";
 import {CampaignTimelineChanelPlayersModel} from "../../store/imsdb.interfaces_auto";
 import {BlockLabels, HelperPepperService} from "../../services/helperpepper-service";
+import {ColorPickerService} from "ngx-color-picker";
 
 
 @Component({
@@ -26,6 +27,7 @@ import {BlockLabels, HelperPepperService} from "../../services/helperpepper-serv
                 <h3>no block prop found, new?</h3>
             </div>
         </ul>
+        <input [(colorPicker)]="color" [cpPosition]="'bottom'" [style.background]="color" [value]="color"/>
         {{m_blockId}}
     `,
 })
@@ -34,8 +36,9 @@ export class BlockProp extends Compbaser implements AfterViewInit {
     m_blockTypeSelected: string = 'none';
     m_blockLabels = BlockLabels;
     m_blockId: number;
+    color;
 
-    constructor(private yp: YellowPepperService, private rp: RedPepperService, private bs: BlockService, private hp: HelperPepperService) {
+    constructor(private yp: YellowPepperService, private rp: RedPepperService, private bs: BlockService, private hp: HelperPepperService, private cpService: ColorPickerService) {
         super();
         // console.log(this.bs.getServiceType());
 
