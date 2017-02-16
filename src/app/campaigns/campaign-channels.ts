@@ -1,4 +1,4 @@
-import {Component, ElementRef, ViewChild} from "@angular/core";
+import {AfterViewInit, Component, ElementRef, ViewChild} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {CampaignTimelineBoardViewerChanelsModel, CampaignTimelineChanelPlayersModel, CampaignTimelineChanelsModel, CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 import {BlockService, IBlockData} from "../blocks/block-service";
@@ -67,7 +67,7 @@ import {DraggableList} from "../../comps/draggable-list";
     `
 })
 
-export class CampaignChannels extends Compbaser {
+export class CampaignChannels extends Compbaser implements AfterViewInit {
 
     private selected_campaign_timeline_id: number = -1;
     private selected_campaign_timeline_chanel_id: number = -1;
@@ -76,15 +76,27 @@ export class CampaignChannels extends Compbaser {
 
     constructor(private yp: YellowPepperService, private rp: RedPepperService, private el: ElementRef, private blockService: BlockService) {
         super();
-        this.listenChannelSelected();
-        this.listenDurationChanged();
-        this.preventRedirect(true);
+
     }
 
     @ViewChild(DraggableList)
     draggableList: DraggableList;
 
+    ngAfterViewInit() {
+        this.listenChannelSelected();
+        this.preventRedirect(true);
+    }
+
     private listenChannelSelected() {
+
+        this.cancelOnDestroy(
+            this.yp.listenCampaignTimelineBoardViewerSelected(true)
+                .skip(1)
+                .distinctUntilChanged()
+                .subscribe(() => {
+                    this.draggableList.deselect();
+                })
+        )
 
         this.cancelOnDestroy(
             this.yp.listenCampaignTimelineBoardViewerSelected(true)
@@ -126,9 +138,7 @@ export class CampaignChannels extends Compbaser {
 
             }, e => console.error(e))
         )
-    }
 
-    private listenDurationChanged(){
         this.cancelOnDestroy(
             this.yp.listenTimelineDurationChanged()
                 .subscribe((totalDuration) => {

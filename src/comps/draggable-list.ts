@@ -83,8 +83,7 @@ export class DraggableList extends Compbaser implements AfterViewInit {
         this.m_items = i_items;
     }
 
-    @Input()
-    set deselect(v) {
+    public deselect() {
         this.m_selectedIdx = -1;
     }
 
