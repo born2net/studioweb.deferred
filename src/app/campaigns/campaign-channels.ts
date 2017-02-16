@@ -132,7 +132,7 @@ export class CampaignChannels extends Compbaser implements AfterViewInit {
                     }).combineAll()
 
             }).subscribe((i_blockList: Array<IBlockData>) => {
-                console.log('total block in channel ' + i_blockList.length);
+                // console.log('total block in channel ' + i_blockList.length);
                 this.m_blockList = List(this._sortBlock(i_blockList));
                 this.draggableList.createSortable()
 
@@ -191,7 +191,7 @@ export class CampaignChannels extends Compbaser implements AfterViewInit {
             self._getBlockRecord(block_id, (i_campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModel) => {
                 var playerDuration = i_campaignTimelineChanelPlayersModel.getPlayerDuration();
                 self.rp.setBlockRecord(block_id, 'player_offset_time', playerOffsetTime);
-                console.log('player ' + block_id + ' offset ' + playerOffsetTime + ' playerDuration ' + playerDuration);
+                // console.log('player ' + block_id + ' offset ' + playerOffsetTime + ' playerDuration ' + playerDuration);
                 playerOffsetTime = parseFloat(playerOffsetTime) + parseFloat(playerDuration);
             })
         });

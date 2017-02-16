@@ -17,10 +17,10 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
     template: `
         <small class="debug">{{me}}</small>
         <ul [ngSwitch]="m_uiUserFocusItem$ | async">
-            <block-prop></block-prop>
+            <block-prop-container></block-prop-container>
             <h3>test show shared block prop</h3>
             <div *ngSwitchCase="m_uiUserFocusItemEnum.sceneBlock">
-                <block-prop></block-prop>
+                <block-prop-container></block-prop-container>
             </div>
         </ul>
     `,

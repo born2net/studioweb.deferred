@@ -9,8 +9,7 @@ import {ColorPickerService} from "ngx-color-picker";
 
 
 @Component({
-    selector: 'block-prop',
-    // changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'block-prop-container',
     template: `
         <small class="debug">{{me}}</small>
         <tabs>
@@ -20,7 +19,7 @@ import {ColorPickerService} from "ngx-color-picker";
             <tab [tabtitle]="m_tabTitle" >
                 <ul [ngSwitch]="m_blockTypeSelected">
                     <div *ngSwitchCase="m_blockLabels.BLOCKCODE_IMAGE">
-                        <h1>Image</h1>
+                        <block-prop-image [setBlockId]="m_blockId"></block-prop-image>
                     </div>
                     <div *ngSwitchCase="m_blockLabels.LABEL">
                         <h1>label</h1>
@@ -43,7 +42,7 @@ import {ColorPickerService} from "ngx-color-picker";
         </tabs>
     `,
 })
-export class BlockProp extends Compbaser implements AfterViewInit {
+export class BlockPropContainer extends Compbaser implements AfterViewInit {
 
     m_blockTypeSelected: string = 'none';
     m_blockLabels = BlockLabels;
@@ -64,7 +63,6 @@ export class BlockProp extends Compbaser implements AfterViewInit {
                 .subscribe((blockData: IBlockData) => {
                     this.m_blockTypeSelected = blockData.blockCode;
                     this.m_tabTitle = blockData.blockAcronym;
-                    console.log(this.m_blockTypeSelected);
                     this.m_blockId = blockData.blockID;
                 }, (e) => console.error(e))
         )

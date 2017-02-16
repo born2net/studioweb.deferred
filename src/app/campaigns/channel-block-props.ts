@@ -22,7 +22,7 @@ import {ACTION_UISTATE_UPDATE} from "../../store/actions/appdb.actions";
             <input id="blockLengthMinutes" data-displayPrevious="false" data-min="0" data-max="59" data-skin="tron" data-width="60" data-height="60" data-thickness=".2" type="text" class="knob" data-fgColor="gray">
             <input id="blockLengthSeconds" data-displayPrevious="false" data-min="0" data-max="59" data-skin="tron" data-width="60" data-height="60" data-thickness=".2" type="text" class="knob" data-fgColor="gray">
         </div>
-        <block-prop></block-prop>
+        <block-prop-container></block-prop-container>
     `,
 })
 export class ChannelBlockProps extends Compbaser implements AfterViewInit {
