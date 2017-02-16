@@ -1,4 +1,4 @@
-import {Component, ChangeDetectionStrategy, AfterViewInit} from "@angular/core";
+import {AfterViewInit, Component} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {RedPepperService} from "../../services/redpepper.service";
@@ -40,6 +40,7 @@ export class BlockProp extends Compbaser implements AfterViewInit {
         // console.log(this.bs.getServiceType());
 
         this.cancelOnDestroy(
+            //
             this.yp.listenBlockChannelSelected()
                 .mergeMap((i_campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModel) => {
                     return this.bs.getBlockData(i_campaignTimelineChanelPlayersModel.getCampaignTimelineChanelPlayerId())
