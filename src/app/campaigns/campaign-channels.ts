@@ -71,12 +71,13 @@ export class CampaignChannels extends Compbaser {
 
     private selected_campaign_timeline_id: number = -1;
     private selected_campaign_timeline_chanel_id: number = -1;
-    private durationChanged$;
+    private durationChanged$ = new Subject();
     m_blockList: List<IBlockData> = List([]);
 
     constructor(private yp: YellowPepperService, private rp: RedPepperService, private el: ElementRef, private blockService: BlockService) {
         super();
         this.listenChannelSelected();
+        this.listenDurationChanged();
         this.preventRedirect(true);
     }
 
@@ -84,8 +85,6 @@ export class CampaignChannels extends Compbaser {
     draggableList: DraggableList;
 
     private listenChannelSelected() {
-        this.durationChanged$ = new Subject();
-        this.durationChanged$.subscribe()
 
         this.cancelOnDestroy(
             this.yp.listenCampaignTimelineBoardViewerSelected(true)
@@ -93,6 +92,7 @@ export class CampaignChannels extends Compbaser {
 
                 .filter((v) => {
                     var campaignTimelineBoardViewerChanelsModel: CampaignTimelineBoardViewerChanelsModel = v[0];
+                    var totalDuration = v[1];
                     if (campaignTimelineBoardViewerChanelsModel == null) this.m_blockList = List([]);
                     return campaignTimelineBoardViewerChanelsModel != null;
 
@@ -126,19 +126,16 @@ export class CampaignChannels extends Compbaser {
 
             }, e => console.error(e))
         )
+    }
 
+    private listenDurationChanged(){
         this.cancelOnDestroy(
             this.yp.listenTimelineDurationChanged()
-                .distinctUntilChanged()
+                // .distinctUntilChanged()
                 .subscribe((totalDuration) => {
                     this.durationChanged$.next(totalDuration);
                 })
         )
-
-    }
-
-    private listenDurationChanged(){
-        
     }
 
     _onItemSelected(event) {

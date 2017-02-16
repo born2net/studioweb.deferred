@@ -79,7 +79,7 @@ export class DraggableList extends Compbaser implements AfterViewInit {
 
     @Input()
     set items(i_items: List<any>) {
-        this.m_selectedIdx = -1;
+        // this.m_selectedIdx = -1;
         this.m_items = i_items;
     }
 
@@ -115,6 +115,7 @@ export class DraggableList extends Compbaser implements AfterViewInit {
             onDrag: self._sortableDrag,
             liveSnap: self._sortableSnap,
             onDragEnd: function () {
+                self.m_selectedIdx = -1;
                 var t = this.target,
                     max = t.kids.length - 1,
                     newIndex = Math.round(this.y / t.currentHeight);

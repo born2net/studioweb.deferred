@@ -83,19 +83,14 @@ export class ChannelBlockProps extends Compbaser implements AfterViewInit {
                     })
                     var playerOffsetTime: any = 0;
                     sorted.forEach((i_campaignTimelineChanelPlayersModel) => {
-                        console.log(i_campaignTimelineChanelPlayersModel.getPlayerDuration() + ' ' + i_campaignTimelineChanelPlayersModel.getPlayerOffsetTime());
+                        // console.log(i_campaignTimelineChanelPlayersModel.getPlayerDuration() + ' ' + i_campaignTimelineChanelPlayersModel.getPlayerOffsetTime());
                         var playerDuration = i_campaignTimelineChanelPlayersModel.getPlayerDuration();
                         self.rp.setBlockRecord(i_campaignTimelineChanelPlayersModel.getCampaignTimelineChanelPlayerId(), 'player_offset_time', playerOffsetTime);
-                        console.log('player ' + i_campaignTimelineChanelPlayersModel.getCampaignTimelineChanelPlayerId() + ' offset ' + playerOffsetTime + ' playerDuration ' + playerDuration);
+                        // console.log('player ' + i_campaignTimelineChanelPlayersModel.getCampaignTimelineChanelPlayerId() + ' offset ' + playerOffsetTime + ' playerDuration ' + playerDuration);
                         playerOffsetTime = parseFloat(playerOffsetTime) + parseFloat(playerDuration);
                     })
                     self.rp.updateTotalTimelineDuration(this.m_selectedCampaignTimelinesModel.getCampaignTimelineId());
                     self.rp.reduxCommit();
-
-                    // var uiState: IUiState = {campaign: {campaignTimelineBoardViewerSelected: -1}}
-                    // this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
-                    // var uiState: IUiState = {campaign: {campaignTimelineBoardViewerSelected: 122}}
-                    // this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
 
                 }, (e) => console.error(e))
         )
