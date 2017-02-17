@@ -181,18 +181,14 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         gradient.removeAllPoints();
         var domPlayerData = self.m_blockData.playerDataDom;
         var xSnippet = self._findGradientPoints(domPlayerData);
-        if (xSnippet.length > 0) {
-            var points = $(xSnippet).find('Point');
-            if (points.length == 0)
-                return this._bgGradientClear();
-            $.each(points, function (i, point) {
-                var pointColor = Lib.DecimalToHex(jQuery(point).attr('color'));
-                var pointMidpoint = (parseInt($(point).attr('midpoint')) / 250);
-                gradient.addPoint(pointMidpoint, pointColor, true);
-            });
-        } else {
-            this._bgGradientClear()
-        }
+        var points = $(xSnippet).find('Point');
+        if (points.length == 0)
+            return this._bgGradientClear();
+        $.each(points, function (i, point) {
+            var pointColor = Lib.DecimalToHex(jQuery(point).attr('color'));
+            var pointMidpoint = (parseInt($(point).attr('midpoint')) / 250);
+            gradient.addPoint(pointMidpoint, pointColor, true);
+        });
     }
 
     _bgGradientClear() {
