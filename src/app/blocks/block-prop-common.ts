@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Input} from "@angular/core";
+import {ChangeDetectionStrategy, Component, ElementRef, Input} from "@angular/core";
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {Compbaser, NgmslibService} from "ng-mslib";
 import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
@@ -91,7 +91,7 @@ export class BlockPropCommon extends Compbaser {
     m_color;
 
 
-    constructor(private fb: FormBuilder, private ngmslibService: NgmslibService, private yp: YellowPepperService, private rp: RedPepperService) {
+    constructor(private fb: FormBuilder, private ngmslibService: NgmslibService, private yp: YellowPepperService, private rp: RedPepperService, private el:ElementRef) {
         super();
 
         this.contGroup = fb.group({
@@ -128,9 +128,6 @@ export class BlockPropCommon extends Compbaser {
      **/
     _bgGradientInit() {
         var self = this;
-
-        var self = this;
-
         var lazyUpdateBgColor = _.debounce(function (points, styles) {
             if (points.length == 0)
                 return;
@@ -142,7 +139,7 @@ export class BlockPropCommon extends Compbaser {
             // BB.comBroker.fire(BB.EVENTS.GRADIENT_COLOR_CLOSED, self, null);
         };
 
-        $('#bgColorGradientSelector').gradientPicker({
+        jQuery('#bgColorGradientSelector',self.el.nativeElement).gradientPicker({
             change: lazyUpdateBgColor,
             closed: gradientColorPickerClosed,
             fillDirection: "90deg"
