@@ -277,12 +277,12 @@ define(['jquery', 'backbone', 'Knob', 'nouislider', 'gradient', 'spinner', 'Font
                 closed: gradientColorPickerClosed,
                 fillDirection: "90deg"
             });
-
+                   
             // always close gradient color picker on mouseout
-            $('.colorpicker').on('mouseleave', function (e) {
-                $(document).trigger('mousedown');
-                BB.comBroker.fire(BB.EVENTS.GRADIENT_COLOR_CLOSED, self, self);
-            });
+            // $('.colorpicker').on('mouseleave', function (e) {
+            //     $(document).trigger('mousedown');
+            //     BB.comBroker.fire(BB.EVENTS.GRADIENT_COLOR_CLOSED, self, self);
+            // });
 
             // to destroy the plugin instance
             // gradient = {}; $(Elements.BG_COLOR_GRADIENT_SELECTOR).remove();

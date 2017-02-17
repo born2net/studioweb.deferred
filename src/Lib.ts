@@ -489,6 +489,55 @@ export class Lib {
     }
 
     /**
+     Smart convert color (many) to decinal
+     @method colorToDecimal
+     @param {String} color
+     @return {Number} decimal
+     **/
+    static ColorToDecimal(color) {
+        if (color.match('rgb')) {
+            color = this.RgbToHex(color);
+            return this.HexToDecimal(color)
+        }
+        return this.HexToDecimal(color);
+    }
+
+    /**
+     Hex to decimal converter
+     @method hexToDecimal
+     @param {String} h
+     @return {Number} decimal
+     **/
+    static HexToDecimal(h) {
+        var h = h.replace(/#/gi, '');
+        return parseInt(h, 16);
+    }
+
+    /**
+     RGB color to hex converter
+     @method rgbToHex
+     @param {Number} rgb
+     @return {String} hex
+     **/
+    static RgbToHex(rgb) {
+        function componentFromStr(numStr, percent) {
+            var num = Math.max(0, parseInt(numStr, 10));
+            return percent ?
+                Math.floor(255 * Math.min(100, num) / 100) : Math.min(255, num);
+        }
+
+        var rgbRegex = /^rgb\(\s*(-?\d+)(%?)\s*,\s*(-?\d+)(%?)\s*,\s*(-?\d+)(%?)\s*\)$/;
+        var result, r, g, b, hex = "";
+        if ((result = rgbRegex.exec(rgb))) {
+            r = componentFromStr(result[1], result[2]);
+            g = componentFromStr(result[3], result[4]);
+            b = componentFromStr(result[5], result[6]);
+            hex = (0x1000000 + (r << 16) + (g << 8) + b).toString(16).slice(1);
+        }
+        return hex;
+    }
+
+    /**
      Decimal to hex converter
      @method decimalToHex
      @param {Number} d

@@ -120,7 +120,8 @@ export class BlockService {
                 this.rp.setCampaignTimelineChannelPlayerRecord(blockData.blockID, 'player_data', player_data);
                 break;
             }
-            // case 'SCENE': {
+            //todo: fix scene
+            case 'SCENE': {
             //     pepper.setScenePlayerdataBlock(self.m_sceneID, self.m_block_id, player_data);
             //     if (!i_noNotify)
             //         self._announceBlockChanged();
@@ -131,7 +132,7 @@ export class BlockService {
             //     if (!i_noNotify)
             //         self._announceBlockChanged();
             //     break;
-            // }
+            }
         }
         this.rp.reduxCommit();
     }
