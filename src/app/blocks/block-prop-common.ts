@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input} from "@angular/core";
+import {AfterViewInit, Component, ElementRef, Input} from "@angular/core";
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {Compbaser, NgmslibService} from "ng-mslib";
 import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
@@ -8,7 +8,8 @@ import {timeout} from "../../decorators/timeout-decorator";
 import {Observable} from "rxjs";
 import {Lib, simpleRegExp} from "../../Lib";
 import * as _ from "lodash";
-import {IBlockData} from "./block-service";
+import {BlockService, IBlockData} from "./block-service";
+import {HelperPepperService} from "../../services/helperpepper-service";
 
 @Component({
     selector: 'block-prop-common',
@@ -30,18 +31,32 @@ import {IBlockData} from "./block-service";
                             </div>
                             <ul class="list-group">
                                 <li class="list-group-item">
-                                    Alpha
-                                    <input id="slider1" type="range" min="100" max="500" step="10"/>
+                                    alpha
+                                    <input id="slider1" (change)="_onAlphaChange($event)" [formControl]="contGroup.controls['alpha']" type="range" min="0" max="1" step="0.1"/>
                                 </li>
                                 <li class="list-group-item">
-                                    <input id="sceneBorderColorSelector" type="text" name="colorSelect" class="fontSelectorMiniColor fontFormatter form-control minicolor-mini" data-control="hue">
+                                    background
+                                    <div style="position: relative; top: 12px" class="material-switch pull-right">
+                                        <input (change)="saveToStore(backgroundSelection.checked)"
+                                               [formControl]="contGroup.controls['background']"
+                                               id="backgroundSelection" #backgroundSelection
+                                               name="backgroundSelection" type="checkbox"/>
+                                        <label for="backgroundSelection" class="label-primary"></label>
+                                    </div>
+                                    <div id="bgColorGradientSelector"></div>
                                 </li>
+
                                 <li class="list-group-item">
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="fa fa-key"></i></span>
-                                        <input type="number" [formControl]="contGroup.controls['campaign_playlist_mode']" min="0"
-                                               class="form-control"
-                                               placeholder="access key">
+                                    <div style="padding-top: 20px; padding-bottom: 20px">
+                                        border
+                                        <div class="material-switch pull-right">
+                                            <input (change)="saveToStore(borderSelection.checked)"
+                                                   [formControl]="contGroup.controls['border']"
+                                                   id="borderSelection" #borderSelection
+                                                   name="borderSelection" type="checkbox"/>
+                                            <label for="borderSelection" class="label-primary"></label>
+                                        </div>
+                                        <input [(colorPicker)]="m_color" [cpPosition]="'bottom'" [style.background]="m_color" [value]="m_color"/>
                                     </div>
                                 </li>
                             </ul>
@@ -50,27 +65,7 @@ import {IBlockData} from "./block-service";
                 </div>
             </form>
         </div>
-        <input [(colorPicker)]="m_color" [cpPosition]="'bottom'" [style.background]="m_color" [value]="m_color"/>
-        <hr/>
-        <div>
-            Background Color
-            <!--<input #rememberMe type="checkbox" [checked]="m_rememberMe" (change)="m_rememberMe = rememberMe.checked"/>-->
-            <ul class="list-group">
-                <li *ngIf="twoFactorStatus" class="list-group-item">
-                    Two factor login with Google Authenticator
-                    <div class="material-switch pull-right">
-                        <input (change)="onChangeStatus(customerNetwork2.checked)"
-                               <!--[formControl]="contGroup.controls['TwofactorCont']"-->
-                               id="customerNetwork2" #customerNetwork2
-                               name="customerNetwork2" type="checkbox"/>
-                        <label for="customerNetwork2" class="label-primary"></label>
-                    </div>
-                </li>
-            </ul>
-        </div>
-        <div id="bgColorGradientSelector"></div>
         <!--<input id="sceneBackgroundSelector" type="text" name="colorSelect" class="fontSelectorMiniColor fontFormatter form-control minicolor-mini" data-control="hue">-->
-        <hr/>
         <h5>block id {{m_blockData.blockID}}</h5>
     `,
     styles: [`
@@ -99,15 +94,15 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
     private contGroup: FormGroup;
     private campaignModel$: Observable<CampaignsModelExt>;
     private m_blockData: IBlockData;
-    private m_viewReady:boolean = false;
+    private m_viewReady: boolean = false;
     m_color;
 
-    constructor(private fb: FormBuilder, private ngmslibService: NgmslibService, private yp: YellowPepperService, private rp: RedPepperService, private el: ElementRef) {
+    constructor(private fb: FormBuilder, private ngmslibService: NgmslibService, private bs:BlockService, private hp: HelperPepperService, private yp: YellowPepperService, private el: ElementRef) {
         super();
         this.contGroup = fb.group({
-            'campaign_name': ['', [Validators.required, Validators.pattern(simpleRegExp)]],
-            'campaign_playlist_mode': [0],
-            'kiosk_mode': [0]
+            'alpha': [0],
+            'border': [0],
+            'background': [0]
         });
         _.forEach(this.contGroup.controls, (value, key: string) => {
             this.formInputs[key] = this.contGroup.controls[key] as FormControl;
@@ -134,11 +129,72 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         this._render();
     }
 
-    private _render(){
+    private _render() {
         if (!this.m_viewReady) return;
+        this._alphaPopulate();
         this._bgPropsPopulate();
+        this._populateBackgroundCheckbox();
     }
 
+    /**
+     On changes in msdb model updated UI common alpha properties
+     @method _alphaPopulate
+     **/
+    _alphaPopulate() {
+        var self = this;
+        var domPlayerData = self.m_blockData.playerDataDom;
+        var data = $(domPlayerData).find('Data').eq(0);
+        var xSnippet = $(data).find('Appearance').eq(0);
+        var a1: any = $(xSnippet).attr('alpha');
+        if (_.isUndefined(a1)) a1 = 1;
+        this.formInputs['alpha'].setValue(a1)
+    }
+
+    _onAlphaChange(event){
+        var domPlayerData = this.m_blockData.playerDataDom;
+        var data = $(domPlayerData).find('Data').eq(0);
+        var xSnippet = $(data).find('Appearance').eq(0);
+        jQuery(xSnippet).attr('alpha', event.target.value);
+        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+    }
+
+    /**
+     Toggle block background on UI checkbox selection
+     @method _toggleBackgroundColorHandler
+     @param {event} e
+     **/
+    _populateBackgroundCheckbox() {
+        // var self = this;
+        // var xBgSnippet = undefined;
+        // var domPlayerData = self.m_blockData.playerDataDom;
+        // var xSnippet = $(domPlayerData).find('Background');
+        // console.log(xSnippet);
+        // $(xSnippet).remove();
+        // self._bgPropsUnpopulate();
+        // self._setBlockPlayerData(domPlayerData);
+        //var checked = jQuery(e.target).prop('checked') == true ? 1 : 0;
+        // if (checked) {
+        //     self._enableBgSelection();
+        //     xBgSnippet = self.hp.getCommonBackgroundXML();
+        //     var data = $(domPlayerData).find('Data').eq(0);
+        //     var bgData = $(data).find('Background');
+        //     if (bgData.length > 0 && !_.isUndefined(bgData.replace)) { // ie bug workaround
+        //         bgData.replace($(xBgSnippet));
+        //     } else {
+        //         $(data).append($(xBgSnippet));
+        //     }
+        //     var player_data = pepper.xmlToStringIEfix(domPlayerData);
+        //     domPlayerData = $.parseXML(player_data);
+        //     self._setBlockPlayerData(domPlayerData, BB.CONSTS.NO_NOTIFICATION);
+        //     self._bgPropsPopulate();
+        //     //self._announceBlockChanged();
+        // } else {
+        //     var xSnippet = self._findBackground(domPlayerData);
+        //     $(xSnippet).remove();
+        //     self._bgPropsUnpopulate();
+        //     self._setBlockPlayerData(domPlayerData);
+        // }
+    }
 
     /**
      Load jquery gradient component once
@@ -190,7 +246,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
                 gradient.addPoint(pointMidpoint, pointColor, true);
             });
         } else {
-            // self._bgPropsUnpopulate();
+            self._bgDisable();
         }
     }
 
@@ -198,7 +254,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
      Disable the gradient background UI
      @method _bgPropsUnpopulate
      **/
-    _bgPropsUnpopulate() {
+    _bgDisable() {
         var self = this;
         // $(Elements.SHOW_BACKGROUND).prop('checked', false);
         // $(Elements.BG_COLOR_GRADIENT_SELECTOR).hide();
@@ -224,11 +280,11 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         // console.log(this.contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.contGroup.value)));
         if (this.contGroup.status != 'VALID')
             return;
-        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_name', this.contGroup.value.campaign_name);
-        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_playlist_mode', this.contGroup.value.campaign_playlist_mode);
-        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_timeline_id', 0); //todo: you need to fix this as zero is arbitrary number right now
-        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_mode', this.contGroup.value.kiosk_mode);
-        this.rp.reduxCommit()
+        // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_name', this.contGroup.value.campaign_name);
+        // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_playlist_mode', this.contGroup.value.campaign_playlist_mode);
+        // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_timeline_id', 0); //todo: you need to fix this as zero is arbitrary number right now
+        // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_mode', this.contGroup.value.kiosk_mode);
+        // this.rp.reduxCommit()
     }
 
     private renderFormInputs() {

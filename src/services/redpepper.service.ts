@@ -1029,6 +1029,17 @@ export class RedPepperService {
     }
 
     /**
+     Set a player_id record in sdk on key with value
+     The method uses generic key / value fields so it can set any part of the record.
+     **/
+    setCampaignTimelineChannelPlayerRecord(i_player_id, i_key, i_value) {
+        this.databaseManager.table_campaign_timeline_chanel_players().openForEdit(i_player_id);
+        var recPlayer = this.databaseManager.table_campaign_timeline_chanel_players().getRec(i_player_id);
+        recPlayer[i_key] = i_value;
+        this.addPendingTables(['table_campaign_timeline_chanel_players']);
+    }
+
+    /**
      Remove campaign board_id
      @method removeCampaignBoard
      @param {Number} i_campaign_id
@@ -2691,22 +2702,6 @@ export class RedPepperService {
      **/
     getBlockRecord(i_block_id) {
         return this.databaseManager.table_campaign_timeline_chanel_players().getRec(i_block_id);
-    }
-
-    /**
-     Set a player_id record in sdk on key with value
-     The method uses generic key / value fields so it can set any part of the record.
-     @method setCampaignTimelineChannelPlayerRecord
-     @param {Number} i_player_id
-     @param {Object} i_key
-     @param {Object} i_value
-     @return none
-     **/
-    setCampaignTimelineChannelPlayerRecord(i_player_id, i_key, i_value) {
-
-        this.databaseManager.table_campaign_timeline_chanel_players().openForEdit(i_player_id);
-        var recPlayer = this.databaseManager.table_campaign_timeline_chanel_players().getRec(i_player_id);
-        recPlayer[i_key] = i_value;
     }
 
     /**

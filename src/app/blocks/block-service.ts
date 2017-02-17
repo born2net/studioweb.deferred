@@ -6,6 +6,7 @@ import {BlockLabels, HelperPepperService} from "../../services/helperpepper-serv
 import * as _ from "lodash";
 import {Observable} from "rxjs";
 import {CampaignTimelineChanelPlayersModelExt} from "../../store/model/msdb-models-extended";
+import {RedPepperService} from "../../services/redpepper.service";
 
 export interface IBlockData {
     blockID: number;
@@ -31,7 +32,7 @@ export class BlockService {
     private m_zIndex = -1;
     private m_minSize = {w: 50, h: 50};
 
-    constructor(@Inject('BLOCK_PLACEMENT') private blockPlacement: string, private yp: YellowPepperService, private hp: HelperPepperService) {
+    constructor(@Inject('BLOCK_PLACEMENT') private blockPlacement: string, private yp: YellowPepperService, private hp: HelperPepperService, private rp: RedPepperService) {
         this.parser = new X2JS({
             escapeMode: true,
             attributePrefix: "_",
@@ -97,6 +98,42 @@ export class BlockService {
 
                 return Observable.of(data)
             })
+    }
+
+    /**
+     Update the msdb for the block with new values inside its player_data
+     @method _setBlockPlayerData
+     @param {Object} i_xmlDoc the dom object to save to local msdb
+     @param {String} [i_noNotify] if set, fire event announcing data saved
+     @param {Boolean} [i_xmlIsString] if set, bypass serializeToString since already in string format
+     **/
+    setBlockPlayerData(blockData:IBlockData, i_xmlDoc:XMLDocument, i_noNotify?:boolean, i_xmlIsString?:boolean) {
+        var self = this;
+        var player_data;
+        if (i_xmlIsString == true) {
+            player_data = i_xmlDoc;
+        } else {
+            player_data = (new XMLSerializer()).serializeToString(i_xmlDoc);
+        }
+        switch (self.blockPlacement) {
+            case 'CHANNEL': {
+                this.rp.setCampaignTimelineChannelPlayerRecord(blockData.blockID, 'player_data', player_data);
+                break;
+            }
+            // case 'SCENE': {
+            //     pepper.setScenePlayerdataBlock(self.m_sceneID, self.m_block_id, player_data);
+            //     if (!i_noNotify)
+            //         self._announceBlockChanged();
+            //     break;
+            // }
+            // case BB.CONSTS.PLACEMENT_IS_SCENE: {
+            //     pepper.setScenePlayerData(self.m_block_id, player_data);
+            //     if (!i_noNotify)
+            //         self._announceBlockChanged();
+            //     break;
+            // }
+        }
+        this.rp.reduxCommit();
     }
 }
 
