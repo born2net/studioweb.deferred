@@ -163,6 +163,11 @@
             }
         },
 
+        clear: function () {
+            var context = this.g2d.canvas.getContext('2d');
+            context.clearRect(0, 0, this.g2d.canvas.width,this.g2d.canvas.height);
+        },
+
         /** webNeat modifications starts here */
         addPoint: function (percent, colorStr, quiet) {
             colorStr = this.colorToHex(colorStr);

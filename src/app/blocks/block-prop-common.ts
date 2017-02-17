@@ -90,8 +90,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         super();
         this.contGroup = fb.group({
             'alpha': [0],
-            'border': [0],
-            'background': [0]
+            'border': [0]
         });
         _.forEach(this.contGroup.controls, (value, key: string) => {
             this.formInputs[key] = this.contGroup.controls[key] as FormControl;
@@ -182,10 +181,10 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         gradient.removeAllPoints();
         var domPlayerData = self.m_blockData.playerDataDom;
         var xSnippet = self._findGradientPoints(domPlayerData);
-        var points = $(xSnippet).find('Point');
-        if (points.length > 0) {
-            this.formInputs['background'].setValue(true)
+        if (xSnippet.length > 0) {
             var points = $(xSnippet).find('Point');
+            if (points.length == 0)
+                return this._bgGradientClear();
             $.each(points, function (i, point) {
                 var pointColor = Lib.DecimalToHex(jQuery(point).attr('color'));
                 var pointMidpoint = (parseInt($(point).attr('midpoint')) / 250);
@@ -193,7 +192,6 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
             });
         } else {
             this._bgGradientClear()
-            this.formInputs['background'].setValue(false)
         }
     }
 
@@ -201,6 +199,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         var self = this;
         var gradient = jQuery('#bgColorGradientSelector', self.el.nativeElement).data("gradientPicker-sel");
         gradient.removeAllPoints();
+        gradient.clear();
     }
 
     /**
@@ -215,6 +214,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
     }
 
     _onRemoveBackground() {
+        this._bgGradientClear();
         var domPlayerData = this.m_blockData.playerDataDom;
         var gradientPoints = this._findGradientPoints(domPlayerData);
         jQuery(gradientPoints).empty();
