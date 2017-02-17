@@ -108,9 +108,9 @@ export class Lib {
      @return {Object}
      **/
     static FormatSecondsToObject(i_totalSeconds) {
-        var seconds:any = 0;
-        var minutes:any = 0;
-        var hours:any = 0;
+        var seconds: any = 0;
+        var minutes: any = 0;
+        var hours: any = 0;
         var totalInSeconds = i_totalSeconds;
         if (i_totalSeconds >= 3600) {
             hours = Math.floor(i_totalSeconds / 3600);
@@ -486,6 +486,18 @@ export class Lib {
         }
 
         return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+    }
+
+    /**
+     Decimal to hex converter
+     @method decimalToHex
+     @param {Number} d
+     @return {String} hex
+     **/
+    static DecimalToHex(d) {
+        var hex = Number(d).toString(16);
+        hex = "000000".substr(0, 6 - hex.length) + hex;
+        return hex;
     }
 
     static ReduxLoggerMiddleware = store => next => action => {

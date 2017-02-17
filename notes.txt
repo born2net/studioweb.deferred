@@ -1,5 +1,14 @@
 ////////////// NOTES ////////////////
 
+npm uninstall -g angular-cli @angular/cli
+npm cache clean
+npm install -g @angular/cli@latest
+Local project package:
+
+rm -rf node_modules dist # use rmdir on Windows
+npm install --save-dev @angular/cli@latest <<<<<<<<<<<<<<<<
+npm install
+
 ==================================================================================================================
 
 debug reflection: http://127.0.0.1:8080/src/create_reflection.html
@@ -15,7 +24,7 @@ revert webpack ng tools: npm install --save @ngtools/webpack@1.2.4
 
 clear cache: npm clear cache
 
-npm install @angular/cli@1.0.0-beta.30 -g
+npm install @angular/cli@1.0.0-beta.32.3 -g
 npm install -g @angular/cli
 
 

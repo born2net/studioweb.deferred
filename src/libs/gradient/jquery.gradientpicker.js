@@ -179,13 +179,14 @@
         removeAllPoints: function () {
             this.controlPoints.forEach(function (point) {
                 point.$el.remove();
-                ;
             });
             this.controlPoints = [];
-            // this.addPoint(0,'#fff');
-            // this.addPoint(1,'#fff');
-
+            this.addPoint(0,'#fff');
+            this.addPoint(1,'#fff');
             this.updatePreview();
+            this.controlPoints.forEach(function (point) {
+                point.$el.remove();
+            });
         },
 
         changeFillDirection: function (fd) {

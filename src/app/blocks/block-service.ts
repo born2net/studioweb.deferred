@@ -18,6 +18,8 @@ export interface IBlockData {
     blockAcronym: string;
     blockMinWidth: number;
     blockMinHeight: number;
+    playerDataJson: {};
+    playerDataDom: XMLDocument,
     campaignTimelineChanelPlayersModelExt: CampaignTimelineChanelPlayersModelExt,
     length?: number;
 }
@@ -55,19 +57,20 @@ export class BlockService {
 
         return this.yp.getBlockRecord(blockId)
             .mergeMap((i_campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModelExt) => {
-
+                // var t0 = performance.now();
                 var xml = i_campaignTimelineChanelPlayersModel.getPlayerData();
-                let playerData = this.parser.xml2js(xml);
-
-                if (playerData['Player']['_player']) {
+                var playerDataDom = $.parseXML(xml);
+                let playerDataJson = this.parser.xml2js(xml);
+                if (playerDataJson['Player']['_player']) {
                     /** Standard block **/
-                    var code = playerData['Player']['_player'];
+                    var code = playerDataJson['Player']['_player'];
 
                     var blockType = this.hp.getBlockNameByCode(code)
                     if (_.isUndefined(blockType)) {
                         var e = `Panic using a component / block which is not supported yet ${code} ${blockType}`;
                         throw new Error(e)
                     }
+                    // console.log(`Serialization of block ${code} took ${(performance.now() - t0)} milliseconds`)
 
                 } else {
                     /** Scene **/
@@ -76,9 +79,6 @@ export class BlockService {
                     //     var domPlayerData = $.parseXML(i_player_data);
                     //     i_scene_id = $(domPlayerData).find('Player').attr('hDataSrc');
                 }
-
-                var a = this.hp.getBlockBoilerplate(code).fontAwesome;
-
                 var data = {
                     blockID: blockId,
                     blockType: blockType,
@@ -90,6 +90,8 @@ export class BlockService {
                     blockAcronym: this.hp.getBlockBoilerplate(code).acronym,
                     blockMinWidth: this.m_minSize.w,
                     blockMinHeight: this.m_minSize.h,
+                    playerDataDom: playerDataDom,
+                    playerDataJson: playerDataJson,
                     campaignTimelineChanelPlayersModelExt: i_campaignTimelineChanelPlayersModel
                 };
 

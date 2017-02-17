@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, ElementRef, Input} from "@angular/core";
+import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input} from "@angular/core";
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {Compbaser, NgmslibService} from "ng-mslib";
 import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
@@ -6,7 +6,7 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
 import {RedPepperService} from "../../services/redpepper.service";
 import {timeout} from "../../decorators/timeout-decorator";
 import {Observable} from "rxjs";
-import {simpleRegExp} from "../../Lib";
+import {Lib, simpleRegExp} from "../../Lib";
 import * as _ from "lodash";
 import {IBlockData} from "./block-service";
 
@@ -18,7 +18,6 @@ import {IBlockData} from "./block-service";
     },
     template: `
         <div>
-
             <form novalidate autocomplete="off" [formGroup]="contGroup">
                 <div class="row">
                     <div class="inner userGeneral">
@@ -53,14 +52,26 @@ import {IBlockData} from "./block-service";
         </div>
         <input [(colorPicker)]="m_color" [cpPosition]="'bottom'" [style.background]="m_color" [value]="m_color"/>
         <hr/>
+        <div>
+            Background Color
+            <!--<input #rememberMe type="checkbox" [checked]="m_rememberMe" (change)="m_rememberMe = rememberMe.checked"/>-->
+            <ul class="list-group">
+                <li *ngIf="twoFactorStatus" class="list-group-item">
+                    Two factor login with Google Authenticator
+                    <div class="material-switch pull-right">
+                        <input (change)="onChangeStatus(customerNetwork2.checked)"
+                               <!--[formControl]="contGroup.controls['TwofactorCont']"-->
+                               id="customerNetwork2" #customerNetwork2
+                               name="customerNetwork2" type="checkbox"/>
+                        <label for="customerNetwork2" class="label-primary"></label>
+                    </div>
+                </li>
+            </ul>
+        </div>
         <div id="bgColorGradientSelector"></div>
         <!--<input id="sceneBackgroundSelector" type="text" name="colorSelect" class="fontSelectorMiniColor fontFormatter form-control minicolor-mini" data-control="hue">-->
         <hr/>
         <h5>block id {{m_blockData.blockID}}</h5>
-
-
-
-
     `,
     styles: [`
         input.ng-invalid {
@@ -81,19 +92,18 @@ import {IBlockData} from "./block-service";
         }
     `]
 })
-export class BlockPropCommon extends Compbaser {
+export class BlockPropCommon extends Compbaser implements AfterViewInit {
 
     private campaignModel: CampaignsModelExt;
     private formInputs = {};
     private contGroup: FormGroup;
     private campaignModel$: Observable<CampaignsModelExt>;
     private m_blockData: IBlockData;
+    private m_viewReady:boolean = false;
     m_color;
 
-
-    constructor(private fb: FormBuilder, private ngmslibService: NgmslibService, private yp: YellowPepperService, private rp: RedPepperService, private el:ElementRef) {
+    constructor(private fb: FormBuilder, private ngmslibService: NgmslibService, private yp: YellowPepperService, private rp: RedPepperService, private el: ElementRef) {
         super();
-
         this.contGroup = fb.group({
             'campaign_name': ['', [Validators.required, Validators.pattern(simpleRegExp)]],
             'campaign_playlist_mode': [0],
@@ -109,16 +119,24 @@ export class BlockPropCommon extends Compbaser {
                 this.renderFormInputs();
             })
         )
-
         this.campaignModel$ = this.yp.listenCampaignValueChanged()
+    }
 
+    @Input()
+    set setBlockData(i_blockData) {
+        this.m_blockData = i_blockData;
+        this._render();
     }
 
     ngAfterViewInit() {
+        this.m_viewReady = true;
         this._bgGradientInit();
+        this._render();
+    }
 
-        // this._bgSceneInit();
-        // this._bgFasterQColorInit();
+    private _render(){
+        if (!this.m_viewReady) return;
+        this._bgPropsPopulate();
     }
 
 
@@ -139,7 +157,7 @@ export class BlockPropCommon extends Compbaser {
             // BB.comBroker.fire(BB.EVENTS.GRADIENT_COLOR_CLOSED, self, null);
         };
 
-        jQuery('#bgColorGradientSelector',self.el.nativeElement).gradientPicker({
+        jQueryAny('#bgColorGradientSelector', self.el.nativeElement).gradientPicker({
             change: lazyUpdateBgColor,
             closed: gradientColorPickerClosed,
             fillDirection: "90deg"
@@ -150,14 +168,55 @@ export class BlockPropCommon extends Compbaser {
             $(document).trigger('mousedown');
             // BB.comBroker.fire(BB.EVENTS.GRADIENT_COLOR_CLOSED, self, self);
         });
-
-
-
     }
 
-    @Input()
-    set setBlockData(i_blockData) {
-        this.m_blockData = i_blockData;
+    /**
+     On changes in msdb model updated UI common gradient background properties
+     @method _bgPropsPopulate
+     **/
+    _bgPropsPopulate() {
+        var self = this;
+        var gradient = jQuery('#bgColorGradientSelector', self.el.nativeElement).data("gradientPicker-sel");
+        // gradient.changeFillDirection("top"); /* change direction future support */
+        gradient.removeAllPoints();
+        var domPlayerData = self.m_blockData.playerDataDom;
+        var xSnippet = self._findGradientPoints(domPlayerData);
+        if (xSnippet.length > 0) {
+            // self._enableBgSelection();
+            var points = $(xSnippet).find('Point');
+            $.each(points, function (i, point) {
+                var pointColor = Lib.DecimalToHex(jQuery(point).attr('color'));
+                var pointMidpoint = (parseInt($(point).attr('midpoint')) / 250);
+                gradient.addPoint(pointMidpoint, pointColor, true);
+            });
+        } else {
+            // self._bgPropsUnpopulate();
+        }
+    }
+
+    /**
+     Disable the gradient background UI
+     @method _bgPropsUnpopulate
+     **/
+    _bgPropsUnpopulate() {
+        var self = this;
+        // $(Elements.SHOW_BACKGROUND).prop('checked', false);
+        // $(Elements.BG_COLOR_GRADIENT_SELECTOR).hide();
+        // $(Elements.BG_COLOR_SOLID_SELECTOR).hide();
+        // var domPlayerData = self._getBlockPlayerData();
+        // var gradientPoints = self._findGradientPoints(domPlayerData);
+        // $(gradientPoints).empty();
+    }
+
+    /**
+     Find the gradient blocks in player_data for selected block
+     @method _findGradientPoints
+     @param  {object} i_domPlayerData
+     @return {Xml} xSnippet
+     **/
+    _findGradientPoints(i_domPlayerData) {
+        var xSnippet = $(i_domPlayerData).find('GradientPoints');
+        return xSnippet;
     }
 
     @timeout()
@@ -183,5 +242,7 @@ export class BlockPropCommon extends Compbaser {
     };
 
     destroy() {
+        var gradient = jQuery('#bgColorGradientSelector', this.el.nativeElement).data("gradientPicker-sel");
+        gradient.destroyed();
     }
 }

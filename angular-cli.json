@@ -1,6 +1,6 @@
 {
   "project": {
-    "version": "1.0.0-beta.22-1",
+    "version": "1.0.0-beta.32.3",
     "name": "StudioDashboard"
   },
   "apps": [
@@ -45,8 +45,8 @@
         "./libs/gradient/jquery.gradientpicker.js",
         "../node_modules/xdate/src/xdate.js"
       ],
+      "environmentSource": "environments/environment.ts",
       "environments": {
-        "source": "environments/environment.ts",
         "dev": "environments/environment.ts",
         "hmr": "environments/environment.hmr.ts",
         "prod": "environments/environment.prod.ts"

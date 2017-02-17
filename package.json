@@ -1,6 +1,6 @@
 {
   "name": "studioweb",
-  "version": "0.1.145",
+  "version": "0.1.146",
   "license": "Modified GPL (see readme.md)",
   "angular-cli": {},
   "scripts": {
@@ -27,7 +27,6 @@
     "release_jit": "rm -r -f ./dist && npm run x_bump && npm run x_prod_jit && npm run x_sw && npm run x_rsync"
   },
   "dependencies": {
-    "@angular/cli": "^1.0.0-beta.31",
     "@angular/common": "^2.4.7",
     "@angular/compiler": "^2.4.7",
     "@angular/core": "^2.4.7",
@@ -86,6 +85,7 @@
     "zone.js": "^0.7.5"
   },
   "devDependencies": {
+    "@angular/cli": "^1.0.0-beta.32.3",
     "@angular/compiler-cli": "^2.4.7",
     "@angular/language-service": "^2.4.7",
     "@angularclass/hmr": "^1.2.2",
