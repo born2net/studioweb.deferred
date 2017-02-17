@@ -1,17 +1,16 @@
-import {AfterViewInit, Component, ElementRef, Input} from "@angular/core";
-import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
+import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input} from "@angular/core";
+import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
 import {Compbaser, NgmslibService} from "ng-mslib";
-import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
 import {YellowPepperService} from "../../services/yellowpepper.service";
-import {timeout} from "../../decorators/timeout-decorator";
-import {Observable} from "rxjs";
 import {Lib} from "../../Lib";
 import * as _ from "lodash";
 import {BlockService, IBlockData} from "./block-service";
 import {HelperPepperService} from "../../services/helperpepper-service";
+import {timeout} from "../../decorators/timeout-decorator";
 
 @Component({
     selector: 'block-prop-common',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <div>
             <form novalidate autocomplete="off" [formGroup]="contGroup">
@@ -41,10 +40,10 @@ import {HelperPepperService} from "../../services/helperpepper-service";
                                     <div style="padding-top: 20px; padding-bottom: 20px">
                                         border
                                         <div class="material-switch pull-right">
-                                            <input (change)="saveToStore(borderSelection.checked)"
-                                                   [formControl]="contGroup.controls['border']"
-                                                   id="borderSelection" #borderSelection
-                                                   name="borderSelection" type="checkbox"/>
+                                            <input
+                                                    [formControl]="contGroup.controls['border']"
+                                                    id="borderSelection" #borderSelection
+                                                    name="borderSelection" type="checkbox"/>
                                             <label for="borderSelection" class="label-primary"></label>
                                         </div>
                                         <input [(colorPicker)]="m_color" [cpPosition]="'bottom'" [style.background]="m_color" [value]="m_color"/>
@@ -86,7 +85,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
     private m_viewReady: boolean = false;
     m_color;
 
-    constructor(private fb: FormBuilder, private ngmslibService: NgmslibService, private bs: BlockService, private hp: HelperPepperService, private yp: YellowPepperService, private el: ElementRef) {
+    constructor(private cd:ChangeDetectorRef, private fb: FormBuilder, private ngmslibService: NgmslibService, private bs: BlockService, private hp: HelperPepperService, private yp: YellowPepperService, private el: ElementRef) {
         super();
         this.contGroup = fb.group({
             'alpha': [0],
@@ -114,6 +113,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         this._alphaPopulate();
         this._gradientPopulate();
         this._populateBackgroundCheckbox();
+        this._borderPropsPopulate();
     }
 
     /**
@@ -248,6 +248,39 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
     }
 
     /**
+     On changes in msdb model updated UI common border properties
+     @method _borderPropsPopulate
+     **/
+    _borderPropsPopulate() {
+        var self = this;
+        var domPlayerData = self.m_blockData.playerDataDom;
+        var xSnippet = self._findBorder(domPlayerData);
+        if (xSnippet.length > 0) {
+            var color = $(xSnippet).attr('borderColor');
+            this._updateBorderColor(true, color)
+        } else {
+            this._updateBorderColor(false, '16777215')
+        }
+    }
+
+    @timeout(100)
+    _updateBorderColor(i_value, i_color) {
+        this.m_color = '#' + Lib.DecimalToHex(i_color);
+        this.formInputs['border'].setValue(i_value);
+        this.cd.markForCheck();
+    }
+
+    /**
+     Find the border section in player_data for selected block
+     @method _findBorder
+     @param  {object} i_domPlayerData
+     @return {Xml} xSnippet
+     **/
+    _findBorder(i_domPlayerData) {
+        return $(i_domPlayerData).find('Border');
+    }
+
+    /**
      Toggle block background on UI checkbox selection
      @method _toggleBackgroundColorHandler
      @param {event} e
@@ -286,43 +319,43 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
     }
 
 
-    /**
-     Disable the gradient background UI
-     @method _bgPropsUnpopulate
-     **/
-    _bgDisable() {
-        var self = this;
-        // $(Elements.SHOW_BACKGROUND).prop('checked', false);
-        // $(Elements.BG_COLOR_GRADIENT_SELECTOR).hide();
-        // $(Elements.BG_COLOR_SOLID_SELECTOR).hide();
-        // var domPlayerData = self._getBlockPlayerData();
-        // var gradientPoints = self._findGradientPoints(domPlayerData);
-        // $(gradientPoints).empty();
-    }
+    // /**
+    //  Disable the gradient background UI
+    //  @method _bgPropsUnpopulate
+    //  **/
+    // _bgDisable() {
+    //     var self = this;
+    //     // $(Elements.SHOW_BACKGROUND).prop('checked', false);
+    //     // $(Elements.BG_COLOR_GRADIENT_SELECTOR).hide();
+    //     // $(Elements.BG_COLOR_SOLID_SELECTOR).hide();
+    //     // var domPlayerData = self._getBlockPlayerData();
+    //     // var gradientPoints = self._findGradientPoints(domPlayerData);
+    //     // $(gradientPoints).empty();
+    // }
 
 
-    @timeout()
-    private saveToStore() {
-        // console.log(this.contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.contGroup.value)));
-        if (this.contGroup.status != 'VALID')
-            return;
-        // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_name', this.contGroup.value.campaign_name);
-        // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_playlist_mode', this.contGroup.value.campaign_playlist_mode);
-        // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_timeline_id', 0); //todo: you need to fix this as zero is arbitrary number right now
-        // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_mode', this.contGroup.value.kiosk_mode);
-        // this.rp.reduxCommit()
-    }
+    // @timeout()
+    // private saveToStore() {
+    //     // console.log(this.contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.contGroup.value)));
+    //     if (this.contGroup.status != 'VALID')
+    //         return;
+    //     // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_name', this.contGroup.value.campaign_name);
+    //     // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_playlist_mode', this.contGroup.value.campaign_playlist_mode);
+    //     // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_timeline_id', 0); //todo: you need to fix this as zero is arbitrary number right now
+    //     // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_mode', this.contGroup.value.kiosk_mode);
+    //     // this.rp.reduxCommit()
+    // }
 
-    private renderFormInputs() {
-        // if (!this.campaignModel)
-        //     return;
-        // _.forEach(this.formInputs, (value, key: string) => {
-        //     let data = this.campaignModel.getKey(key);
-        //     data = StringJS(data).booleanToNumber();
-        //     this.formInputs[key].setValue(data)
-        // });
-    }
-    ;
+    // private renderFormInputs() {
+    //     // if (!this.campaignModel)
+    //     //     return;
+    //     // _.forEach(this.formInputs, (value, key: string) => {
+    //     //     let data = this.campaignModel.getKey(key);
+    //     //     data = StringJS(data).booleanToNumber();
+    //     //     this.formInputs[key].setValue(data)
+    //     // });
+    // }
+    // ;
 
     destroy() {
         var gradient = jQuery('#bgColorGradientSelector', this.el.nativeElement).data("gradientPicker-sel");
