@@ -313,7 +313,7 @@
 
         clicked: function (e) {
             this.configView.show(this.$el.position(), this.color, this);
-            log(this.color);
+            console.log(this.color);
             e.stopPropagation();
             return false;
         },

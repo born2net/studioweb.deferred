@@ -32,6 +32,7 @@
       "scripts": [
         "../node_modules/jquery/dist/jquery.min.js",
         "./libs/jquery.base64.js",
+        "./libs/jquery-ui.js",
         "./libs/jquery.knob.min.js",
         "./libs/bootstrap-timepicker/js/bootstrap-timepicker.min.js",
         "./store/signage_sdk.js",
@@ -40,8 +41,8 @@
         "../node_modules/platform/platform.js",
         "./libs/fabric.require1-4-12.js",
         "./libs/minicolors/jquery.minicolors.js",
-        "./libs/gradient/jquery.gradientpicker.js",
         "./libs/gradient/colorpicker.js",
+        "./libs/gradient/jquery.gradientpicker.js",
         "../node_modules/xdate/src/xdate.js"
       ],
       "environments": {
