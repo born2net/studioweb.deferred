@@ -1,12 +1,14 @@
 import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input} from "@angular/core";
 import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
-import {Compbaser, NgmslibService} from "ng-mslib";
+import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {Lib} from "../../Lib";
 import * as _ from "lodash";
 import {BlockService, IBlockData} from "./block-service";
 import {HelperPepperService} from "../../services/helperpepper-service";
 import {timeout} from "../../decorators/timeout-decorator";
+import {Subject} from "rxjs";
+import {RedPepperService} from "../../services/redpepper.service";
 
 @Component({
     selector: 'block-prop-common',
@@ -40,13 +42,15 @@ import {timeout} from "../../decorators/timeout-decorator";
                                     <div style="padding-top: 20px; padding-bottom: 20px">
                                         border
                                         <div class="material-switch pull-right">
-                                            <input
-                                                    [formControl]="contGroup.controls['border']"
-                                                    id="borderSelection" #borderSelection
-                                                    name="borderSelection" type="checkbox"/>
+                                            <input (change)="_toggleBorder(borderSelection.checked)"
+                                                   [formControl]="contGroup.controls['border']"
+                                                   id="borderSelection" #borderSelection
+                                                   name="borderSelection" type="checkbox"/>
                                             <label for="borderSelection" class="label-primary"></label>
                                         </div>
-                                        <input [(colorPicker)]="m_color" [cpPosition]="'bottom'" [style.background]="m_color" [value]="m_color"/>
+                                        <input (colorPickerChange)="m_borderColorChanged.next($event)" [cpOKButton]="true" [cpOKButtonClass]="'btn btn-primary btn-xs'" #borderColor [(colorPicker)]="m_color" [cpPosition]="'bottom'"
+                                               [cpAlphaChannel]="'disabled'"
+                                               [style.background]="m_color" [value]="m_color"/>
                                     </div>
                                 </li>
                             </ul>
@@ -83,17 +87,36 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
     private contGroup: FormGroup;
     private m_blockData: IBlockData;
     private m_viewReady: boolean = false;
+    private m_borderColorChanged = new Subject();
     m_color;
 
-    constructor(private cd:ChangeDetectorRef, private fb: FormBuilder, private ngmslibService: NgmslibService, private bs: BlockService, private hp: HelperPepperService, private yp: YellowPepperService, private el: ElementRef) {
+    constructor(private cd: ChangeDetectorRef, private fb: FormBuilder, private rp: RedPepperService, private bs: BlockService, private hp: HelperPepperService, private yp: YellowPepperService, private el: ElementRef) {
         super();
         this.contGroup = fb.group({
             'alpha': [0],
+            'borderColor': [],
             'border': [0]
         });
         _.forEach(this.contGroup.controls, (value, key: string) => {
             this.formInputs[key] = this.contGroup.controls[key] as FormControl;
         })
+        this._listenBorderChanged();
+    }
+
+    _listenBorderChanged() {
+        this.cancelOnDestroy(
+            //
+            this.m_borderColorChanged
+                .debounceTime(500)
+                .distinct()
+                .subscribe((i_color) => {
+                    var domPlayerData = this.m_blockData.playerDataDom;
+                    var border = this._findBorder(domPlayerData);
+                    console.log(this.m_color);
+                    $(border).attr('borderColor', Lib.HexToDecimal(i_color));
+                    this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+                }, (e) => console.error(e))
+        )
     }
 
     @Input()
@@ -108,12 +131,45 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         this._render();
     }
 
-    private _render() {
+    _render() {
         if (!this.m_viewReady) return;
         this._alphaPopulate();
         this._gradientPopulate();
         this._populateBackgroundCheckbox();
         this._borderPropsPopulate();
+    }
+
+    /**
+     Toggle block background on UI checkbox selection
+     @method _toggleBackgroundColorHandler
+     @param {event} e
+     **/
+    _toggleBorder(i_checked: boolean) {
+        var self = this;
+        var xBgSnippet = undefined;
+        var domPlayerData = self.m_blockData.playerDataDom;
+        var checked = i_checked == true ? 1 : 0;
+        if (checked) {
+            // self._enableBorderSelection();
+            xBgSnippet = self.hp.getCommonBorderXML();
+            var data = $(domPlayerData).find('Data').eq(0);
+            var bgData: any = self._findBorder(data);
+            if (bgData.length > 0 && !_.isUndefined(bgData.replace)) { // ie bug workaround
+                bgData.replace($(xBgSnippet));
+            } else {
+                $(data).append($(xBgSnippet));
+            }
+            var player_data = self.rp.xmlToStringIEfix(domPlayerData);
+            domPlayerData = $.parseXML(player_data);
+            this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+            // self._borderPropsPopulate();
+            //self._announceBlockChanged();
+        } else {
+            var xSnippet = self._findBorder(domPlayerData);
+            $(xSnippet).remove();
+            // self._borderPropsUnpopulate();
+            this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+        }
     }
 
     /**

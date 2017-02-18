@@ -64,7 +64,7 @@ export class YellowPepperService {
     }
 
     /**
-     Listen to when a campaign timeline channel block (player) is selected OR is value changed in store at that slice
+     Listen to when a campaign timeline channel block (player) is selected >>>OR<<< its value has changed in store slice
      **/
     listenBlockChannelSelectedOrChanged(emitOnEmpty: boolean = false): Observable<CampaignTimelineChanelPlayersModel> {
         var blockSelected$ = this.store.select(store => store.appDb.uiState.campaign.blockChannelSelected);

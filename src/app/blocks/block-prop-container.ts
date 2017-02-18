@@ -56,8 +56,8 @@ export class BlockPropContainer extends Compbaser implements AfterViewInit {
 
         this.cancelOnDestroy(
             //
-            // this.yp.listenBlockChannelSelectedOrChanged()
-            this.yp.listenBlockChannelSelected()
+            // this.yp.listenBlockChannelSelected()
+            this.yp.listenBlockChannelSelectedOrChanged()
                 .mergeMap((i_campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModel) => {
                     return this.bs.getBlockData(i_campaignTimelineChanelPlayersModel.getCampaignTimelineChanelPlayerId())
                 })
