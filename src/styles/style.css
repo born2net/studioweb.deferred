@@ -733,7 +733,7 @@ a.list-group-item:focus, button.list-group-item:focus {
     background: url("../assets/custom_background.png");
     font-family: Arial, Helvetica, sans-serif;
     display: none;
-    z-index: 500;
+    z-index: 9999;
 }
 
 .color-chooser {

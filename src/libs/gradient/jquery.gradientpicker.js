@@ -1,5 +1,6 @@
 /**
  @author Matt Crinklaw-Vogt (tantaman)
+ https://github.com/tantaman/jquery-gradient-picker
  */
 
 (function ($) {
