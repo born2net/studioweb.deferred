@@ -26,7 +26,7 @@ import {ColorPickerService} from "ngx-color-picker";
                         <h1>QR</h1>
                     </div>
                     <div *ngSwitchCase="m_blockLabels.CLOCK">
-                        <h1>Clock</h1>
+                        <block-prop-clock [setBlockData]="m_blockData"></block-prop-clock>
                     </div>
                     <div *ngSwitchCase="m_blockLabels.HTML">
                         <block-prop-html [setBlockData]="m_blockData"></block-prop-html>

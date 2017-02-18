@@ -42,10 +42,11 @@ import "gsap/CSSPlugin";
 import "gsap/Draggable";
 import "gsap/TweenLite";
 import {Lib} from "../Lib";
+import {FontLoaderService} from "../services/font-loader-service";
 // import "fabric"; // need to remove if we import via cli
 // import {ScreenTemplate} from "../comps/screen-template/screen-template";
 
-export var providing = [CommBroker, AUTH_PROVIDERS, RedPepperService, YellowPepperService, LocalStorage, StoreService, AppdbAction, CommBroker,
+export var providing = [CommBroker, AUTH_PROVIDERS, RedPepperService, YellowPepperService, LocalStorage, StoreService, FontLoaderService, AppdbAction, CommBroker,
     {
         provide: "OFFLINE_ENV",
         useValue: window['offlineDevMode']
@@ -108,7 +109,7 @@ export function appReducer(state: any = INITIAL_APPLICATION_STATE, action: any) 
 })
 
 export class AppModule {
-    constructor(private compiler:Compiler, private ngmslibService: NgmslibService, private yp:YellowPepperService) {
+    constructor(private compiler:Compiler, private ngmslibService: NgmslibService, private yp:YellowPepperService, private fontLoaderService:FontLoaderService) {
         console.log(`running in dev mode: ${Lib.DevMode()}`);
         console.log(`App in ${(compiler instanceof Compiler) ? 'AOT' : 'JIT'} mode`);
         window['jQueryAny'] = jQuery;
