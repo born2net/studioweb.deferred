@@ -124,7 +124,6 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
     _render() {
         this._alphaPopulate();
         this._gradientPopulate();
-        this._populateBackgroundCheckbox();
         this._borderPropsPopulate();
     }
 
@@ -340,83 +339,6 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
     _findBorder(i_domPlayerData) {
         return $(i_domPlayerData).find('Border');
     }
-
-    /**
-     Toggle block background on UI checkbox selection
-     @method _toggleBackgroundColorHandler
-     @param {event} e
-     **/
-    _populateBackgroundCheckbox() {
-        // var self = this;
-        // var xBgSnippet = undefined;
-        // var domPlayerData = self.m_blockData.playerDataDom;
-        // var xSnippet = $(domPlayerData).find('Background');
-        // console.log(xSnippet);
-        // $(xSnippet).remove();
-        // self._bgPropsUnpopulate();
-        // self._setBlockPlayerData(domPlayerData);
-        //var checked = jQuery(e.target).prop('checked') == true ? 1 : 0;
-        // if (checked) {
-        //     self._enableBgSelection();
-        //     xBgSnippet = self.hp.getCommonBackgroundXML();
-        //     var data = $(domPlayerData).find('Data').eq(0);
-        //     var bgData = $(data).find('Background');
-        //     if (bgData.length > 0 && !_.isUndefined(bgData.replace)) { // ie bug workaround
-        //         bgData.replace($(xBgSnippet));
-        //     } else {
-        //         $(data).append($(xBgSnippet));
-        //     }
-        //     var player_data = pepper.xmlToStringIEfix(domPlayerData);
-        //     domPlayerData = $.parseXML(player_data);
-        //     self._setBlockPlayerData(domPlayerData, BB.CONSTS.NO_NOTIFICATION);
-        //     self._gradientPopulate();
-        //     //self._announceBlockChanged();
-        // } else {
-        //     var xSnippet = self._findBackground(domPlayerData);
-        //     $(xSnippet).remove();
-        //     self._bgPropsUnpopulate();
-        //     self._setBlockPlayerData(domPlayerData);
-        // }
-    }
-
-
-    // /**
-    //  Disable the gradient background UI
-    //  @method _bgPropsUnpopulate
-    //  **/
-    // _bgDisable() {
-    //     var self = this;
-    //     // $(Elements.SHOW_BACKGROUND).prop('checked', false);
-    //     // $(Elements.BG_COLOR_GRADIENT_SELECTOR).hide();
-    //     // $(Elements.BG_COLOR_SOLID_SELECTOR).hide();
-    //     // var domPlayerData = self._getBlockPlayerData();
-    //     // var gradientPoints = self._findGradientPoints(domPlayerData);
-    //     // $(gradientPoints).empty();
-    // }
-
-
-    // @timeout()
-    // private saveToStore() {
-    //     // console.log(this.contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.contGroup.value)));
-    //     if (this.contGroup.status != 'VALID')
-    //         return;
-    //     // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_name', this.contGroup.value.campaign_name);
-    //     // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_playlist_mode', this.contGroup.value.campaign_playlist_mode);
-    //     // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_timeline_id', 0); //todo: you need to fix this as zero is arbitrary number right now
-    //     // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_mode', this.contGroup.value.kiosk_mode);
-    //     // this.rp.reduxCommit()
-    // }
-
-    // private renderFormInputs() {
-    //     // if (!this.campaignModel)
-    //     //     return;
-    //     // _.forEach(this.formInputs, (value, key: string) => {
-    //     //     let data = this.campaignModel.getKey(key);
-    //     //     data = StringJS(data).booleanToNumber();
-    //     //     this.formInputs[key].setValue(data)
-    //     // });
-    // }
-    // ;
 
     destroy() {
         var gradient = jQuery('#bgColorGradientSelector', this.el.nativeElement).data("gradientPicker-sel");
