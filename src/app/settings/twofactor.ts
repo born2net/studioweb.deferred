@@ -19,7 +19,7 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
                     <div class="inner userGeneral">
                         <div class="panel panel-default tallPanel">
                             <div class="panel-heading">
-                                <small class="release">target properties
+                                <small class="release">general properties
                                     <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
                                 </small>
                             </div>

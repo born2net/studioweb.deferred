@@ -21,13 +21,15 @@ import {Observable} from "rxjs";
                     <div class="inner userGeneral">
                         <div class="panel panel-default tallPanel">
                             <div class="panel-heading">
-                                <small class="release">target properties
+                                <small class="release">channel properties
                                     <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
                                 </small>
                                 <small class="debug">{{me}}</small>
-                                Channel name: {{(m_channel$ | async)?.getChanelName()}}
                             </div>
                             <ul class="list-group">
+                                <li class="list-group-item">
+                                    Channel name: {{(m_channel$ | async)?.getChanelName()}}
+                                </li>
                                 <li class="list-group-item">
                                     <span i18n>repeat to fit</span>
                                     <div class="material-switch pull-right">

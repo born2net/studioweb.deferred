@@ -16,7 +16,7 @@ import {Observable} from "rxjs";
                 <div class="inner userGeneral">
                     <div class="panel panel-default tallPanel">
                         <div class="panel-heading">
-                            <small class="release">target properties
+                            <small class="release">editor properties
                                 <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
                             </small>
                             <small class="debug">{{me}}</small>
