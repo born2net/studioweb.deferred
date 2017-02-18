@@ -80,7 +80,6 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
     private formInputs = {};
     private contGroup: FormGroup;
     private m_blockData: IBlockData;
-    private m_viewReady: boolean = false;
     private m_borderColorChanged = new Subject();
     m_color;
 
@@ -94,7 +93,29 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         _.forEach(this.contGroup.controls, (value, key: string) => {
             this.formInputs[key] = this.contGroup.controls[key] as FormControl;
         })
+    }
+
+    @Input()
+    set setBlockData(i_blockData: IBlockData) {
+        if (this.m_blockData && this.m_blockData.blockID != i_blockData.blockID) {
+            this.m_blockData = i_blockData;
+            this._render();
+        } else {
+            this.m_blockData = i_blockData;
+        }
+    }
+
+    ngAfterViewInit() {
         this._listenBorderChanged();
+        this._bgGradientInit();
+        this._render();
+    }
+
+    _render() {
+        this._alphaPopulate();
+        this._gradientPopulate();
+        this._populateBackgroundCheckbox();
+        this._borderPropsPopulate();
     }
 
     _listenBorderChanged() {
@@ -111,28 +132,6 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
                     this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
                 }, (e) => console.error(e))
         )
-    }
-
-    @Input()
-    set setBlockData(i_blockData: IBlockData) {
-        if (this.m_blockData && this.m_blockData.blockID != i_blockData.blockID) {
-            this.m_blockData = i_blockData;
-            this._render();
-        } else {
-            this.m_blockData = i_blockData;
-        }
-    }
-
-    ngAfterViewInit() {
-        this._bgGradientInit();
-        this._render();
-    }
-
-    _render() {
-        this._alphaPopulate();
-        this._gradientPopulate();
-        this._populateBackgroundCheckbox();
-        this._borderPropsPopulate();
     }
 
     /**
