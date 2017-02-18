@@ -14,47 +14,56 @@ import {RedPepperService} from "../../services/redpepper.service";
     selector: 'block-prop-common',
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-      <div>
-        <form novalidate autocomplete="off" [formGroup]="contGroup">
-          <div class="row">
-            <div class="inner userGeneral">
-              <div class="panel panel-default tallPanel">
-                <div class="panel-heading">
-                  <small class="release">target properties
-                    <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
-                  </small>
-                  <small class="debug">{{me}}</small>
-                </div>
-                <ul class="list-group">
-                  <li class="list-group-item">
-                    alpha
-                    <input id="slider1" (change)="_onAlphaChange($event)" [formControl]="contGroup.controls['alpha']" type="range" min="0" max="1" step="0.1"/>
-                  </li>
-                  <li class="list-group-item">
-                    background
-                    <button style="position: relative; top: 15px" (click)="_onRemoveBackground()" class="btn btn-default btn-sm pull-right" type="button">
-                      <i class="fa fa-times"></i>
-                    </button>
-                    <div id="bgColorGradientSelector"></div>
-                  </li>
+        <div>
+            <form novalidate autocomplete="off" [formGroup]="contGroup">
+                <div class="row">
+                    <div class="inner userGeneral">
+                        <div class="panel panel-default tallPanel">
+                            <div class="panel-heading">
+                                <small class="release">target properties
+                                    <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
+                                </small>
+                                <small class="debug">{{me}}</small>
+                            </div>
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    alpha
+                                    <input id="slider1" (change)="_onAlphaChange($event)" [formControl]="contGroup.controls['alpha']" type="range" min="0" max="1" step="0.1"/>
+                                </li>
+                                <li class="list-group-item">
+                                    background
+                                    <button style="position: relative; top: 25px" (click)="_onRemoveBackground()" class="btn btn-default btn-sm pull-right" type="button">
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                    <div id="bgColorGradientSelector"></div>
+                                </li>
 
-                  <li class="list-group-item">
-                    <div style="padding-top: 20px; padding-bottom: 20px">
-                      border
-                      <div class="material-switch pull-right">
-                        <input (change)="_toggleBorder(borderSelection.checked)" [formControl]="contGroup.controls['border']" id="borderSelection" #borderSelection name="borderSelection" type="checkbox"/>
-                        <label for="borderSelection" class="label-primary"></label>
-                      </div>
-                      <input (colorPickerChange)="m_borderColorChanged.next($event)" [cpOKButton]="true" [cpOKButtonClass]="'btn btn-primary btn-xs'" #borderColor [(colorPicker)]="m_color" [cpPosition]="'bottom'" [cpAlphaChannel]="'disabled'" [style.background]="m_color" [value]="m_color"/>
+                                <li class="list-group-item">
+                                    <div style="padding-top: 20px; padding-bottom: 20px">
+                                        border
+                                        <br/>
+                                        <div class="material-switch pull-right">
+                                            <input #borderSelection (change)="_toggleBorder(borderSelection.checked)"
+                                                   [formControl]="contGroup.controls['border']"
+                                                   id="borderSelection"
+                                                   name="borderSelection" type="checkbox"/>
+                                            <label for="borderSelection" class="label-primary"></label>
+                                        </div>
+                                        <input #borderColor [disabled]="!borderSelection.checked" (colorPickerChange)="m_borderColorChanged.next($event)"
+                                               [cpOKButton]="true" [cpOKButtonClass]="'btn btn-primary btn-xs'"
+                                               [(colorPicker)]="m_color" [cpPosition]="'bottom'"
+                                               [cpAlphaChannel]="'disabled'" style="width: 185px"
+                                               [style.background]="m_color" [value]="m_color"/>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </form>
-      </div><!--<input id="sceneBackgroundSelector" type="text" name="colorSelect" class="fontSelectorMiniColor fontFormatter form-control minicolor-mini" data-control="hue">-->
-      <h5>block id {{m_blockData.blockID}}</h5>
+                </div>
+            </form>
+        </div>
+        <!--<input id="sceneBackgroundSelector" type="text" name="colorSelect" class="fontSelectorMiniColor fontFormatter form-control minicolor-mini" data-control="hue">-->
+        <h5>block id {{m_blockData.blockID}}</h5>
     `,
     styles: [`
         input.ng-invalid {
@@ -93,6 +102,22 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         _.forEach(this.contGroup.controls, (value, key: string) => {
             this.formInputs[key] = this.contGroup.controls[key] as FormControl;
         })
+        this._listenBorderChanged();
+    }
+
+    _listenBorderChanged() {
+        this.cancelOnDestroy(
+            //
+            this.m_borderColorChanged
+                .debounceTime(500)
+                .distinct()
+                .subscribe((i_color) => {
+                    var domPlayerData = this.m_blockData.playerDataDom;
+                    var border = this._findBorder(domPlayerData);
+                    $(border).attr('borderColor', Lib.HexToDecimal(i_color));
+                    this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+                }, (e) => console.error(e))
+        )
     }
 
     /**
@@ -125,22 +150,6 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         this._alphaPopulate();
         this._gradientPopulate();
         this._borderPropsPopulate();
-    }
-
-    _listenBorderChanged() {
-        this.cancelOnDestroy(
-            //
-            this.m_borderColorChanged
-                .debounceTime(500)
-                .distinct()
-                .subscribe((i_color) => {
-                    var domPlayerData = this.m_blockData.playerDataDom;
-                    var border = this._findBorder(domPlayerData);
-                    console.log(this.m_color);
-                    $(border).attr('borderColor', Lib.HexToDecimal(i_color));
-                    this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
-                }, (e) => console.error(e))
-        )
     }
 
     /**
@@ -207,14 +216,12 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         var lazyUpdateBgColor = _.debounce(function (points, styles) {
             if (points.length == 0)
                 return;
-            self._gradientChanged({points: points, styles: styles})
-            console.log('updated...');
-            // BB.comBroker.fire(BB.EVENTS.GRADIENT_COLOR_CHANGED, self, null, {points: points, styles: styles});
+            // self._gradientChanged({points: points, styles: styles})
+            // console.log('gradient 1...' + Math.random());
         }, 50);
 
         var gradientColorPickerClosed = function () {
             // console.log('gradient 2');
-            // BB.comBroker.fire(BB.EVENTS.GRADIENT_COLOR_CLOSED, self, null);
         };
 
         jQueryAny('#bgColorGradientSelector', self.el.nativeElement).gradientPicker({
@@ -339,6 +346,18 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
     _findBorder(i_domPlayerData) {
         return $(i_domPlayerData).find('Border');
     }
+
+    // @timeout()
+    // private saveToStore() {
+    //     // console.log(this.contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.contGroup.value)));
+    //     if (this.contGroup.status != 'VALID')
+    //         return;
+    //     // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_name', this.contGroup.value.campaign_name);
+    //     // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_playlist_mode', this.contGroup.value.campaign_playlist_mode);
+    //     // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_timeline_id', 0); //todo: you need to fix this as zero is arbitrary number right now
+    //     // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_mode', this.contGroup.value.kiosk_mode);
+    //     // this.rp.reduxCommit()
+    // }
 
     destroy() {
         var gradient = jQuery('#bgColorGradientSelector', this.el.nativeElement).data("gradientPicker-sel");
