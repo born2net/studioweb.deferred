@@ -1030,3 +1030,21 @@ a.list-group-item:focus, button.list-group-item:focus {
     left: -50px;
     width: 240px;
 }
+
+
+input.ng-invalid {
+    border-right: 10px solid red;
+}
+
+.material-switch {
+    position: relative;
+    padding-top: 10px;
+}
+
+.input-group {
+    padding-top: 10px;
+}
+
+i {
+    width: 20px;
+}

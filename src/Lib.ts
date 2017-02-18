@@ -11,6 +11,8 @@ import {environment} from "./environments/environment";
 
 export const moment = moment_["default"];
 export var simpleRegExp = '[\\[\\]\\-A-Za-z0-9_~=!:@\.|\ ]{3,50}';
+//(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})
+export var urlRegExp = `(https?:\/\/(?:www\.|(?!www))\.*)`
 const rxjsDebugger = true;
 Observable.prototype.sub = Observable.prototype.subscribe;
 

@@ -22,9 +22,10 @@ import {Tabs} from "../comps/tabs/tabs";
 import {Tab} from "../comps/tabs/tab";
 import {BlockPropImage} from "../app/blocks/block-prop-image";
 import {BlockPropCommon} from "../app/blocks/block-prop-common";
+import {BlockPropHtml} from "../app/blocks/block-prop-html";
 
 var sharedComponents = [Tabs, Tab, Infobox, Sliderpanel, Slideritem, PanelSplitMain, PanelSplitSide, PanelSplitContainer, ListToArrayPipe, FormatSecondsPipe, MatchBodyHeight, ScreenTemplate, BlurForwarder, DraggableList,
-    BlockPropContainer, BlockPropImage, BlockPropCommon];
+    BlockPropContainer, BlockPropImage, BlockPropCommon, BlockPropHtml];
 
 @NgModule({
     imports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule, ContextMenuModule, ChartModule, ReactiveFormsModule, ColorPickerModule],

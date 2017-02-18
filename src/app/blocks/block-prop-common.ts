@@ -30,7 +30,7 @@ import * as _ from "lodash";
                                 </li>
                                 <li class="list-group-item">
                                     background
-                                    <button style="position: relative; top: 25px" (click)="_onRemoveBackground()" class="btn btn-default btn-sm pull-right" type="button">
+                                    <button style="position: relative; top: 15px" (click)="_onRemoveBackground()" class="btn btn-default btn-sm pull-right" type="button">
                                         <i class="fa fa-times"></i>
                                     </button>
                                     <div id="bgColorGradientSelector"></div>
@@ -61,25 +61,7 @@ import * as _ from "lodash";
             </form>
         </div>
         <h5>block id {{m_blockData.blockID}}</h5>
-    `,
-    styles: [`
-        input.ng-invalid {
-            border-right: 10px solid red;
-        }
-
-        .material-switch {
-            position: relative;
-            padding-top: 10px;
-        }
-
-        .input-group {
-            padding-top: 10px;
-        }
-
-        i {
-            width: 20px;
-        }
-    `]
+    `
 })
 export class BlockPropCommon extends Compbaser implements AfterViewInit {
 
@@ -111,7 +93,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
                 .subscribe((i_color) => {
                     var domPlayerData = this.m_blockData.playerDataDom;
                     var border = this._findBorder(domPlayerData);
-                    $(border).attr('borderColor', Lib.HexToDecimal(i_color));
+                    jQuery(border).attr('borderColor', Lib.HexToDecimal(i_color));
                     this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
                 }, (e) => console.error(e))
         )
@@ -162,21 +144,21 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         if (checked) {
             // self._enableBorderSelection();
             xBgSnippet = self.bs.getCommonBorderXML();
-            var data = $(domPlayerData).find('Data').eq(0);
+            var data = jQuery(domPlayerData).find('Data').eq(0);
             var bgData: any = self._findBorder(data);
             if (bgData.length > 0 && !_.isUndefined(bgData.replace)) { // ie bug workaround
-                bgData.replace($(xBgSnippet));
+                bgData.replace(jQuery(xBgSnippet));
             } else {
-                $(data).append($(xBgSnippet));
+                jQuery(data).append(jQuery(xBgSnippet));
             }
             var player_data = self.rp.xmlToStringIEfix(domPlayerData);
-            domPlayerData = $.parseXML(player_data);
+            domPlayerData = jQuery.parseXML(player_data);
             this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
             // self._borderPropsPopulate();
             //self._announceBlockChanged();
         } else {
             var xSnippet = self._findBorder(domPlayerData);
-            $(xSnippet).remove();
+            jQuery(xSnippet).remove();
             // self._borderPropsUnpopulate();
             this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
         }
@@ -189,17 +171,17 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
     _alphaPopulate() {
         var self = this;
         var domPlayerData = self.m_blockData.playerDataDom;
-        var data = $(domPlayerData).find('Data').eq(0);
-        var xSnippet = $(data).find('Appearance').eq(0);
-        var a1: any = $(xSnippet).attr('alpha');
+        var data = jQuery(domPlayerData).find('Data').eq(0);
+        var xSnippet = jQuery(data).find('Appearance').eq(0);
+        var a1: any = jQuery(xSnippet).attr('alpha');
         if (_.isUndefined(a1)) a1 = 1;
         this.formInputs['alpha'].setValue(a1)
     }
 
     _onAlphaChange(event) {
         var domPlayerData = this.m_blockData.playerDataDom;
-        var data = $(domPlayerData).find('Data').eq(0);
-        var xSnippet = $(data).find('Appearance').eq(0);
+        var data = jQuery(domPlayerData).find('Data').eq(0);
+        var xSnippet = jQuery(data).find('Appearance').eq(0);
         jQuery(xSnippet).attr('alpha', event.target.value);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
@@ -228,8 +210,8 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         });
 
         // always close gradient color picker on mouseout
-        // $('.colorpicker').on('mouseleave', function (e) {
-        //     $(document).trigger('mousedown');
+        // jQuery('.colorpicker').on('mouseleave', function (e) {
+        //     jQuery(document).trigger('mousedown');
         //     console.log('gradient 3');
         // });
     }
@@ -245,12 +227,12 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         gradient.removeAllPoints();
         var domPlayerData = self.m_blockData.playerDataDom;
         var xSnippet = self._findGradientPoints(domPlayerData);
-        var points = $(xSnippet).find('Point');
+        var points = jQuery(xSnippet).find('Point');
         if (points.length == 0)
             return this._bgGradientClear();
-        $.each(points, function (i, point) {
+        jQuery.each(points, function (i, point) {
             var pointColor = Lib.DecimalToHex(jQuery(point).attr('color'));
-            var pointMidpoint = (parseInt($(point).attr('midpoint')) / 250);
+            var pointMidpoint = (parseInt(jQuery(point).attr('midpoint')) / 250);
             gradient.addPoint(pointMidpoint, pointColor, true);
         });
     }
@@ -269,7 +251,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
      @return {Xml} xSnippet
      **/
     _findGradientPoints(i_domPlayerData) {
-        var xSnippet = $(i_domPlayerData).find('GradientPoints');
+        var xSnippet = jQuery(i_domPlayerData).find('GradientPoints');
         return xSnippet;
     }
 
@@ -294,20 +276,20 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
             return;
         var domPlayerData = self.m_blockData.playerDataDom;
         var gradientPoints = self._findGradientPoints(domPlayerData);
-        $(gradientPoints).empty();
+        jQuery(gradientPoints).empty();
         var pointsXML = "";
         for (var i = 0; i < points.length; ++i) {
             var pointMidpoint: any = (points[i].position * 250);
             var color = Lib.ColorToDecimal(points[i].color);
             var xPoint = '<Point color="' + color + '" opacity="1" midpoint="' + pointMidpoint + '" />';
             // log(xPoint);
-            // $(gradientPoints).append(xPoint);
+            // jQuery(gradientPoints).append(xPoint);
             pointsXML += xPoint;
         }
-        // $(domPlayerData).find('GradientPoints').html(pointsXML);
+        // jQuery(domPlayerData).find('GradientPoints').html(pointsXML);
         var xmlString = (new XMLSerializer()).serializeToString(domPlayerData);
         xmlString = xmlString.replace(/<GradientPoints[ ]*\/>/, '<GradientPoints>' + pointsXML + '</GradientPoints>');
-        domPlayerData = $.parseXML(xmlString);
+        domPlayerData = jQuery.parseXML(xmlString);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
@@ -320,7 +302,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         var domPlayerData = self.m_blockData.playerDataDom;
         var xSnippet = self._findBorder(domPlayerData);
         if (xSnippet.length > 0) {
-            var color = $(xSnippet).attr('borderColor');
+            var color = jQuery(xSnippet).attr('borderColor');
             this._updateBorderColor(true, color)
         } else {
             this._updateBorderColor(false, '16777215')
@@ -341,7 +323,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
      @return {Xml} xSnippet
      **/
     _findBorder(i_domPlayerData) {
-        return $(i_domPlayerData).find('Border');
+        return jQuery(i_domPlayerData).find('Border');
     }
 
     // @timeout()

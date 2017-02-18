@@ -15,7 +15,7 @@ import {ColorPickerService} from "ngx-color-picker";
                 <block-prop-common [setBlockData]="m_blockData"></block-prop-common>
             </tab>
             <tab [tabtitle]="m_tabTitle">
-                <ul [ngSwitch]="m_blockTypeSelected">
+                <ul style="padding: 0px" [ngSwitch]="m_blockTypeSelected">
                     <div *ngSwitchCase="m_blockLabels.BLOCKCODE_IMAGE">
                         <block-prop-image [setBlockData]="m_blockData"></block-prop-image>
                     </div>
@@ -29,7 +29,7 @@ import {ColorPickerService} from "ngx-color-picker";
                         <h1>Clock</h1>
                     </div>
                     <div *ngSwitchCase="m_blockLabels.HTML">
-                        <h1>HTML</h1>
+                        <block-prop-html [setBlockData]="m_blockData"></block-prop-html>
                     </div>
                     <div *ngSwitchDefault>
                         <h3>no block prop found, new?</h3>
