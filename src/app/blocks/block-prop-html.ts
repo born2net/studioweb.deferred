@@ -3,8 +3,8 @@ import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {BlockService, IBlockData} from "./block-service";
 import {RedPepperService} from "../../services/redpepper.service";
 import {Compbaser, NgmslibService} from "ng-mslib";
+import {urlRegExp} from "../../Lib";
 import * as _ from "lodash";
-import {simpleRegExp, urlRegExp} from "../../Lib";
 
 @Component({
     selector: 'block-prop-html',
