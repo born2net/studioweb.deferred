@@ -13,6 +13,7 @@ import * as _ from "lodash";
     },
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
+        <font-selector></font-selector>
         <div>
             <form novalidate autocomplete="off" [formGroup]="contGroup">
                 <div class="row">
