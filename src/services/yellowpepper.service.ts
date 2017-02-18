@@ -49,7 +49,7 @@ export class YellowPepperService {
     }
 
     /**
-     Listen to when a campaign timeline channel block (player) that is selected
+     Listen to campaign timeline channel block (player) is selected (via .withLatestFrom)
      **/
     listenBlockChannelSelected(emitOnEmpty: boolean = false): Observable<CampaignTimelineChanelPlayersModel> {
         var blockSelected$ = this.store.select(store => store.appDb.uiState.campaign.blockChannelSelected);
@@ -64,7 +64,7 @@ export class YellowPepperService {
     }
 
     /**
-     Listen to when a campaign timeline channel block (player) is selected >>>OR<<< its value has changed in store slice
+     Listen to campaign timeline channel block (player) is selected >>>OR<<< its value has changed in store slice (via .combineLatest)
      **/
     listenBlockChannelSelectedOrChanged(emitOnEmpty: boolean = false): Observable<CampaignTimelineChanelPlayersModel> {
         var blockSelected$ = this.store.select(store => store.appDb.uiState.campaign.blockChannelSelected);

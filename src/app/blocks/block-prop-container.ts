@@ -1,10 +1,8 @@
 import {AfterViewInit, Component} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
-import {RedPepperService} from "../../services/redpepper.service";
-import {BlockService, IBlockData} from "./block-service";
+import {BlockLabels, BlockService, IBlockData} from "./block-service";
 import {CampaignTimelineChanelPlayersModel} from "../../store/imsdb.interfaces_auto";
-import {BlockLabels, HelperPepperService} from "../../services/helperpepper-service";
 import {ColorPickerService} from "ngx-color-picker";
 
 
@@ -13,10 +11,10 @@ import {ColorPickerService} from "ngx-color-picker";
     template: `
         <small class="debug">{{me}}</small>
         <tabs>
-            <tab [tabtitle]="'style'" >
+            <tab [tabtitle]="'style'">
                 <block-prop-common [setBlockData]="m_blockData"></block-prop-common>
             </tab>
-            <tab [tabtitle]="m_tabTitle" >
+            <tab [tabtitle]="m_tabTitle">
                 <ul [ngSwitch]="m_blockTypeSelected">
                     <div *ngSwitchCase="m_blockLabels.BLOCKCODE_IMAGE">
                         <block-prop-image [setBlockData]="m_blockData"></block-prop-image>
@@ -46,17 +44,16 @@ export class BlockPropContainer extends Compbaser implements AfterViewInit {
 
     m_blockTypeSelected: string = 'none';
     m_blockLabels = BlockLabels;
-    m_blockData:IBlockData;
+    m_blockData: IBlockData;
     m_tabTitle: string = 'none';
     m_color;
 
-    constructor(private yp: YellowPepperService, private rp: RedPepperService, private bs: BlockService, private hp: HelperPepperService, private cpService: ColorPickerService) {
+    constructor(private yp: YellowPepperService, private bs: BlockService, private cpService: ColorPickerService) {
         super();
         // console.log(this.bs.getServiceType());
 
         this.cancelOnDestroy(
             //
-            // this.yp.listenBlockChannelSelected()
             this.yp.listenBlockChannelSelectedOrChanged()
                 .mergeMap((i_campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModel) => {
                     return this.bs.getBlockData(i_campaignTimelineChanelPlayersModel.getCampaignTimelineChanelPlayerId())

@@ -1,14 +1,12 @@
 import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input} from "@angular/core";
 import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
-import {Compbaser} from "ng-mslib";
-import {YellowPepperService} from "../../services/yellowpepper.service";
-import {Lib} from "../../Lib";
-import * as _ from "lodash";
 import {BlockService, IBlockData} from "./block-service";
-import {HelperPepperService} from "../../services/helperpepper-service";
 import {timeout} from "../../decorators/timeout-decorator";
 import {Subject} from "rxjs";
 import {RedPepperService} from "../../services/redpepper.service";
+import {Compbaser} from "ng-mslib";
+import {Lib} from "../../Lib";
+import * as _ from "lodash";
 
 @Component({
     selector: 'block-prop-common',
@@ -62,7 +60,6 @@ import {RedPepperService} from "../../services/redpepper.service";
                 </div>
             </form>
         </div>
-        <!--<input id="sceneBackgroundSelector" type="text" name="colorSelect" class="fontSelectorMiniColor fontFormatter form-control minicolor-mini" data-control="hue">-->
         <h5>block id {{m_blockData.blockID}}</h5>
     `,
     styles: [`
@@ -92,7 +89,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
     private m_borderColorChanged = new Subject();
     m_color;
 
-    constructor(private cd: ChangeDetectorRef, private fb: FormBuilder, private rp: RedPepperService, private bs: BlockService, private hp: HelperPepperService, private yp: YellowPepperService, private el: ElementRef) {
+    constructor(private cd: ChangeDetectorRef, private fb: FormBuilder, private rp: RedPepperService, private bs: BlockService, private el: ElementRef) {
         super();
         this.contGroup = fb.group({
             'alpha': [0],
@@ -164,7 +161,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         var checked = i_checked == true ? 1 : 0;
         if (checked) {
             // self._enableBorderSelection();
-            xBgSnippet = self.hp.getCommonBorderXML();
+            xBgSnippet = self.bs.getCommonBorderXML();
             var data = $(domPlayerData).find('Data').eq(0);
             var bgData: any = self._findBorder(data);
             if (bgData.length > 0 && !_.isUndefined(bgData.replace)) { // ie bug workaround
@@ -216,7 +213,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         var lazyUpdateBgColor = _.debounce(function (points, styles) {
             if (points.length == 0)
                 return;
-            // self._gradientChanged({points: points, styles: styles})
+            self._gradientChanged({points: points, styles: styles})
             // console.log('gradient 1...' + Math.random());
         }, 50);
 
