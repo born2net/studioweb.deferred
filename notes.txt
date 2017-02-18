@@ -9,6 +9,10 @@ rm -rf node_modules dist # use rmdir on Windows
 npm install --save-dev @angular/cli@latest <<<<<<<<<<<<<<<<
 npm install
 
+
+ng init --ng4
+
+
 ==================================================================================================================
 
 debug reflection: http://127.0.0.1:8080/src/create_reflection.html
