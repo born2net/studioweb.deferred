@@ -95,8 +95,15 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         })
     }
 
+    /**
+     * set block data for the component.
+     * on first selection we just set the blockData, in subsequent calls we only
+     * re-render if we are dealing with a new block id, note that on componet creation
+     * the rendering is done via ngAfterViewInit
+     * @param i_blockData
+     */
     @Input()
-    set setBlockData(i_blockData: IBlockData) {
+    set setBlockData(i_blockData) {
         if (this.m_blockData && this.m_blockData.blockID != i_blockData.blockID) {
             this.m_blockData = i_blockData;
             this._render();
@@ -111,6 +118,9 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         this._render();
     }
 
+    /**
+     * Render the component with latest data from BlockData
+     */
     _render() {
         this._alphaPopulate();
         this._gradientPopulate();
