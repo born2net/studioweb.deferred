@@ -15,7 +15,7 @@ import {ColorPickerService} from "ngx-color-picker";
                 <block-prop-common [setBlockData]="m_blockData"></block-prop-common>
             </tab>
             <tab [tabtitle]="m_tabTitle">
-                <ul style="padding: 0px" [ngSwitch]="m_blockTypeSelected">
+                <div [ngSwitch]="m_blockTypeSelected">
                     <div *ngSwitchCase="m_blockLabels.BLOCKCODE_IMAGE">
                         <block-prop-image [setBlockData]="m_blockData"></block-prop-image>
                     </div>
@@ -31,11 +31,21 @@ import {ColorPickerService} from "ngx-color-picker";
                     <div *ngSwitchCase="m_blockLabels.HTML">
                         <block-prop-html [setBlockData]="m_blockData"></block-prop-html>
                     </div>
+                    <div *ngSwitchCase="m_blockLabels.BLOCKCODE_WORLD_WEATHER">
+                        <block-prop-weather [setBlockData]="m_blockData"></block-prop-weather>
+                    </div>
                     <div *ngSwitchDefault>
                         <h3>no block prop found, new?</h3>
                         {{m_blockTypeSelected}}
                     </div>
-                </ul>
+                </div>
+            </tab>
+            <tab [tabtitle]="'settings'">
+                <div [ngSwitch]="m_blockTypeSelected">
+                    <div *ngSwitchCase="m_blockLabels.BLOCKCODE_WORLD_WEATHER">
+                        <block-prop-weather [settingsMode]="true" [setBlockData]="m_blockData"></block-prop-weather>
+                    </div>
+                </div>
             </tab>
         </tabs>
     `,
@@ -46,6 +56,7 @@ export class BlockPropContainer extends Compbaser implements AfterViewInit {
     m_blockLabels = BlockLabels;
     m_blockData: IBlockData;
     m_tabTitle: string = 'none';
+    m_showSettingTab:boolean = true;
     m_color;
 
     constructor(private yp: YellowPepperService, private bs: BlockService, private cpService: ColorPickerService) {
@@ -62,6 +73,8 @@ export class BlockPropContainer extends Compbaser implements AfterViewInit {
                     this.m_blockTypeSelected = blockData.blockCode;
                     this.m_tabTitle = blockData.blockAcronym;
                     this.m_blockData = blockData;
+                    this.m_showSettingTab = blockData.playerDataJsonMime == null ? false : true;
+                    console.log(Math.random() + ' ' + this.m_showSettingTab );
                 }, (e) => console.error(e))
         )
 
