@@ -1,7 +1,8 @@
-import {Component, ChangeDetectionStrategy, AfterViewInit, Input, Output, EventEmitter} from "@angular/core";
+import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {Subject} from "rxjs";
 import {FontLoaderService} from "../../services/font-loader-service";
+import {timeout} from "../../decorators/timeout-decorator";
 
 export interface IFontSelector {
     bold: boolean;
@@ -36,7 +37,7 @@ export interface IFontSelector {
                         <button (click)="_onFontStyleToggle('italic')" type="button" name="italic" class="fontFormatter btn btn-default btn-sm" [ngClass]="{active: m_config.italic}">
                             <i class="gencons fa fa-italic"></i>
                         </button>
-                        <button #borderColor (colorPickerChange)="m_borderColorChanged.next($event)"
+                        <button (click)="_moveColorPicker()" #borderColor (colorPickerChange)="m_borderColorChanged.next($event)"
                                 [cpOKButton]="true" [cpOKButtonClass]="'btn btn-primary btn-xs'"
                                 [(colorPicker)]="m_config.color" [cpPosition]="'left'" style="width: 59px"
                                 [cpAlphaChannel]="'disabled'" class="colorPicker offSet"
@@ -65,6 +66,10 @@ export interface IFontSelector {
 
     `,
     styles: [`
+        /*:host /deep/ .color-picker {*/
+        /*position: relative;*/
+        /*} */
+
         .fontSelection {
             width: 200px;
         }
@@ -108,6 +113,7 @@ export class FontSelector extends Compbaser implements AfterViewInit {
     m_fonts: Array<string>;
 
     private m_borderColorChanged = new Subject();
+    private m_moveColorPickerOnce = false;
 
     m_config: IFontSelector = {
         size: 12,
@@ -119,7 +125,7 @@ export class FontSelector extends Compbaser implements AfterViewInit {
         color: '#ff0000',
     }
 
-    constructor(private fontService: FontLoaderService) {
+    constructor(private fontService: FontLoaderService, private el: ElementRef) {
         super();
         this.m_fonts = this.fontService.getFonts();
         this._listenColorChanged();
@@ -159,7 +165,14 @@ export class FontSelector extends Compbaser implements AfterViewInit {
         )
     }
 
-    _onFontChanged(e){
+    @timeout(1)
+    _moveColorPicker() {
+        if (this.m_moveColorPickerOnce) return;
+        this.m_moveColorPickerOnce = true;
+        jQuery(".color-picker", this.el.nativeElement).css("left", "+=100");
+    }
+
+    _onFontChanged(e) {
         this.m_config.font = e.target.value;
         this.onChange.emit(this.m_config);
     }
@@ -180,6 +193,7 @@ export class FontSelector extends Compbaser implements AfterViewInit {
     }
 
     ngAfterViewInit() {
+
     }
 
     ngOnInit() {
