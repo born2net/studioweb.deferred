@@ -129,22 +129,11 @@ export class FontSelector extends Compbaser implements AfterViewInit {
         super();
         this.m_fonts = this.fontService.getFonts();
         this._listenColorChanged();
-
-        // setTimeout(()=>{
-        //     this.m_config = {
-        //         size: 22,
-        //         alignment: 'center',
-        //         bold: false,
-        //         italic: true,
-        //         font: 'Lobster',
-        //         underline: true,
-        //         color: '#e9ec0a',
-        //     }
-        // },3000)
     }
 
     @Input()
     set setConfig(i_config: IFontSelector) {
+        if (!i_config) return;
         this.m_config = i_config
     }
 

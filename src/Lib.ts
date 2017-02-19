@@ -504,6 +504,16 @@ export class Lib {
         return this.HexToDecimal(color);
     }
 
+    static ColorToHex(color) {
+        if (color.match('#')) {
+            return color;
+        }
+        if (color.match('rgb')) {
+            return '#' + this.RgbToHex(color);
+        }
+        return '#' + color;
+    }
+
     /**
      Hex to decimal converter
      @method hexToDecimal
