@@ -8,10 +8,6 @@ import {SideProps} from "../../store/actions/appdb.actions";
 @Component({
     selector: 'campaign-list',
     template: `
-        <div style="width: 250px">
-            <font-selector></font-selector>    
-        </div>
-        
         <small class="debug">{{me}}</small>
         <ul (click)="$event.preventDefault()" class="appList list-group">
 

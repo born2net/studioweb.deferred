@@ -38,7 +38,7 @@ export interface IFontSelector {
                         </button>
                         <button #borderColor (colorPickerChange)="m_borderColorChanged.next($event)"
                                 [cpOKButton]="true" [cpOKButtonClass]="'btn btn-primary btn-xs'"
-                                [(colorPicker)]="m_config.color" [cpPosition]="'bottom'" style="width: 59px"
+                                [(colorPicker)]="m_config.color" [cpPosition]="'left'" style="width: 59px"
                                 [cpAlphaChannel]="'disabled'" class="colorPicker offSet"
                                 [style.background]="m_config.color" [value]="m_config.color">
                         </button>
