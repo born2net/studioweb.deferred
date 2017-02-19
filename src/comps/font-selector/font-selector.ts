@@ -13,7 +13,6 @@ export interface IFontSelector {
     size: number;
 }
 
-
 @Component({
     selector: 'font-selector',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -180,11 +179,7 @@ export class FontSelector extends Compbaser implements AfterViewInit {
         this.onChange.emit(this.m_config);
     }
 
-
-
     ngAfterViewInit() {
-
-
     }
 
     ngOnInit() {
