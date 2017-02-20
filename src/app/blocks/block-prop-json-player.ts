@@ -12,34 +12,109 @@ import * as _ from "lodash";
         '(input-blur)': 'saveToStore($event)'
     },
     changeDetection: ChangeDetectionStrategy.OnPush,
-    template: `        
+    template: `
         <small class="debug">{{me}}</small>
         <form class="inner15" novalidate autocomplete="off" [formGroup]="contGroup">
             <div class="row">
-                <ul class="list-group" >
+                <ul class="list-group">
                     <li class="list-group-item">
-                        load with scene
-                        <input type="text" [formControl]="contGroup.controls['url']"/>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
+                            <input [formControl]="contGroup.controls['url']" required
+                                   pattern="[0-9]|[a-z]|[A-Z]+"
+                                   type="text" class="form-control" minlength="3" maxlength="15"
+                                   placeholder="JSON URL">
+                        </div>
+                    </li>
+
+
+                    <li class="list-group-item">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
+                            <input [formControl]="contGroup.controls['url']" required
+                                   pattern="[0-9]|[a-z]|[A-Z]+"
+                                   type="text" class="form-control" minlength="3" maxlength="15"
+                                   placeholder="Object path">
+                        </div>
+                    </li>
+
+                    <li class="list-group-item">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-key"></i></span>
+                            <input type="number" [formControl]="contGroup.controls['url']" min="0"
+                                   class="form-control"
+                                   placeholder="interval">
+                        </div>
+                    </li>
+
+
+                    <li class="list-group-item">
+                        Load with scene
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
+                            <select style="font-size: 1.5em" [formControl]="contGroup.controls['url']">
+                                <option>A</option>
+                                <option>B</option>
+                                <option>C</option>
+                            </select>
+
+                        </div>
                     </li>
                     <li class="list-group-item">
-                        interval
-                        <input type="text" [formControl]="contGroup.controls['url']"/>
+                        <span i18n>Play video to completion</span>
+                        <div class="material-switch pull-right">
+                            <input (change)="onFormChange(w1.checked)"
+                                   id="w1" #w1
+                                   name="w1" type="checkbox"/>
+                            <label for="w1" class="label-primary"></label>
+                        </div>
                     </li>
                     <li class="list-group-item">
-                        play video to completion
-                        <input type="text" [formControl]="contGroup.controls['url']"/>
+                        <span i18n>random playback</span>
+                        <div class="material-switch pull-right">
+                            <input (change)="onFormChange(w2.checked)"
+                                   id="w2" #w2
+                                   name="w2" type="checkbox"/>
+                            <label for="w2" class="label-primary"></label>
+                        </div>
                     </li>
                     <li class="list-group-item">
-                        random playback
-                        <input type="text" [formControl]="contGroup.controls['url']"/>
+                        <span i18n>slideshow mode</span>
+                        <div class="material-switch pull-right">
+                            <input (change)="onFormChange(w2.checked)"
+                                   id="w2" #w2
+                                   name="w2" type="checkbox"/>
+                            <label for="w2" class="label-primary"></label>
+                        </div>
                     </li>
                     <li class="list-group-item">
-                        slideshow mode
-                        <input type="text" [formControl]="contGroup.controls['url']"/>
-                    </li>
-                    <li class="list-group-item">
-                        On event take the following action
-                        <input type="text" [formControl]="contGroup.controls['url']"/>
+                        <label data-localize="onEventTakeAction">On event take the following
+                            action
+                        </label>
+
+                        <h4 class="panel-title" style="padding-bottom: 15px">
+                            <button id="addJsonEvents" type="button" title="add event" class="btn btn-default btn-sm">
+                                <span class="fa fa-plus"></span>
+                            </button>
+                            <button id="removeJsonEvents" type="button" title="remove event" class="btn btn-default btn-sm">
+                                <span class="fa fa-minus"></span>
+                            </button>
+                        </h4>
+                        
+                        <table id="jsonEventsTable" class="table table-no-bordered" data-sortable="false" data-search="false" data-mode="inline" data-show-columns="false" data-pagination="false" data-reorderable-rows="true" data-height="200">
+                            <thead>
+                            <tr>
+                                <th data-field="state" data-radio="true" data-width="40px"></th>
+                                <th data-field="event" data-editable="true" data-localize="event">event
+                                </th>
+                                <th data-field="action" data-type="number" data-formatter="BB.lib.jsonEventAction" data-halign="center" data-align="center" data-width="60px" data-localize="action">action
+                                </th>
+                                <th data-field="selectedPage" data-formatter="BB.lib.jsonEventActionGoToItem" class="collectionSelectedItem" data-type="number" data-halign="center" data-align="center" data-width="60px"
+                                    data-localize="jsonURL">json url
+                                </th>
+                            </tr>
+                            </thead>
+                        </table>
                     </li>
                 </ul>
             </div>
