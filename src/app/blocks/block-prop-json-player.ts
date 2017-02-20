@@ -12,50 +12,38 @@ import * as _ from "lodash";
         '(input-blur)': 'saveToStore($event)'
     },
     changeDetection: ChangeDetectionStrategy.OnPush,
-    template: `
-        <div>
-            <form novalidate autocomplete="off" [formGroup]="contGroup">
-                <div class="row">
-                    <div class="inner userGeneral">
-                        <div class="panel panel-default tallPanel">
-                            <div class="panel-heading">
-                                <small class="release">web properties
-                                    <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
-                                </small>
-                                <small class="debug">{{me}}</small>
-                            </div>
-                            <ul style="padding-top: 20px; padding-bottom: 20px" class="list-group">
-                                <li class="list-group-item">
-                                    load with scene
-                                    <input type="text" [formControl]="contGroup.controls['url']"/>
-                                </li>
-                                <li class="list-group-item">
-                                    interval 
-                                    <input type="text" [formControl]="contGroup.controls['url']"/>
-                                </li>
-                                <li class="list-group-item">
-                                    play video to completion
-                                    <input type="text" [formControl]="contGroup.controls['url']"/>
-                                </li>
-                                <li class="list-group-item">
-                                    random playback
-                                    <input type="text" [formControl]="contGroup.controls['url']"/>
-                                </li>
-                                <li class="list-group-item">
-                                    slideshow mode
-                                    <input type="text" [formControl]="contGroup.controls['url']"/>
-                                </li>
-                                <li class="list-group-item">
-                                    On event take the following action
-                                    <input type="text" [formControl]="contGroup.controls['url']"/>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-        <h5>block id {{m_blockData.blockID}}</h5>
+    template: `        
+        <small class="debug">{{me}}</small>
+        <form class="inner15" novalidate autocomplete="off" [formGroup]="contGroup">
+            <div class="row">
+                <ul class="list-group" >
+                    <li class="list-group-item">
+                        load with scene
+                        <input type="text" [formControl]="contGroup.controls['url']"/>
+                    </li>
+                    <li class="list-group-item">
+                        interval
+                        <input type="text" [formControl]="contGroup.controls['url']"/>
+                    </li>
+                    <li class="list-group-item">
+                        play video to completion
+                        <input type="text" [formControl]="contGroup.controls['url']"/>
+                    </li>
+                    <li class="list-group-item">
+                        random playback
+                        <input type="text" [formControl]="contGroup.controls['url']"/>
+                    </li>
+                    <li class="list-group-item">
+                        slideshow mode
+                        <input type="text" [formControl]="contGroup.controls['url']"/>
+                    </li>
+                    <li class="list-group-item">
+                        On event take the following action
+                        <input type="text" [formControl]="contGroup.controls['url']"/>
+                    </li>
+                </ul>
+            </div>
+        </form>
     `
 })
 export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {

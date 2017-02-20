@@ -648,8 +648,6 @@ small.release {
     top: -10px
 }
 
-
-
 /**
  for hovers see: http://ianlunn.github.io/Hover/
 **/
@@ -996,7 +994,6 @@ a.list-group-item:focus, button.list-group-item:focus {
     background-image: url("../assets/circle_remove.png");
 }
 
-
 .gradientPicker-ptConfig .color-chooser {
     float: left;
 }
@@ -1031,7 +1028,6 @@ a.list-group-item:focus, button.list-group-item:focus {
     width: 240px;
 }
 
-
 input.ng-invalid {
     border-right: 10px solid red;
 }
@@ -1049,3 +1045,21 @@ i {
     width: 20px;
 }
 
+form .list-group, form .list-group-item {
+    border: 0 none !important;
+}
+
+.inner5 {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.inner10 {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.inner15 {
+    padding-left: 15px;
+    padding-right: 15px;
+}

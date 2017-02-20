@@ -3,54 +3,34 @@ import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {BlockService, IBlockData} from "./block-service";
 import {RedPepperService} from "../../services/redpepper.service";
 import {Compbaser, NgmslibService} from "ng-mslib";
-import {IFontSelector} from "../../comps/font-selector/font-selector";
-import {Lib, urlRegExp} from "../../Lib";
+import {urlRegExp} from "../../Lib";
 import * as _ from "lodash";
-
 
 @Component({
     selector: 'block-prop-weather',
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <form novalidate autocomplete="off">
+        <small class="debug">{{me}}</small>
+        <form novalidate autocomplete="off" class="inner5">
             <div class="row">
-                <div class="inner userGeneral">
-                    <div class="panel panel-default tallPanel">
-                        <div class="panel-heading">
-                            <small class="release">web properties
-                                <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
-                            </small>
-                            <small class="debug">{{me}}</small>
-                        </div>
-                        <div *ngIf="!jsonMode">
-                            <ul style="padding-top: 20px; padding-bottom: 20px" class="list-group">
-                                <li class="list-group-item">
-                                    <ul style="padding-top: 20px; padding-bottom: 20px" class="list-group">
-                                        <li class="list-group-item">
-                                            units
-                                            <input type="text" [formControl]="contGroup.controls['url']"/>
-                                        </li>
-                                        <li class="list-group-item">
-                                            style
-                                            <input type="text" [formControl]="contGroup.controls['url']"/>
-                                        </li>
-                                        <li class="list-group-item">
-                                            address / zip code
-                                            <input type="text" [formControl]="contGroup.controls['url']"/>
-                                        </li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </div>
-                        <div *ngIf="jsonMode">
-                            <ul style="padding-top: 20px; padding-bottom: 20px" class="list-group">
-                                <li class="list-group-item">
-                                    <h3>json</h3>
-                                    <block-prop-json-player [setBlockData]="m_blockData"></block-prop-json-player>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
+                <div *ngIf="!jsonMode">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            units
+                            <input type="text" [formControl]="contGroup.controls['url']"/>
+                        </li>
+                        <li class="list-group-item">
+                            style
+                            <input type="text" [formControl]="contGroup.controls['url']"/>
+                        </li>
+                        <li class="list-group-item">
+                            address / zip code
+                            <input type="text" [formControl]="contGroup.controls['url']"/>
+                        </li>
+                    </ul>
+                </div>
+                <div *ngIf="jsonMode">
+                    <block-prop-json-player [setBlockData]="m_blockData"></block-prop-json-player>
                 </div>
             </div>
         </form>
@@ -85,7 +65,7 @@ export class BlockPropWeather extends Compbaser implements AfterViewInit {
         }
     }
 
-    private _render(){
+    private _render() {
         // this.contGroup.reset();
         // var domPlayerData = this.m_blockData.playerDataDom
         // var xSnippet = jQuery(domPlayerData).find('HTML');
@@ -95,7 +75,6 @@ export class BlockPropWeather extends Compbaser implements AfterViewInit {
     ngAfterViewInit() {
         this._render();
     }
-
 
 
     destroy() {

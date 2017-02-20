@@ -12,54 +12,49 @@ import * as _ from "lodash";
     selector: 'block-prop-common',
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <div>
-            <form novalidate autocomplete="off" [formGroup]="contGroup">
-                <div class="row">
-                    <div class="inner userGeneral">
-                        <div class="panel panel-default tallPanel">
-                            <div class="panel-heading">
-                                <small class="release">common properties
-                                    <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
-                                </small>
-                                <small class="debug">{{me}}</small>
-                            </div>
-                            <ul class="list-group">
-                                <li class="list-group-item">
-                                    alpha
-                                    <input id="slider1" (change)="_onAlphaChange($event)" [formControl]="contGroup.controls['alpha']" type="range" min="0" max="1" step="0.1"/>
-                                </li>
-                                <li class="list-group-item">
-                                    background
-                                    <button style="position: relative; top: 15px" (click)="_onRemoveBackground()" class="btn btn-default btn-sm pull-right" type="button">
-                                        <i class="fa fa-times"></i>
-                                    </button>
-                                    <div id="bgColorGradientSelector"></div>
-                                </li>
+        <small class="debug">{{me}}</small>
+        <form class="inner5" novalidate autocomplete="off" [formGroup]="contGroup">
+            <div class="row">
+                <div class="panel-heading">
+                    <small class="release">common properties
+                        <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
+                    </small>
 
-                                <li class="list-group-item">
-                                    <div style="padding-top: 20px; padding-bottom: 20px">
-                                        border
-                                        <br/>
-                                        <div class="material-switch pull-right">
-                                            <input #borderSelection (change)="_toggleBorder(borderSelection.checked)"
-                                                   [formControl]="contGroup.controls['border']"
-                                                   id="borderSelection"
-                                                   name="borderSelection" type="checkbox"/>
-                                            <label for="borderSelection" class="label-primary"></label>
-                                        </div>
-                                        <input #borderColor [disabled]="!borderSelection.checked" (colorPickerChange)="m_borderColorChanged.next($event)"
-                                               [cpOKButton]="true" [cpOKButtonClass]="'btn btn-primary btn-xs'"
-                                               [(colorPicker)]="m_color" [cpPosition]="'bottom'"
-                                               [cpAlphaChannel]="'disabled'" style="width: 185px"
-                                               [style.background]="m_color" [value]="m_color"/>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
                 </div>
-            </form>
-        </div>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        alpha
+                        <input id="slider1" (change)="_onAlphaChange($event)" [formControl]="contGroup.controls['alpha']" type="range" min="0" max="1" step="0.1"/>
+                    </li>
+                    <li class="list-group-item">
+                        background
+                        <button style="position: relative; top: 15px" (click)="_onRemoveBackground()" class="btn btn-default btn-sm pull-right" type="button">
+                            <i class="fa fa-times"></i>
+                        </button>
+                        <div id="bgColorGradientSelector"></div>
+                    </li>
+
+                    <li class="list-group-item">
+                        <div style="padding-top: 20px; padding-bottom: 20px">
+                            border
+                            <br/>
+                            <div class="material-switch pull-right">
+                                <input #borderSelection (change)="_toggleBorder(borderSelection.checked)"
+                                       [formControl]="contGroup.controls['border']"
+                                       id="borderSelection"
+                                       name="borderSelection" type="checkbox"/>
+                                <label for="borderSelection" class="label-primary"></label>
+                            </div>
+                            <input #borderColor [disabled]="!borderSelection.checked" (colorPickerChange)="m_borderColorChanged.next($event)"
+                                   [cpOKButton]="true" [cpOKButtonClass]="'btn btn-primary btn-xs'"
+                                   [(colorPicker)]="m_color" [cpPosition]="'bottom'"
+                                   [cpAlphaChannel]="'disabled'" style="width: 185px"
+                                   [style.background]="m_color" [value]="m_color"/>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </form>
         <h5>block id {{m_blockData.blockID}}</h5>
     `
 })
