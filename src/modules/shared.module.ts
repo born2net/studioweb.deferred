@@ -26,9 +26,10 @@ import {BlockPropHtml} from "../app/blocks/block-prop-html";
 import {BlockPropClock} from "../app/blocks/block-prop-clock";
 import {FontSelector} from "../comps/font-selector/font-selector";
 import {BlockPropWeather} from "../app/blocks/block-prop-weather";
+import {BlockPropJsonPlayer} from "../app/blocks/block-prop-json-player";
 
 var sharedComponents = [Tabs, Tab, Infobox, Sliderpanel, Slideritem, PanelSplitMain, PanelSplitSide, PanelSplitContainer, ListToArrayPipe, FormatSecondsPipe, MatchBodyHeight, ScreenTemplate, BlurForwarder, DraggableList,
-    FontSelector, BlockPropContainer, BlockPropImage, BlockPropCommon, BlockPropHtml, BlockPropClock, BlockPropWeather];
+    FontSelector, BlockPropContainer, BlockPropImage, BlockPropCommon, BlockPropHtml, BlockPropClock, BlockPropWeather, BlockPropJsonPlayer];
 
 @NgModule({
     imports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule, ContextMenuModule, ChartModule, ReactiveFormsModule, ColorPickerModule],

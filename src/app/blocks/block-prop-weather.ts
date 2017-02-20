@@ -1,84 +1,78 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, Input} from "@angular/core";
-import {FormBuilder} from "@angular/forms";
+import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {BlockService, IBlockData} from "./block-service";
 import {RedPepperService} from "../../services/redpepper.service";
-import {Compbaser} from "ng-mslib";
+import {Compbaser, NgmslibService} from "ng-mslib";
 import {IFontSelector} from "../../comps/font-selector/font-selector";
-import {Lib} from "../../Lib";
+import {Lib, urlRegExp} from "../../Lib";
+import * as _ from "lodash";
+
 
 @Component({
     selector: 'block-prop-weather',
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <div>
-            <form novalidate autocomplete="off">
-                <div class="row">
-                    <div class="inner userGeneral">
-                        <div class="panel panel-default tallPanel">
-                            <div class="panel-heading">
-                                <small class="release">web properties
-                                    <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
-                                </small>
-                                <small class="debug">{{me}}</small>
-                            </div>
-                            
-                            <div *ngIf="!jsonMode">
-                                <ul style="padding-top: 20px; padding-bottom: 20px" class="list-group">
-                                    <li class="list-group-item">
-                                        <h3>basic</h3>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <div *ngIf="jsonMode">
-                                <ul style="padding-top: 20px; padding-bottom: 20px" class="list-group">
-                                    <li class="list-group-item">
-                                        <h3>json</h3>
-                                    </li>
-                                </ul>    
-                            </div>
-                            
-                            
+        <form novalidate autocomplete="off">
+            <div class="row">
+                <div class="inner userGeneral">
+                    <div class="panel panel-default tallPanel">
+                        <div class="panel-heading">
+                            <small class="release">web properties
+                                <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
+                            </small>
+                            <small class="debug">{{me}}</small>
+                        </div>
+                        <div *ngIf="!jsonMode">
+                            <ul style="padding-top: 20px; padding-bottom: 20px" class="list-group">
+                                <li class="list-group-item">
+                                    <ul style="padding-top: 20px; padding-bottom: 20px" class="list-group">
+                                        <li class="list-group-item">
+                                            units
+                                            <input type="text" [formControl]="contGroup.controls['url']"/>
+                                        </li>
+                                        <li class="list-group-item">
+                                            style
+                                            <input type="text" [formControl]="contGroup.controls['url']"/>
+                                        </li>
+                                        <li class="list-group-item">
+                                            address / zip code
+                                            <input type="text" [formControl]="contGroup.controls['url']"/>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                        <div *ngIf="jsonMode">
+                            <ul style="padding-top: 20px; padding-bottom: 20px" class="list-group">
+                                <li class="list-group-item">
+                                    <h3>json</h3>
+                                    <block-prop-json-player [setBlockData]="m_blockData"></block-prop-json-player>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
-            </form>
-        </div>
-        <font-selector (onChange)="_onFontChanged($event)" [setConfig]="m_fontConfig"></font-selector>
-        <h5>block id {{m_blockData.blockID}}</h5>
+            </div>
+        </form>
     `
 })
 export class BlockPropWeather extends Compbaser implements AfterViewInit {
 
+    private formInputs = {};
+    private contGroup: FormGroup;
     private m_blockData: IBlockData;
 
-    m_fontConfig: IFontSelector;
-    m_clockFormats = [{
-        type: 'longDateAndTime',
-        format: 'Friday, Mar 21 2018 at 8:59AM'
-    }, {
-        type: 'longDate',
-        format: 'Friday, Mar 21 2018'
-    }, {
-        type: 'shortDayTime',
-        format: 'Friday 9:10 AM'
-    }, {
-        type: 'date',
-        format: '3/21/18'
-    }, {
-        type: 'time',
-        format: '9:00:39 AM'
-    }];
-
-    m_model = {
-        options: this.m_clockFormats[0]
-    };
-
-    constructor(private fb: FormBuilder, private rp: RedPepperService, private bs: BlockService) {
+    constructor(private fb: FormBuilder, private rp: RedPepperService, private bs: BlockService, private ngmslibService: NgmslibService) {
         super();
+        this.contGroup = fb.group({
+            'url': ['', [Validators.pattern(urlRegExp)]]
+        });
+        _.forEach(this.contGroup.controls, (value, key: string) => {
+            this.formInputs[key] = this.contGroup.controls[key] as FormControl;
+        })
     }
 
-    @Input() jsonMode:boolean;
+    @Input() jsonMode: boolean;
 
 
     @Input()
@@ -91,58 +85,19 @@ export class BlockPropWeather extends Compbaser implements AfterViewInit {
         }
     }
 
-    _onFontChanged(config: IFontSelector) {
-        var domPlayerData = this.m_blockData.playerDataDom;
-        var xSnippet = jQuery(domPlayerData).find('Clock');
-        var xSnippetFont = jQuery(xSnippet).find('Font');
-        config.bold == true ? xSnippetFont.attr('fontWeight', 'bold') : xSnippetFont.attr('fontWeight', 'normal');
-        config.italic == true ? xSnippetFont.attr('fontStyle', 'italic') : xSnippetFont.attr('fontStyle', 'normal');
-        config.underline == true ? xSnippetFont.attr('textDecoration', 'underline') : xSnippetFont.attr('textDecoration', 'none');
-        xSnippetFont.attr('fontColor', Lib.ColorToDecimal(config.color));
-        xSnippetFont.attr('fontSize', config.size);
-        xSnippetFont.attr('fontFamily', config.font);
-        xSnippetFont.attr('textAlign', config.alignment);
-        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
-    }
-
-    _onFormatChanged(e) {
-        var mask = this.bs.getBlockBoilerplate(this.m_blockData.blockCode).getDateTimeMask(e.type);
-        var domPlayerData = this.m_blockData.playerDataDom;
-        var xSnippet = jQuery(domPlayerData).find('Clock');
-        xSnippet.attr('clockMask', mask);
-        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+    private _render(){
+        // this.contGroup.reset();
+        // var domPlayerData = this.m_blockData.playerDataDom
+        // var xSnippet = jQuery(domPlayerData).find('HTML');
+        // this.formInputs['url'].setValue(xSnippet.attr('src'));
     }
 
     ngAfterViewInit() {
         this._render();
     }
 
-    _render() {
-        // var self = this;
-        // var domPlayerData = this.m_blockData.playerDataDom;
-        // var xSnippet = jQuery(domPlayerData).find('Clock');
-        // var mask = jQuery(xSnippet).attr('clockMask');
-        // var xSnippetFont = jQuery(xSnippet).find('Font');
-        //
-        // this.m_clockFormats.forEach(i_clockFormat => {
-        //     var currMask = self.bs.getBlockBoilerplate(self.m_blockData.blockCode).getDateTimeMask(i_clockFormat.type);
-        //     if (mask == currMask) {
-        //         this.m_model = {options: i_clockFormat};
-        //     }
-        // });
-        //
-        // this.m_fontConfig = {
-        //     size: Number(xSnippetFont.attr('fontSize')),
-        //     alignment: <any>xSnippetFont.attr('textAlign'),
-        //     bold: xSnippetFont.attr('fontWeight') == 'bold' ? true : false,
-        //     italic: xSnippetFont.attr('fontStyle') == 'italic' ? true : false,
-        //     font: xSnippetFont.attr('fontFamily'),
-        //     underline: xSnippetFont.attr('textDecoration') == 'underline' ? true : false,
-        //     color: Lib.ColorToHex(Lib.DecimalToHex(xSnippetFont.attr('fontColor'))),
-        // }
-    }
+
 
     destroy() {
-        console.log('destroy html component');
     }
 }
