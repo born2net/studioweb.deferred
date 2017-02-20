@@ -45,7 +45,7 @@ import {Tab} from "../../comps/tabs/tab";
             <tab #settings [tabtitle]="'settings'">
                 <div [ngSwitch]="m_blockTypeSelected">
                     <div *ngSwitchCase="m_blockLabels.BLOCKCODE_WORLD_WEATHER">
-                        <block-prop-weather [settingsMode]="true" [setBlockData]="m_blockData"></block-prop-weather>
+                        <block-prop-weather [jsonMode]="true" [setBlockData]="m_blockData"></block-prop-weather>
                     </div>
                 </div>
             </tab>

@@ -21,19 +21,24 @@ import {Lib} from "../../Lib";
                                 </small>
                                 <small class="debug">{{me}}</small>
                             </div>
-                            <ul style="padding-top: 20px; padding-bottom: 20px" class="list-group">
-                                <li class="list-group-item">
-                                    <div id="blockClockCommonProperties">
-                                        <span i18n>Choose format</span>
-                                        <div class="radio" *ngFor="let item of m_clockFormats">
-                                            <label>
-                                                <input type="radio" name="options" (click)="m_model.options = item; _onFormatChanged(item)" [checked]="item === m_model.options" [value]="item">
-                                                {{item.format}}
-                                            </label>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
+                            
+                            <div *ngIf="!jsonMode">
+                                <ul style="padding-top: 20px; padding-bottom: 20px" class="list-group">
+                                    <li class="list-group-item">
+                                        <h3>basic</h3>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div *ngIf="jsonMode">
+                                <ul style="padding-top: 20px; padding-bottom: 20px" class="list-group">
+                                    <li class="list-group-item">
+                                        <h3>json</h3>
+                                    </li>
+                                </ul>    
+                            </div>
+                            
+                            
                         </div>
                     </div>
                 </div>
@@ -46,7 +51,6 @@ import {Lib} from "../../Lib";
 export class BlockPropWeather extends Compbaser implements AfterViewInit {
 
     private m_blockData: IBlockData;
-    private m_settinsMode: boolean = false;
 
     m_fontConfig: IFontSelector;
     m_clockFormats = [{
@@ -74,10 +78,8 @@ export class BlockPropWeather extends Compbaser implements AfterViewInit {
         super();
     }
 
-    @Input()
-    set settingsMode(v:boolean) {
-        this.m_settinsMode = v;
-    }
+    @Input() jsonMode:boolean;
+
 
     @Input()
     set setBlockData(i_blockData) {

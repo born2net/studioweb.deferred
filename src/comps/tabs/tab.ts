@@ -8,19 +8,19 @@ import {Tabs} from '../tabs/tabs';
         'active'
     ],
     styles: [`
-    .pane{
-      padding: 1em;
-      background-color: white;
-      border-left: 1px solid #dddddd ;
-      border-right: 1px solid #dddddd ;
-      border-bottom: 1px solid #dddddd ;
-    }
-  `],
+        .pane {
+            padding: 1em;
+            background-color: white;
+            border-left: 1px solid #dddddd;
+            border-right: 1px solid #dddddd;
+            border-bottom: 1px solid #dddddd;
+        }
+    `],
     template: `
-    <div [hidden]="!_active" class="pane">
-      <ng-content></ng-content>
-    </div>
-  `
+        <div [hidden]="!_active" class="pane">
+            <ng-content></ng-content>
+        </div>
+    `
 })
 
 /**
@@ -30,28 +30,36 @@ import {Tabs} from '../tabs/tabs';
  **/
 export class Tab {
 
-    constructor(@Host() tabs:Tabs) {
+    constructor(@Host() private tabs: Tabs) {
         tabs.addTab(this);
     }
 
     @Output()
-    activated:EventEmitter<any> = new EventEmitter<any>();
+    activated: EventEmitter<any> = new EventEmitter<any>();
 
-    public title:string;
+    public title: string;
     private _active = false;
     private _show = true;
-    public set active(value){
+
+    public set active(value) {
         this._active = value || false;
         if (this._active)
             this.activated.emit(true);
     }
-    public get active(){
+
+    public get active() {
         return this._active;
     }
-    public set show(value){
+
+    public set show(value) {
         this._show = value;
+        if (value == false) {
+            this._active = false
+            this.tabs.checkOneActive();
+        }
     }
-    public get show(){
+
+    public get show() {
         return this._show;
     }
 
