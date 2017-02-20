@@ -55,7 +55,7 @@ export class Tab {
         this._show = value;
         if (value == false) {
             this._active = false
-            this.tabs.checkOneActive();
+            this.tabs.checkActive();
         }
     }
 

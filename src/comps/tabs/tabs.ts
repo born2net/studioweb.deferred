@@ -30,10 +30,10 @@ export class Tabs {
         return false;
     }
 
-    public checkOneActive() {
+    /** make sure at least one tab is active **/
+    public checkActive() {
         var actives = this.tabs.filter((tab) => tab.active == true);
-        if (actives.length == 0)
-            this.tabs[0].active = true;
+        actives.length == 0 ? this.tabs[0].active = true : null;
     }
 
     addTab(tab: any) {
