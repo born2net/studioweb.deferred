@@ -12,7 +12,7 @@ import {Tab} from "../../comps/tabs/tab";
     selector: 'block-prop-container',
     template: `
         <small class="debug">{{me}}</small>
-        <tabs #tabs>
+        <tabs>
             <tab [tabtitle]="'style'">
                 <block-prop-common [setBlockData]="m_blockData"></block-prop-common>
             </tab>
@@ -74,25 +74,19 @@ export class BlockPropContainer extends Compbaser implements AfterViewInit {
                     this.m_blockTypeSelected = blockData.blockCode;
                     this.m_tabTitle = blockData.blockAcronym;
                     this.m_blockData = blockData;
-                    if (this.tabs){
-                        if (blockData.playerDataJsonMime){
-                            this.tabs.show();
-                        } else {
-                            this.tabs.hide(this.settings)
-                        }
+                    if (!this.settings) return;
+                    if (blockData.playerDataJsonMime) {
+                        this.settings.show = true;
+                    } else {
+                        this.settings.show = false;
                     }
 
                 }, (e) => console.error(e))
         )
-
-
     }
 
-    @ViewChild('tabs')
-    tabs:Tabs;
-
     @ViewChild('settings')
-    settings:Tab;
+    settings: Tab;
 
 
     ngAfterViewInit() {

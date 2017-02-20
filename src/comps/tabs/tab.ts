@@ -31,7 +31,6 @@ import {Tabs} from '../tabs/tabs';
 export class Tab {
 
     constructor(@Host() tabs:Tabs) {
-        //this.title = 'tab';
         tabs.addTab(this);
     }
 
@@ -40,6 +39,7 @@ export class Tab {
 
     public title:string;
     private _active = false;
+    private _show = true;
     public set active(value){
         this._active = value || false;
         if (this._active)
@@ -48,7 +48,11 @@ export class Tab {
     public get active(){
         return this._active;
     }
-
-
+    public set show(value){
+        this._show = value;
+    }
+    public get show(){
+        return this._show;
+    }
 
 }
