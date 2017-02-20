@@ -2,6 +2,7 @@ import {Component, ChangeDetectionStrategy, trigger, transition, animate, state,
 import {Compbaser} from "ng-mslib";
 import {routerTransition} from "../route-animation";
 import {BlockService} from "../blocks/block-service";
+import {AppdbAction} from "../../store/actions/appdb.actions";
 
 @Component({
     // changeDetection: ChangeDetectionStrategy.OnPush,
@@ -45,8 +46,12 @@ import {BlockService} from "../blocks/block-service";
     `
 })
 export class CampaignsNavigation extends Compbaser {
-    constructor() {
+    constructor(private actions: AppdbAction) {
         super();
+    }
+
+    destroy(){
+        this.actions.resetCampaignSelection();
     }
 }
 

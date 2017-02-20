@@ -1,16 +1,18 @@
-import {AfterViewInit, Component} from "@angular/core";
+import {AfterViewInit, Component, ViewChild} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {BlockLabels, BlockService, IBlockData} from "./block-service";
 import {CampaignTimelineChanelPlayersModel} from "../../store/imsdb.interfaces_auto";
 import {ColorPickerService} from "ngx-color-picker";
+import {Tabs} from "../../comps/tabs/tabs";
+import {Tab} from "../../comps/tabs/tab";
 
 
 @Component({
     selector: 'block-prop-container',
     template: `
         <small class="debug">{{me}}</small>
-        <tabs>
+        <tabs #tabs>
             <tab [tabtitle]="'style'">
                 <block-prop-common [setBlockData]="m_blockData"></block-prop-common>
             </tab>
@@ -40,7 +42,7 @@ import {ColorPickerService} from "ngx-color-picker";
                     </div>
                 </div>
             </tab>
-            <tab [tabtitle]="'settings'">
+            <tab #settings [tabtitle]="'settings'">
                 <div [ngSwitch]="m_blockTypeSelected">
                     <div *ngSwitchCase="m_blockLabels.BLOCKCODE_WORLD_WEATHER">
                         <block-prop-weather [settingsMode]="true" [setBlockData]="m_blockData"></block-prop-weather>
@@ -56,7 +58,6 @@ export class BlockPropContainer extends Compbaser implements AfterViewInit {
     m_blockLabels = BlockLabels;
     m_blockData: IBlockData;
     m_tabTitle: string = 'none';
-    m_showSettingTab:boolean = true;
     m_color;
 
     constructor(private yp: YellowPepperService, private bs: BlockService, private cpService: ColorPickerService) {
@@ -73,13 +74,26 @@ export class BlockPropContainer extends Compbaser implements AfterViewInit {
                     this.m_blockTypeSelected = blockData.blockCode;
                     this.m_tabTitle = blockData.blockAcronym;
                     this.m_blockData = blockData;
-                    this.m_showSettingTab = blockData.playerDataJsonMime == null ? false : true;
-                    console.log(Math.random() + ' ' + this.m_showSettingTab );
+                    if (this.tabs){
+                        if (blockData.playerDataJsonMime){
+                            this.tabs.show();
+                        } else {
+                            this.tabs.hide(this.settings)
+                        }
+                    }
+
                 }, (e) => console.error(e))
         )
 
 
     }
+
+    @ViewChild('tabs')
+    tabs:Tabs;
+
+    @ViewChild('settings')
+    settings:Tab;
+
 
     ngAfterViewInit() {
     }

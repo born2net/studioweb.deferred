@@ -23,4 +23,8 @@ export class CampaignTimelineChanelPlayersModelExt extends CampaignTimelineChane
         return parseFloat(this.getKey('player_offset_time'));
     }
 
+    public getPlayerDurationInt() {
+        return parseFloat(this.getKey('player_duration'));
+    }
+
 }

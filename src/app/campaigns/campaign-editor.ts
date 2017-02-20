@@ -2,14 +2,11 @@ import {animate, Component, EventEmitter, Output, state, style, transition, trig
 import {Compbaser} from "ng-mslib";
 import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
 import {YellowPepperService} from "../../services/yellowpepper.service";
-import {RedPepperService} from "../../services/redpepper.service";
 import {CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 import {List} from "immutable";
 import {Once} from "../../decorators/once-decorator";
 import {ACTION_UISTATE_UPDATE, AppdbAction, SideProps} from "../../store/actions/appdb.actions";
 import {IUiState} from "../../store/store.data";
-import {stat} from "fs";
-import {BlockService} from "../blocks/block-service";
 import {Lib} from "../../Lib";
 
 @Component({

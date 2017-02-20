@@ -5,9 +5,11 @@ import {Component} from '@angular/core';
     selector: 'tabs',
     template: `
     <ul class="nav nav-tabs">
-      <li *ngFor="let tab of tabs" (click)="selectTab(tab, $event)" [class.active]="tab.active">
-        <a href="#">{{tab.title}}</a>
-      </li>
+      <ng-container *ngFor="let tab of tabs">
+          <li (click)="selectTab(tab, $event)" [class.active]="tab.active">
+              <a href="#">aaa {{tab.title}}</a>      
+          </li>
+      </ng-container>
     </ul>
     <ng-content></ng-content>
   `
@@ -15,7 +17,7 @@ import {Component} from '@angular/core';
 export class Tabs {
 
     tabs:any[];
-
+    removed;
     constructor() {
         this.tabs = [];
     }
@@ -39,5 +41,22 @@ export class Tabs {
             tab.active = true;
         }
         this.tabs.push(tab);
+    }
+
+    show(){
+        if(this.removed)
+            this.tabs.push(this.removed[0])
+        this.removed = null;
+    }
+
+    hide(tab) {
+        var i = this.tabs.indexOf(tab)
+        if (i!=-1) {
+            this.tabs.forEach((tab)=>tab.active = false);
+            this.removed = this.tabs.splice(i, 1);
+            this.tabs[0].active = true;
+        }
+
+        // this.tabs = this.tabs.filter(i_tab => i_tab.title != i_title) as List<any>
     }
 }

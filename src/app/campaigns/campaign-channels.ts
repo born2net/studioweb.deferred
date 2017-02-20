@@ -60,7 +60,7 @@ import {DraggableList} from "../../comps/draggable-list";
                 <span>{{item.blockName}}</span>
                 <i class="dragch fa fa-arrows-v"></i>
                 <span class="lengthTimer hidden-xs"> 
-                    {{item.length | FormatSecondsPipe}}
+                    {{item.duration | FormatSecondsPipe}}
                 </span>
             </a>
         </template>
@@ -76,7 +76,6 @@ export class CampaignChannels extends Compbaser implements AfterViewInit {
 
     constructor(private yp: YellowPepperService, private rp: RedPepperService, private el: ElementRef, private blockService: BlockService) {
         super();
-
     }
 
     @ViewChild(DraggableList)
@@ -99,6 +98,7 @@ export class CampaignChannels extends Compbaser implements AfterViewInit {
         )
 
         this.cancelOnDestroy(
+
             this.yp.listenCampaignTimelineBoardViewerSelected(true)
                 .combineLatest(this.durationChanged$)
 
@@ -124,18 +124,12 @@ export class CampaignChannels extends Compbaser implements AfterViewInit {
                     return Observable.of([])
 
                 return Observable.from(blockIds)
-                    .switchMap((blockId) => {
-                        return this.blockService.getBlockData(blockId)
-                            .map((blockData: IBlockData) => this.yp.getBlockTimelineChannelBlockLength(blockData.blockID)
-                                .map(length => Object.assign(blockData, {length: length}))
-                            )
-                    }).combineAll()
+                    .map((blockId) => this.blockService.getBlockData(blockId))
+                    .combineAll()
 
             }).subscribe((i_blockList: Array<IBlockData>) => {
-                // console.log('total block in channel ' + i_blockList.length);
                 this.m_blockList = List(this._sortBlock(i_blockList));
                 this.draggableList.createSortable()
-
             }, e => console.error(e))
         )
 
@@ -163,18 +157,31 @@ export class CampaignChannels extends Compbaser implements AfterViewInit {
     }
 
     private _sortBlock(i_blockList: Array<IBlockData>): Array<IBlockData> {
-        var blocksSorted = {};
-        _.forEach(i_blockList, (i_block: IBlockData) => {
-            var player_data = i_block.campaignTimelineChanelPlayersModelExt.getPlayerData();
-            var domPlayerData = $.parseXML(player_data);
-            var sceneHandle = jQuery(domPlayerData).find('Player').attr('player');
-            // workaround to remove scenes listed inside table campaign_timeline_chanel_players
-            if (sceneHandle == '3510')
-                return;
-            var offsetTime = i_block.campaignTimelineChanelPlayersModelExt.getPlayerOffsetTimeInt();
-            blocksSorted[offsetTime] = i_block;
-        });
-        return _.values(blocksSorted) as Array<IBlockData>;
+
+        var sorted = i_blockList.sort((a, b) => {
+            if (a.offset < b.offset)
+                return -1;
+            if (a.offset > b.offset)
+                return 1;
+            if (a.offset === b.offset)
+                return 0;
+        })
+        return sorted;
+
+        // var blocksSorted = {};
+        // _.forEach(i_blockList, (i_block: IBlockData) => {
+        //     var player_data = i_block.campaignTimelineChanelPlayersModelExt.getPlayerData();
+        //     var domPlayerData = $.parseXML(player_data);
+        //     var sceneHandle = jQuery(domPlayerData).find('Player').attr('player');
+        //     // workaround to remove scenes listed inside table campaign_timeline_chanel_players
+        //     if (sceneHandle == '3510')
+        //         return;
+        //     var a = i_block.campaignTimelineChanelPlayersModelExt.getKey('player_offset_time');
+        //     var offsetTime = i_block.campaignTimelineChanelPlayersModelExt.getPlayerOffsetTimeInt();
+        //     console.log(i_block.blockName + ' duration: ' + i_block.length + ' offset: ' + offsetTime);
+        //     blocksSorted[offsetTime] = i_block;
+        // });
+        // return _.values(blocksSorted) as Array<IBlockData>;
     }
 
     /**
@@ -191,7 +198,7 @@ export class CampaignChannels extends Compbaser implements AfterViewInit {
             self._getBlockRecord(block_id, (i_campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModel) => {
                 var playerDuration = i_campaignTimelineChanelPlayersModel.getPlayerDuration();
                 self.rp.setBlockRecord(block_id, 'player_offset_time', playerOffsetTime);
-                // console.log('player ' + block_id + ' offset ' + playerOffsetTime + ' playerDuration ' + playerDuration);
+                console.log('player ' + block_id + ' offset ' + playerOffsetTime + ' playerDuration ' + playerDuration);
                 playerOffsetTime = parseFloat(playerOffsetTime) + parseFloat(playerDuration);
             })
         });

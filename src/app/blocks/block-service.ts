@@ -48,9 +48,10 @@ export interface IBlockData {
     blockMinHeight: number;
     playerDataJson: {};
     playerDataDom: XMLDocument,
-    playerDataJsonMime:number;
+    playerDataJsonMime: number;
     campaignTimelineChanelPlayersModelExt: CampaignTimelineChanelPlayersModelExt,
-    length?: number;
+    duration: number;
+    offset: number;
 }
 
 /**
@@ -777,7 +778,7 @@ export class BlockService {
                     //     var domPlayerData = $.parseXML(i_player_data);
                     //     i_scene_id = $(domPlayerData).find('Player').attr('hDataSrc');
                 }
-                var data:IBlockData = {
+                var data: IBlockData = {
                     blockID: blockId,
                     blockType: blockType,
                     blockCode: code,
@@ -791,6 +792,8 @@ export class BlockService {
                     playerDataDom: playerDataDom,
                     playerDataJson: playerDataJson,
                     playerDataJsonMime: (playerDataJson.Player.Data.Json && playerDataJson.Player.Data.Json.Player) ? playerDataJson.Player.Data.Json.Player : null,
+                    duration: i_campaignTimelineChanelPlayersModel.getPlayerDurationInt(),
+                    offset: i_campaignTimelineChanelPlayersModel.getPlayerOffsetTimeInt(),
                     campaignTimelineChanelPlayersModelExt: i_campaignTimelineChanelPlayersModel
                 };
 
