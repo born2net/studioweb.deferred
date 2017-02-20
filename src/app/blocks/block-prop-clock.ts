@@ -134,6 +134,6 @@ export class BlockPropClock extends Compbaser implements AfterViewInit {
     }
 
     destroy() {
-        console.log('destroy html component');
+        // console.log('destroy html component');
     }
 }
