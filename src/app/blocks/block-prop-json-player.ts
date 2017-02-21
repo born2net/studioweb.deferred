@@ -142,8 +142,6 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
         _.forEach(this.contGroup.controls, (value, key: string) => {
             this.formInputs[key] = this.contGroup.controls[key] as FormControl;
         })
-
-
     }
 
     @ViewChild('simpleGrid')
