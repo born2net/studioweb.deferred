@@ -31,14 +31,9 @@ import {Once} from "../../decorators/once-decorator";
                         Load with scene
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
-                            <!--<select #sceneSelection [(ngModel)]="m_sceneSeleced.id" (change)="_onSceneSelectionChanged($event.target.value)" style="height: 30px" formControlName="sceneSelection">-->
-                                <!--<option *ngFor="let scene of m_sceneSelection">{{scene.label}}</option>-->
-                            <!--</select>-->
-
                             <select #sceneSelection [(ngModel)]="m_sceneSeleced.id" style="height: 30px" (change)="_onSceneSelectionChanged($event.target.value)"formControlName="sceneSelection">
                                 <option [selected]="scene.selected" [value]="scene.sceneId" *ngFor="let scene of m_sceneSelection">{{scene.label}}</option>
                             </select>
-
                         </div>
                     </li>
                     <li class="list-group-item">
@@ -146,7 +141,6 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
     }
 
     _onSceneSelectionChanged(scene) {
-        // var show = scene.getAttribute("data-id");
         console.log(this.contGroup.controls['sceneSelection'].value);
         /*
          if (!self.m_selected)
