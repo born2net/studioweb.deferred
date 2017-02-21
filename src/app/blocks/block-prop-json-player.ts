@@ -78,39 +78,26 @@ import {Map, List} from 'immutable';
                                 <span class="fa fa-minus"></span>
                             </button>
                         </h4>
-
-                        <!--<table id="jsonEventsTable" class="table table-no-bordered" data-sortable="false" data-search="false" data-mode="inline" data-show-columns="false" data-pagination="false" data-reorderable-rows="true" data-height="200">-->
-                        <!--<thead>-->
-                        <!--<tr>-->
-                        <!--<th data-field="state" data-radio="true" data-width="40px"></th>-->
-                        <!--<th data-field="event" data-editable="true" data-localize="event">event-->
-                        <!--</th>-->
-                        <!--<th data-field="action" data-type="number" data-formatter="BB.lib.jsonEventAction" data-halign="center" data-align="center" data-width="60px" data-localize="action">action-->
-                        <!--</th>-->
-                        <!--<th data-field="selectedPage" data-formatter="BB.lib.jsonEventActionGoToItem" class="collectionSelectedItem" data-type="number" data-halign="center" data-align="center" data-width="60px"-->
-                        <!--data-localize="jsonURL">json url-->
-                        <!--</th>-->
-                        <!--</tr>-->
-                        <!--</thead>-->
-                        <!--</table>-->
-
-                        <simpleGridTable #userSimpleGridTable>
-                            <thead>
-                            <tr>
-                                <th>event</th>
-                                <th>action</th>
-                                <th>url</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr class="simpleGridRecord" simpleGridRecord *ngFor="let item of m_events; let index=index">
-                                <td style="width: 50%" [editable]="true" [processField]="getField('event')" simpleGridData [item]="item"></td>
-                                <td style="width: 50%" [editable]="false" [processField]="tableQty" simpleGridData [item]="item"></td>
-                                <td style="width: 50%" [editable]="false" [processField]="tableQty" simpleGridData [item]="item"></td>
-                                <td style="width: 50%" [processField]="tablePrice" simpleGridData [item]="item"></td>
-                            </tr>
-                            </tbody>
-                        </simpleGridTable>
+                        <div style="overflow-x: scroll">
+                            <div style="width: 600px">
+                                <simpleGridTable #userSimpleGridTable>
+                                    <thead>
+                                    <tr>
+                                        <th>event</th>
+                                        <th>action</th>
+                                        <th>url</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr class="simpleGridRecord" simpleGridRecord *ngFor="let item of m_events; let index=index" [item]="item" [index]="index">
+                                        <td style="width: 20%" [editable]="true" [processField]="getField('event')" simpleGridData [item]="item"></td>
+                                        <td style="width: 40%" simpleGridDataDropdown [testSelection]="_selectedAction()" (changed)="_setAction($event)" field="name" [item]="item" [dropdown]="m_actions"></td>
+                                        <td style="width: 40%" [editable]="true" [processField]="getField('url')" simpleGridData [item]="item"></td>
+                                    </tr>
+                                    </tbody>
+                                </simpleGridTable>
+                            </div>
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -127,16 +114,19 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
     private m_sceneSeleced: any = {};
     private m_events: List<StoreModel>;
     private m_slideShowMode = 0;
-    private m_actions: { firstPage: string; nextPage: string; prevPage: string; lastPage: string; loadUrl: string; } = {
-        firstPage: 'beginning',
-        nextPage: 'next',
-        prevPage: 'previous',
-        lastPage: 'last',
-        loadUrl: 'loadURL'
-    }
+    private m_actions: List<StoreModel>;
+
 
     constructor(private fb: FormBuilder, private yp: YellowPepperService, private rp: RedPepperService, private bs: BlockService, private cd: ChangeDetectorRef) {
         super();
+        this.m_actions = List([
+            new StoreModel({name: 'firstPage'}),
+            new StoreModel({name: 'nextPage'}),
+            new StoreModel({name: 'prevPage'}),
+            new StoreModel({name: 'lastPage'}),
+            new StoreModel({name: 'loadUrl'})
+        ]);
+
         this.contGroup = fb.group({
             'sceneSelection': [],
             'randomOrder': [],
@@ -200,28 +190,36 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
      Load event list to block props UI
      @method _initEventTable
      **/
-    private _initEventTable() {
+    _initEventTable() {
         var rowIndex = 0;
         var domPlayerData = this.m_blockData.playerDataDom;
         var events = [];
         jQuery(domPlayerData).find('EventCommands').children().each((k, eventCommand) => {
             var url = '';
             if (jQuery(eventCommand).attr('command') == 'loadUrl')
-                url = $(eventCommand).find('Url').attr('name');
+                url = jQuery(eventCommand).find('Url').attr('name');
             if (_.isUndefined(url))
                 url = '';
             var storeModel = new StoreModel({
-                rowIndex: rowIndex,
-                checkbox: true,
                 event: jQuery(eventCommand).attr('from'),
                 url: url,
-                action: this.m_actions[$(eventCommand).attr('command')]
+                action: jQuery(eventCommand).attr('command')
             });
             events.push(storeModel)
             rowIndex++;
         });
         this.m_events = List(events)
 
+    }
+
+    _setAction(e) {
+
+    }
+
+    _selectedAction() {
+        return (a: StoreModel, b: StoreModel) => {
+            return a.getKey('name') == b.getKey('action') ? 'selected' : '';
+        }
     }
 
     /**
@@ -285,8 +283,9 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
     private tableQty(field) {
         return field.product_count;
     }
+
     private getField(name) {
-        return (storeModel:StoreModel)=>{
+        return (storeModel: StoreModel) => {
             return storeModel.getKey(name);
         }
 

@@ -33,7 +33,7 @@ import {StoreModel} from "../../models/StoreModel";
 })
 export class SimpleGridDataDropdown {
 
-    private m_dropdown:List<any>
+    private m_dropdown:List<StoreModel>
     private m_storeModel:StoreModel;
     private m_field:string = '';
     private value:string = '';
