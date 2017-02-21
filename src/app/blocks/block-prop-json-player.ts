@@ -15,9 +15,6 @@ import {SimpleGridRecord} from "../../comps/simple-grid-module/SimpleGridRecord"
 
 @Component({
     selector: 'block-prop-json-player',
-    host: {
-        '(input-blur)': 'saveToStore($event)'
-    },
     template: `
         <small class="debug">{{me}}</small>
         <form class="inner15" novalidate autocomplete="off" [formGroup]="contGroup">
@@ -152,13 +149,13 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
     set setBlockData(i_blockData) {
         /** Disabled as in this component we wish to always update UI on block changes
          * since we are addinf and removing elements to event grid and need to be updated
+         // if (this.m_blockData && this.m_blockData.blockID != i_blockData.blockID) {
+         //     this.m_blockData = i_blockData;
+         //     this._render();
+         // } else {
+         //     this.m_blockData = i_blockData;
+         // }
          **/
-        // if (this.m_blockData && this.m_blockData.blockID != i_blockData.blockID) {
-        //     this.m_blockData = i_blockData;
-        //     this._render();
-        // } else {
-        //     this.m_blockData = i_blockData;
-        // }
         this.m_blockData = i_blockData;
         this._render();
     }
@@ -193,14 +190,14 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
         var record: SimpleGridRecord = this.simpleGrid.getSelected();
         if (_.isUndefined(record)) return;
         var domPlayerData = this.m_blockData.playerDataDom;
-        $(domPlayerData).find('EventCommands').children().eq(record.index).remove();
+        jQuery(domPlayerData).find('EventCommands').children().eq(record.index).remove();
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
     }
 
     _onAddNewEvent() {
         var domPlayerData = this.m_blockData.playerDataDom;
         var buff = '<EventCommand from="event" condition="" command="firstPage" />';
-        $(domPlayerData).find('EventCommands').append($(buff));
+        jQuery(domPlayerData).find('EventCommands').append(jQuery(buff));
         domPlayerData = this.rp.xmlToStringIEfix(domPlayerData)
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData, true);
     }
@@ -236,13 +233,12 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
             rowIndex++;
         });
         this.m_events = List(events)
-
     }
 
     _setAction(event: ISimpleGridEdit, index: number) {
         var domPlayerData = this.m_blockData.playerDataDom;
         var target = jQuery(domPlayerData).find('EventCommands').children().get(index);
-        $(target).attr('command', event.value);
+        jQuery(target).attr('command', event.value);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
@@ -256,16 +252,16 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
         console.log(event.value);
         var domPlayerData = this.m_blockData.playerDataDom;
         var target = jQuery(domPlayerData).find('EventCommands').children().get(index);
-        $(target).attr('from', event.value);
+        jQuery(target).attr('from', event.value);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
     private _onUrlEdited(event: ISimpleGridEdit, index) {
         var url = event.value;
         var domPlayerData = this.m_blockData.playerDataDom;
-        var target = $(domPlayerData).find('EventCommands').children().get(parseInt(index));
-        $(target).find('Params').remove();
-        $(target).append('<Params> <Url name="' + url + '" /></Params>');
+        var target = jQuery(domPlayerData).find('EventCommands').children().get(parseInt(index));
+        jQuery(target).find('Params').remove();
+        jQuery(target).append('<Params> <Url name="' + url + '" /></Params>');
         domPlayerData = this.rp.xmlToStringIEfix(domPlayerData);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData, true);
     }
@@ -318,35 +314,6 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
         this.formInputs['slideShow'].setValue(this.m_slideShowMode);
     }
 
-    private saveToStore() {
-        // console.log(this.contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.contGroup.value)));
-        if (this.contGroup.status != 'VALID')
-            return;
-        var domPlayerData = this.m_blockData.playerDataDom;
-        var xSnippet = jQuery(domPlayerData).find('HTML');
-        xSnippet.attr('src', this.contGroup.value.url);
-        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
-    }
-
-    private tableQty(field) {
-        return field.product_count;
-    }
-
-    private getField(name) {
-        return (storeModel: StoreModel) => {
-            var value = storeModel.getKey(name);
-            if (_.isEmpty(value))
-                return "none"
-            return value;
-        }
-
-    }
-
-    private tablePrice(field) {
-        return parseFloat(field.price);
-    }
-
     destroy() {
-        console.log('destroy html component');
     }
 }
