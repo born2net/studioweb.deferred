@@ -43,6 +43,7 @@ import "gsap/Draggable";
 import "gsap/TweenLite";
 import {Lib} from "../Lib";
 import {FontLoaderService} from "../services/font-loader-service";
+import {SimpleGridModule} from "../comps/simple-grid-module/SimpleGridModule";
 // import "fabric"; // need to remove if we import via cli
 // import {ScreenTemplate} from "../comps/screen-template/screen-template";
 
@@ -78,6 +79,7 @@ export function appReducer(state: any = INITIAL_APPLICATION_STATE, action: any) 
         EffectsModule.run(MsdbEffects),
         StoreDevtoolsModule.instrumentStore({maxAge: 2}),
         // StoreDevtoolsModule.instrumentOnlyWithExtension(),
+        SimpleGridModule.forRoot(),
         SharedModule.forRoot(),
         ToastModule.forRoot({
             animate: 'flyRight',

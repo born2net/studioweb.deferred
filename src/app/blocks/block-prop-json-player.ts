@@ -7,6 +7,8 @@ import {urlRegExp} from "../../Lib";
 import * as _ from "lodash";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {Once} from "../../decorators/once-decorator";
+import {StoreModel} from "../../store/model/StoreModel";
+import {Map, List} from 'immutable';
 
 @Component({
     selector: 'block-prop-json-player',
@@ -66,11 +68,8 @@ import {Once} from "../../decorators/once-decorator";
                             <label for="w3" class="label-primary"></label>
                         </div>
                     </li>
-                    <li class="list-group-item">
-                        <label data-localize="onEventTakeAction">On event take the following
-                            action
-                        </label>
-
+                    <li *ngIf="!m_slideShowMode" class="list-group-item">
+                        <label i18n>On event take the following action</label>
                         <h4 class="panel-title" style="padding-bottom: 15px">
                             <button id="addJsonEvents" type="button" title="add event" class="btn btn-default btn-sm">
                                 <span class="fa fa-plus"></span>
@@ -80,20 +79,38 @@ import {Once} from "../../decorators/once-decorator";
                             </button>
                         </h4>
 
-                        <table id="jsonEventsTable" class="table table-no-bordered" data-sortable="false" data-search="false" data-mode="inline" data-show-columns="false" data-pagination="false" data-reorderable-rows="true" data-height="200">
+                        <!--<table id="jsonEventsTable" class="table table-no-bordered" data-sortable="false" data-search="false" data-mode="inline" data-show-columns="false" data-pagination="false" data-reorderable-rows="true" data-height="200">-->
+                        <!--<thead>-->
+                        <!--<tr>-->
+                        <!--<th data-field="state" data-radio="true" data-width="40px"></th>-->
+                        <!--<th data-field="event" data-editable="true" data-localize="event">event-->
+                        <!--</th>-->
+                        <!--<th data-field="action" data-type="number" data-formatter="BB.lib.jsonEventAction" data-halign="center" data-align="center" data-width="60px" data-localize="action">action-->
+                        <!--</th>-->
+                        <!--<th data-field="selectedPage" data-formatter="BB.lib.jsonEventActionGoToItem" class="collectionSelectedItem" data-type="number" data-halign="center" data-align="center" data-width="60px"-->
+                        <!--data-localize="jsonURL">json url-->
+                        <!--</th>-->
+                        <!--</tr>-->
+                        <!--</thead>-->
+                        <!--</table>-->
+
+                        <simpleGridTable #userSimpleGridTable>
                             <thead>
                             <tr>
-                                <th data-field="state" data-radio="true" data-width="40px"></th>
-                                <th data-field="event" data-editable="true" data-localize="event">event
-                                </th>
-                                <th data-field="action" data-type="number" data-formatter="BB.lib.jsonEventAction" data-halign="center" data-align="center" data-width="60px" data-localize="action">action
-                                </th>
-                                <th data-field="selectedPage" data-formatter="BB.lib.jsonEventActionGoToItem" class="collectionSelectedItem" data-type="number" data-halign="center" data-align="center" data-width="60px"
-                                    data-localize="jsonURL">json url
-                                </th>
+                                <th>event</th>
+                                <th>action</th>
+                                <th>url</th>
                             </tr>
                             </thead>
-                        </table>
+                            <tbody>
+                            <tr class="simpleGridRecord" simpleGridRecord *ngFor="let item of m_events; let index=index">
+                                <td style="width: 50%" [editable]="true" [processField]="getField('event')" simpleGridData [item]="item"></td>
+                                <td style="width: 50%" [editable]="false" [processField]="tableQty" simpleGridData [item]="item"></td>
+                                <td style="width: 50%" [editable]="false" [processField]="tableQty" simpleGridData [item]="item"></td>
+                                <td style="width: 50%" [processField]="tablePrice" simpleGridData [item]="item"></td>
+                            </tr>
+                            </tbody>
+                        </simpleGridTable>
                     </li>
                 </ul>
             </div>
@@ -108,6 +125,15 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
     private m_showJsonUrl = false;
     private m_sceneSelection = [];
     private m_sceneSeleced: any = {};
+    private m_events: List<StoreModel>;
+    private m_slideShowMode = 0;
+    private m_actions: { firstPage: string; nextPage: string; prevPage: string; lastPage: string; loadUrl: string; } = {
+        firstPage: 'beginning',
+        nextPage: 'next',
+        prevPage: 'previous',
+        lastPage: 'last',
+        loadUrl: 'loadURL'
+    }
 
     constructor(private fb: FormBuilder, private yp: YellowPepperService, private rp: RedPepperService, private bs: BlockService, private cd: ChangeDetectorRef) {
         super();
@@ -121,6 +147,8 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
         _.forEach(this.contGroup.controls, (value, key: string) => {
             this.formInputs[key] = this.contGroup.controls[key] as FormControl;
         })
+
+
     }
 
     @Input()
@@ -139,32 +167,61 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
 
     _onPlayVideoInFull(i_value) {
         var domPlayerData = this.m_blockData.playerDataDom;
-        var xSnippet = $(domPlayerData).find('Json');
+        var xSnippet = jQuery(domPlayerData).find('Json');
         jQuery(xSnippet).attr('playVideoInFull', i_value);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
     }
 
     _onRandomPlay(i_value) {
         var domPlayerData = this.m_blockData.playerDataDom;
-        var xSnippet = $(domPlayerData).find('Json');
+        var xSnippet = jQuery(domPlayerData).find('Json');
         jQuery(xSnippet).attr('randomOrder', i_value);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
     }
 
     _onSlideShow(i_value) {
+        this.m_slideShowMode = i_value;
         var domPlayerData = this.m_blockData.playerDataDom;
-        var xSnippet = $(domPlayerData).find('Json');
+        var xSnippet = jQuery(domPlayerData).find('Json');
         jQuery(xSnippet).attr('slideShow', i_value);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
     }
 
     _onSceneSelectionChanged(i_scene_id) {
         var domPlayerData = this.m_blockData.playerDataDom;
-        var xSnippet = $(domPlayerData).find('Json');
-        var xSnippetPlayer = $(xSnippet).find('Player');
+        var xSnippet = jQuery(domPlayerData).find('Json');
+        var xSnippetPlayer = jQuery(xSnippet).find('Player');
         jQuery(xSnippetPlayer).attr('hDataSrc', i_scene_id);
         console.log('assigning to scene ' + i_scene_id);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
+    }
+
+    /**
+     Load event list to block props UI
+     @method _initEventTable
+     **/
+    private _initEventTable() {
+        var rowIndex = 0;
+        var domPlayerData = this.m_blockData.playerDataDom;
+        var events = [];
+        jQuery(domPlayerData).find('EventCommands').children().each((k, eventCommand) => {
+            var url = '';
+            if (jQuery(eventCommand).attr('command') == 'loadUrl')
+                url = $(eventCommand).find('Url').attr('name');
+            if (_.isUndefined(url))
+                url = '';
+            var storeModel = new StoreModel({
+                rowIndex: rowIndex,
+                checkbox: true,
+                event: jQuery(eventCommand).attr('from'),
+                url: url,
+                action: this.m_actions[$(eventCommand).attr('command')]
+            });
+            events.push(storeModel)
+            rowIndex++;
+        });
+        this.m_events = List(events)
+
     }
 
     /**
@@ -179,9 +236,9 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
             .subscribe((scenes) => {
                 this.m_sceneSelection = [];
                 var domPlayerData = this.m_blockData.playerDataDom;
-                var xSnippet = $(domPlayerData).find('Json');
-                var xSnippetPlayer = $(xSnippet).find('Player');
-                var selectedSceneID = $(xSnippetPlayer).attr('hDataSrc');
+                var xSnippet = jQuery(domPlayerData).find('Json');
+                var xSnippetPlayer = jQuery(xSnippet).find('Player');
+                var selectedSceneID = jQuery(xSnippetPlayer).attr('hDataSrc');
                 for (var scene in scenes) {
                     var mimeType = scenes[scene].mimeType;
                     var label = scenes[scene].label;
@@ -204,25 +261,39 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
     _render() {
         this.contGroup.reset();
         this._initSceneDropdown();
+        this._initEventTable();
         var domPlayerData = this.m_blockData.playerDataDom
         var xSnippet = jQuery(domPlayerData).find('Json');
         var playVideoInFull = StringJS(jQuery(xSnippet).attr('playVideoInFull')).booleanToNumber();
         this.formInputs['playVideoInFull'].setValue(playVideoInFull);
         var randomOrder = StringJS(jQuery(xSnippet).attr('randomOrder')).booleanToNumber();
         this.formInputs['randomOrder'].setValue(randomOrder);
-        var slideShow = StringJS(jQuery(xSnippet).attr('slideShow')).booleanToNumber();
-        this.formInputs['slideShow'].setValue(slideShow);
+        this.m_slideShowMode = StringJS(jQuery(xSnippet).attr('slideShow')).booleanToNumber(true) as number;
+        this.formInputs['slideShow'].setValue(this.m_slideShowMode);
     }
-
 
     private saveToStore() {
         // console.log(this.contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.contGroup.value)));
         if (this.contGroup.status != 'VALID')
             return;
         var domPlayerData = this.m_blockData.playerDataDom;
-        var xSnippet = $(domPlayerData).find('HTML');
+        var xSnippet = jQuery(domPlayerData).find('HTML');
         xSnippet.attr('src', this.contGroup.value.url);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+    }
+
+    private tableQty(field) {
+        return field.product_count;
+    }
+    private getField(name) {
+        return (storeModel:StoreModel)=>{
+            return storeModel.getKey(name);
+        }
+
+    }
+
+    private tablePrice(field) {
+        return parseFloat(field.price);
     }
 
     destroy() {
