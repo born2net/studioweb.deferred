@@ -102,6 +102,7 @@ import {Map, List} from 'immutable';
                 </ul>
             </div>
         </form>
+        
     `
 })
 export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
