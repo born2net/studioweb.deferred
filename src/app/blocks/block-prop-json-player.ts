@@ -37,7 +37,7 @@ import {SimpleGridRecord} from "../../comps/simple-grid-module/SimpleGridRecord"
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
                             <!--<select #sceneSelection [(ngModel)]="m_sceneSeleced.id" style="height: 30px" (change)="_onSceneSelectionChanged($event.target.value)" formControlName="sceneSelection">-->
-                                <!--<option [selected]="scene.selected" [value]="scene.sceneId" *ngFor="let scene of m_sceneSelection">{{scene.label}}</option>-->
+                            <!--<option [selected]="scene.selected" [value]="scene.sceneId" *ngFor="let scene of m_sceneSelection">{{scene.label}}</option>-->
                             <!--</select>-->
                             <p-dropdown [style]="{'width':'150px'}" (onChange)="_onSceneSelectionChanged($event)" [(ngModel)]="m_sceneSeleced" [options]="m_sceneSelection" [filter]="true" formControlName="sceneSelection"></p-dropdown>
                         </div>
@@ -78,7 +78,7 @@ import {SimpleGridRecord} from "../../comps/simple-grid-module/SimpleGridRecord"
                             <button (click)="_onAddNewEvent()" type="button" title="add event" class="btn btn-default btn-sm">
                                 <span class="fa fa-plus"></span>
                             </button>
-                            <button (click)="_onRemoveEvent()"  type="button" title="remove event" class="btn btn-default btn-sm">
+                            <button (click)="_onRemoveEvent()" type="button" title="remove event" class="btn btn-default btn-sm">
                                 <span class="fa fa-minus"></span>
                             </button>
                         </h4>
@@ -147,11 +147,14 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
     }
 
     @ViewChild('simpleGrid')
-    simpleGrid:SimpleGridTable;
+    simpleGrid: SimpleGridTable;
 
 
     @Input()
     set setBlockData(i_blockData) {
+        /** Disabled as in this component we wish to always update UI on block changes
+         * since we are addinf and removing elements to event grid and need to be updated
+         **/
         // if (this.m_blockData && this.m_blockData.blockID != i_blockData.blockID) {
         //     this.m_blockData = i_blockData;
         //     this._render();
@@ -188,8 +191,9 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
     }
 
-    _onRemoveEvent(){
-        var record:SimpleGridRecord = this.simpleGrid.getSelected();
+    _onRemoveEvent() {
+        var record: SimpleGridRecord = this.simpleGrid.getSelected();
+        if (_.isUndefined(record)) return;
         var domPlayerData = this.m_blockData.playerDataDom;
         $(domPlayerData).find('EventCommands').children().eq(record.index).remove();
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
