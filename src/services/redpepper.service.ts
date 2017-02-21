@@ -1491,7 +1491,6 @@ export class RedPepperService {
      @return {Object} scene names
      **/
     getSceneNames() {
-
         var sceneNames: any = {};
         $(this.databaseManager.table_player_data().getAllPrimaryKeys()).each(function (k, player_data_id: any) {
             var recPlayerData = this.databaseManager.table_player_data().getRec(player_data_id);

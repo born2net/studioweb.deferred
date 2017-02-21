@@ -35,6 +35,10 @@ export const BlockLabels = {
     'MRSS': 3340
 }
 
+export const MimeMap = {
+    'weather': 'Json.weather',
+}
+
 export interface IBlockData {
     blockID: number;
     blockType: string;
@@ -47,6 +51,7 @@ export interface IBlockData {
     blockMinWidth: number;
     blockMinHeight: number;
     playerDataJson: {};
+    playerMimeName: string;
     playerDataDom: XMLDocument,
     playerDataJsonMime: number;
     campaignTimelineChanelPlayersModelExt: CampaignTimelineChanelPlayersModelExt,
@@ -763,7 +768,6 @@ export class BlockService {
                 if (playerDataJson['Player']['_player']) {
                     /** Standard block **/
                     var code = playerDataJson['Player']['_player'];
-
                     var blockType = this.getBlockNameByCode(code)
                     if (_.isUndefined(blockType)) {
                         var e = `Panic using a component / block which is not supported yet ${code} ${blockType}`;
@@ -791,6 +795,7 @@ export class BlockService {
                     blockMinHeight: this.m_minSize.h,
                     playerDataDom: playerDataDom,
                     playerDataJson: playerDataJson,
+                    playerMimeName: playerDataJson.Player.Data.Json ? MimeMap[playerDataJson.Player.Data.Json._providerType] : null,
                     playerDataJsonMime: (playerDataJson.Player.Data.Json && playerDataJson.Player.Data.Json.Player) ? playerDataJson.Player.Data.Json.Player : null,
                     duration: i_campaignTimelineChanelPlayersModel.getPlayerDurationInt(),
                     offset: i_campaignTimelineChanelPlayersModel.getPlayerOffsetTimeInt(),

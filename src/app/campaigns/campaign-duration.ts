@@ -7,14 +7,10 @@ import {Observable} from "rxjs";
     selector: 'campaign-duration',
     // changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <small class="release">my component
-            <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
-        </small>
         <small class="debug">{{me}}</small>
         <span style="font-size: 1em" data-localize="campaignLength">campaign length:</span>
         <span id="timelinesTotalLength" style="font-size: 1em">{{m_duration$ | async | FormatSecondsPipe}} </span>
-
-    `,
+    `
 })
 export class CampaignDuration extends Compbaser implements AfterViewInit {
 

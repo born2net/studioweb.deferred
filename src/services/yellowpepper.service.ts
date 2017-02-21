@@ -12,7 +12,7 @@ import {
     CampaignTimelineChanelsModel,
     CampaignTimelineSchedulesModel,
     CampaignTimelineSequencesModel,
-    CampaignTimelinesModel
+    CampaignTimelinesModel, PlayerDataModel
 } from "../store/imsdb.interfaces_auto";
 import {IScreenTemplateData} from "../comps/screen-template/screen-template";
 import {OrientationEnum} from "../app/campaigns/campaign-orientation";
@@ -112,7 +112,7 @@ export class YellowPepperService {
                 }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
     }
 
-    listenTimelineDurationChanged(emitOnEmpty: boolean = false):Observable<number> {
+    listenTimelineDurationChanged(emitOnEmpty: boolean = false): Observable<number> {
         var $timelinesList$ = this.store.select(store => store.msDatabase.sdk.table_campaign_timelines);
         return this.listenCampaignSelected()
             .combineLatest($timelinesList$, (campaign, timelines) => {
@@ -228,6 +228,26 @@ export class YellowPepperService {
                 // console.log('winner ' + longestChannelDuration);
                 return longestChannelDuration;
             })
+    }
+
+    /**
+     Returns all scenes
+     **/
+    getSceneNames(): Observable<Array<any>> {
+        return this.store.select(store => store.msDatabase.sdk.table_player_data)
+            .map((i_layerDataModels: List<PlayerDataModel>) => {
+                return i_layerDataModels.reduce((result, i_layerDataModel) => {
+                    var domPlayerData = $.parseXML(i_layerDataModel.getPlayerDataValue())
+                    var player_data_id = i_layerDataModel.getPlayerDataId();
+                    var scene = {
+                        id: player_data_id,
+                        label: (jQuery(domPlayerData).find('Player').attr('label')),
+                        mimeType: jQuery(domPlayerData).find('Player').attr('mimeType')
+                    };
+                    result.push(scene)
+                    return result;
+                }, [])
+            }).take(1);
     }
 
     /**
