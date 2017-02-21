@@ -813,7 +813,7 @@ export class BlockService {
      @param {String} [i_noNotify] if set, fire event announcing data saved
      @param {Boolean} [i_xmlIsString] if set, bypass serializeToString since already in string format
      **/
-    setBlockPlayerData(blockData: IBlockData, i_xmlDoc: XMLDocument, i_noNotify?: boolean, i_xmlIsString?: boolean) {
+    setBlockPlayerData(blockData: IBlockData, i_xmlDoc: XMLDocument, i_xmlIsString?: boolean) {
         var self = this;
         var player_data;
         if (i_xmlIsString == true) {

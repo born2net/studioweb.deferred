@@ -1,6 +1,7 @@
 import {Component, Input, ChangeDetectionStrategy, Output, EventEmitter} from '@angular/core'
 import {StoreModel} from "../../models/StoreModel";
 import {ISimpleGridEdit} from "./SimpleGrid";
+import {timeout} from "../../decorators/timeout-decorator";
 
 @Component({
     selector: 'td[simpleGridData]',
@@ -24,7 +25,7 @@ import {ISimpleGridEdit} from "./SimpleGrid";
     template: `
          <label [ngClass]="{editableLabel: _editable}" *ngIf="!_editing" (click)="onEdit(true)">{{value}}</label>
          <span *ngIf="_editing">
-            <input value="{{value}}" [(ngModel)]="value"/>
+            <input [value]="value" [(ngModel)]="value"/>
                 <a (click)="onEdit(false)" class="fa fa-check"></a>
          </span>
          
@@ -61,10 +62,10 @@ export class SimpleGridData {
     @Output()
     labelEdited:EventEmitter<any> = new EventEmitter();
 
-    onEdit(value:any) {
+    onEdit(isEditing:boolean) {
         if (this._editable == false || this._editable == 'false')
             return;
-        this._editing = value;
+        this._editing = isEditing;
         if (this._editing)
             return;
         // done editing, so notify

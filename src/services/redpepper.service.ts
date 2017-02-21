@@ -1560,7 +1560,6 @@ export class RedPepperService {
      @return {String} xml string
      **/
     xmlToStringIEfix(i_domPlayerData) {
-
         var player_data = (new XMLSerializer()).serializeToString(i_domPlayerData);
         return this.ieFixEscaped(player_data);
     }
