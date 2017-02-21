@@ -1,8 +1,8 @@
-import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input} from "@angular/core";
+import {AfterViewInit, ChangeDetectorRef, Component, Input} from "@angular/core";
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {BlockService, IBlockData} from "./block-service";
 import {RedPepperService} from "../../services/redpepper.service";
-import {Compbaser, NgmslibService} from "ng-mslib";
+import {Compbaser} from "ng-mslib";
 import {urlRegExp} from "../../Lib";
 import * as _ from "lodash";
 import {YellowPepperService} from "../../services/yellowpepper.service";
@@ -31,7 +31,7 @@ import {Once} from "../../decorators/once-decorator";
                         Load with scene
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
-                            <select #sceneSelection [(ngModel)]="m_sceneSeleced.id" style="height: 30px" (change)="_onSceneSelectionChanged($event.target.value)"formControlName="sceneSelection">
+                            <select #sceneSelection [(ngModel)]="m_sceneSeleced.id" style="height: 30px" (change)="_onSceneSelectionChanged($event.target.value)" formControlName="sceneSelection">
                                 <option [selected]="scene.selected" [value]="scene.sceneId" *ngFor="let scene of m_sceneSelection">{{scene.label}}</option>
                             </select>
                         </div>
@@ -49,19 +49,21 @@ import {Once} from "../../decorators/once-decorator";
                     <li class="list-group-item">
                         <span i18n>random playback</span>
                         <div class="material-switch pull-right">
-                            <input (change)="onFormChange(w2.checked)"
+                            <input (change)="_onRandomPlay(w2.checked)"
+                                   [formControl]="contGroup.controls['randomOrder']"
                                    id="w2" #w2
                                    name="w2" type="checkbox"/>
                             <label for="w2" class="label-primary"></label>
                         </div>
                     </li>
                     <li class="list-group-item">
-                        <span i18n>slideshow mode</span>
+                        <span i18n>slideshow</span>
                         <div class="material-switch pull-right">
-                            <input (change)="onFormChange(w2.checked)"
-                                   id="w2" #w2
-                                   name="w2" type="checkbox"/>
-                            <label for="w2" class="label-primary"></label>
+                            <input (change)="_onSlideShow(w3.checked)"
+                                   [formControl]="contGroup.controls['slideShow']"
+                                   id="w3" #w3
+                                   name="w3" type="checkbox"/>
+                            <label for="w3" class="label-primary"></label>
                         </div>
                     </li>
                     <li class="list-group-item">
@@ -105,12 +107,14 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
     private m_blockData: IBlockData;
     private m_showJsonUrl = false;
     private m_sceneSelection = [];
-    private m_sceneSeleced:any = {};
+    private m_sceneSeleced: any = {};
 
     constructor(private fb: FormBuilder, private yp: YellowPepperService, private rp: RedPepperService, private bs: BlockService, private cd: ChangeDetectorRef) {
         super();
         this.contGroup = fb.group({
             'sceneSelection': [],
+            'randomOrder': [],
+            'slideShow': [],
             'playVideoInFull': [],
             'url': ['', [Validators.pattern(urlRegExp)]]
         });
@@ -136,28 +140,31 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
     _onPlayVideoInFull(i_value) {
         var domPlayerData = this.m_blockData.playerDataDom;
         var xSnippet = $(domPlayerData).find('Json');
-        $(xSnippet).attr('playVideoInFull', i_value);
+        jQuery(xSnippet).attr('playVideoInFull', i_value);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
     }
 
-    _onSceneSelectionChanged(scene) {
-        console.log(this.contGroup.controls['sceneSelection'].value);
-        /*
-         if (!self.m_selected)
-         return;
-         //var listType = $(e.target).attr('name');
-         //if (_.isUndefined(listType))
-         //    return;
-         var $selected = $(e.target).find(':selected');
-         //var sceneName = $(e.target).text();
-         var sceneID = $selected.attr('data-scene_id');
-         var domPlayerData = self._getBlockPlayerData();
-         var xSnippet = $(domPlayerData).find('Json');
-         var xSnippetPlayer = $(xSnippet).find('Player');
-         $(xSnippetPlayer).attr('hDataSrc', sceneID);
-         BB.lib.log('assigning to scene ' + sceneID);
-         self._setBlockPlayerData(domPlayerData, BB.CONSTS.NO_NOTIFICATION);
-         */
+    _onRandomPlay(i_value) {
+        var domPlayerData = this.m_blockData.playerDataDom;
+        var xSnippet = $(domPlayerData).find('Json');
+        jQuery(xSnippet).attr('randomOrder', i_value);
+        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
+    }
+
+    _onSlideShow(i_value) {
+        var domPlayerData = this.m_blockData.playerDataDom;
+        var xSnippet = $(domPlayerData).find('Json');
+        jQuery(xSnippet).attr('slideShow', i_value);
+        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
+    }
+
+    _onSceneSelectionChanged(i_scene_id) {
+        var domPlayerData = this.m_blockData.playerDataDom;
+        var xSnippet = $(domPlayerData).find('Json');
+        var xSnippetPlayer = $(xSnippet).find('Player');
+        jQuery(xSnippetPlayer).attr('hDataSrc', i_scene_id);
+        console.log('assigning to scene ' + i_scene_id);
+        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
     }
 
     /**
@@ -168,7 +175,6 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
      **/
     @Once()
     private _initSceneDropdown() {
-
         return this.yp.getSceneNames()
             .subscribe((scenes) => {
                 this.m_sceneSelection = [];
@@ -180,7 +186,7 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
                     var mimeType = scenes[scene].mimeType;
                     var label = scenes[scene].label;
                     var sceneId = scenes[scene].id;
-                    if (sceneId == selectedSceneID){
+                    if (sceneId == selectedSceneID) {
                         this.m_sceneSeleced = scenes[scene];
                         // this.contGroup.controls['sceneSelection'].updateValueAndValidity(sceneId);
                     }
@@ -193,8 +199,6 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
                 }
                 this.cd.detectChanges();
             }, (e) => console.error(e)) //cancelOnDestroy please
-
-
     }
 
     _render() {
@@ -202,10 +206,12 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
         this._initSceneDropdown();
         var domPlayerData = this.m_blockData.playerDataDom
         var xSnippet = jQuery(domPlayerData).find('Json');
-        var a = jQuery(xSnippet).attr('playVideoInFull');
         var playVideoInFull = StringJS(jQuery(xSnippet).attr('playVideoInFull')).booleanToNumber();
         this.formInputs['playVideoInFull'].setValue(playVideoInFull);
-
+        var randomOrder = StringJS(jQuery(xSnippet).attr('randomOrder')).booleanToNumber();
+        this.formInputs['randomOrder'].setValue(randomOrder);
+        var slideShow = StringJS(jQuery(xSnippet).attr('slideShow')).booleanToNumber();
+        this.formInputs['slideShow'].setValue(slideShow);
     }
 
 
