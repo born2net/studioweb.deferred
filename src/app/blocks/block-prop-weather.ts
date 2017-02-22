@@ -18,24 +18,24 @@ import * as _ from "lodash";
                 <div *ngIf="!jsonMode">
                     <ul class="list-group">
                         <li class="list-group-item">
-                            <label>Units</label>
+                            <label>Unit</label>
                             <br/>
-                            <input (change)="_onRadioChanged('unit',$event)" type="radio" value="F" name="units" formControlName="units">
+                            <input type="radio" value="F" name="unit" formControlName="unit">
                             Fahrenheit
                             <br/>
-                            <input (change)="_onRadioChanged('unit',$event)" type="radio" value="C" name="units" formControlName="units">
+                            <input type="radio" value="C" name="unit" formControlName="unit">
                             Celsius
                         </li>
                         <li class="list-group-item">
                             <label>Styles</label>
                             <br/>
-                            <input (change)="_onRadioChanged('color',$event)" type="radio" value="1" name="colors" formControlName="colors">
+                            <input type="radio" value="1" name="style" formControlName="style">
                             Black
                             <br/>
-                            <input (change)="_onRadioChanged('color',$event)" type="radio" value="2" name="colors" formControlName="colors">
+                            <input type="radio" value="2" name="style" formControlName="style">
                             White
                             <br/>
-                            <input (change)="_onRadioChanged('color',$event)" type="radio" value="3" name="colors" formControlName="colors">
+                            <input type="radio" value="3" name="style" formControlName="style">
                             Color
                         </li>
                         <li class="list-group-item">
@@ -52,28 +52,15 @@ import * as _ from "lodash";
     `
 })
 export class BlockPropWeather extends Compbaser implements AfterViewInit {
-
-    _onRadioChanged(source, event) {
-        var value = event.target.value;
-        var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
-        var item = jQuery(domPlayerData).find('Json').find('Data');
-        source == 'unit' ? jQuery(item).attr('unit', value) : jQuery(item).attr('style', value);
-        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
-    }
-
     m_formInputs = {};
     m_contGroup: FormGroup;
     m_blockData: IBlockData;
-    m_unit = 'F'
-    m_style = '0';
-    radioItems = 'one two three'.split(' ');
-    model = {options: 'three'};
 
     constructor(private fb: FormBuilder, private cd: ChangeDetectorRef, private bs: BlockService, private ngmslibService: NgmslibService) {
         super();
         this.m_contGroup = fb.group({
-            'colors': "",
-            'units': "",
+            'style': "",
+            'unit': "",
             'address': ['', [Validators.pattern(simpleRegExp)]]
         });
         _.forEach(this.m_contGroup.controls, (value, key: string) => {
@@ -91,20 +78,16 @@ export class BlockPropWeather extends Compbaser implements AfterViewInit {
         } else {
             this.m_blockData = i_blockData;
         }
-
     }
 
     private _render() {
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom
         var $data = $(domPlayerData).find('Json').find('Data');
-        this.m_unit = $data.attr('unit');
-        this.m_style = String($data.attr('style'));
-        var address = $data.attr('address');
-        this.m_formInputs['units'].setValue(this.m_unit);
-        this.m_formInputs['colors'].setValue(this.m_style);
-        this.m_formInputs['address'].setValue(address);
+        var a = $data.attr('style');
+        this.m_formInputs['unit'].setValue($data.attr('unit'));
+        this.m_formInputs['style'].setValue($data.attr('style'));
+        this.m_formInputs['address'].setValue($data.attr('address'));
         this.cd.markForCheck();
-
     }
 
     ngAfterViewInit() {
@@ -116,19 +99,10 @@ export class BlockPropWeather extends Compbaser implements AfterViewInit {
         if (this.m_contGroup.status != 'VALID')
             return;
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
-        // var item = jQuery(domPlayerData).find('Json').find('Data');
-        // try {
-        //     jQuery(item).attr('style', this.m_contGroup.value.color.value);
-        //     jQuery(item).attr('address', this.m_contGroup.value.address);
-        //     this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
-        // }  catch(e){}
-        //
-        // try {
-        //     jQuery(item).attr('unit', this.m_contGroup.value.units.value);
-        //     jQuery(item).attr('address', this.m_contGroup.value.address);
-        //     this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
-        // }  catch(e){}
-
+        var item = jQuery(domPlayerData).find('Json').find('Data');
+        jQuery(item).attr('unit', this.m_contGroup.value.unit);
+        jQuery(item).attr('style', this.m_contGroup.value.style);
+        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
     destroy() {
