@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectorRef, Component, Input, ViewChild} from "@angular/core";
+import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, ViewChild} from "@angular/core";
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {BlockService, IBlockData} from "./block-service";
 import {RedPepperService} from "../../services/redpepper.service";
@@ -15,6 +15,7 @@ import {SimpleGridRecord} from "../../comps/simple-grid-module/SimpleGridRecord"
 
 @Component({
     selector: 'block-prop-json-player',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <small class="debug">{{me}}</small>
         <form class="inner15" novalidate autocomplete="off" [formGroup]="contGroup">
@@ -42,7 +43,7 @@ import {SimpleGridRecord} from "../../comps/simple-grid-module/SimpleGridRecord"
                     <li class="list-group-item">
                         <span i18n>Play video to completion</span>
                         <div class="material-switch pull-right">
-                            <input (change)="_onPlayVideoInFull(w1.checked)"
+                            <input (click)="_onPlayVideoInFull(w1.checked)"
                                    [formControl]="contGroup.controls['playVideoInFull']"
                                    id="w1" #w1
                                    name="w1" type="checkbox"/>
@@ -301,17 +302,24 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
     }
 
     _render() {
-        this.contGroup.reset();
+        // this.contGroup.reset();
         this._initSceneDropdown();
         this._initEventTable();
         var domPlayerData = this.m_blockData.playerDataDom
         var xSnippet = jQuery(domPlayerData).find('Json');
         var playVideoInFull = StringJS(jQuery(xSnippet).attr('playVideoInFull')).booleanToNumber();
-        this.formInputs['playVideoInFull'].setValue(playVideoInFull);
+        var a;
+        if (playVideoInFull) {
+            a = true;
+        } else {
+            a = false;
+        }
+        this.formInputs['playVideoInFull'].setValue(a);
         var randomOrder = StringJS(jQuery(xSnippet).attr('randomOrder')).booleanToNumber();
         this.formInputs['randomOrder'].setValue(randomOrder);
         this.m_slideShowMode = StringJS(jQuery(xSnippet).attr('slideShow')).booleanToNumber(true) as number;
         this.formInputs['slideShow'].setValue(this.m_slideShowMode);
+        this.cd.detectChanges();
     }
 
     destroy() {

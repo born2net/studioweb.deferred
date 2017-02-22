@@ -804,8 +804,6 @@ export class BlockService {
                     offset: i_campaignTimelineChanelPlayersModel.getPlayerOffsetTimeInt(),
                     campaignTimelineChanelPlayersModelExt: i_campaignTimelineChanelPlayersModel
                 };
-                if (playerDataJson.Player.Data.Json)
-                    console.log(playerDataJson.Player.Data.Json._providerType);
                 return Observable.of(data)
             })
     }

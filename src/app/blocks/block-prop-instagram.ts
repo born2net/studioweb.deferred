@@ -108,5 +108,3 @@ export class BlockPropInstagram extends Compbaser implements AfterViewInit {
     destroy() {
     }
 }
-
-
