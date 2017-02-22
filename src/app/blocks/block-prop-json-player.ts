@@ -40,34 +40,35 @@ import {SimpleGridRecord} from "../../comps/simple-grid-module/SimpleGridRecord"
                             <p-dropdown [style]="{'width':'150px'}" (onChange)="_onSceneSelectionChanged($event)" [(ngModel)]="m_sceneSeleced" [options]="m_sceneSelection" [filter]="true" formControlName="sceneSelection"></p-dropdown>
                         </div>
                     </li>
+
                     <li class="list-group-item">
-                        <span i18n>Play video to completion</span>
+                        <span i18n>play video to completion</span>
                         <div class="material-switch pull-right">
-                            <input (click)="_onPlayVideoInFull(w1.checked)"
+                            <input (change)="_onPlayVideoInFull(playVideoInFull.checked)"
                                    [formControl]="contGroup.controls['playVideoInFull']"
-                                   id="w1" #w1
-                                   name="w1" type="checkbox"/>
-                            <label for="w1" class="label-primary"></label>
+                                   id="playVideoInFull" #playVideoInFull
+                                   name="playVideoInFull" type="checkbox"/>
+                            <label for="playVideoInFull" class="label-primary"></label>
                         </div>
                     </li>
                     <li class="list-group-item">
                         <span i18n>random playback</span>
                         <div class="material-switch pull-right">
-                            <input (change)="_onRandomPlay(w2.checked)"
+                            <input (change)="_onRandomPlay(randomOrder.checked)"
                                    [formControl]="contGroup.controls['randomOrder']"
-                                   id="w2" #w2
-                                   name="w2" type="checkbox"/>
-                            <label for="w2" class="label-primary"></label>
+                                   id="randomOrder" #randomOrder
+                                   name="randomOrder" type="checkbox"/>
+                            <label for="randomOrder" class="label-primary"></label>
                         </div>
                     </li>
                     <li class="list-group-item">
                         <span i18n>slideshow</span>
                         <div class="material-switch pull-right">
-                            <input (change)="_onSlideShow(w3.checked)"
+                            <input (change)="_onSlideShow(slideShow.checked)"
                                    [formControl]="contGroup.controls['slideShow']"
-                                   id="w3" #w3
-                                   name="w3" type="checkbox"/>
-                            <label for="w3" class="label-primary"></label>
+                                   id="slideShow" #slideShow
+                                   name="slideShow" type="checkbox"/>
+                            <label for="slideShow" class="label-primary"></label>
                         </div>
                     </li>
                     <li *ngIf="!m_slideShowMode" class="list-group-item">
@@ -307,13 +308,7 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
         var domPlayerData = this.m_blockData.playerDataDom
         var xSnippet = jQuery(domPlayerData).find('Json');
         var playVideoInFull = StringJS(jQuery(xSnippet).attr('playVideoInFull')).booleanToNumber();
-        var a;
-        if (playVideoInFull) {
-            a = true;
-        } else {
-            a = false;
-        }
-        this.formInputs['playVideoInFull'].setValue(a);
+        this.formInputs['playVideoInFull'].setValue(playVideoInFull);
         var randomOrder = StringJS(jQuery(xSnippet).attr('randomOrder')).booleanToNumber();
         this.formInputs['randomOrder'].setValue(randomOrder);
         this.m_slideShowMode = StringJS(jQuery(xSnippet).attr('slideShow')).booleanToNumber(true) as number;

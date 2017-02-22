@@ -127,15 +127,14 @@ export class BlockPropCalendar extends Compbaser implements AfterViewInit {
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom
         var $data = $(domPlayerData).find('Json').find('Data');
         var mode = $data.attr('mode');
-        // this.m_mode = (mode == 'fixed') ? false : true;
-        // this.m_formInputs['mode'].setValue(this.m_mode);
-        // var daysAfter = $data.attr('after');
-        // var daysBefore = $data.attr('before');
-        // this.m_formInputs['start_date'].setValue(daysAfter);
-        // this.m_formInputs['end_date'].setValue(daysBefore);
+        this.m_mode = (mode == 'fixed') ? false : true;
+        var daysAfter = $data.attr('after');
+        var daysBefore = $data.attr('before');
+        this.m_formInputs['mode'].setValue(this.m_mode);
+        this.m_formInputs['start_date'].setValue(daysAfter);
+        this.m_formInputs['end_date'].setValue(daysBefore);
         this.m_formInputs['token'].setValue($data.attr('token'));
         this._getGoogleCalendars();
-        this.cd.markForCheck();
     }
 
     _onModeChange(i_value) {
