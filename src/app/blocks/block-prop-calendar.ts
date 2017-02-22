@@ -3,7 +3,6 @@ import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {BlockService, IBlockData} from "./block-service";
 import {Compbaser, NgmslibService} from "ng-mslib";
 import * as _ from "lodash";
-import {Lib} from "../../Lib";
 
 @Component({
     selector: 'block-prop-calendar',
@@ -18,22 +17,57 @@ import {Lib} from "../../Lib";
                 <div *ngIf="!jsonMode">
                     <ul class="list-group">
                         <li class="list-group-item">
-                            <span i18n>token</span>
-                            <input (blur)="_getGoogleCalendars()" type="text" [formControl]="m_contGroup.controls['token']"/>
+                            <span i18n>token</span><br/>
+                            <input style="width: 280px" (blur)="_getGoogleCalendars()" type="text" [formControl]="m_contGroup.controls['token']"/>
                         </li>
                         <li class="list-group-item">
-                            <button i18n class="btn btn-default" (click)="_onCreateToken()">create instagram token</button>
+                            <button i18n class="btn btn-default" style="width: 280px" (click)="_onCreateToken()">create instagram token</button>
                         </li>
                         <li class="list-group-item">
                             <span i18n>Load with calendar</span>
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
-                                <select #sceneSelection (change)="_onCalSelected($event)"  style="height: 30px" formControlName="calSelection">
+                                <select #sceneSelection (change)="_onCalSelected($event)" style="height: 30px; width: 234px" formControlName="calSelection">
                                     <option [value]="cal.id" *ngFor="let cal of m_calList">{{cal.label}}</option>
                                 </select>
 
                             </div>
                         </li>
+                        <li class="list-group-item">
+                            <span i18n>offset range mode</span>
+                            <div class="material-switch pull-right">
+                                <input (click)="_onModeChange(w1.checked)"
+                                       [formControl]="m_contGroup.controls['mode']"
+                                       id="w1" #w1
+                                       name="w1" type="checkbox"/>
+                                <label for="w1" class="label-primary"></label>
+                            </div>
+                        </li>
+
+                        <li *ngIf="m_mode" class="list-group-item">
+                            <label i18n>days before today</label><br/>
+                            <input type="number"/>
+                        </li>
+
+                        <li *ngIf="m_mode" class="list-group-item">
+                            <label i18n>days after today</label><br/>
+                            <input type="number"/>
+                        </li>
+
+                        <li *ngIf="!m_mode" class="list-group-item">
+                            <label i18n>start date</label><br/>
+                            <input (blur)="_saveDates('daily_start',$event)" #datepickerSchedulerDailyStart type="date" [formControl]="m_contGroup.controls['start_date']"
+                                   class="form-control"
+                                   placeholder="start date">
+                        </li>
+
+                        <li *ngIf="!m_mode" class="list-group-item">
+                            <label i18n>end date</label><br/>
+                            <input (blur)="_saveDates('daily_start',$event)" #datepickerSchedulerDailyStart type="date" [formControl]="m_contGroup.controls['end_date']"
+                                   class="form-control"
+                                   placeholder="start date">
+                        </li>
+
                     </ul>
                 </div>
                 <div *ngIf="jsonMode">
@@ -49,11 +83,15 @@ export class BlockPropCalendar extends Compbaser implements AfterViewInit {
     m_blockData: IBlockData;
     m_calList = [];
     m_calSeleced: any = {};
+    m_mode = false;
 
     constructor(private fb: FormBuilder, private cd: ChangeDetectorRef, private bs: BlockService, private ngmslibService: NgmslibService) {
         super();
         this.m_contGroup = fb.group({
             'token': [''],
+            'mode': [''],
+            'start_date': ['1/1/2020'],
+            'end_date': ['1/1/2020'],
             'calSelection': ['']
         });
         _.forEach(this.m_contGroup.controls, (value, key: string) => {
@@ -73,16 +111,41 @@ export class BlockPropCalendar extends Compbaser implements AfterViewInit {
         }
     }
 
-    _onCalSelected(value) {
-        console.log(value.target.value);
+    _saveDates(range) {
+
+    }
+
+    _onCalSelected(event) {
+        var calId = event.target.value;
+        var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
+        var item = $(domPlayerData).find('Json').find('Data');
+        $(item).attr('id', calId);
+        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
     private _render() {
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom
         var $data = $(domPlayerData).find('Json').find('Data');
+        var mode = $data.attr('mode');
+        // this.m_mode = (mode == 'fixed') ? false : true;
+        // this.m_formInputs['mode'].setValue(this.m_mode);
+        // var daysAfter = $data.attr('after');
+        // var daysBefore = $data.attr('before');
+        // this.m_formInputs['start_date'].setValue(daysAfter);
+        // this.m_formInputs['end_date'].setValue(daysBefore);
         this.m_formInputs['token'].setValue($data.attr('token'));
         this._getGoogleCalendars();
         this.cd.markForCheck();
+    }
+
+    _onModeChange(i_value) {
+        var mode = i_value == true ? 'offset' : 'fixed';
+        this.m_mode = i_value;
+        var domPlayerData = this.m_blockData.playerDataDom;
+        var xSnippet = $(domPlayerData).find('Json').find('Data');
+        $(xSnippet).attr('mode', mode);
+        // this.m_formInputs['mode'].setValue(this.m_mode);
+        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
     _getGoogleCalendars() {
@@ -98,7 +161,7 @@ export class BlockPropCalendar extends Compbaser implements AfterViewInit {
                     if (_.isUndefined(response.responseText) || response.responseText.length == 0)
                         return;
                     var jData = JSON.parse(response.responseText);
-                    _.forEach(jData, function (k: any, idx) {
+                    _.forEach(jData, function (k: any) {
                         self.m_calList.push({
                             id: k.id,
                             label: k.summary
@@ -108,7 +171,6 @@ export class BlockPropCalendar extends Compbaser implements AfterViewInit {
                     if (id && id.length > 10)
                         self.m_calSeleced = self.m_calList.find(item => item.id == id);
                     self.m_formInputs['calSelection'].setValue(self.m_calSeleced.id);
-                    // self.m_calSeleced = _.random(0,2);
                     self.cd.markForCheck()
                 },
                 error: function (jqXHR, exception) {
@@ -147,12 +209,15 @@ export class BlockPropCalendar extends Compbaser implements AfterViewInit {
         // Lib.Con(this.m_contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.m_contGroup.value)));
         if (this.m_contGroup.status != 'VALID')
             return;
-        // var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
-        // var item = jQuery(domPlayerData).find('Json').find('Data');
-        // jQuery(item).attr('token', this.m_contGroup.value.token);
-        // this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+        var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
+        var item = jQuery(domPlayerData).find('Json').find('Data');
+        jQuery(item).attr('token', this.m_contGroup.value.token);
+        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
     destroy() {
     }
 }
+
+
+// var randomOrder = StringJS(jQuery(xSnippet).attr('randomOrder')).booleanToNumber();

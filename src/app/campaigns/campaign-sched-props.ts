@@ -29,8 +29,7 @@ export class CampaignSchedProps extends Compbaser implements AfterViewInit {
     private m_PRIORITY_HIGH = 0;
     private m_WEEKDAYS = [1, 2, 4, 8, 16, 32, 64];
     private m_WEEKDAYS_NAME = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    // private campaignModel$: Observable<CampaignsModelExt>;
-
+    
     constructor(private fb: FormBuilder, private el: ElementRef, private yp: YellowPepperService, private rp: RedPepperService, private cd: ChangeDetectorRef, private ngmslibService: NgmslibService) {
         super();
         this.contGroup = this.fb.group({
