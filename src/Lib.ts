@@ -17,9 +17,13 @@ const rxjsDebugger = true;
 Observable.prototype.sub = Observable.prototype.subscribe;
 
 
-window['con'] = (msg) => {
-    if (Lib.DevMode())
+window['con'] = (msg, stringify) => {
+    if (Lib.DevMode()) {
+        if (stringify)
+            msg = JSON.stringify(msg);
         console.info(`${new Date().toLocaleTimeString()} ${msg}`);
+    }
+
 }
 
 declare module 'rxjs/Observable' {
@@ -64,8 +68,8 @@ Observable.prototype.debug = function (message: string) {
 @Injectable()
 export class Lib {
 
-    static Con(msg) {
-        con(msg)
+    static Con(msg: any, stringify?: boolean) {
+        con(msg, stringify)
     }
 
     /**

@@ -82,7 +82,7 @@ declare var Draggable;
 declare var con:Con;
 
 interface Con {
-    (msg:string):void;
+    (msg:any, stringify?:boolean):void;
 }
 
 interface PlatformStatic {

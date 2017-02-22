@@ -39,6 +39,9 @@ import {Tab} from "../../comps/tabs/tab";
                     <div *ngSwitchCase="m_blockLabels.BLOCKCODE_INSTAGRAM">
                         <block-prop-instagram [setBlockData]="m_blockData"></block-prop-instagram>
                     </div>
+                    <div *ngSwitchCase="m_blockLabels.BLOCKCODE_CALENDAR">
+                        <block-prop-calendar [setBlockData]="m_blockData"></block-prop-calendar>
+                    </div>
                     <div *ngSwitchDefault>
                         <h3>no block prop found, new?</h3>
                         {{m_blockTypeSelected}}
@@ -52,6 +55,9 @@ import {Tab} from "../../comps/tabs/tab";
                     </div>
                     <div *ngSwitchCase="m_blockLabels.BLOCKCODE_INSTAGRAM">
                         <block-prop-instagram [jsonMode]="true" [setBlockData]="m_blockData"></block-prop-instagram>
+                    </div>
+                    <div *ngSwitchCase="m_blockLabels.BLOCKCODE_CALENDAR">
+                        <block-prop-calendar [jsonMode]="true" [setBlockData]="m_blockData"></block-prop-calendar>
                     </div>
                 </div>
             </tab>
