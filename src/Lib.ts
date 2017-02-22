@@ -16,6 +16,12 @@ export var urlRegExp = `(https?:\/\/(?:www\.|(?!www))\.*)`
 const rxjsDebugger = true;
 Observable.prototype.sub = Observable.prototype.subscribe;
 
+
+window['con'] = (msg) => {
+    if (Lib.DevMode())
+        console.info(`${new Date().toLocaleTimeString()} ${msg}`);
+}
+
 declare module 'rxjs/Observable' {
     interface Observable<T> {
         debug: (...any) => Observable<T>
@@ -57,6 +63,11 @@ Observable.prototype.debug = function (message: string) {
 
 @Injectable()
 export class Lib {
+
+    static Con(msg) {
+        con(msg)
+    }
+
     /**
      *
      * @param dateString format of date + time: /Date(1469923200000+0000)/"
@@ -265,7 +276,7 @@ export class Lib {
         }
     }
 
-    static MapOfIndex(map: Map<string,any>, index: number, position: "first" | "last"): string {
+    static MapOfIndex(map: Map<string, any>, index: number, position: "first" | "last"): string {
         var mapJs = map.toJS();
         var mapJsPairs = _.toPairs(mapJs);
         var offset = position == 'first' ? 0 : 1;

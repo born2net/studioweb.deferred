@@ -79,7 +79,11 @@ interface jQueryModal extends JQuery {
 
 declare var jQueryAny: any;
 declare var Draggable;
+declare var con:Con;
 
+interface Con {
+    (msg:string):void;
+}
 
 interface PlatformStatic {
     description?: string;

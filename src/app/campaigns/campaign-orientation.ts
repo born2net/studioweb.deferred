@@ -80,6 +80,5 @@ export class CampaignOrientation extends Compbaser {
     }
 
     destroy() {
-        console.log('removed orien');
     }
 }

@@ -198,7 +198,7 @@ export class CampaignChannels extends Compbaser implements AfterViewInit {
             self._getBlockRecord(block_id, (i_campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModel) => {
                 var playerDuration = i_campaignTimelineChanelPlayersModel.getPlayerDuration();
                 self.rp.setBlockRecord(block_id, 'player_offset_time', playerOffsetTime);
-                console.log('player ' + block_id + ' offset ' + playerOffsetTime + ' playerDuration ' + playerDuration);
+                // console.log('player ' + block_id + ' offset ' + playerOffsetTime + ' playerDuration ' + playerDuration);
                 playerOffsetTime = parseFloat(playerOffsetTime) + parseFloat(playerDuration);
             })
         });

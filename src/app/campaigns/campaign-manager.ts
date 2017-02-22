@@ -117,14 +117,14 @@ export class CampaignManager extends Compbaser {
     }
 
     private save() {
-        console.log('saving...');
+        con('saving...');
         this.redPepperService.save((result) => {
             if (result.status == true) {
                 alert('saved');
             } else {
                 alert(JSON.stringify(result));
             }
-            console.log(JSON.stringify(result));
+            // console.log(JSON.stringify(result));
         });
     }
 

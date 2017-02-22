@@ -250,7 +250,6 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
     }
 
     private _onLabelEdited(event: ISimpleGridEdit, index) {
-        console.log(event.value);
         var domPlayerData = this.m_blockData.playerDataDom;
         var target = jQuery(domPlayerData).find('EventCommands').children().get(index);
         jQuery(target).attr('from', event.value);

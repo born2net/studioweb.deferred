@@ -35,13 +35,6 @@ export const BlockLabels = {
     'MRSS': 3340
 }
 
-// export const MapMimeProviders = {
-//     'weather': 'Json.weather',
-//     'instagram.feed': 'Json.instagram.feed',
-// }
-
-//instagram.media
-
 export interface IBlockData {
     blockID: number;
     blockType: string;
@@ -1016,3 +1009,10 @@ export class BlockService {
 }
 
 
+
+
+// export const MapMimeProviders = {
+//     'weather': 'Json.weather',
+//     'instagram.feed': 'Json.instagram.feed',
+// }
+//instagram.media

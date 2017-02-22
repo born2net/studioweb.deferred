@@ -77,10 +77,10 @@ export class BlockPropInstagram extends Compbaser implements AfterViewInit {
         } else {
             bootbox.alert('Browser popups are blocked, please enable and try again');
         }
-    }
+    }           
 
     private saveToStore() {
-        console.log(this.m_contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.m_contGroup.value)));
+        con(this.m_contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.m_contGroup.value)));
         if (this.m_contGroup.status != 'VALID')
             return;
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;

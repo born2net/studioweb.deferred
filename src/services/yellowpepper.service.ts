@@ -632,7 +632,6 @@ export class YellowPepperService {
             }).withLatestFrom(
             boards$,
             (campaign: CampaignsModelExt, boards: List<BoardsModel>) => {
-                console.log(boards);
                 return campaign;
             });
     }
@@ -660,10 +659,8 @@ export class YellowPepperService {
         }).concatMap((campaignsModel: CampaignsModelExt) => {
             return this.findCampaignByIdTest(campaignsModel.getCampaignId())
         }, (c: CampaignsModelExt, d: CampaignsModelExt) => {
-            console.log(c, d);
             return d;
         }).concatMap((campaignsModel: CampaignsModelExt) => this.findCampaignByIdTest(campaignsModel.getCampaignId()), (e: CampaignsModelExt, f: CampaignsModelExt) => {
-            console.log(e, f);
             return e
         }).take(1)
     }

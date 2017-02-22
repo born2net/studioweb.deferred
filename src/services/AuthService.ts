@@ -84,7 +84,7 @@ export class AuthService {
 
     private enterApplication() {
         setTimeout(() => {
-            console.log('enter app');
+            Lib.Con('enter app');
             // this.router.navigate(['/App1/Dashboard']);
             if (Lib.DevMode()) {
                 this.router.navigate(['/App1/Campaigns']);
@@ -118,7 +118,7 @@ export class AuthService {
                     i_pass = credentialsArr[2];
                     i_remember = 'false';
                 } catch (e) {
-                    console.log('error login ' + e);
+                    console.error('error login ' + e);
                 }
             }
         }

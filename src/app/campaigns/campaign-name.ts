@@ -37,7 +37,6 @@ export class CampaignName extends Compbaser {
             }
         }
         this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
-        console.log('dest camp name');
     }
 
 

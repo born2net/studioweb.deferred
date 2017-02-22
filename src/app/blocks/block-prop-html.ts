@@ -87,6 +87,5 @@ export class BlockPropHtml extends Compbaser implements AfterViewInit {
     }
 
     destroy() {
-        console.log('destroy html component');
     }
 }

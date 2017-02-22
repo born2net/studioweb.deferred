@@ -23,6 +23,6 @@ export class StoreService {
         if (this.singleton) return;
         this.singleton = true;
         this.store.dispatch({type: EFFECT_INIT_REDUXIFY_MSDB})
-        console.log('loaded network services...');
+        con('loaded network services...');
     }
 }

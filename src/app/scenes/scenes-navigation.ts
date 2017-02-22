@@ -55,7 +55,6 @@ export class ScenesNavigation extends Compbaser {
 
     constructor(private blockService: BlockService) {
         super();
-        console.log(this.blockService.getServiceType());
     }
 
     ngOnInit() {

@@ -76,6 +76,5 @@ export class CampaignList extends Compbaser {
     }
 
     destroy() {
-        console.log('dest camp list');
     }
 }

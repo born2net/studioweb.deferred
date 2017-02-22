@@ -74,6 +74,5 @@ export class CampaignResolution extends Compbaser {
     }
 
     destroy() {
-        console.log('dest resolutiom');
     }
 }

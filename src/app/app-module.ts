@@ -112,11 +112,11 @@ export function appReducer(state: any = INITIAL_APPLICATION_STATE, action: any) 
 
 export class AppModule {
     constructor(private compiler:Compiler, private ngmslibService: NgmslibService, private yp:YellowPepperService, private fontLoaderService:FontLoaderService) {
-        console.log(`running in dev mode: ${Lib.DevMode()}`);
-        console.log(`App in ${(compiler instanceof Compiler) ? 'AOT' : 'JIT'} mode`);
+        Lib.Con(`running in dev mode: ${Lib.DevMode()}`);
+        Lib.Con(`App in ${(compiler instanceof Compiler) ? 'AOT' : 'JIT'} mode`);
         window['jQueryAny'] = jQuery;
         this.ngmslibService.globalizeStringJS();
-        console.log(StringJS('app-loaded-and-ready').humanize().s);
+        Lib.Con(StringJS('app-loaded-and-ready').humanize().s);
     }
 }
 

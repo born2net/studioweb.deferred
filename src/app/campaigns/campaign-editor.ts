@@ -89,6 +89,5 @@ export class CampaignEditor extends Compbaser {
     }
 
     destroy() {
-        console.log('dest camp editor');
     }
 }
