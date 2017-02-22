@@ -274,6 +274,7 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
      **/
     @Once()
     private _initSceneDropdown() {
+        var self = this;
         return this.yp.getSceneNames()
             .subscribe((scenes) => {
                 this.m_sceneSelection = [];
@@ -289,8 +290,7 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
                         this.m_sceneSeleced = scenes[scene];
                         // this.contGroup.controls['sceneSelection'].updateValueAndValidity(sceneId);
                     }
-
-                    if (this.m_blockData.playerMimeName == mimeType) {
+                    if (this.m_blockData.playerMimeScene == mimeType) {
                         this.m_sceneSelection.push({
                             sceneId, label, mimeType, value: scenes[scene]
                         })

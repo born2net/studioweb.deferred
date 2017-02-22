@@ -35,9 +35,12 @@ export const BlockLabels = {
     'MRSS': 3340
 }
 
-export const MimeMap = {
-    'weather': 'Json.weather',
-}
+// export const MapMimeProviders = {
+//     'weather': 'Json.weather',
+//     'instagram.feed': 'Json.instagram.feed',
+// }
+
+//instagram.media
 
 export interface IBlockData {
     blockID: number;
@@ -51,9 +54,9 @@ export interface IBlockData {
     blockMinWidth: number;
     blockMinHeight: number;
     playerDataJson: {};
-    playerMimeName: string;
+    playerMimeScene: string;
     playerDataDom: XMLDocument,
-    playerDataJsonMime: number;
+    playerDataJsonHandle: number;
     campaignTimelineChanelPlayersModelExt: CampaignTimelineChanelPlayersModelExt,
     duration: number;
     offset: number;
@@ -795,13 +798,14 @@ export class BlockService {
                     blockMinHeight: this.m_minSize.h,
                     playerDataDom: playerDataDom,
                     playerDataJson: playerDataJson,
-                    playerMimeName: playerDataJson.Player.Data.Json ? MimeMap[playerDataJson.Player.Data.Json._providerType] : null,
-                    playerDataJsonMime: (playerDataJson.Player.Data.Json && playerDataJson.Player.Data.Json.Player) ? playerDataJson.Player.Data.Json.Player : null,
+                    playerMimeScene: playerDataJson.Player.Data.Json ? `Json.${playerDataJson.Player.Data.Json._providerType}` : null,
+                    playerDataJsonHandle: (playerDataJson.Player.Data.Json && playerDataJson.Player.Data.Json.Player) ? playerDataJson.Player.Data.Json.Player : null,
                     duration: i_campaignTimelineChanelPlayersModel.getPlayerDurationInt(),
                     offset: i_campaignTimelineChanelPlayersModel.getPlayerOffsetTimeInt(),
                     campaignTimelineChanelPlayersModelExt: i_campaignTimelineChanelPlayersModel
                 };
-
+                if (playerDataJson.Player.Data.Json)
+                    console.log(playerDataJson.Player.Data.Json._providerType);
                 return Observable.of(data)
             })
     }

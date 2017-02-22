@@ -36,6 +36,9 @@ import {Tab} from "../../comps/tabs/tab";
                     <div *ngSwitchCase="m_blockLabels.BLOCKCODE_WORLD_WEATHER">
                         <block-prop-weather [setBlockData]="m_blockData"></block-prop-weather>
                     </div>
+                    <div *ngSwitchCase="m_blockLabels.BLOCKCODE_INSTAGRAM">
+                        <block-prop-instagram [setBlockData]="m_blockData"></block-prop-instagram>
+                    </div>
                     <div *ngSwitchDefault>
                         <h3>no block prop found, new?</h3>
                         {{m_blockTypeSelected}}
@@ -46,6 +49,9 @@ import {Tab} from "../../comps/tabs/tab";
                 <div [ngSwitch]="m_blockTypeSelected">
                     <div *ngSwitchCase="m_blockLabels.BLOCKCODE_WORLD_WEATHER">
                         <block-prop-weather [jsonMode]="true" [setBlockData]="m_blockData"></block-prop-weather>
+                    </div>
+                    <div *ngSwitchCase="m_blockLabels.BLOCKCODE_INSTAGRAM">
+                        <block-prop-instagram [jsonMode]="true" [setBlockData]="m_blockData"></block-prop-instagram>
                     </div>
                 </div>
             </tab>
@@ -75,7 +81,7 @@ export class BlockPropContainer extends Compbaser implements AfterViewInit {
                     this.m_tabTitle = blockData.blockAcronym;
                     this.m_blockData = blockData;
                     if (!this.settings) return;
-                    if (blockData.playerDataJsonMime) {
+                    if (blockData.playerDataJsonHandle) {
                         this.settings.show = true;
                     } else {
                         this.settings.show = false;

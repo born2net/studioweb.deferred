@@ -6,7 +6,7 @@ import {simpleRegExp} from "../../Lib";
 import * as _ from "lodash";
 
 @Component({
-    selector: 'block-prop-weather',
+    selector: 'block-prop-instagram',
     host: {
         '(input-blur)': 'saveToStore($event)'
     },
@@ -51,7 +51,7 @@ import * as _ from "lodash";
         </form>
     `
 })
-export class BlockPropWeather extends Compbaser implements AfterViewInit {
+export class BlockPropInstagram extends Compbaser implements AfterViewInit {
     m_formInputs = {};
     m_contGroup: FormGroup;
     m_blockData: IBlockData;
