@@ -1,8 +1,11 @@
 <small class="debug">{{me}}</small>
 <h4 i18n>campaign editor</h4>
-<!--<div matchBodyHeight="150" id="campaignView" style="margin-right: 30px; padding-right: 5px; overflow-y: auto">-->
-<div id="campaignView" style="padding-right: 24px">
+
+<!-- todo: need to investigate as performance sometime laggy when using the matchBodyHeight directive here -->
+<div matchBodyHeight="150" id="campaignView" style="margin-right: 30px; padding-right: 5px; overflow-y: auto">
+    <!--<div id="campaignView" style="padding-right: 24px">-->
     <div class="panel-group" id="timelinesCollapsible">
+
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
@@ -49,7 +52,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a  (click)="m_isVisible2 = !m_isVisible2"  id="toggleStorylineCollapsible" data-toggle="collapse" data-parent="#storylineCollapsible" href="#storylineContainerCollapse">
+                    <a (click)="m_isVisible2 = !m_isVisible2" id="toggleStorylineCollapsible" data-toggle="collapse" data-parent="#storylineCollapsible" href="#storylineContainerCollapse">
                         <span [@visibilityChanged2]="m_isVisible2" class="collapsed glyphicon glyphicon-chevron-up"></span>
                         <span data-localize="timeline">Timeline</span>
                     </a>

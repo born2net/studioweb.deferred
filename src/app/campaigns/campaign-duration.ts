@@ -1,11 +1,11 @@
-import {AfterViewInit, Component} from "@angular/core";
+import {AfterViewInit, ChangeDetectionStrategy, Component} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {Observable} from "rxjs";
 
 @Component({
     selector: 'campaign-duration',
-    // changeDetection: ChangeDetectionStrategy.OnPush,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <small class="debug">{{me}}</small>
         <span style="font-size: 1em" data-localize="campaignLength">campaign length:</span>

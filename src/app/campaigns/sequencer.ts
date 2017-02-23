@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Input, Output, QueryList, ViewChildren} from "@angular/core";
+import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output, QueryList, ViewChildren} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {RedPepperService} from "../../services/redpepper.service";
 import {YellowPepperService} from "../../services/yellowpepper.service";
@@ -41,6 +41,7 @@ import {Once} from "../../decorators/once-decorator";
         }
 
     `],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <div (click)="$event.preventDefault()">
             <small class="debug">{{me}}</small>

@@ -1,11 +1,10 @@
-import {Component, ChangeDetectionStrategy, trigger, transition, animate, state, style} from "@angular/core";
+import {animate, ChangeDetectionStrategy, Component, state, style, transition, trigger} from "@angular/core";
 import {Compbaser} from "ng-mslib";
-import {routerTransition} from "../route-animation";
 import {BlockService} from "../blocks/block-service";
 import {AppdbAction} from "../../store/actions/appdb.actions";
 
 @Component({
-    // changeDetection: ChangeDetectionStrategy.OnPush,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     // new animation, can't add due to aot limitation and angular language service bug
     // host: {
     //     '[@routerTransition]': '',
@@ -50,7 +49,7 @@ export class CampaignsNavigation extends Compbaser {
         super();
     }
 
-    destroy(){
+    destroy() {
         this.actions.resetCampaignSelection();
     }
 }

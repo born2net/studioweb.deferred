@@ -1,4 +1,4 @@
-import {Component} from "@angular/core";
+import {ChangeDetectionStrategy, Component} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {ISliderItemData} from "../../comps/sliderpanel/Slideritem";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
@@ -9,7 +9,7 @@ import {Once} from "../../decorators/once-decorator";
 import {IScreenTemplateData} from "../../comps/screen-template/screen-template";
 
 @Component({
-    // changeDetection: ChangeDetectionStrategy.OnPush,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'campaigns',
     template: `
         <small class="debug" style="padding-right: 25px">{{me}}</small>

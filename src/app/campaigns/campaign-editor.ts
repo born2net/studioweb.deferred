@@ -1,4 +1,4 @@
-import {animate, Component, EventEmitter, Output, state, style, transition, trigger} from "@angular/core";
+import {animate, ChangeDetectionStrategy, Component, EventEmitter, Output, state, style, transition, trigger} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
 import {YellowPepperService} from "../../services/yellowpepper.service";
@@ -12,6 +12,7 @@ import {Lib} from "../../Lib";
 @Component({
     selector: 'campaign-editor',
     templateUrl: './campaign-editors.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     animations: [
         trigger('visibilityChanged1', [
             state('true', style({transform: 'rotate(0deg)'})),

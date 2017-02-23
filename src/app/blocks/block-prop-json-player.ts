@@ -85,7 +85,7 @@ import {SimpleGridRecord} from "../../comps/simple-grid-module/SimpleGridRecord"
                                 <span class="fa fa-minus"></span>
                             </button>
                         </h4>
-                        <div style="overflow: scroll;  height: 300px">
+                        <div style="overflow-x: scroll">
                             <div style="width: 600px">
                                 <simpleGridTable #simpleGrid>
                                     <thead>
@@ -338,7 +338,7 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
         xSnippet.attr('itemInterval', this.m_contGroup.value.itemInterval);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
-    
+
     destroy() {
     }
 }
