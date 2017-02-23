@@ -15,7 +15,7 @@ import {Observable} from "rxjs";
         '(input-blur)': 'onFormChange($event)'
     },
     template: `
-        <div>
+        <div style="padding-right: 5px">
             <form novalidate autocomplete="off" [formGroup]="m_contGroup">
                 <div class="row">
                     <div class="inner userGeneral">
