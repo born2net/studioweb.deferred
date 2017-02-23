@@ -28,15 +28,17 @@ import {FontSelector} from "../comps/font-selector/font-selector";
 import {BlockPropWeather} from "../app/blocks/block-prop-weather";
 import {BlockPropJsonPlayer} from "../app/blocks/block-prop-json-player";
 import {SimpleGridModule} from "../comps/simple-grid-module/SimpleGridModule";
-import {DropdownModule, RadioButtonModule} from 'primeng/primeng';
+import {DropdownModule, RadioButtonModule} from "primeng/primeng";
 import {BlockPropInstagram} from "../app/blocks/block-prop-instagram";
 import {BlockPropCalendar} from "../app/blocks/block-prop-calendar";
 import {BlockPropSheets} from "../app/blocks/block-prop-sheets";
 import {BlockPropTwitter} from "../app/blocks/block-prop-twitter";
 import {BlockPropExtVideo} from "../app/blocks/block-prop-ext-video";
+import {BlockPropExtImage} from "../app/blocks/block-prop-ext-image";
 
 var sharedComponents = [Tabs, Tab, Infobox, Sliderpanel, Slideritem, PanelSplitMain, PanelSplitSide, PanelSplitContainer, ListToArrayPipe, FormatSecondsPipe, MatchBodyHeight, ScreenTemplate, BlurForwarder, DraggableList,
-    FontSelector, BlockPropContainer, BlockPropImage, BlockPropCommon, BlockPropHtml, BlockPropClock, BlockPropWeather,BlockPropInstagram, BlockPropJsonPlayer, BlockPropCalendar, BlockPropSheets, BlockPropTwitter, BlockPropExtVideo];
+    FontSelector, BlockPropContainer, BlockPropImage, BlockPropCommon, BlockPropHtml, BlockPropClock, BlockPropWeather, BlockPropInstagram, BlockPropJsonPlayer,
+    BlockPropCalendar, BlockPropSheets, BlockPropTwitter, BlockPropExtVideo, BlockPropExtImage];
 
 @NgModule({
     imports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule, ContextMenuModule, ChartModule, ReactiveFormsModule, ColorPickerModule, DropdownModule, RadioButtonModule, SimpleGridModule],
