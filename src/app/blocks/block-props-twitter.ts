@@ -17,7 +17,11 @@ import * as _ from "lodash";
                 <div *ngIf="!jsonMode">
                     <ul class="list-group">
                         <li class="list-group-item">
-                            <span i18n>token</span>
+                            <span i18n>screen name</span><br/>
+                            <input type="text" placeholder="filter"  [formControl]="m_contGroup.controls['screenName']"/>
+                        </li>
+                        <li class="list-group-item">
+                            <span i18n>token</span><br/>
                             <input type="text" [formControl]="m_contGroup.controls['token']"/>
                         </li>
                         <li class="list-group-item">
@@ -40,6 +44,7 @@ export class BlockPropsTwitter extends Compbaser implements AfterViewInit {
     constructor(private fb: FormBuilder, private cd: ChangeDetectorRef, private bs: BlockService, private ngmslibService: NgmslibService) {
         super();
         this.m_contGroup = fb.group({
+            'screenName': [''],
             'token': ['']
         });
         _.forEach(this.m_contGroup.controls, (value, key: string) => {
@@ -63,7 +68,7 @@ export class BlockPropsTwitter extends Compbaser implements AfterViewInit {
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom
         var $data = $(domPlayerData).find('Json').find('Data');
         this.m_formInputs['token'].setValue($data.attr('token'));
-        // this.cd.markForCheck();
+        this.m_formInputs['screenName'].setValue($data.attr('screenName'));
     }
 
     ngAfterViewInit() {
@@ -71,7 +76,7 @@ export class BlockPropsTwitter extends Compbaser implements AfterViewInit {
     }
 
     _onCreateToken() {
-        var win = window.open('http://instagram.signage.me', '_blank');
+        var win = window.open('http://twitter.signage.me', '_blank');
         if (win) {
             win.focus();
         } else {
@@ -85,6 +90,7 @@ export class BlockPropsTwitter extends Compbaser implements AfterViewInit {
             return;
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
         var item = jQuery(domPlayerData).find('Json').find('Data');
+        jQuery(item).attr('screenName', this.m_contGroup.value.screenName);
         jQuery(item).attr('token', this.m_contGroup.value.token);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
