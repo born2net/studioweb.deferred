@@ -35,13 +35,16 @@ import {SimpleGridRecord} from "../../comps/simple-grid-module/SimpleGridRecord"
                         </div>
                     </li>
                     <li class="list-group-item">
-                        Load with scene
+                        <span i18n>load with scene</span>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
-                            <p-dropdown [style]="{'width':'150px'}" (onChange)="_onSceneSelectionChanged($event)" [(ngModel)]="m_sceneSeleced" [options]="m_sceneSelection" [filter]="true" formControlName="sceneSelection"></p-dropdown>
+                            <p-dropdown [style]="{'width':'220px'}" (onChange)="_onSceneSelectionChanged($event)" [(ngModel)]="m_sceneSeleced" [options]="m_sceneSelection" [filter]="true" formControlName="sceneSelection"></p-dropdown>
                         </div>
                     </li>
-
+                    <li class="list-group-item">
+                        <label i18n>interval</label><br/>
+                        <input style="width: 268px" type="number" min="1" [formControl]="m_contGroup.controls['itemInterval']"/>
+                    </li>
                     <li class="list-group-item">
                         <span i18n>play video to completion</span>
                         <div class="material-switch pull-right">
@@ -136,6 +139,7 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
             'randomOrder': [],
             'slideShow': [],
             'playVideoInFull': [],
+            'itemInterval': [],
             'itemsPath': [],
             'itemsUrl': ['', [Validators.pattern(urlRegExp)]],
             'url': ['', [Validators.pattern(urlRegExp)]]
@@ -172,6 +176,7 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
     }
 
     _onPlayVideoInFull(i_value) {
+        i_value = StringJS(i_value).booleanToNumber()
         var domPlayerData = this.m_blockData.playerDataDom;
         var xSnippet = jQuery(domPlayerData).find('Json');
         jQuery(xSnippet).attr('playVideoInFull', i_value);
@@ -179,6 +184,7 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
     }
 
     _onRandomPlay(i_value) {
+        i_value = StringJS(i_value).booleanToNumber()
         var domPlayerData = this.m_blockData.playerDataDom;
         var xSnippet = jQuery(domPlayerData).find('Json');
         jQuery(xSnippet).attr('randomOrder', i_value);
@@ -186,6 +192,7 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
     }
 
     _onSlideShow(i_value) {
+        i_value = StringJS(i_value).booleanToNumber()
         this.m_slideShowMode = i_value;
         var domPlayerData = this.m_blockData.playerDataDom;
         var xSnippet = jQuery(domPlayerData).find('Json');
@@ -316,15 +323,19 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
         this.formInputs['randomOrder'].setValue(randomOrder);
         this.m_slideShowMode = StringJS(jQuery(xSnippet).attr('slideShow')).booleanToNumber(true) as number;
         this.formInputs['slideShow'].setValue(this.m_slideShowMode);
+        this.formInputs['itemsPath'].setValue(jQuery(xSnippet).attr('itemsPath'));
+        this.formInputs['itemInterval'].setValue(jQuery(xSnippet).attr('itemInterval'));
+        this.formInputs['itemsUrl'].setValue(jQuery(xSnippet).attr('url'));
     }
 
     private saveToStore() {
         if (this.m_contGroup.status != 'VALID')
             return;
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
-        var item = jQuery(domPlayerData).find('Json').find('Data');
-        jQuery(item).attr('itemsPath', this.m_contGroup.value.itemsPath);
-        jQuery(item).attr('url', this.m_contGroup.value.itemsUrl);
+        var xSnippet = jQuery(domPlayerData).find('Json');
+        xSnippet.attr('itemsPath', this.m_contGroup.value.itemsPath);
+        xSnippet.attr('url', this.m_contGroup.value.itemsUrl);
+        xSnippet.attr('itemInterval', this.m_contGroup.value.itemInterval);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
     

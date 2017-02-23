@@ -1,14 +1,11 @@
-import {Component, ChangeDetectionStrategy} from "@angular/core";
+import {Component} from "@angular/core";
 import {Compbaser} from "ng-mslib";
-import {ApplicationState} from "../../store/application.state";
-import {Store} from "@ngrx/store";
 import {Observable} from "rxjs";
 import {SideProps} from "../../store/actions/appdb.actions";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 
 @Component({
     selector: 'campaign-props-manager',
-    // changeDetection: ChangeDetectionStrategy.OnPush,
     styles: [`
         ul {
             padding: 0
@@ -39,7 +36,7 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
                 <screen-layout-editor-props></screen-layout-editor-props>
             </div>
             <!--<div *ngSwitchCase="m_uiUserFocusItemEnum.sceneBlock">-->
-                <!--<block-prop></block-prop>-->
+            <!--<block-prop></block-prop>-->
             <!--</div>-->
             <div *ngSwitchCase="m_uiUserFocusItemEnum.channelBlock">
                 <channel-block-props></channel-block-props>

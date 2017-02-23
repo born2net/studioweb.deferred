@@ -20,6 +20,10 @@ export class MatchBodyHeight implements AfterContentInit {
         var bodyHeight = jQuery('body').height() - this.matchBodyHeight;
         jQuery(this.el.nativeElement).height(bodyHeight);
     }
+
+    ngOnDestroy(){
+        // console.log('dest matchBodyHeight');
+    }
 }
 
 // import {timeout} from "../../decorators/timeout-decorator";

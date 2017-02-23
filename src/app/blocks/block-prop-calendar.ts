@@ -19,10 +19,10 @@ import * as moment from 'moment'
                     <ul class="list-group">
                         <li class="list-group-item">
                             <span i18n>token</span><br/>
-                            <input style="width: 280px" (blur)="_getGoogleCalendars()" type="text" [formControl]="m_contGroup.controls['token']"/>
+                            <input class="default-prop-width" (blur)="_getGoogleCalendars()" type="text" [formControl]="m_contGroup.controls['token']"/>
                         </li>
                         <li class="list-group-item">
-                            <button i18n class="btn btn-default" style="width: 280px" (click)="_onCreateToken()">create instagram token</button>
+                            <button i18n class="btn btn-default default-prop-width" (click)="_onCreateToken()">create instagram token</button>
                         </li>
                         <li class="list-group-item">
                             <span i18n>Load with calendar</span>
