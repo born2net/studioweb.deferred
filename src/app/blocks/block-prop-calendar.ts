@@ -148,35 +148,33 @@ export class BlockPropCalendar extends Compbaser implements AfterViewInit {
      @method _populateStartEndDates
      **/
     _populateStartEndDates(): void {
+        var startDate = this._getRangeDate('startDate');
+        var endDate = this._getRangeDate('endDate');
+        this.m_formInputs['startDate'].setValue(startDate);
+        this.m_formInputs['endDate'].setValue(endDate);
+    }
+
+    _setRangeDate(i_field: 'startDate' | 'endDate', i_value): void {
+        var domPlayerData = this.m_blockData.playerDataDom;
+        var xSnippet = $(domPlayerData).find('Json').find('Data');
+        var value = moment(i_value).unix() + '000';
+        $(xSnippet).attr(i_field, value);
+        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+    }
+
+    _getRangeDate(i_field): string {
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
         var item = $(domPlayerData).find('Json').find('Data');
-        var startDate:any = $(item).attr('startDate');
-        if (_.isEmpty(startDate)) {
+        var value: any = $(item).attr(i_field);
+        if (_.isEmpty(value)) {
             var date = new Date();
-            var startDateUnix = moment(date).unix();
-            startDate = moment(date).format('YYYY-MM-DD');
-            var domPlayerData = this.m_blockData.playerDataDom;
-            var xSnippet = $(domPlayerData).find('Json').find('Data');
-            $(xSnippet).attr('startDate', startDateUnix);
-            this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
-        } else {
-            startDate = moment.unix(parseInt(startDate)).format('YYYY-MM-DD');
+            var lastWeek: number = date.setDate(new Date().getDate() - 7);
+            var newDate = moment(lastWeek).format('YYYY-MM-DD');
+            return newDate;
         }
-        this.m_formInputs['startDate'].setValue(startDate);
-
-        var endDate:any = $(item).attr('endDate');
-        if (_.isEmpty(endDate)) {
-            var inWeek: number = date.setDate(new Date().getDate() + 7);
-            var endDateUnix = moment(inWeek).unix();
-            endDate = moment(inWeek).format('YYYY-MM-DD');
-            var domPlayerData = this.m_blockData.playerDataDom;
-            var xSnippet = $(domPlayerData).find('Json').find('Data');
-            $(xSnippet).attr('endDate', endDateUnix);
-            this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
-        } else {
-            endDate = moment.unix(parseInt(endDate)).format('YYYY-MM-DD');
-        }
-        this.m_formInputs['endDate'].setValue(endDate);
+        value = value.slice(0, -3);
+        value = moment.unix(parseInt(value)).format('YYYY-MM-DD');
+        return value;
     }
 
     _onModeChange(i_value) {
@@ -185,7 +183,6 @@ export class BlockPropCalendar extends Compbaser implements AfterViewInit {
         var domPlayerData = this.m_blockData.playerDataDom;
         var xSnippet = $(domPlayerData).find('Json').find('Data');
         $(xSnippet).attr('mode', mode);
-        // this.m_formInputs['mode'].setValue(this.m_mode);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
@@ -229,10 +226,6 @@ export class BlockPropCalendar extends Compbaser implements AfterViewInit {
         return $(item).attr('id');
     }
 
-    _onSceneCalSelectionChanged() {
-
-    }
-
     ngAfterViewInit() {
         this._render();
     }
@@ -252,7 +245,11 @@ export class BlockPropCalendar extends Compbaser implements AfterViewInit {
             return;
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
         var item = jQuery(domPlayerData).find('Json').find('Data');
+        jQuery(item).attr('before', this.m_contGroup.value.before);
+        jQuery(item).attr('after', this.m_contGroup.value.after);
         jQuery(item).attr('token', this.m_contGroup.value.token);
+        this._setRangeDate('startDate',this.m_contGroup.value.startDate)
+        this._setRangeDate('endDate',this.m_contGroup.value.endDate)
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
@@ -262,3 +259,31 @@ export class BlockPropCalendar extends Compbaser implements AfterViewInit {
 
 
 // var randomOrder = StringJS(jQuery(xSnippet).attr('randomOrder')).booleanToNumber();
+// var startDate: any = $(item).attr('startDate');
+// if (_.isEmpty(startDate)) {
+//     var date = new Date();
+//     var startDateUnix = moment(date).unix();
+//     startDate = moment(date).format('YYYY-MM-DD');
+//     var domPlayerData = this.m_blockData.playerDataDom;
+//     var xSnippet = $(domPlayerData).find('Json').find('Data');
+//     $(xSnippet).attr('startDate', startDateUnix);
+//     this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+// } else {
+//     startDate = moment.unix(parseInt(startDate)).format('YYYY-MM-DD');
+// }
+//
+// this.m_formInputs['startDate'].setValue(startDate);
+//
+// var endDate: any = $(item).attr('endDate');
+// if (_.isEmpty(endDate)) {
+//     var inWeek: number = date.setDate(new Date().getDate() + 7);
+//     var endDateUnix = moment(inWeek).unix();
+//     endDate = moment(inWeek).format('YYYY-MM-DD');
+//     var domPlayerData = this.m_blockData.playerDataDom;
+//     var xSnippet = $(domPlayerData).find('Json').find('Data');
+//     $(xSnippet).attr('endDate', endDateUnix);
+//     this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+// } else {
+//     endDate = moment.unix(parseInt(endDate)).format('YYYY-MM-DD');
+// }
+// this.m_formInputs['endDate'].setValue(endDate);
