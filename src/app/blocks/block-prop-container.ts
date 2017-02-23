@@ -21,6 +21,9 @@ import {Tab} from "../../comps/tabs/tab";
                     <div *ngSwitchCase="m_blockLabels.BLOCKCODE_IMAGE">
                         <block-prop-image [setBlockData]="m_blockData"></block-prop-image>
                     </div>
+                    <div *ngSwitchCase="m_blockLabels.EXTERNAL_VIDEO">
+                        <block-prop-ext-video [setBlockData]="m_blockData"></block-prop-ext-video>
+                    </div>
                     <div *ngSwitchCase="m_blockLabels.LABEL">
                         <h1>label</h1>
                     </div>
