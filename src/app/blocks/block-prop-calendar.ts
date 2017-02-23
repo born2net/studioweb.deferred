@@ -47,12 +47,12 @@ import * as moment from 'moment'
 
                         <li *ngIf="m_mode" class="list-group-item">
                             <label i18n>days before today</label><br/>
-                            <input type="number" [formControl]="m_contGroup.controls['before']"/>
+                            <input type="number" min="1" [formControl]="m_contGroup.controls['before']"/>
                         </li>
 
                         <li *ngIf="m_mode" class="list-group-item">
                             <label i18n>days after today</label><br/>
-                            <input type="number" [formControl]="m_contGroup.controls['after']"/>
+                            <input type="number" min="1" [formControl]="m_contGroup.controls['after']"/>
                         </li>
 
                         <li *ngIf="!m_mode" class="list-group-item">
@@ -133,11 +133,8 @@ export class BlockPropCalendar extends Compbaser implements AfterViewInit {
         this.m_mode = (mode == 'fixed') ? false : true;
         var before = $data.attr('before');
         var after = $data.attr('after');
-        var startDate = $data.attr('startDate');
-        var endDate = $data.attr('endDate');
         this.m_formInputs['mode'].setValue(this.m_mode);
-        this.m_formInputs['endDate'].setValue(endDate);
-        this.m_formInputs['after'].setValue(before);
+        this.m_formInputs['after'].setValue(after);
         this.m_formInputs['before'].setValue(before);
         this.m_formInputs['token'].setValue($data.attr('token'));
         this._getGoogleCalendars();
