@@ -45,7 +45,7 @@ import {Once} from "../../decorators/once-decorator";
     template: `
         <div (click)="$event.preventDefault()">
             <small class="debug">{{me}}</small>
-            <h2>timelines: {{m_campaignTimelinesModels?.size}}</h2>
+            <h4 style="color: #a9a9a9">total timelines: {{m_campaignTimelinesModels?.size}}</h4>
             <context-menu></context-menu>
             <hr class="dottedHR">
             <div id="dragcontainer">

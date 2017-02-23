@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ViewChild} from "@angular/core";
+import {AfterViewInit, ChangeDetectorRef, Component, ViewChild} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {BlockLabels, BlockService, IBlockData} from "./block-service";
@@ -87,7 +87,7 @@ export class BlockPropContainer extends Compbaser implements AfterViewInit {
     m_blockData: IBlockData;
     m_tabTitle: string = 'none';
 
-    constructor(private yp: YellowPepperService, private bs: BlockService, private cpService: ColorPickerService) {
+    constructor(private yp: YellowPepperService, private bs: BlockService, private cpService: ColorPickerService, private cd:ChangeDetectorRef) {
         super();
         // console.log(this.bs.getServiceType());
 
@@ -108,7 +108,7 @@ export class BlockPropContainer extends Compbaser implements AfterViewInit {
                     } else {
                         this.settings.show = false;
                     }
-
+                    this.cd.markForCheck();
                 }, (e) => console.error(e))
         )
     }

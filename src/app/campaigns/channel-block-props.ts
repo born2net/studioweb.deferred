@@ -1,13 +1,10 @@
-import {Component, ChangeDetectionStrategy, ElementRef, AfterViewInit} from "@angular/core";
+import {AfterViewInit, Component, ElementRef} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {CampaignTimelineChanelPlayersModel, CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 import {Lib} from "../../Lib";
 import {RedPepperService} from "../../services/redpepper.service";
-import {Map, List} from 'immutable';
-import {timeout} from "../../decorators/timeout-decorator";
-import {IUiState} from "../../store/store.data";
-import {ACTION_UISTATE_UPDATE} from "../../store/actions/appdb.actions";
+import {List} from "immutable";
 import {CampaignTimelineChanelPlayersModelExt} from "../../store/model/msdb-models-extended";
 
 @Component({

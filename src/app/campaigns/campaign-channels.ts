@@ -53,17 +53,20 @@ import {DraggableList} from "../../comps/draggable-list";
             <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
         </small>
         <small class="debug">{{me}}</small>
-        <draggable-list (onItemSelected)="_onItemSelected($event)" [customTemplate]="customTemplate" (onDragComplete)="_onDragComplete($event)" [items]="m_blockList"></draggable-list>
-        <template #customTemplate let-item>
-            <a href="#" [attr.data-block_id]="item.blockID">
-                <i class="fa {{item.blockFontAwesome}}"></i>
-                <span>{{item.blockName}}</span>
-                <i class="dragch fa fa-arrows-v"></i>
-                <span class="lengthTimer hidden-xs"> 
+        <!-- todo: need to investigate as performance sometime laggy when using the matchBodyHeight directive here -->
+        <div matchBodyHeight="540" id="campaignView" style="padding-right: 5px; overflow-y: auto">
+            <draggable-list (onItemSelected)="_onItemSelected($event)" [customTemplate]="customTemplate" (onDragComplete)="_onDragComplete($event)" [items]="m_blockList"></draggable-list>
+            <template #customTemplate let-item>
+                <a href="#" [attr.data-block_id]="item.blockID">
+                    <i class="fa {{item.blockFontAwesome}}"></i>
+                    <span>{{item.blockName}}</span>
+                    <i class="dragch fa fa-arrows-v"></i>
+                    <span class="lengthTimer hidden-xs"> 
                     {{item.duration | FormatSecondsPipe}}
                 </span>
-            </a>
-        </template>
+                </a>
+            </template>    
+        </div>
     `
 })
 
