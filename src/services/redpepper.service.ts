@@ -1,8 +1,8 @@
 import {Injectable} from "@angular/core";
 import {Observable} from "rxjs";
-import {IDataBaseManager, ILoadManager, IPepperConnection, IPepperAuthReply} from "../store/imsdb.interfaces";
+import {IDataBaseManager, ILoadManager, IPepperAuthReply, IPepperConnection} from "../store/imsdb.interfaces";
 import * as MsdbModels from "../store/imsdb.interfaces_auto";
-import {TableNames, ISDK} from "../store/imsdb.interfaces_auto";
+import {ISDK, TableNames} from "../store/imsdb.interfaces_auto";
 import * as MsdbModelsExtended from "../store/model/msdb-models-extended";
 import {StoreModel} from "../store/model/StoreModel";
 import {List} from "immutable";
@@ -221,7 +221,7 @@ export class RedPepperService {
      @param {Number} i_campaign_timeline_id
      @return none
      **/
-    updateTotalTimelineDuration(i_campaign_timeline_id):void {
+    updateTotalTimelineDuration(i_campaign_timeline_id): void {
         var longestChannelDuration = 0;
         // Get all timelines
         $(this.databaseManager.table_campaign_timelines().getAllPrimaryKeys()).each((k, campaign_timeline_id) => {
@@ -246,7 +246,7 @@ export class RedPepperService {
             }
         });
         this.setCampaignTimelineRecord(i_campaign_timeline_id, 'timeline_duration', longestChannelDuration);
-        this.addPendingTables(['table_campaign_timelines','table_campaign_timeline_chanels','table_campaign_timeline_chanel_players']);
+        this.addPendingTables(['table_campaign_timelines', 'table_campaign_timeline_chanels', 'table_campaign_timeline_chanel_players']);
     }
 
     /**
@@ -324,7 +324,7 @@ export class RedPepperService {
     }
 
     //todo: finish process
-    createCampaignEntire(screenProps:{}, campaignName:string, resolution:string):number {
+    createCampaignEntire(screenProps: {}, campaignName: string, resolution: string): number {
 
         if (campaignName == '')
             campaignName = 'new campaign';
@@ -1570,10 +1570,85 @@ export class RedPepperService {
      @param {String} escapedHTML
      @return {String}
      **/
+    /**
+     "Good" old IE, always a headache, jQuery workarounds....
+     @method ieFixEscaped
+     @param {String} escapedHTML
+     @return {String}
+     **/
     ieFixEscaped(escapedHTML) {
         return escapedHTML.replace(/xmlns="http:\/\/www.w3.org\/1999\/xhtml"/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&').replace(/<rss/gi, '<Rss').replace(/rss>/g, 'Rss>').replace(/<background/gi, '<Background').replace(/background>/gi, 'Background>').replace(/<appearance/gi, '<Appearance').replace(/appearance>/gi, 'Appearance>').replace(/<gradientpoints/gi, '<GradientPoints').replace(/gradientpoints>/gi, 'GradientPoints>').replace(/<aspectratio/gi, '<AspectRatio').replace(/aspectratio>/gi, 'AspectRatio>').replace(/<layout/gi, '<Layout').replace(/layout>/gi, 'Layout>').replace(/<title/gi, '<Title').replace(/title>/gi, 'Title>').replace(/<description/gi, '<Description').replace(/description>/gi, 'Description>').replace(/<data/gi, '<Data').replace(/data>/gi, 'Data>').replace(/<player/gi, '<Player').replace(/player>/gi, 'Player>').replace(/<players/gi, '<Players').replace(/players>/gi, 'Players>').replace(/<text/gi, '<Text').replace(/text>/gi, 'Text>').replace(/<eventCommands/gi, '<EventCommands').replace(/eventCommands>/gi, 'EventCommands>').replace(/<eventCommand/gi, '<EventCommand').replace(/eventCommand>/gi, 'EventCommand>').replace(/<border/gi, '<Border').replace(/border>/gi, 'Border>').replace(/<scene/gi, '<Scene').replace(/scene>/gi, 'Scene>').replace(/<clock/gi, '<Clock').replace(/clock>/gi, 'Clock>').replace(/<point/gi, '<Point').replace(/point>/gi, 'Point>').replace(/<video/gi, '<Video').replace(/video>/gi, 'Video>').replace(/<image/gi, '<Image').replace(/image>/gi, 'Image>').replace(/<label/gi, '<Label').replace(/label>/gi, 'Label>').replace(/<font/gi, '<Font').replace(/font>/gi, 'Font>').replace(/fontsize/gi, 'fontSize').replace(/startdate/gi, 'startDate').replace(/enddate/gi, 'endDate').replace(/fontcolor/gi, 'fontColor').replace(/fontfamily/gi, 'fontFamily').replace(/fontweight/gi, 'fontWeight').replace(/fontstyle/gi, 'fontStyle').replace(/bordercolor/gi, 'borderColor').replace(/borderthickness/gi, 'borderThickness').replace(/cornerradius/gi, 'cornerRadius').replace(/textdecoration/gi, 'textDecoration').replace(/textalign/gi, 'textAlign').replace(/hdatasrc/gi, 'hDataSrc').replace(/minrefreshtime/gi, 'minRefreshTime').replace(/itemspath/gi, 'itemsPath').replace(/slideshow/gi, 'slideShow').replace(/iteminterval/gi, 'itemInterval').replace(/playvideoinfull/gi, 'playVideoInFull').replace(/randomorder/gi, 'randomOrder').replace(/providertype/gi, 'providerType').replace(/fieldname/gi, 'fieldName').replace(/fieldtype/gi, 'fieldType').replace(/gradienttype/gi, 'gradientType').replace(/autorewind/gi, 'autoRewind').replace(/clockformat/gi, 'clockFormat').replace(/clockmask/gi, 'clockMask').replace(/hresource/gi, 'hResource').replace(/videoidlist/gi, 'VideoIdList').replace(/<page/gi, '<Page').replace(/page>/gi, 'Page>').replace(/<gps/gi, '<GPS').replace(/gps>/gi, 'GPS>').replace(/<fixed/gi, '<Fixed').replace(/fixed>/gi, 'Fixed>').replace(/<xmlitem/gi, '<XmlItem').replace(/xmlitem>/gi, 'XmlItem>').replace(/<json/gi, '<Json').replace(/json>/gi, 'Json>').replace(/<locationbased/gi, '<LocationBased').replace(/locationbased>/gi, 'LocationBased>').replace(/<params/gi, '<Params').replace(/params>/gi, 'Params>').replace(/<url/gi, '<Url').replace(/url>/gi, 'Url>').replace(/maintainaspectratio/gi, 'maintainAspectRatio').replace(/<resource/gi, '<Resource').replace(/resource>/g, 'Resource>').// replace(/<htdata/gi, '<htData').replace(/htdata>/gi, 'htData>').
         replace(/<link/gi, '<LINK').replace(/link>/g, 'LINK>');
     }
+
+    // ieFixEscaped (escapedHTML) {
+    //     return escapedHTML.replace(/xmlns="http:\/\/www.w3.org\/1999\/xhtml"/g, '').
+    //     replace(/&lt;/g, '<').
+    //     replace(/&gt;/g, '>').
+    //     replace(/&amp;/g, '&').
+    //     replace(/<rss/gi, '<Rss').replace(/rss>/g, 'Rss>').
+    //     replace(/<background/gi, '<Background').replace(/background>/gi, 'Background>').
+    //     replace(/<appearance/gi, '<Appearance').replace(/appearance>/gi, 'Appearance>').
+    //     replace(/<gradientpoints/gi, '<GradientPoints').replace(/gradientpoints>/gi, 'GradientPoints>').
+    //     replace(/<aspectratio/gi, '<AspectRatio').replace(/aspectratio>/gi, 'AspectRatio>').
+    //     replace(/<layout/gi, '<Layout').replace(/layout>/gi, 'Layout>').
+    //     replace(/<title/gi, '<Title').replace(/title>/gi, 'Title>').
+    //     replace(/<description/gi, '<Description').replace(/description>/gi, 'Description>').
+    //     replace(/<data/gi, '<Data').replace(/data>/gi, 'Data>').
+    //     replace(/<player/gi, '<Player').replace(/player>/gi, 'Player>').
+    //     replace(/<players/gi, '<Players').replace(/players>/gi, 'Players>').
+    //     replace(/<text/gi, '<Text').replace(/text>/gi, 'Text>').
+    //     replace(/<eventCommands/gi, '<EventCommands').replace(/eventCommands>/gi, 'EventCommands>').
+    //     replace(/<eventCommand/gi, '<EventCommand').replace(/eventCommand>/gi, 'EventCommand>').
+    //     replace(/<border/gi, '<Border').replace(/border>/gi, 'Border>').
+    //     replace(/<scene/gi, '<Scene').replace(/scene>/gi, 'Scene>').
+    //     replace(/<clock/gi, '<Clock').replace(/clock>/gi, 'Clock>').
+    //     replace(/<point/gi, '<Point').replace(/point>/gi, 'Point>').
+    //     replace(/<video/gi, '<Video').replace(/video>/gi, 'Video>').
+    //     replace(/<image/gi, '<Image').replace(/image>/gi, 'Image>').
+    //     replace(/<label/gi, '<Label').replace(/label>/gi, 'Label>').
+    //     replace(/<font/gi, '<Font').replace(/font>/gi, 'Font>').
+    //     replace(/fontsize/gi, 'fontSize').
+    //     replace(/startdate/gi, 'startDate').
+    //     replace(/enddate/gi, 'endDate').
+    //     replace(/fontcolor/gi, 'fontColor').
+    //     replace(/fontfamily/gi, 'fontFamily').
+    //     replace(/fontweight/gi, 'fontWeight').
+    //     replace(/fontstyle/gi, 'fontStyle').
+    //     replace(/bordercolor/gi, 'borderColor').
+    //     replace(/borderthickness/gi, 'borderThickness').
+    //     replace(/cornerradius/gi, 'cornerRadius').
+    //     replace(/textdecoration/gi, 'textDecoration').
+    //     replace(/textalign/gi, 'textAlign').
+    //     replace(/hdatasrc/gi, 'hDataSrc').
+    //     replace(/minrefreshtime/gi, 'minRefreshTime').
+    //     replace(/itemspath/gi, 'itemsPath').
+    //     replace(/slideshow/gi, 'slideShow').
+    //     replace(/iteminterval/gi, 'itemInterval').
+    //     replace(/playvideoinfull/gi, 'playVideoInFull').
+    //     replace(/randomorder/gi, 'randomOrder').
+    //     replace(/providertype/gi, 'providerType').
+    //     replace(/fieldname/gi, 'fieldName').
+    //     replace(/fieldtype/gi, 'fieldType').
+    //     replace(/gradienttype/gi, 'gradientType').
+    //     replace(/autorewind/gi, 'autoRewind').
+    //     replace(/clockformat/gi, 'clockFormat').
+    //     replace(/clockmask/gi, 'clockMask').
+    //     replace(/hresource/gi, 'hResource').
+    //     replace(/videoidlist/gi, 'VideoIdList').
+    //     replace(/<page/gi, '<Page').replace(/page>/gi, 'Page>').
+    //     replace(/<gps/gi, '<GPS').replace(/gps>/gi, 'GPS>').
+    //     replace(/<fixed/gi, '<Fixed').replace(/fixed>/gi, 'Fixed>').
+    //     replace(/<xmlitem/gi, '<XmlItem').replace(/xmlitem>/gi, 'XmlItem>').
+    //     replace(/<json/gi, '<Json').replace(/json>/gi, 'Json>').
+    //     replace(/<locationbased/gi, '<LocationBased').replace(/locationbased>/gi, 'LocationBased>').
+    //     replace(/<params/gi, '<Params').replace(/params>/gi, 'Params>').
+    //     replace(/<url/gi, '<Url').replace(/url>/gi, 'Url>').
+    //     replace(/maintainaspectratio/gi, 'maintainAspectRatio').
+    //     replace(/<resource/gi, '<Resource').replace(/resource>/g, 'Resource>').
+    //     // replace(/<htdata/gi, '<htData').replace(/htdata>/gi, 'htData>').
+    //     replace(/<link/gi, '<LINK').replace(/link>/g, 'LINK>');
+    // }
 
     /**
      append scene player block to pepper player_data table
@@ -2077,7 +2152,7 @@ export class RedPepperService {
 
         var sequenceIndex = -1;
 
-        $(this.databaseManager.table_campaign_timeline_sequences().getAllPrimaryKeys()).each((k, campaign_timeline_sequence_id)=> {
+        $(this.databaseManager.table_campaign_timeline_sequences().getAllPrimaryKeys()).each((k, campaign_timeline_sequence_id) => {
             var recCampaignTimelineSequence = this.databaseManager.table_campaign_timeline_sequences().getRec(campaign_timeline_sequence_id);
             if (recCampaignTimelineSequence['campaign_timeline_id'] == i_campaign_timeline_id) {
                 sequenceIndex = recCampaignTimelineSequence['sequence_index'];

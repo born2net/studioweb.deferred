@@ -28,7 +28,7 @@ import {Tab} from "../../comps/tabs/tab";
                         <block-prop-ext-image [setBlockData]="m_blockData"></block-prop-ext-image>
                     </div>
                     <div *ngSwitchCase="m_blockLabels.LABEL">
-                        <h1>label</h1>
+                        <block-prop-label [setBlockData]="m_blockData"></block-prop-label>
                     </div>
                     <div *ngSwitchCase="m_blockLabels.QR">
                         <h1>QR</h1>

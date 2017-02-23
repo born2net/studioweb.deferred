@@ -808,14 +808,15 @@ export class BlockService {
      @param {String} [i_noNotify] if set, fire event announcing data saved
      @param {Boolean} [i_xmlIsString] if set, bypass serializeToString since already in string format
      **/
-    setBlockPlayerData(blockData: IBlockData, i_xmlDoc: XMLDocument, i_xmlIsString?: boolean) {
+    setBlockPlayerData(blockData: IBlockData, i_xmlDoc: XMLDocument | string) {
         var self = this;
-        var player_data;
-        if (i_xmlIsString == true) {
-            player_data = i_xmlDoc;
+        var player_data:string;
+        if (i_xmlDoc instanceof XMLDocument) {
+            player_data = (new XMLSerializer()).serializeToString(i_xmlDoc as XMLDocument);
         } else {
-            player_data = (new XMLSerializer()).serializeToString(i_xmlDoc);
+            player_data = i_xmlDoc as string;
         }
+        player_data = this.rp.ieFixEscaped(player_data);
         switch (self.blockPlacement) {
             case 'CHANNEL': {
                 this.rp.setCampaignTimelineChannelPlayerRecord(blockData.blockID, 'player_data', player_data);

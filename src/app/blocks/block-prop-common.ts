@@ -146,8 +146,8 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
             } else {
                 jQuery(data).append(jQuery(xBgSnippet));
             }
-            var player_data = self.rp.xmlToStringIEfix(domPlayerData);
-            domPlayerData = jQuery.parseXML(player_data);
+            // var player_data = self.rp.xmlToStringIEfix(domPlayerData);
+            // domPlayerData = jQuery.parseXML(player_data);
             this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
             // self._borderPropsPopulate();
             //self._announceBlockChanged();

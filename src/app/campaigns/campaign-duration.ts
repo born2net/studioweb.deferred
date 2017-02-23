@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component} from "@angular/core";
+import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {Observable} from "rxjs";
@@ -16,12 +16,13 @@ export class CampaignDuration extends Compbaser implements AfterViewInit {
 
     m_duration$:Observable<number>;
 
-    constructor(private yp: YellowPepperService) {
+    constructor(private yp: YellowPepperService, private cd:ChangeDetectorRef) {
         super();
     }
 
     ngAfterViewInit() {
         this.m_duration$ = this.yp.listenTimelineDurationChanged()
+        this.cd.markForCheck()
     }
 
     ngOnInit() {

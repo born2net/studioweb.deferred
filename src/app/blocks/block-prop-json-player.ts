@@ -212,8 +212,8 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
         var domPlayerData = this.m_blockData.playerDataDom;
         var buff = '<EventCommand from="event" condition="" command="firstPage" />';
         jQuery(domPlayerData).find('EventCommands').append(jQuery(buff));
-        domPlayerData = this.rp.xmlToStringIEfix(domPlayerData)
-        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData, true);
+        // domPlayerData = this.rp.xmlToStringIEfix(domPlayerData)
+        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
     _onSceneSelectionChanged(i_scene_id) {
@@ -275,8 +275,8 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
         var target = jQuery(domPlayerData).find('EventCommands').children().get(parseInt(index));
         jQuery(target).find('Params').remove();
         jQuery(target).append('<Params> <Url name="' + url + '" /></Params>');
-        domPlayerData = this.rp.xmlToStringIEfix(domPlayerData);
-        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData, true);
+        // domPlayerData = this.rp.xmlToStringIEfix(domPlayerData);
+        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
     /**
