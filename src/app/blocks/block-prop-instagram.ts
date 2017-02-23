@@ -6,9 +6,7 @@ import * as _ from "lodash";
 
 @Component({
     selector: 'block-prop-instagram',
-    host: {
-        '(input-blur)': 'saveToStore($event)'
-    },
+    host: {'(input-blur)': 'saveToStore($event)'},
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <small class="debug">{{me}}</small>
@@ -77,7 +75,7 @@ export class BlockPropInstagram extends Compbaser implements AfterViewInit {
         } else {
             bootbox.alert('Browser popups are blocked, please enable and try again');
         }
-    }           
+    }
 
     private saveToStore() {
         con(this.m_contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.m_contGroup.value)));

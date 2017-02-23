@@ -16,18 +16,22 @@ import {SimpleGridRecord} from "../../comps/simple-grid-module/SimpleGridRecord"
 @Component({
     selector: 'block-prop-json-player',
     changeDetection: ChangeDetectionStrategy.OnPush,
+    host: {'(input-blur)': 'saveToStore($event)'},
     template: `
         <small class="debug">{{me}}</small>
-        <form class="inner15" novalidate autocomplete="off" [formGroup]="contGroup">
+        <form class="inner15" novalidate autocomplete="off" [formGroup]="m_contGroup">
             <div class="row">
-                <ul class="list-group">
-                    <!-- will need to support it later when usigng JSON Block -->
-                    <li *ngIf="m_showJsonUrl" class="list-group-item">
+                <ul class="list-group">                    
+                    <li *ngIf="standAlone" class="list-group-item">
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
-                            <input pattern="[0-9]|[a-z]|[A-Z]+"
-                                   type="text" class="form-control" minlength="3" maxlength="15"
-                                   placeholder="JSON URL">
+                            <input type="text" class="form-control" minlength="3" placeholder="json url" [formControl]="m_contGroup.controls['itemsUrl']">
+                        </div>
+                    </li>
+                    <li *ngIf="standAlone" class="list-group-item">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
+                            <input type="text" class="form-control" minlength="3" placeholder="object path" [formControl]="m_contGroup.controls['itemsPath']">
                         </div>
                     </li>
                     <li class="list-group-item">
@@ -42,7 +46,7 @@ import {SimpleGridRecord} from "../../comps/simple-grid-module/SimpleGridRecord"
                         <span i18n>play video to completion</span>
                         <div class="material-switch pull-right">
                             <input (change)="_onPlayVideoInFull(playVideoInFull.checked)"
-                                   [formControl]="contGroup.controls['playVideoInFull']"
+                                   [formControl]="m_contGroup.controls['playVideoInFull']"
                                    id="playVideoInFull" #playVideoInFull
                                    name="playVideoInFull" type="checkbox"/>
                             <label for="playVideoInFull" class="label-primary"></label>
@@ -52,7 +56,7 @@ import {SimpleGridRecord} from "../../comps/simple-grid-module/SimpleGridRecord"
                         <span i18n>random playback</span>
                         <div class="material-switch pull-right">
                             <input (change)="_onRandomPlay(randomOrder.checked)"
-                                   [formControl]="contGroup.controls['randomOrder']"
+                                   [formControl]="m_contGroup.controls['randomOrder']"
                                    id="randomOrder" #randomOrder
                                    name="randomOrder" type="checkbox"/>
                             <label for="randomOrder" class="label-primary"></label>
@@ -62,7 +66,7 @@ import {SimpleGridRecord} from "../../comps/simple-grid-module/SimpleGridRecord"
                         <span i18n>slideshow</span>
                         <div class="material-switch pull-right">
                             <input (change)="_onSlideShow(slideShow.checked)"
-                                   [formControl]="contGroup.controls['slideShow']"
+                                   [formControl]="m_contGroup.controls['slideShow']"
                                    id="slideShow" #slideShow
                                    name="slideShow" type="checkbox"/>
                             <label for="slideShow" class="label-primary"></label>
@@ -108,9 +112,8 @@ import {SimpleGridRecord} from "../../comps/simple-grid-module/SimpleGridRecord"
 export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
 
     private formInputs = {};
-    private contGroup: FormGroup;
+    private m_contGroup: FormGroup;
     private m_blockData: IBlockData;
-    private m_showJsonUrl = false;
     private m_sceneSelection = [];
     private m_sceneSeleced: any = {};
     private m_events: List<StoreModel>;
@@ -128,20 +131,24 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
             new StoreModel({name: 'loadUrl'})
         ]);
 
-        this.contGroup = fb.group({
+        this.m_contGroup = fb.group({
             'sceneSelection': [],
             'randomOrder': [],
             'slideShow': [],
             'playVideoInFull': [],
+            'itemsPath': [],
+            'itemsUrl': ['', [Validators.pattern(urlRegExp)]],
             'url': ['', [Validators.pattern(urlRegExp)]]
         });
-        _.forEach(this.contGroup.controls, (value, key: string) => {
-            this.formInputs[key] = this.contGroup.controls[key] as FormControl;
+        _.forEach(this.m_contGroup.controls, (value, key: string) => {
+            this.formInputs[key] = this.m_contGroup.controls[key] as FormControl;
         })
     }
 
     @ViewChild('simpleGrid')
     simpleGrid: SimpleGridTable;
+
+    @Input() standAlone: boolean = false;
 
 
     @Input()
@@ -287,20 +294,18 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
                     var sceneId = scenes[scene].id;
                     if (sceneId == selectedSceneID) {
                         this.m_sceneSeleced = scenes[scene];
-                        // this.contGroup.controls['sceneSelection'].updateValueAndValidity(sceneId);
                     }
-                    if (this.m_blockData.playerMimeScene == mimeType) {
+                    // if this component is used as a standalone Json Player, include in drop down all possible scenes
+                    if (self.m_blockData.playerMimeScene == mimeType || this.standAlone) {
                         this.m_sceneSelection.push({
                             sceneId, label, mimeType, value: scenes[scene]
                         })
                     }
                 }
-                // this.cd.detectChanges();
-            }, (e) => console.error(e)) //cancelOnDestroy please
+            }, (e) => console.error(e))
     }
 
     _render() {
-        // this.contGroup.reset();
         this._initSceneDropdown();
         this._initEventTable();
         var domPlayerData = this.m_blockData.playerDataDom
@@ -311,9 +316,18 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
         this.formInputs['randomOrder'].setValue(randomOrder);
         this.m_slideShowMode = StringJS(jQuery(xSnippet).attr('slideShow')).booleanToNumber(true) as number;
         this.formInputs['slideShow'].setValue(this.m_slideShowMode);
-        // this.cd.detectChanges();
     }
 
+    private saveToStore() {
+        if (this.m_contGroup.status != 'VALID')
+            return;
+        var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
+        var item = jQuery(domPlayerData).find('Json').find('Data');
+        jQuery(item).attr('itemsPath', this.m_contGroup.value.itemsPath);
+        jQuery(item).attr('url', this.m_contGroup.value.itemsUrl);
+        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+    }
+    
     destroy() {
     }
 }

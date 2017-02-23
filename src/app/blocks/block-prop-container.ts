@@ -34,7 +34,7 @@ import {Tab} from "../../comps/tabs/tab";
                         <block-prop-html [setBlockData]="m_blockData"></block-prop-html>
                     </div>
                     <div *ngSwitchCase="m_blockLabels.BLOCKCODE_JSON">
-                        <block-prop-json-player [setBlockData]="m_blockData"></block-prop-json-player>
+                        <block-prop-json-player [standAlone]="true" [setBlockData]="m_blockData"></block-prop-json-player>
                     </div>
                     <div *ngSwitchCase="m_blockLabels.BLOCKCODE_WORLD_WEATHER">
                         <block-prop-weather [setBlockData]="m_blockData"></block-prop-weather>
