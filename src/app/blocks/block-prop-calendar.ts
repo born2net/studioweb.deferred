@@ -171,7 +171,7 @@ export class BlockPropCalendar extends Compbaser implements AfterViewInit {
         if (_.isEmpty(endDate)) {
             var inWeek: number = date.setDate(new Date().getDate() + 7);
             var endDateUnix = moment(inWeek).unix();
-            endDate = moment(inWeek).format("MM/DD/YYYY");
+            endDate = moment(inWeek).format('YYYY-MM-DD');
             var domPlayerData = this.m_blockData.playerDataDom;
             var xSnippet = $(domPlayerData).find('Json').find('Data');
             $(xSnippet).attr('endDate', endDateUnix);
