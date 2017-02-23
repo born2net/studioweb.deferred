@@ -146,14 +146,15 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
 
     @Input()
     set setBlockData(i_blockData) {
-        /** Disabled as in this component we wish to always update UI on block changes
-         * since we are addinf and removing elements to event grid and need to be updated
-         // if (this.m_blockData && this.m_blockData.blockID != i_blockData.blockID) {
-         //     this.m_blockData = i_blockData;
-         //     this._render();
-         // } else {
-         //     this.m_blockData = i_blockData;
-         // }
+        /**
+         Disabled as in this component we wish to always update UI on block changes
+         since we are addinf and removing elements to event grid and need to be updated
+         if (this.m_blockData && this.m_blockData.blockID != i_blockData.blockID) {
+              this.m_blockData = i_blockData;
+             this._render();
+          } else {
+              this.m_blockData = i_blockData;
+         }
          **/
         this.m_blockData = i_blockData;
         this._render();
@@ -272,6 +273,7 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
      **/
     @Once()
     private _initSceneDropdown() {
+        var self = this;
         return this.yp.getSceneNames()
             .subscribe((scenes) => {
                 this.m_sceneSelection = [];

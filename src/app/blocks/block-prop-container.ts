@@ -33,6 +33,9 @@ import {Tab} from "../../comps/tabs/tab";
                     <div *ngSwitchCase="m_blockLabels.HTML">
                         <block-prop-html [setBlockData]="m_blockData"></block-prop-html>
                     </div>
+                    <div *ngSwitchCase="m_blockLabels.BLOCKCODE_JSON">
+                        <block-prop-json-player [setBlockData]="m_blockData"></block-prop-json-player>
+                    </div>
                     <div *ngSwitchCase="m_blockLabels.BLOCKCODE_WORLD_WEATHER">
                         <block-prop-weather [setBlockData]="m_blockData"></block-prop-weather>
                     </div>
@@ -54,6 +57,7 @@ import {Tab} from "../../comps/tabs/tab";
                     </div>
                 </div>
             </tab>
+            <!-- below are JSON based blocked which bind to scenes -->
             <tab #settings [tabtitle]="'settings'">
                 <div [ngSwitch]="m_blockTypeSelected">
                     <div *ngSwitchCase="m_blockLabels.BLOCKCODE_WORLD_WEATHER">
@@ -82,7 +86,6 @@ export class BlockPropContainer extends Compbaser implements AfterViewInit {
     m_blockLabels = BlockLabels;
     m_blockData: IBlockData;
     m_tabTitle: string = 'none';
-    m_color;
 
     constructor(private yp: YellowPepperService, private bs: BlockService, private cpService: ColorPickerService) {
         super();
@@ -99,7 +102,8 @@ export class BlockPropContainer extends Compbaser implements AfterViewInit {
                     this.m_tabTitle = blockData.blockAcronym;
                     this.m_blockData = blockData;
                     if (!this.settings) return;
-                    if (blockData.playerDataJsonHandle) {
+                    // for json based scenes show the settings, unless its the actuall Json Player which we don't
+                    if (blockData.playerDataJsonHandle && this.m_blockTypeSelected != '4300') {
                         this.settings.show = true;
                     } else {
                         this.settings.show = false;
