@@ -31,10 +31,11 @@ import {SimpleGridModule} from "../comps/simple-grid-module/SimpleGridModule";
 import {DropdownModule, RadioButtonModule} from 'primeng/primeng';
 import {BlockPropInstagram} from "../app/blocks/block-prop-instagram";
 import {BlockPropCalendar} from "../app/blocks/block-prop-calendar";
-import {BlockPropsTwitter} from "../app/blocks/block-props-twitter";
+import {BlockPropSheets} from "../app/blocks/block-prop-sheets";
+import {BlockPropTwitter} from "../app/blocks/block-prop-twitter";
 
 var sharedComponents = [Tabs, Tab, Infobox, Sliderpanel, Slideritem, PanelSplitMain, PanelSplitSide, PanelSplitContainer, ListToArrayPipe, FormatSecondsPipe, MatchBodyHeight, ScreenTemplate, BlurForwarder, DraggableList,
-    FontSelector, BlockPropContainer, BlockPropImage, BlockPropCommon, BlockPropHtml, BlockPropClock, BlockPropWeather,BlockPropInstagram, BlockPropJsonPlayer, BlockPropCalendar, BlockPropsTwitter];
+    FontSelector, BlockPropContainer, BlockPropImage, BlockPropCommon, BlockPropHtml, BlockPropClock, BlockPropWeather,BlockPropInstagram, BlockPropJsonPlayer, BlockPropCalendar, BlockPropSheets, BlockPropTwitter];
 
 @NgModule({
     imports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule, ContextMenuModule, ChartModule, ReactiveFormsModule, ColorPickerModule, DropdownModule, RadioButtonModule, SimpleGridModule],

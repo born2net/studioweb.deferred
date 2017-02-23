@@ -5,7 +5,7 @@ import {Compbaser, NgmslibService} from "ng-mslib";
 import * as _ from "lodash";
 
 @Component({
-    selector: 'block-props-twitter',
+    selector: 'block-prop-twitter',
     host: {
         '(input-blur)': 'saveToStore($event)'
     },
@@ -36,7 +36,7 @@ import * as _ from "lodash";
         </form>
     `
 })
-export class BlockPropsTwitter extends Compbaser implements AfterViewInit {
+export class BlockPropTwitter extends Compbaser implements AfterViewInit {
     m_formInputs = {};
     m_contGroup: FormGroup;
     m_blockData: IBlockData;

@@ -256,34 +256,3 @@ export class BlockPropCalendar extends Compbaser implements AfterViewInit {
     destroy() {
     }
 }
-
-
-// var randomOrder = StringJS(jQuery(xSnippet).attr('randomOrder')).booleanToNumber();
-// var startDate: any = $(item).attr('startDate');
-// if (_.isEmpty(startDate)) {
-//     var date = new Date();
-//     var startDateUnix = moment(date).unix();
-//     startDate = moment(date).format('YYYY-MM-DD');
-//     var domPlayerData = this.m_blockData.playerDataDom;
-//     var xSnippet = $(domPlayerData).find('Json').find('Data');
-//     $(xSnippet).attr('startDate', startDateUnix);
-//     this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
-// } else {
-//     startDate = moment.unix(parseInt(startDate)).format('YYYY-MM-DD');
-// }
-//
-// this.m_formInputs['startDate'].setValue(startDate);
-//
-// var endDate: any = $(item).attr('endDate');
-// if (_.isEmpty(endDate)) {
-//     var inWeek: number = date.setDate(new Date().getDate() + 7);
-//     var endDateUnix = moment(inWeek).unix();
-//     endDate = moment(inWeek).format('YYYY-MM-DD');
-//     var domPlayerData = this.m_blockData.playerDataDom;
-//     var xSnippet = $(domPlayerData).find('Json').find('Data');
-//     $(xSnippet).attr('endDate', endDateUnix);
-//     this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
-// } else {
-//     endDate = moment.unix(parseInt(endDate)).format('YYYY-MM-DD');
-// }
-// this.m_formInputs['endDate'].setValue(endDate);
