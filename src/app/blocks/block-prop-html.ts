@@ -13,44 +13,34 @@ import * as _ from "lodash";
     },
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <div>
-            <form novalidate autocomplete="off" [formGroup]="contGroup">
-                <div class="row">
-                    <div class="inner userGeneral">
-                        <div class="panel panel-default tallPanel">
-                            <div class="panel-heading">
-                                <small class="release">web properties
-                                    <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
-                                </small>
-                                <small class="debug">{{me}}</small>
-                            </div>
-                            <ul style="padding-top: 20px; padding-bottom: 20px" class="list-group">
-                                <li class="list-group-item">
-                                    url address
-                                    <input type="text" [formControl]="contGroup.controls['url']"/>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
+
+        <small class="debug">{{me}}</small>
+        <form novalidate autocomplete="off" class="inner5" [formGroup]="m_contGroup">
+            <div class="row">
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <span i18n>url</span><br/>
+                        <input class="default-prop-width" type="text" [formControl]="m_contGroup.controls['url']"/>
+                    </li>
+                </ul>
+            </div>
+        </form>
         <h5>block id {{m_blockData.blockID}}</h5>
     `
 })
 export class BlockPropHtml extends Compbaser implements AfterViewInit {
 
     private formInputs = {};
-    private contGroup: FormGroup;
+    private m_contGroup: FormGroup;
     private m_blockData: IBlockData;
 
     constructor(private fb: FormBuilder, private rp: RedPepperService, private bs: BlockService, private ngmslibService: NgmslibService) {
         super();
-        this.contGroup = fb.group({
+        this.m_contGroup = fb.group({
             'url': ['', [Validators.pattern(urlRegExp)]]
         });
-        _.forEach(this.contGroup.controls, (value, key: string) => {
-            this.formInputs[key] = this.contGroup.controls[key] as FormControl;
+        _.forEach(this.m_contGroup.controls, (value, key: string) => {
+            this.formInputs[key] = this.m_contGroup.controls[key] as FormControl;
         })
     }
 
@@ -69,7 +59,7 @@ export class BlockPropHtml extends Compbaser implements AfterViewInit {
     }
 
     _render() {
-        this.contGroup.reset();
+        this.m_contGroup.reset();
         var domPlayerData = this.m_blockData.playerDataDom
         var xSnippet = jQuery(domPlayerData).find('HTML');
         this.formInputs['url'].setValue(xSnippet.attr('src'));
@@ -77,12 +67,12 @@ export class BlockPropHtml extends Compbaser implements AfterViewInit {
 
 
     private saveToStore() {
-        // console.log(this.contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.contGroup.value)));
-        if (this.contGroup.status != 'VALID')
+        // console.log(this.m_contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.m_contGroup.value)));
+        if (this.m_contGroup.status != 'VALID')
             return;
         var domPlayerData = this.m_blockData.playerDataDom;
         var xSnippet = $(domPlayerData).find('HTML');
-        xSnippet.attr('src', this.contGroup.value.url);
+        xSnippet.attr('src', this.m_contGroup.value.url);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 

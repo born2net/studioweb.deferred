@@ -10,32 +10,23 @@ import {Lib} from "../../Lib";
     selector: 'block-prop-clock',
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <div>
+        <small class="debug">{{me}}</small>
+        <div style="padding: 5px">
             <form novalidate autocomplete="off">
                 <div class="row">
-                    <div class="inner userGeneral">
-                        <div class="panel panel-default tallPanel">
-                            <div class="panel-heading">
-                                <small class="release">web properties
-                                    <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
-                                </small>
-                                <small class="debug">{{me}}</small>
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <div id="blockClockCommonProperties">
+                                <span i18n>Choose format</span>
+                                <div class="radio" *ngFor="let item of m_clockFormats">
+                                    <label>
+                                        <input type="radio" name="options" (click)="m_model.options = item; _onFormatChanged(item)" [checked]="item === m_model.options" [value]="item">
+                                        {{item.format}}
+                                    </label>
+                                </div>
                             </div>
-                            <ul style="padding-top: 20px; padding-bottom: 20px" class="list-group">
-                                <li class="list-group-item">
-                                    <div id="blockClockCommonProperties">
-                                        <span i18n>Choose format</span>
-                                        <div class="radio" *ngFor="let item of m_clockFormats">
-                                            <label>
-                                                <input type="radio" name="options" (click)="m_model.options = item; _onFormatChanged(item)" [checked]="item === m_model.options" [value]="item">
-                                                {{item.format}}
-                                            </label>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
+                        </li>
+                    </ul>
                 </div>
             </form>
         </div>
