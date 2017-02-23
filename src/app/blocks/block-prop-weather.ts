@@ -86,7 +86,7 @@ export class BlockPropWeather extends Compbaser implements AfterViewInit {
         this.m_formInputs['unit'].setValue($data.attr('unit'));
         this.m_formInputs['style'].setValue($data.attr('style'));
         this.m_formInputs['address'].setValue($data.attr('address'));
-        this.cd.markForCheck();
+        //this.cd.markForCheck();
     }
 
     ngAfterViewInit() {

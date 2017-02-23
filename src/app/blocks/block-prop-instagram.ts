@@ -63,7 +63,7 @@ export class BlockPropInstagram extends Compbaser implements AfterViewInit {
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom
         var $data = $(domPlayerData).find('Json').find('Data');
         this.m_formInputs['token'].setValue($data.attr('token'));
-        this.cd.markForCheck();
+        // this.cd.markForCheck();
     }
 
     ngAfterViewInit() {

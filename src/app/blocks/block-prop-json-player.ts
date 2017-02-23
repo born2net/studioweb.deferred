@@ -34,9 +34,6 @@ import {SimpleGridRecord} from "../../comps/simple-grid-module/SimpleGridRecord"
                         Load with scene
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
-                            <!--<select #sceneSelection [(ngModel)]="m_sceneSeleced.id" style="height: 30px" (change)="_onSceneSelectionChanged($event.target.value)" formControlName="sceneSelection">-->
-                            <!--<option [selected]="scene.selected" [value]="scene.sceneId" *ngFor="let scene of m_sceneSelection">{{scene.label}}</option>-->
-                            <!--</select>-->
                             <p-dropdown [style]="{'width':'150px'}" (onChange)="_onSceneSelectionChanged($event)" [(ngModel)]="m_sceneSeleced" [options]="m_sceneSelection" [filter]="true" formControlName="sceneSelection"></p-dropdown>
                         </div>
                     </li>
@@ -275,7 +272,6 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
      **/
     @Once()
     private _initSceneDropdown() {
-        var self = this;
         return this.yp.getSceneNames()
             .subscribe((scenes) => {
                 this.m_sceneSelection = [];
@@ -297,7 +293,7 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
                         })
                     }
                 }
-                this.cd.detectChanges();
+                // this.cd.detectChanges();
             }, (e) => console.error(e)) //cancelOnDestroy please
     }
 
@@ -313,7 +309,7 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
         this.formInputs['randomOrder'].setValue(randomOrder);
         this.m_slideShowMode = StringJS(jQuery(xSnippet).attr('slideShow')).booleanToNumber(true) as number;
         this.formInputs['slideShow'].setValue(this.m_slideShowMode);
-        this.cd.detectChanges();
+        // this.cd.detectChanges();
     }
 
     destroy() {

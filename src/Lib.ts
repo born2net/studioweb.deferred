@@ -3,13 +3,12 @@ import {Injectable} from "@angular/core";
 import * as Immutable from "immutable";
 import {List, Map} from "immutable";
 import * as _ from "lodash";
-import * as moment_ from "moment";
+import * as moment from 'moment'
 import {Observable} from "rxjs";
 import {PartialObserver} from "rxjs/Observer";
 import {AnonymousSubscription} from "rxjs/Subscription";
 import {environment} from "./environments/environment";
 
-export const moment = moment_["default"];
 export var simpleRegExp = '[\\[\\]\\-A-Za-z0-9_~=!:@\.|\ ]{3,50}';
 //(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})
 export var urlRegExp = `(https?:\/\/(?:www\.|(?!www))\.*)`

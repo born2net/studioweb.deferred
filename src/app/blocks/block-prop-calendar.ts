@@ -3,6 +3,7 @@ import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {BlockService, IBlockData} from "./block-service";
 import {Compbaser, NgmslibService} from "ng-mslib";
 import * as _ from "lodash";
+import * as moment from 'moment'
 
 @Component({
     selector: 'block-prop-calendar',
@@ -46,24 +47,24 @@ import * as _ from "lodash";
 
                         <li *ngIf="m_mode" class="list-group-item">
                             <label i18n>days before today</label><br/>
-                            <input type="number"/>
+                            <input type="number" [formControl]="m_contGroup.controls['before']"/>
                         </li>
 
                         <li *ngIf="m_mode" class="list-group-item">
                             <label i18n>days after today</label><br/>
-                            <input type="number"/>
+                            <input type="number" [formControl]="m_contGroup.controls['after']"/>
                         </li>
 
                         <li *ngIf="!m_mode" class="list-group-item">
                             <label i18n>start date</label><br/>
-                            <input (blur)="_saveDates('daily_start',$event)" #datepickerSchedulerDailyStart type="date" [formControl]="m_contGroup.controls['start_date']"
+                            <input (blur)="_saveDates('daily_start',$event)" #datepickerSchedulerDailyStart type="date" [formControl]="m_contGroup.controls['startDate']"
                                    class="form-control"
                                    placeholder="start date">
                         </li>
 
                         <li *ngIf="!m_mode" class="list-group-item">
                             <label i18n>end date</label><br/>
-                            <input (blur)="_saveDates('daily_start',$event)" #datepickerSchedulerDailyStart type="date" [formControl]="m_contGroup.controls['end_date']"
+                            <input (blur)="_saveDates('daily_start',$event)" #datepickerSchedulerDailyStart type="date" [formControl]="m_contGroup.controls['endDate']"
                                    class="form-control"
                                    placeholder="start date">
                         </li>
@@ -90,8 +91,10 @@ export class BlockPropCalendar extends Compbaser implements AfterViewInit {
         this.m_contGroup = fb.group({
             'token': [''],
             'mode': [''],
-            'start_date': ['1/1/2020'],
-            'end_date': ['1/1/2020'],
+            'startDate': ['1/1/2020'],
+            'endDate': ['1/1/2020'],
+            'before': [],
+            'after': [],
             'calSelection': ['']
         });
         _.forEach(this.m_contGroup.controls, (value, key: string) => {
@@ -128,13 +131,55 @@ export class BlockPropCalendar extends Compbaser implements AfterViewInit {
         var $data = $(domPlayerData).find('Json').find('Data');
         var mode = $data.attr('mode');
         this.m_mode = (mode == 'fixed') ? false : true;
-        var daysAfter = $data.attr('after');
-        var daysBefore = $data.attr('before');
+        var before = $data.attr('before');
+        var after = $data.attr('after');
+        var startDate = $data.attr('startDate');
+        var endDate = $data.attr('endDate');
         this.m_formInputs['mode'].setValue(this.m_mode);
-        this.m_formInputs['start_date'].setValue(daysAfter);
-        this.m_formInputs['end_date'].setValue(daysBefore);
+        this.m_formInputs['endDate'].setValue(endDate);
+        this.m_formInputs['after'].setValue(before);
+        this.m_formInputs['before'].setValue(before);
         this.m_formInputs['token'].setValue($data.attr('token'));
         this._getGoogleCalendars();
+        this._populateStartEndDates();
+    }
+
+    /**
+     Populate the start and end dates for Google calendar date range selection
+     If first time date component is used, set startDate and endDate where
+     startDate is relative to today and endDate for a week from now
+     @method _populateStartEndDates
+     **/
+    _populateStartEndDates(): void {
+        var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
+        var item = $(domPlayerData).find('Json').find('Data');
+        var startDate:any = $(item).attr('startDate');
+        if (_.isEmpty(startDate)) {
+            var date = new Date();
+            var startDateUnix = moment(date).unix();
+            startDate = moment(date).format('YYYY-MM-DD');
+            var domPlayerData = this.m_blockData.playerDataDom;
+            var xSnippet = $(domPlayerData).find('Json').find('Data');
+            $(xSnippet).attr('startDate', startDateUnix);
+            this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+        } else {
+            startDate = moment.unix(parseInt(startDate)).format('YYYY-MM-DD');
+        }
+        this.m_formInputs['startDate'].setValue(startDate);
+
+        var endDate:any = $(item).attr('endDate');
+        if (_.isEmpty(endDate)) {
+            var inWeek: number = date.setDate(new Date().getDate() + 7);
+            var endDateUnix = moment(inWeek).unix();
+            endDate = moment(inWeek).format("MM/DD/YYYY");
+            var domPlayerData = this.m_blockData.playerDataDom;
+            var xSnippet = $(domPlayerData).find('Json').find('Data');
+            $(xSnippet).attr('endDate', endDateUnix);
+            this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+        } else {
+            endDate = moment.unix(parseInt(endDate)).format('YYYY-MM-DD');
+        }
+        this.m_formInputs['endDate'].setValue(endDate);
     }
 
     _onModeChange(i_value) {

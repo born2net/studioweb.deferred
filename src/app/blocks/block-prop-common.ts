@@ -304,11 +304,10 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         }
     }
 
-    @timeout(100)
     _updateBorderColor(i_value, i_color) {
         this.m_color = '#' + Lib.DecimalToHex(i_color);
         this.formInputs['border'].setValue(i_value);
-        this.cd.markForCheck();
+        // this.cd.markForCheck();
     }
 
     /**
