@@ -6,7 +6,7 @@ import * as _ from "lodash";
 import {urlRegExp} from "../../Lib";
 
 @Component({
-    selector: 'block-prop-ext-video',
+    selector: 'block-prop-video',
     host: {'(input-blur)': 'saveToStore($event)'},
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
@@ -14,16 +14,26 @@ import {urlRegExp} from "../../Lib";
         <form novalidate autocomplete="off" class="inner5" [formGroup]="m_contGroup">
             <div class="row">
                 <ul class="list-group">
-                    <li class="list-group-item">
+                    <li *ngIf="external" class="list-group-item">
                         <span i18n>url</span><br/>
                         <input class="default-prop-width" type="text" [formControl]="m_contGroup.controls['url']"/>
+                    </li>
+                    <li *ngIf="!external" class="list-group-item">
+                        <span i18n>maintain aspect ratio</span>
+                        <div class="material-switch pull-right">
+                            <input #imageRatio (change)="_toggleAspectRatio(imageRatio.checked)"
+                                   [formControl]="m_contGroup.controls['maintain']"
+                                   id="imageRatio"
+                                   name="imageRatio" type="checkbox"/>
+                            <label for="imageRatio" class="label-primary"></label>
+                        </div>
                     </li>
                 </ul>
             </div>
         </form>
     `
 })
-export class BlockPropExtVideo extends Compbaser implements AfterViewInit {
+export class BlockPropVideo extends Compbaser implements AfterViewInit {
     m_formInputs = {};
     m_contGroup: FormGroup;
     m_blockData: IBlockData;
@@ -31,12 +41,15 @@ export class BlockPropExtVideo extends Compbaser implements AfterViewInit {
     constructor(private fb: FormBuilder, private cd: ChangeDetectorRef, private bs: BlockService, private ngmslibService: NgmslibService) {
         super();
         this.m_contGroup = fb.group({
-            'url': ['', [Validators.pattern(urlRegExp)]]
+            'url': ['', [Validators.pattern(urlRegExp)]],
+            'maintain': []
         });
         _.forEach(this.m_contGroup.controls, (value, key: string) => {
             this.m_formInputs[key] = this.m_contGroup.controls[key] as FormControl;
         })
     }
+
+    @Input() external: boolean = false;
 
     @Input()
     set setBlockData(i_blockData) {
@@ -48,10 +61,27 @@ export class BlockPropExtVideo extends Compbaser implements AfterViewInit {
         }
     }
 
+    /**
+     Toggle maintain aspect ratio
+     **/
+    _toggleAspectRatio(i_value) {
+        i_value = StringJS(i_value).booleanToNumber()
+        var domPlayerData = this.m_blockData.playerDataDom;
+        var xSnippet = jQuery(domPlayerData).find('AspectRatio');
+        jQuery(xSnippet).attr('maintain', i_value);
+        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
+    }
+
     private _render() {
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom
-        var xSnippet = $(domPlayerData).find('LINK');
-        this.m_formInputs['url'].setValue(xSnippet.attr('src'));
+        if (this.external) {
+            var xSnippet = $(domPlayerData).find('LINK');
+            this.m_formInputs['url'].setValue(xSnippet.attr('src'));
+        } else {
+            var xSnippet = $(domPlayerData).find('AspectRatio');
+            var maintain = StringJS(jQuery(xSnippet).attr('maintain')).booleanToNumber();
+            this.m_formInputs['maintain'].setValue(maintain);
+        }
     }
 
     ngAfterViewInit() {

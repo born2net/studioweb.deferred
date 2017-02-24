@@ -14,11 +14,11 @@ import {urlRegExp} from "../../Lib";
         <form novalidate autocomplete="off" class="inner5" [formGroup]="m_contGroup">
             <div class="row">
                 <ul class="list-group">
-                    <li *ngIf="externalImage" class="list-group-item">
+                    <li *ngIf="external" class="list-group-item">
                         <span i18n>url</span><br/>
                         <input class="default-prop-width" type="text" [formControl]="m_contGroup.controls['url']"/>
                     </li>
-                    <li *ngIf="!externalImage" class="list-group-item">
+                    <li *ngIf="!external" class="list-group-item">
                         <span i18n>maintain aspect ratio</span>
                         <div class="material-switch pull-right">
                             <input #imageRatio (change)="_toggleAspectRatio(imageRatio.checked)"
@@ -59,7 +59,7 @@ export class BlockPropImage extends Compbaser implements AfterViewInit {
         }
     }
 
-    @Input() externalImage: boolean = false;
+    @Input() external: boolean = false;
 
     /**
      Toggle maintain aspect ratio
@@ -74,7 +74,7 @@ export class BlockPropImage extends Compbaser implements AfterViewInit {
 
     private _render() {
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom
-        if (this.externalImage) {
+        if (this.external) {
             var xSnippet = $(domPlayerData).find('LINK');
             this.m_formInputs['url'].setValue(xSnippet.attr('src'));
         } else {

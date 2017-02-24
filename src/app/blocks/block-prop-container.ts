@@ -19,13 +19,16 @@ import {Tab} from "../../comps/tabs/tab";
             <tab [tabtitle]="m_tabTitle">
                 <div [ngSwitch]="m_blockTypeSelected">
                     <div *ngSwitchCase="m_blockLabels.BLOCKCODE_IMAGE">
-                        <block-prop-image [externalImage]="false" [setBlockData]="m_blockData"></block-prop-image>
+                        <block-prop-image [external]="false" [setBlockData]="m_blockData"></block-prop-image>
                     </div>
                     <div *ngSwitchCase="m_blockLabels.IMAGE">
-                        <block-prop-image [externalImage]="true" [setBlockData]="m_blockData"></block-prop-image>
+                        <block-prop-image [external]="true" [setBlockData]="m_blockData"></block-prop-image>
+                    </div>
+                    <div *ngSwitchCase="m_blockLabels.BLOCKCODE_VIDEO">
+                        <block-prop-video [external]="false" [setBlockData]="m_blockData"></block-prop-video>
                     </div>
                     <div *ngSwitchCase="m_blockLabels.EXTERNAL_VIDEO">
-                        <block-prop-ext-video [setBlockData]="m_blockData"></block-prop-ext-video>
+                        <block-prop-video [external]="true" [setBlockData]="m_blockData"></block-prop-video>
                     </div>
                     <div *ngSwitchCase="m_blockLabels.LABEL">
                         <block-prop-label [setBlockData]="m_blockData"></block-prop-label>
