@@ -130,7 +130,7 @@ export class CampaignChannels extends Compbaser implements AfterViewInit {
 
             }).subscribe((i_blockList: Array<IBlockData>) => {
                 this.m_blockList = List(this._sortBlock(i_blockList));
-                this.draggableList.createSortable()
+                // this.draggableList.createSortable()
             }, e => console.error(e))
         )
 

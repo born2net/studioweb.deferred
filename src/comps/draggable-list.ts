@@ -75,12 +75,13 @@ export class DraggableList extends Compbaser implements AfterViewInit {
     m_items: List<any>
     m_selectedIdx = -1;
 
-    @Input() customTemplate: TemplateRef <Object>;
+    @Input() customTemplate: TemplateRef<Object>;
 
     @Input()
     set items(i_items: List<any>) {
         // this.m_selectedIdx = -1;
         this.m_items = i_items;
+        this.createSortable();
     }
 
     public deselect() {
@@ -106,9 +107,21 @@ export class DraggableList extends Compbaser implements AfterViewInit {
     @timeout(300)
     public createSortable() {
         var self = this;
+
         var selector = '.sortableList';
         if (jQuery(selector).children().length == 0) return;
         var sortable = document.querySelector(selector);
+        if (this.m_draggables) {
+            this.m_draggables.forEach((drag) => {
+                drag.kill()
+            });
+            // var a = Draggable.get(".sortableList");
+            // var sortable = document.querySelector(selector);
+            // var a = Draggable.get(sortable);
+            // con(a);
+            // Draggable.get(".sortableList").kill();
+        }
+
         self.m_draggables = Draggable.create(sortable.children, {
             type: "y",
             bounds: sortable,
