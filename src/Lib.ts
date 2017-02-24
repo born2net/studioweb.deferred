@@ -174,6 +174,30 @@ export class Lib {
         return parseFloat(parseFloat(i_value).toFixed(2));
     }
 
+    /**
+     Remove characters that a problemtaic to app / js
+     **/
+    static CleanProbCharacters(i_string:string, i_restriction:number) {
+        switch (i_restriction) {
+            case 1: {
+                i_string = i_string.replace(/{/ig, "(");
+                i_string = i_string.replace(/}/ig, ")");
+            }
+            case 2: {
+                i_string = i_string.replace(/</ig, "(");
+                i_string = i_string.replace(/>/ig, ")");
+            }
+            case 3: {
+                i_string = i_string.replace(/&/ig, "and");
+            }
+            case 4: {
+                i_string = i_string.replace(/"/ig, "`");
+                i_string = i_string.replace(/'/ig, "`");
+            }
+        }
+        return i_string;
+    }
+
     static CleanCharForXml(value: any): any {
         var clean = function (value: string) {
             if (_.isUndefined(value))

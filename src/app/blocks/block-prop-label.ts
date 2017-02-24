@@ -3,7 +3,7 @@ import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {BlockService, IBlockData} from "./block-service";
 import {RedPepperService} from "../../services/redpepper.service";
 import {Compbaser, NgmslibService} from "ng-mslib";
-import {urlRegExp} from "../../Lib";
+import {Lib, urlRegExp} from "../../Lib";
 import * as _ from "lodash";
 import {IFontSelector} from "../../comps/font-selector/font-selector";
 
@@ -21,7 +21,8 @@ import {IFontSelector} from "../../comps/font-selector/font-selector";
                 <ul class="list-group">
                     <li class="list-group-item">
                         <span i18n>url</span><br/>
-                        <input class="default-prop-width" type="text" [formControl]="m_contGroup.controls['url']"/>
+                        <textarea class="default-prop-width" spellcheck="true" rows="10" cols="50" type="textarea" [formControl]="m_contGroup.controls['text']">
+                        </textarea>
                     </li>
                 </ul>
             </div>
@@ -40,7 +41,7 @@ export class BlockPropLabel extends Compbaser implements AfterViewInit {
     constructor(private fb: FormBuilder, private rp: RedPepperService, private bs: BlockService, private ngmslibService: NgmslibService) {
         super();
         this.m_contGroup = fb.group({
-            'url': ['', [Validators.pattern(urlRegExp)]]
+            'text': ['']
         });
         _.forEach(this.m_contGroup.controls, (value, key: string) => {
             this.formInputs[key] = this.m_contGroup.controls[key] as FormControl;
@@ -62,20 +63,53 @@ export class BlockPropLabel extends Compbaser implements AfterViewInit {
     }
 
     _render() {
-        this.m_contGroup.reset();
         var domPlayerData = this.m_blockData.playerDataDom
-        var xSnippet = jQuery(domPlayerData).find('HTML');
-        this.formInputs['url'].setValue(xSnippet.attr('src'));
+        var xSnippetLabel = $(domPlayerData).find('Label');
+        var xSnippetText = $(xSnippetLabel).find('Text');
+        var xSnippetFont = $(xSnippetLabel).find('Font');
+        this.m_fontConfig = {
+            bold: xSnippetFont.attr('fontWeight') == 'bold' ? true : false,
+            italic: xSnippetFont.attr('fontStyle') == 'italic' ? true : false,
+            underline: xSnippetFont.attr('textDecoration') == 'underline' ? true : false,
+            alignment: xSnippetFont.attr('textAlign') as any,
+            font: xSnippetFont.attr('fontFamily'),
+            color: Lib.ColorToHex(Lib.DecimalToHex(xSnippetFont.attr('fontColor'))),
+            size: parseInt(xSnippetFont.attr('fontSize'))
+        };
+        this.formInputs['text'].setValue(xSnippetText.text());
     }
 
+
+    _onFontChanged(config: IFontSelector) {
+        var domPlayerData = this.m_blockData.playerDataDom;
+        var xSnippet = $(domPlayerData).find('Label');
+        var xSnippetFont = $(xSnippet).find('Font');
+        config.bold == true ? xSnippetFont.attr('fontWeight', 'bold') : xSnippetFont.attr('fontWeight', 'normal');
+        config.italic == true ? xSnippetFont.attr('fontStyle', 'italic') : xSnippetFont.attr('fontStyle', 'normal');
+        config.underline == true ? xSnippetFont.attr('textDecoration', 'underline') : xSnippetFont.attr('textDecoration', 'none');
+        xSnippetFont.attr('fontColor', Lib.ColorToDecimal(config.color));
+        xSnippetFont.attr('fontSize', config.size);
+        xSnippetFont.attr('fontFamily', config.font);
+        xSnippetFont.attr('textAlign', config.alignment);
+        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+    }
 
     private saveToStore() {
         // console.log(this.m_contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.m_contGroup.value)));
         if (this.m_contGroup.status != 'VALID')
             return;
+        var text = this.formInputs['text'].value;
+        text = Lib.CleanProbCharacters(text, 1);
         var domPlayerData = this.m_blockData.playerDataDom;
+        var xSnippet = $(domPlayerData).find('Label');
+        var xSnippetText = $(xSnippet).find('Text');
+        if (text != xSnippetText.text()){
+            $(xSnippetText).text(text);
+        }
+
+
         var xSnippet = $(domPlayerData).find('HTML');
-        xSnippet.attr('src', this.m_contGroup.value.url);
+        xSnippet.attr('src', this.formInputs['text'].value);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
