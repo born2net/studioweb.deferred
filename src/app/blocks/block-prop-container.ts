@@ -30,6 +30,9 @@ import {Tab} from "../../comps/tabs/tab";
                     <div *ngSwitchCase="m_blockLabels.EXTERNAL_VIDEO">
                         <block-prop-video [external]="true" [setBlockData]="m_blockData"></block-prop-video>
                     </div>
+                    <div *ngSwitchCase="m_blockLabels.MRSS">
+                        <block-prop-mrss [setBlockData]="m_blockData"></block-prop-mrss>
+                    </div>
                     <div *ngSwitchCase="m_blockLabels.LABEL">
                         <block-prop-label [setBlockData]="m_blockData"></block-prop-label>
                     </div>
