@@ -79,7 +79,6 @@ export class BlockPropLabel extends Compbaser implements AfterViewInit {
         this.formInputs['text'].setValue(xSnippetText.text());
     }
 
-
     _onFontChanged(config: IFontSelector) {
         var domPlayerData = this.m_blockData.playerDataDom;
         var xSnippet = $(domPlayerData).find('Label');

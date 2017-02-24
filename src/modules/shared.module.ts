@@ -20,7 +20,6 @@ import {DraggableList} from "../comps/draggable-list";
 import {ColorPickerModule} from "ngx-color-picker";
 import {Tabs} from "../comps/tabs/tabs";
 import {Tab} from "../comps/tabs/tab";
-import {BlockPropImage} from "../app/blocks/block-prop-image";
 import {BlockPropCommon} from "../app/blocks/block-prop-common";
 import {BlockPropHtml} from "../app/blocks/block-prop-html";
 import {BlockPropClock} from "../app/blocks/block-prop-clock";
@@ -34,12 +33,12 @@ import {BlockPropCalendar} from "../app/blocks/block-prop-calendar";
 import {BlockPropSheets} from "../app/blocks/block-prop-sheets";
 import {BlockPropTwitter} from "../app/blocks/block-prop-twitter";
 import {BlockPropExtVideo} from "../app/blocks/block-prop-ext-video";
-import {BlockPropExtImage} from "../app/blocks/block-prop-ext-image";
 import {BlockPropLabel} from "../app/blocks/block-prop-label";
+import {BlockPropImage} from "../app/blocks/block-prop-image";
 
 var sharedComponents = [Tabs, Tab, Infobox, Sliderpanel, Slideritem, PanelSplitMain, PanelSplitSide, PanelSplitContainer, ListToArrayPipe, FormatSecondsPipe, MatchBodyHeight, ScreenTemplate, BlurForwarder, DraggableList,
-    FontSelector, BlockPropContainer, BlockPropImage, BlockPropCommon, BlockPropHtml, BlockPropClock, BlockPropWeather, BlockPropInstagram, BlockPropJsonPlayer,
-    BlockPropCalendar, BlockPropSheets, BlockPropTwitter, BlockPropExtVideo, BlockPropExtImage, BlockPropLabel];
+    FontSelector, BlockPropContainer, BlockPropCommon, BlockPropHtml, BlockPropClock, BlockPropWeather, BlockPropInstagram, BlockPropJsonPlayer,
+    BlockPropCalendar, BlockPropSheets, BlockPropTwitter, BlockPropExtVideo, BlockPropImage, BlockPropLabel];
 
 @NgModule({
     imports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule, ContextMenuModule, ChartModule, ReactiveFormsModule, ColorPickerModule, DropdownModule, RadioButtonModule, SimpleGridModule],

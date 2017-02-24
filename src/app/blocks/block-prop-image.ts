@@ -1,148 +1,102 @@
-import {ChangeDetectionStrategy, Component, Input} from "@angular/core";
+import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input} from "@angular/core";
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
+import {BlockService, IBlockData} from "./block-service";
 import {Compbaser, NgmslibService} from "ng-mslib";
-import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
-import {YellowPepperService} from "../../services/yellowpepper.service";
-import {RedPepperService} from "../../services/redpepper.service";
-import {timeout} from "../../decorators/timeout-decorator";
-import {Observable} from "rxjs";
-import {simpleRegExp} from "../../Lib";
 import * as _ from "lodash";
-import {IBlockData} from "./block-service";
+import {urlRegExp} from "../../Lib";
 
 @Component({
     selector: 'block-prop-image',
+    host: {'(input-blur)': 'saveToStore($event)'},
     changeDetection: ChangeDetectionStrategy.OnPush,
-    host: {
-        '(input-blur)': 'saveToStore($event)'
-    },
     template: `
-        <div>
-            <form novalidate autocomplete="off" [formGroup]="contGroup">
-                <div class="row">
-                    <div class="inner userGeneral">
-                        <div class="panel panel-default tallPanel">
-                            <div class="panel-heading">
-                                <small class="release">image properties
-                                    <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
-                                </small>
-                                <small class="debug">{{me}}</small>
-                            </div>
-                            <ul class="list-group">
-                                <li class="list-group-item">
-                                    kiosk mode
-                                    <div class="material-switch pull-right">
-                                        <input (change)="saveToStore(customerNetwork2.checked)"
-                                               [formControl]="contGroup.controls['kiosk_mode']"
-                                               id="customerNetwork2" #customerNetwork2
-                                               name="customerNetwork2" type="checkbox"/>
-                                        <label for="customerNetwork2" class="label-primary"></label>
-                                    </div>
-                                </li>
-                                <li class="list-group-item">
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
-                                        <input [formControl]="contGroup.controls['campaign_name']" required
-                                               pattern="[0-9]|[a-z]|[A-Z]+"
-                                               type="text" class="form-control" minlength="3" maxlength="15"
-                                               placeholder="campaign name">
-                                    </div>
-                                </li>
-                                <li class="list-group-item">
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="fa fa-key"></i></span>
-                                        <input type="number" [formControl]="contGroup.controls['campaign_playlist_mode']" min="0"
-                                               class="form-control"
-                                               placeholder="access key">
-                                    </div>
-                                </li>
-                            </ul>
+        <small class="debug">{{me}}</small>
+        <form novalidate autocomplete="off" class="inner5" [formGroup]="m_contGroup">
+            <div class="row">
+                <ul class="list-group">
+                    <li *ngIf="externalImage" class="list-group-item">
+                        <span i18n>url</span><br/>
+                        <input class="default-prop-width" type="text" [formControl]="m_contGroup.controls['url']"/>
+                    </li>
+                    <li *ngIf="!externalImage" class="list-group-item">
+                        <span i18n>maintain aspect ratio</span>
+                        <div class="material-switch pull-right">
+                            <input #imageRatio (change)="_toggleAspectRatio(imageRatio.checked)"
+                                   [formControl]="m_contGroup.controls['maintain']"
+                                   id="imageRatio"
+                                   name="imageRatio" type="checkbox"/>
+                            <label for="imageRatio" class="label-primary"></label>
                         </div>
-                    </div>
-                </div>
-            </form>
-            <hr/>
-            <h5>block id {{m_blockData.blockID}}</h5>
-        </div>
-
-    `,
-    styles: [`
-        input.ng-invalid {
-            border-right: 10px solid red;
-        }
-
-        .material-switch {
-            position: relative;
-            padding-top: 10px;
-        }
-
-        .input-group {
-            padding-top: 10px;
-        }
-
-        i {
-            width: 20px;
-        }
-    `]
+                    </li>
+                </ul>
+            </div>
+        </form>
+    `
 })
-export class BlockPropImage extends Compbaser {
+export class BlockPropImage extends Compbaser implements AfterViewInit {
+    m_formInputs = {};
+    m_contGroup: FormGroup;
+    m_blockData: IBlockData;
 
-    private campaignModel: CampaignsModelExt;
-    private formInputs = {};
-    private contGroup: FormGroup;
-    private campaignModel$: Observable<CampaignsModelExt>;
-    private m_blockData:IBlockData;
-
-
-    constructor(private fb: FormBuilder, private ngmslibService: NgmslibService, private yp: YellowPepperService, private rp: RedPepperService) {
+    constructor(private fb: FormBuilder, private cd: ChangeDetectorRef, private bs: BlockService, private ngmslibService: NgmslibService) {
         super();
-
-        this.contGroup = fb.group({
-            'campaign_name': ['', [Validators.required, Validators.pattern(simpleRegExp)]],
-            'campaign_playlist_mode': [0],
-            'kiosk_mode': [0]
+        this.m_contGroup = fb.group({
+            'url': ['', [Validators.pattern(urlRegExp)]],
+            'maintain': []
         });
-        _.forEach(this.contGroup.controls, (value, key: string) => {
-            this.formInputs[key] = this.contGroup.controls[key] as FormControl;
+        _.forEach(this.m_contGroup.controls, (value, key: string) => {
+            this.m_formInputs[key] = this.m_contGroup.controls[key] as FormControl;
         })
-
-        this.cancelOnDestroy(
-            this.yp.listenCampaignSelected().subscribe((campaign: CampaignsModelExt) => {
-                this.campaignModel = campaign;
-                this.renderFormInputs();
-            })
-        )
-
-        this.campaignModel$ = this.yp.listenCampaignValueChanged()
-
     }
 
     @Input()
     set setBlockData(i_blockData) {
-        this.m_blockData = i_blockData;
+        if (this.m_blockData && this.m_blockData.blockID != i_blockData.blockID) {
+            this.m_blockData = i_blockData;
+            this._render();
+        } else {
+            this.m_blockData = i_blockData;
+        }
     }
 
-    @timeout()
+    @Input() externalImage: boolean = false;
+
+    /**
+     Toggle maintain aspect ratio
+     **/
+    _toggleAspectRatio(i_value) {
+        i_value = StringJS(i_value).booleanToNumber()
+        var domPlayerData = this.m_blockData.playerDataDom;
+        var xSnippet = jQuery(domPlayerData).find('AspectRatio');
+        jQuery(xSnippet).attr('maintain', i_value);
+        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
+    }
+
+    private _render() {
+        var domPlayerData: XMLDocument = this.m_blockData.playerDataDom
+        if (this.externalImage) {
+            var xSnippet = $(domPlayerData).find('LINK');
+            this.m_formInputs['url'].setValue(xSnippet.attr('src'));
+        } else {
+            var xSnippet = $(domPlayerData).find('AspectRatio');
+            var maintain = StringJS(jQuery(xSnippet).attr('maintain')).booleanToNumber();
+            this.m_formInputs['maintain'].setValue(maintain);
+        }
+    }
+
+    ngAfterViewInit() {
+        this._render();
+    }
+
     private saveToStore() {
-        // console.log(this.contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.contGroup.value)));
-        if (this.contGroup.status != 'VALID')
+        con(this.m_contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.m_contGroup.value)));
+        if (this.m_contGroup.status != 'VALID')
             return;
-        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_name', this.contGroup.value.campaign_name);
-        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_playlist_mode', this.contGroup.value.campaign_playlist_mode);
-        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_timeline_id', 0); //todo: you need to fix this as zero is arbitrary number right now
-        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_mode', this.contGroup.value.kiosk_mode);
-        this.rp.reduxCommit()
+        var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
+        var xSnippet = $(domPlayerData).find('LINK');
+        xSnippet.attr('src', this.m_contGroup.value.url);
+        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
-
-    private renderFormInputs() {
-        if (!this.campaignModel)
-            return;
-        _.forEach(this.formInputs, (value, key: string) => {
-            let data = this.campaignModel.getKey(key);
-            data = StringJS(data).booleanToNumber();
-            this.formInputs[key].setValue(data)
-        });
-    };
 
     destroy() {
     }
