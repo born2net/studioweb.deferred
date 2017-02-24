@@ -36,6 +36,7 @@ export class CampaignEditor extends Compbaser {
     m_campaignTimelinesModels: List<CampaignTimelinesModel>;
     m_isVisible1 = true;
     m_isVisible2 = true;
+    m_toggleShowChannel = true;
 
     constructor(private yp: YellowPepperService, private actions: AppdbAction) {
         super();

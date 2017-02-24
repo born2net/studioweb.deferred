@@ -220,5 +220,11 @@ export class DraggableList extends Compbaser implements AfterViewInit {
     }
 
     destroy() {
+        if (this.m_draggables) {
+            this.m_draggables.forEach((drag) => {
+                drag.kill()
+            });
+        }
+        this.m_draggables = null;
     }
 }
