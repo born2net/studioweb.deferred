@@ -6,7 +6,7 @@ import {urlRegExp} from "../../Lib";
 import * as _ from "lodash";
 
 @Component({
-    selector: 'block-prop-mrss',
+    selector: 'block-prop-rss',
     host: {'(input-blur)': 'saveToStore($event)'},
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
@@ -38,7 +38,7 @@ import * as _ from "lodash";
         </form>
     `
 })
-export class BlockPropMrss extends Compbaser implements AfterViewInit {
+export class BlockPropRss extends Compbaser implements AfterViewInit {
     m_formInputs = {};
     m_contGroup: FormGroup;
     m_blockData: IBlockData;
