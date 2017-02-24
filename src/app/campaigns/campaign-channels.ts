@@ -5,7 +5,6 @@ import {BlockService, IBlockData} from "../blocks/block-service";
 import {Observable, Subject} from "rxjs";
 import {RedPepperService} from "../../services/redpepper.service";
 import {YellowPepperService} from "../../services/yellowpepper.service";
-import * as _ from "lodash";
 import {Once} from "../../decorators/once-decorator";
 import {List} from "immutable";
 import {IUiState} from "../../store/store.data";
@@ -59,13 +58,13 @@ import {DraggableList} from "../../comps/draggable-list";
             <template #customTemplate let-item>
                 <a href="#" [attr.data-block_id]="item.blockID">
                     <i class="fa {{item.blockFontAwesome}}"></i>
-                    <span>{{item.blockName}}</span>
+                    <span>{{item.resource?.name || item.blockName}}</span>
                     <i class="dragch fa fa-arrows-v"></i>
                     <span class="lengthTimer hidden-xs"> 
                     {{item.duration | FormatSecondsPipe}}
                 </span>
                 </a>
-            </template>    
+            </template>
         </div>
     `
 })
@@ -101,7 +100,6 @@ export class CampaignChannels extends Compbaser implements AfterViewInit {
         )
 
         this.cancelOnDestroy(
-
             this.yp.listenCampaignTimelineBoardViewerSelected(true)
                 .combineLatest(this.durationChanged$)
 

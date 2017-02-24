@@ -5,6 +5,7 @@ import * as _ from "lodash";
 import {Observable} from "rxjs";
 import {CampaignTimelineChanelPlayersModelExt} from "../../store/model/msdb-models-extended";
 import {RedPepperService} from "../../services/redpepper.service";
+import {ResourcesModel} from "../../store/imsdb.interfaces_auto";
 
 export const BlockLabels = {
     'BLOCKCODE_SCENE': 3510,
@@ -53,6 +54,11 @@ export interface IBlockData {
     campaignTimelineChanelPlayersModelExt: CampaignTimelineChanelPlayersModelExt,
     duration: number;
     offset: number;
+    resource?: {
+        name: string,
+        handle: string,
+        type: string,
+    }
 }
 
 /**
@@ -739,8 +745,6 @@ export class BlockService {
                 fontAwesome: self.getFontAwesome('rss')
             }
         };
-
-
     }
 
     public getServiceType(): string {
@@ -762,6 +766,7 @@ export class BlockService {
                 var playerDataDom = $.parseXML(xml);
                 let playerDataJson = this.parser.xml2js(xml);
                 if (playerDataJson['Player']['_player']) {
+
                     /** Standard block **/
                     var code = playerDataJson['Player']['_player'];
                     var blockType = this.getBlockNameByCode(code)
@@ -798,6 +803,25 @@ export class BlockService {
                     campaignTimelineChanelPlayersModelExt: i_campaignTimelineChanelPlayersModel
                 };
                 return Observable.of(data)
+
+                /** for resources fill additional data **/
+            }).mergeMap((blockData: IBlockData) => {
+                var domPlayerData = blockData.playerDataDom;
+                var xSnippet = jQuery(domPlayerData).find('Resource');
+                if (xSnippet.length > 0) {
+                    blockData.resource = {
+                        handle: jQuery(xSnippet).attr('hResource'),
+                        name: '',
+                        type: ''
+                    };
+                    return this.yp.getResourceRecord(blockData.resource.handle)
+                        .map((i_resourcesModel: ResourcesModel) => {
+                            blockData.resource.name = i_resourcesModel.getResourceName()
+                            blockData.resource.type = i_resourcesModel.getResourceType()
+                            return blockData;
+                        })
+                }
+                return Observable.of(blockData);
             })
     }
 
@@ -810,7 +834,7 @@ export class BlockService {
      **/
     setBlockPlayerData(blockData: IBlockData, i_xmlDoc: XMLDocument | string) {
         var self = this;
-        var player_data:string;
+        var player_data: string;
         if (i_xmlDoc instanceof XMLDocument) {
             player_data = (new XMLSerializer()).serializeToString(i_xmlDoc as XMLDocument);
         } else {
@@ -1008,8 +1032,6 @@ export class BlockService {
         // return xPlayerData;
     }
 }
-
-
 
 
 // export const MapMimeProviders = {

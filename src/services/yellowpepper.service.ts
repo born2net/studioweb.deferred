@@ -12,7 +12,7 @@ import {
     CampaignTimelineChanelsModel,
     CampaignTimelineSchedulesModel,
     CampaignTimelineSequencesModel,
-    CampaignTimelinesModel, PlayerDataModel
+    CampaignTimelinesModel, PlayerDataModel, ResourcesModel
 } from "../store/imsdb.interfaces_auto";
 import {IScreenTemplateData} from "../comps/screen-template/screen-template";
 import {OrientationEnum} from "../app/campaigns/campaign-orientation";
@@ -337,6 +337,19 @@ export class YellowPepperService {
                 return i_campaignTimelineChanelPlayersModels
                     .find((i_campaignTimelineChanelPlayersModel) => {
                         return i_campaignTimelineChanelPlayersModel.getCampaignTimelineChanelPlayerId() == i_player_id
+                    })
+            }).take(1)
+    }
+
+    /**
+     Get a resource record via its resource_id.
+     **/
+    getResourceRecord(i_resource_id): Observable<ResourcesModel> {
+        return this.store.select(store => store.msDatabase.sdk.table_resources)
+            .map((i_resourcesModels: List<ResourcesModel>) => {
+                return i_resourcesModels
+                    .find((i_resourcesModel) => {
+                        return i_resourcesModel.getResourceId() == i_resource_id
                     })
             }).take(1)
     }
