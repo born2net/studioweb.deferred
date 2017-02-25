@@ -38,10 +38,11 @@ import {BlockPropImage} from "../app/blocks/block-prop-image";
 import {BlockPropMrss} from "../app/blocks/block-prop-mrss";
 import {BlockPropRss} from "../app/blocks/block-prop-rss";
 import {BlockPropCollection} from "../app/blocks/block-prop-collection";
+import {JsonEventGrid} from "../app/blocks/json-event-grid";
 
 var sharedComponents = [Tabs, Tab, Infobox, Sliderpanel, Slideritem, PanelSplitMain, PanelSplitSide, PanelSplitContainer, ListToArrayPipe, FormatSecondsPipe, MatchBodyHeight, ScreenTemplate, BlurForwarder, DraggableList,
     FontSelector, BlockPropContainer, BlockPropCommon, BlockPropHtml, BlockPropClock, BlockPropWeather, BlockPropInstagram, BlockPropJsonPlayer,
-    BlockPropCalendar, BlockPropSheets, BlockPropTwitter, BlockPropVideo, BlockPropImage, BlockPropLabel, BlockPropMrss, BlockPropRss, BlockPropCollection];
+    BlockPropCalendar, BlockPropSheets, BlockPropTwitter, BlockPropVideo, BlockPropImage, BlockPropLabel, BlockPropMrss, BlockPropRss, BlockPropCollection, JsonEventGrid];
 
 @NgModule({
     imports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule, ContextMenuModule, ChartModule, ReactiveFormsModule, ColorPickerModule, DropdownModule, RadioButtonModule, SimpleGridModule],
