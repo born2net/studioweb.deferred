@@ -33,6 +33,9 @@ import {Tab} from "../../comps/tabs/tab";
                     <div *ngSwitchCase="m_blockLabels.MRSS">
                         <block-prop-mrss [setBlockData]="m_blockData"></block-prop-mrss>
                     </div>
+                    <div *ngSwitchCase="m_blockLabels.BLOCKCODE_COLLECTION">
+                        <block-prop-collection [setBlockData]="m_blockData"></block-prop-collection>
+                    </div>
                     <div *ngSwitchCase="m_blockLabels.RSS">
                         <block-prop-rss [setBlockData]="m_blockData"></block-prop-rss>
                     </div>
