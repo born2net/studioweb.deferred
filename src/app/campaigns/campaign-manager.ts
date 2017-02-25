@@ -120,7 +120,7 @@ export class CampaignManager extends Compbaser {
         con('saving...');
         this.redPepperService.save((result) => {
             if (result.status == true) {
-                alert('saved');
+                bootbox.alert('saved');
             } else {
                 alert(JSON.stringify(result));
             }
