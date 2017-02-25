@@ -4,10 +4,10 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
 import {ISimpleGridEdit} from "../../comps/simple-grid-module/SimpleGrid";
 import {StoreModel} from "../../store/model/StoreModel";
 import {BlockService, IBlockData} from "./block-service";
-import {List} from "immutable";
-import * as _ from "lodash";
 import {SimpleGridRecord} from "../../comps/simple-grid-module/SimpleGridRecord";
 import {SimpleGridTable} from "../../comps/simple-grid-module/SimpleGridTable";
+import {List} from "immutable";
+import * as _ from "lodash";
 
 @Component({
     selector: 'json-event-grid',
@@ -60,7 +60,6 @@ export class JsonEventGrid extends Compbaser implements AfterViewInit {
             new StoreModel({name: 'lastPage'}),
             new StoreModel({name: 'loadUrl'})
         ]);
-        
     }
 
     @ViewChild('simpleGrid')
@@ -74,7 +73,6 @@ export class JsonEventGrid extends Compbaser implements AfterViewInit {
 
     _render() {
         this._initEventTable();
-        var domPlayerData = this.m_blockData.playerDataDom
     }
 
     /**
@@ -148,8 +146,6 @@ export class JsonEventGrid extends Compbaser implements AfterViewInit {
     }
 
     ngAfterViewInit() {
-
-
     }
 
     ngOnInit() {
