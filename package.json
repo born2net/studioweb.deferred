@@ -1,6 +1,6 @@
 {
   "name": "studioweb",
-  "version": "0.1.152",
+  "version": "0.1.153",
   "license": "Modified GPL (see readme.md)",
   "angular-cli": {},
   "scripts": {
@@ -85,7 +85,7 @@
     "zone.js": "^0.7.5"
   },
   "devDependencies": {
-    "@angular/cli": "^1.0.0-beta.32.3",
+    "@angular/cli": "^1.0.0-rc.0",
     "@angular/compiler-cli": "^2.4.7",
     "@angular/language-service": "^2.4.7",
     "@angularclass/hmr": "^1.2.2",

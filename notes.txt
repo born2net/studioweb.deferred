@@ -28,7 +28,7 @@ revert webpack ng tools: npm install --save @ngtools/webpack@1.2.4
 
 clear cache: npm clear cache
 
-npm install @angular/cli@1.0.0-beta.32.3 -g
+npm install @angular/cli@latest -g
 npm install -g @angular/cli
 
 

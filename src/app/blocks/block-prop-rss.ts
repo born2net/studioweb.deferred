@@ -2,8 +2,9 @@ import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, In
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {BlockService, IBlockData} from "./block-service";
 import {Compbaser, NgmslibService} from "ng-mslib";
-import {urlRegExp} from "../../Lib";
+import {Lib, urlRegExp} from "../../Lib";
 import * as _ from "lodash";
+import {IFontSelector} from "../../comps/font-selector/font-selector";
 
 @Component({
     selector: 'block-prop-rss',
@@ -22,14 +23,42 @@ import * as _ from "lodash";
                     <li *ngIf="m_showCustomUrl" class="list-group-item">
                         <input class="default-prop-width" type="text" formControlName="url"/>
                     </li>
+                    <li class="list-group-item">
+                        <label i18n>RSS refresh (minutes)</label><br/>
+                        <input class="default-prop-width" type="number" min="1" [formControl]="m_contGroup.controls['minRefreshTime']"/>
+                    </li>
+                    <li class="list-group-item">
+                        <label i18n>RSS scroll direction</label>
+                        <br/>
+                        <input type="radio" value="0" name="vertical" formControlName="vertical">
+                        <span i18n>Horizontal</span>
+                        <br/>
+                        <input type="radio" value="1" name="vertical" formControlName="vertical">
+                        <span i18n>Vertical</span>
+                    </li>
+                    <li class="list-group-item">
+                        <label i18n>RSS scroll speed</label>
+                        <br/>
+                        <input type="radio" value="20" name="speed" formControlName="speed">
+                        <span i18n>slow</span>
+                        <br/>
+                        <input type="radio" value="50" name="speed" formControlName="speed">
+                        <span i18n>medium</span>
+                        <br/>
+                        <input type="radio" value="100" name="speed" formControlName="speed">
+                        <span i18n>fast</span>
+                    </li>
+                    
                 </ul>
             </div>
+            <font-selector (onChange)="_onFontChanged($event)" [setConfig]="m_fontConfig"></font-selector>
         </form>
     `
 })
 export class BlockPropRss extends Compbaser implements AfterViewInit {
     m_formInputs = {};
     m_contGroup: FormGroup;
+    m_fontConfig: IFontSelector;
     m_blockData: IBlockData;
     m_showCustomUrl = false;
     m_mrssLinksData = [];
@@ -61,6 +90,9 @@ export class BlockPropRss extends Compbaser implements AfterViewInit {
         super();
         this.m_contGroup = fb.group({
             'url': ['', [Validators.pattern(urlRegExp)]],
+            'minRefreshTime': [1],
+            'vertical': [0],
+            'speed': [50],
             'rssSelection': []
         });
         _.forEach(this.m_contGroup.controls, (value, key: string) => {
@@ -98,10 +130,28 @@ export class BlockPropRss extends Compbaser implements AfterViewInit {
         this.m_showCustomUrl = this._isUrlCustom(event.target.value);
     }
 
+    _onFontChanged(config: IFontSelector) {
+        var domPlayerData = this.m_blockData.playerDataDom;
+        var xSnippet = jQuery(domPlayerData).find('Rss');
+        var xSnippetFont = jQuery(xSnippet).find('Font').eq(0);
+        config.bold == true ? xSnippetFont.attr('fontWeight', 'bold') : xSnippetFont.attr('fontWeight', 'normal');
+        config.italic == true ? xSnippetFont.attr('fontStyle', 'italic') : xSnippetFont.attr('fontStyle', 'normal');
+        config.underline == true ? xSnippetFont.attr('textDecoration', 'underline') : xSnippetFont.attr('textDecoration', 'none');
+        xSnippetFont.attr('fontColor', Lib.ColorToDecimal(config.color));
+        xSnippetFont.attr('fontSize', config.size);
+        xSnippetFont.attr('fontFamily', config.font);
+        xSnippetFont.attr('textAlign', config.alignment);
+        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+    }
+
     private _render() {
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom
         var xSnippet = $(domPlayerData).find('Rss');
+        var xSnippetFont = jQuery(xSnippet).find('Font').eq(0);
         var url = xSnippet.attr('url');
+        var vertical = $(xSnippet).attr('vertical');
+        var minRefreshTime = $(xSnippet).attr('minRefreshTime')
+        var speed = $(xSnippet).attr('speed')
 
         if (this._isUrlCustom(url)) {
             this.m_showCustomUrl = true;
@@ -111,7 +161,19 @@ export class BlockPropRss extends Compbaser implements AfterViewInit {
             this.m_showCustomUrl = false;
             this.m_formInputs['rssSelection'].setValue(url);
         }
-        this.cd.markForCheck();
+        this.m_formInputs['minRefreshTime'].setValue(minRefreshTime);
+        this.m_formInputs['speed'].setValue(speed);
+        this.m_formInputs['vertical'].setValue(vertical);
+
+        this.m_fontConfig = {
+            size: Number(xSnippetFont.attr('fontSize')),
+            alignment: <any>xSnippetFont.attr('textAlign'),
+            bold: xSnippetFont.attr('fontWeight') == 'bold' ? true : false,
+            italic: xSnippetFont.attr('fontStyle') == 'italic' ? true : false,
+            font: xSnippetFont.attr('fontFamily'),
+            underline: xSnippetFont.attr('textDecoration') == 'underline' ? true : false,
+            color: Lib.ColorToHex(Lib.DecimalToHex(xSnippetFont.attr('fontColor'))),
+        }
     }
 
     ngAfterViewInit() {
@@ -129,6 +191,9 @@ export class BlockPropRss extends Compbaser implements AfterViewInit {
         } else {
             $(xSnippet).attr('url', this.m_contGroup.value.rssSelection);
         }
+        $(xSnippet).attr('minRefreshTime', this.m_contGroup.value.minRefreshTime);
+        $(xSnippet).attr('speed', this.m_contGroup.value.speed);
+        $(xSnippet).attr('vertical', this.m_contGroup.value.vertical);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
