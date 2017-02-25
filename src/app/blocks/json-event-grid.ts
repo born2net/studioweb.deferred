@@ -43,7 +43,7 @@ import * as _ from "lodash";
                 </simpleGridTable>
             </div>
         </div>
-    `,
+    `
 })
 export class JsonEventGrid extends Compbaser implements AfterViewInit {
 
