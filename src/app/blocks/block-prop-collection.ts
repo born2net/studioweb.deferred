@@ -10,9 +10,15 @@ import * as _ from "lodash";
     host: {
         '(input-blur)': 'saveToStore($event)'
     },
+    styles: [`
+        /* walk up the ancestor tree and if darkTheme is found, apply style */
+        /*:host-context(.darkTheme) * {*/
+            /*background-color: #1e1e1e;*/
+        /*}*/
+    `],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-
+        <h2>test</h2>
         <small class="debug">{{me}}</small>
         <form novalidate autocomplete="off" class="inner5" [formGroup]="m_contGroup">
             <div class="row">
