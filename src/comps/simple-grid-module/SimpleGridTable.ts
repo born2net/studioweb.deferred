@@ -3,9 +3,10 @@ import {
     ChangeDetectionStrategy,
     Input,
     ContentChildren,
-    QueryList
+    QueryList, AfterViewInit, AfterContentInit, ContentChild
 } from "@angular/core";
 import {SimpleGridRecord} from "./SimpleGridRecord";
+import {SimpleGridDraggable} from "./SimpleGridDraggable";
 
 @Component({
     selector: 'simpleGridTable',
@@ -26,14 +27,15 @@ import {SimpleGridRecord} from "./SimpleGridRecord";
     `,
 })
 
-export class SimpleGridTable {
+export class SimpleGridTable  {
     @Input() sort;
 
     @Input() list;
 
     private selected;
 
-    @ContentChildren(SimpleGridRecord) simpleGridRecord: QueryList<SimpleGridRecord>;
+    @ContentChildren(SimpleGridRecord) simpleGridRecords: QueryList<SimpleGridRecord>;
+    @ContentChild(SimpleGridDraggable) simpleGridDraggable;
 
     public setSelected(i_selected: SimpleGridRecord) {
         this.deselect();
@@ -44,9 +46,10 @@ export class SimpleGridTable {
 
     public deselect() {
         this.selected = null;
-        if (!this.simpleGridRecord)
+        if (!this.simpleGridRecords && !this.simpleGridDraggable)
             return;
-        this.simpleGridRecord.map((i_simpleGridRecord: SimpleGridRecord) => {
+        var records:QueryList<SimpleGridRecord> = this.simpleGridRecords.length > 0 || this.simpleGridDraggable.simpleGridRecords;
+        records.map((i_simpleGridRecord: SimpleGridRecord) => {
             i_simpleGridRecord.selectedClass = false;
         })
     }

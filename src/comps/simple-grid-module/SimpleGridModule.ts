@@ -15,10 +15,11 @@ import {
     FormsModule,
     ReactiveFormsModule
 } from "@angular/forms";
+import {SimpleGridDraggable} from "./SimpleGridDraggable";
 // import {StoreModel} from "../../models/StoreModel";
 
 
-export const SIMPLEGRID_DIRECTIVES: Array<any> = [SimpleGridTable, SimpleGridSortableHeader, SimpleGridRecord, SimpleGridData, SimpleGridDataCurrency, SimpleGridDataImage, SimpleGridDataChecks, SimpleGridDataDropdown];
+export const SIMPLEGRID_DIRECTIVES: Array<any> = [SimpleGridTable, SimpleGridSortableHeader, SimpleGridRecord, SimpleGridData, SimpleGridDataCurrency, SimpleGridDataImage, SimpleGridDataChecks, SimpleGridDataDropdown, SimpleGridDraggable];
 
 export interface ISimpleGridEdit {
     value: string;
