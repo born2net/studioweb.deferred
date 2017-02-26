@@ -28,8 +28,8 @@ interface ICollectionItem {
     `],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-      <h2>test</h2>
       <small class="debug">{{me}}</small>
+      
       <form novalidate autocomplete="off" class="inner5" [formGroup]="m_contGroup">
         <div class="row">
           <li class="list-group-item">
