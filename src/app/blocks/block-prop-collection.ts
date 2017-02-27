@@ -42,7 +42,7 @@ import {JsonEventResourceModel} from "./json-event-grid";
                     </div>
                 </li>
                 <li class="list-group-item">
-                    <label i18n>Play this list in a sequential order</label>
+                    <label i18n>Play collection in sequence</label>
                     <div style="overflow-x: auto">
                         <div style="width: 250px">
                             <simpleGridTable #simpleGrid>

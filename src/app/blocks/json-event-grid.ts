@@ -46,7 +46,7 @@ export class JsonEventResourceModel extends StoreModel {
                         <th>go to</th>
                     </tr>
                     </thead>
-                    <tbody simpleGridDraggable (dragCompleted)="_onDragComplete($event)">
+                    <tbody>
                     <tr class="simpleGridRecord" simpleGridRecord *ngFor="let item of m_events; let index=index" [item]="item" [index]="index">
                         <td style="width: 30%" [editable]="true" (labelEdited)="_onLabelEdited($event,index)" field="event" simpleGridData [item]="item"></td>
                         <td style="width: 35%" simpleGridDataDropdown [testSelection]="_selectedAction()" (changed)="_setAction($event,index)" field="name" [item]="item" [dropdown]="m_actions"></td>
@@ -125,13 +125,6 @@ export class JsonEventGrid extends Compbaser implements AfterViewInit {
         this._initEventTable();
     }
 
-    _onDragComplete(list: Array<any>) {
-        con('---------------------');
-        list.forEach((item: StoreModel, i) => {
-            con(i + ' ' + item.getKey('event'))
-        })
-    }
-
     /**
      Load event list to block props UI
      @method _initEventTable
@@ -144,6 +137,8 @@ export class JsonEventGrid extends Compbaser implements AfterViewInit {
             var url = '';
             if (jQuery(eventCommand).attr('command') == 'loadUrl')
                 url = jQuery(eventCommand).find('Url').attr('name');
+            if (jQuery(eventCommand).attr('command') == 'selectPage')
+                url = $(eventCommand).find('Page').attr('name');
             if (_.isUndefined(url) || _.isEmpty(url))
                 url = '---';
             var storeModel = new StoreModel({
@@ -189,14 +184,7 @@ export class JsonEventGrid extends Compbaser implements AfterViewInit {
 
     _selectedResource() {
         return (a: StoreModel, b: StoreModel) => {
-            console.log(a,b);
-            if (a.getKey('name') == b.getKey('action'))
-                return 'selected';
-            var X = a.getKey('type');
-            var Y = b.getKey('type');
-            var Z = b.getKey('action');
-            if (a.getKey('type') == 'resource' || a.getKey('type') == 'scene' && b.getKey('action') == 'selectPage')
-                return 'selected';
+            return a.getKey('name') == b.getKey('url') ? 'selected' : '';
         }
     }
 

@@ -43,7 +43,7 @@ export class SimpleGridTable {
         if (!this.simpleGridRecords && !this.simpleGridDraggable)
             return;
         // content children parsed differently depending if we are using SimpleGridDraggable or not
-        var records: QueryList<SimpleGridRecord> = this.simpleGridRecords.length > 0 || this.simpleGridDraggable.simpleGridRecords;
+        var records: QueryList<SimpleGridRecord> = this.simpleGridRecords.length > 0 ? this.simpleGridRecords : this.simpleGridDraggable.simpleGridRecords;
         records.map((i_simpleGridRecord: SimpleGridRecord) => {
             i_simpleGridRecord.selectedClass = false;
         })
