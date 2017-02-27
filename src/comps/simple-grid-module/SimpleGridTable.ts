@@ -1,10 +1,4 @@
-import {
-    Component,
-    ChangeDetectionStrategy,
-    Input,
-    ContentChildren,
-    QueryList, AfterViewInit, AfterContentInit, ContentChild
-} from "@angular/core";
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ContentChild, ContentChildren, Input, QueryList} from "@angular/core";
 import {SimpleGridRecord} from "./SimpleGridRecord";
 import {SimpleGridDraggable} from "./SimpleGridDraggable";
 
@@ -15,7 +9,7 @@ import {SimpleGridDraggable} from "./SimpleGridDraggable";
         .simpleTable {
             background-color: white;
         }
-        
+
         * {
             font-size: 0.9em;
         }
@@ -23,19 +17,31 @@ import {SimpleGridDraggable} from "./SimpleGridDraggable";
     template: `
         <table class="table simpleTable">
             <ng-content></ng-content>
-        </table>      
+        </table>
     `,
 })
 
-export class SimpleGridTable  {
+export class SimpleGridTable {
     @Input() sort;
 
     @Input() list;
 
     private selected;
 
+    constructor(private cd: ChangeDetectorRef) {
+
+    }
+
     @ContentChildren(SimpleGridRecord) simpleGridRecords: QueryList<SimpleGridRecord>;
     @ContentChild(SimpleGridDraggable) simpleGridDraggable;
+
+    ngAfterViewInit() {
+        if (!this.simpleGridRecords && !this.simpleGridDraggable) return;
+        var records: QueryList<SimpleGridRecord> = this.simpleGridRecords.length > 0 || this.simpleGridDraggable.simpleGridRecords;
+        // records.changes.subscribe(val => {
+        //     var arr = records.toArray();
+        // });
+    }
 
     public setSelected(i_selected: SimpleGridRecord) {
         this.deselect();
@@ -48,7 +54,7 @@ export class SimpleGridTable  {
         this.selected = null;
         if (!this.simpleGridRecords && !this.simpleGridDraggable)
             return;
-        var records:QueryList<SimpleGridRecord> = this.simpleGridRecords.length > 0 || this.simpleGridDraggable.simpleGridRecords;
+        var records: QueryList<SimpleGridRecord> = this.simpleGridRecords.length > 0 || this.simpleGridDraggable.simpleGridRecords;
         records.map((i_simpleGridRecord: SimpleGridRecord) => {
             i_simpleGridRecord.selectedClass = false;
         })
@@ -56,5 +62,16 @@ export class SimpleGridTable  {
 
     public getSelected(): SimpleGridRecord {
         return this.selected;
+    }
+
+    public getOrder() {
+        if (!this.simpleGridRecords && !this.simpleGridDraggable) return;
+        var records: QueryList<SimpleGridRecord> = this.simpleGridRecords.length > 0 || this.simpleGridDraggable.simpleGridRecords;
+        records.notifyOnChanges()
+        // this.cd.detectChanges();
+        records.forEach((s: SimpleGridRecord) => {
+            console.log(s.index + ' ' + s.item.getKey('event'));
+        });
+
     }
 }

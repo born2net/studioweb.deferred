@@ -33,12 +33,12 @@ import * as _ from "lodash";
                         <th>url</th>
                     </tr>
                     </thead>
-                    <tbody simpleGridDraggable>
-                        <tr class="simpleGridRecord" simpleGridRecord *ngFor="let item of m_events; let index=index" [item]="item" [index]="index">
-                            <td style="width: 30%" [editable]="true" (labelEdited)="_onLabelEdited($event,index)" field="event" simpleGridData [item]="item"></td>
-                            <td style="width: 35%" simpleGridDataDropdown [testSelection]="_selectedAction()" (changed)="_setAction($event,index)" field="name" [item]="item" [dropdown]="m_actions"></td>
-                            <td style="width: 35%" [editable]="true" (labelEdited)="_onUrlEdited($event,index)" field="url" simpleGridData [item]="item"></td>
-                        </tr>
+                    <tbody simpleGridDraggable (dragCompleted)="_onDragComplete($event)">
+                    <tr class="simpleGridRecord" [attr.data-id]="item.getKey('id')" simpleGridRecord *ngFor="let item of m_events; let index=index" [item]="item" [index]="index">
+                        <td style="width: 30%" [editable]="true" (labelEdited)="_onLabelEdited($event,index)" field="event" simpleGridData [item]="item"></td>
+                        <td style="width: 35%" simpleGridDataDropdown [testSelection]="_selectedAction()" (changed)="_setAction($event,index)" field="name" [item]="item" [dropdown]="m_actions"></td>
+                        <td style="width: 35%" [editable]="true" (labelEdited)="_onUrlEdited($event,index)" field="url" simpleGridData [item]="item"></td>
+                    </tr>
                     </tbody>
                 </simpleGridTable>
             </div>
@@ -64,7 +64,7 @@ export class JsonEventGrid extends Compbaser implements AfterViewInit {
 
     @ViewChild('simpleGrid')
     simpleGrid: SimpleGridTable;
-    
+
     @Input()
     set setBlockData(i_blockData) {
         this.m_blockData = i_blockData;
@@ -73,6 +73,10 @@ export class JsonEventGrid extends Compbaser implements AfterViewInit {
 
     _render() {
         this._initEventTable();
+    }
+
+    _onDragComplete(events) {
+        this.simpleGrid.getOrder();
     }
 
     /**
@@ -90,6 +94,7 @@ export class JsonEventGrid extends Compbaser implements AfterViewInit {
             if (_.isUndefined(url) || _.isEmpty(url))
                 url = '---';
             var storeModel = new StoreModel({
+                id: rowIndex,
                 event: jQuery(eventCommand).attr('from'),
                 url: url,
                 action: jQuery(eventCommand).attr('command')
@@ -106,7 +111,7 @@ export class JsonEventGrid extends Compbaser implements AfterViewInit {
         jQuery(target).attr('command', event.value);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
-    
+
     _onRemoveEvent() {
         var record: SimpleGridRecord = this.simpleGrid.getSelected();
         if (_.isUndefined(record)) return;
