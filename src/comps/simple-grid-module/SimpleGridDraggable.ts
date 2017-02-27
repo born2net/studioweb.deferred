@@ -1,8 +1,18 @@
-import {ContentChildren, Directive, ElementRef, EventEmitter, forwardRef, Inject, Output, QueryList} from "@angular/core";
+import {
+    ContentChildren,
+    Directive,
+    ElementRef,
+    EventEmitter,
+    forwardRef,
+    Inject,
+    Output,
+    QueryList
+} from "@angular/core";
 import {SimpleGridTable} from "./SimpleGridTable";
 import {timeout} from "../../decorators/timeout-decorator";
 import {SimpleGridRecord} from "./SimpleGridRecord";
 import {Subscription} from "rxjs";
+import {StoreModel} from "../../models/StoreModel";
 
 @Directive({
     selector: 'tbody[simpleGridDraggable]'
@@ -47,14 +57,8 @@ export class SimpleGridDraggable {
     @timeout(500)
     public createSortable() {
         var self = this;
-        jQuery(self.el.nativeElement).children().each((i, child) => {
-            jQuery.data(child, "idx", i);
-
-        });
-        this.simpleGridRecords.forEach((rec: SimpleGridRecord, i) => {
-            // rec['child'] = children[i]
-            rec.index = i;
-        })
+        jQuery(self.el.nativeElement).children().each((i, child) => jQuery.data(child, "idx", i));
+        this.simpleGridRecords.forEach((rec: SimpleGridRecord, i) => rec.index = i);
 
         if (jQuery(self.el.nativeElement).children().length == 0) return;
         this._cleanSortables();
@@ -80,40 +84,16 @@ export class SimpleGridDraggable {
                 }
                 TweenLite.set(t.kids, {yPercent: 0, overwrite: "all"});
                 TweenLite.set(t, {y: 0, color: ""});
-                // self.simpleGridRecords.forEach((v:SimpleGridRecord)=>{
-                //     console.log(v.item.getKey('id'));
-                // })
-                // var items = jQuery(self.el.nativeElement).children();
-
-                // var first = jQuery(self.el.nativeElement).children().first();
-                // console.log('position ' + jQuery.data(first[0], "idx"));
-                //
-                // self.simpleGridRecords.forEach((rec:SimpleGridRecord,i)=>{
-                //     console.log('position ' + i + ' ' + rec.item.getKey('event'));
-                // })
-
+                var result = [];
                 jQuery(self.el.nativeElement).children().each((i, child) => {
-
                     var oldIndex = jQuery.data(child, "idx");
-
-                    var found:SimpleGridRecord = self.simpleGridRecords.find((rec:SimpleGridRecord)=>{
+                    var found: SimpleGridRecord = self.simpleGridRecords.find((rec: SimpleGridRecord) => {
                         return rec.index == oldIndex;
                     })
-                    console.log(i + ' ' + found.item.getKey('event'));
+                    // con(i + ' ' + found.item.getKey('event'));
+                    result.push(found.item)
                 })
-
-                // var items = jQuery().children().each((child,ela)=>{
-                //     var a = jQuery(self.el.nativeElement).outterHTML;
-                //     var b = jQuery(self.el.nativeElement).find('[data-block_id]');
-                //     var c = jQuery(self.el.nativeElement).find('data-block_id');
-                //     var d = jQuery(self.el.nativeElement).find('block_id');
-                //     var e = jQuery(ela).find('td');
-                // });
-                // self.dragCompleted.emit(items)
-
-                //_.each(self.m_draggables, function(i){
-                //    this.enabled(false);
-                //});
+                self.dragCompleted.emit(result)
             }
         });
     }

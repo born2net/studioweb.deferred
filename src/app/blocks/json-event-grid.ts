@@ -75,8 +75,12 @@ export class JsonEventGrid extends Compbaser implements AfterViewInit {
         this._initEventTable();
     }
 
-    _onDragComplete(events) {
-        this.simpleGrid.getOrder();
+    _onDragComplete(list:Array<any>) {
+        con('---------------------');
+        list.forEach((item:StoreModel,i)=>{
+            con(i + ' ' + item.getKey('event'))
+        })
+        // this.simpleGrid.getOrder();
     }
 
     /**
