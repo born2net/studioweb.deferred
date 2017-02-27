@@ -34,7 +34,7 @@ import * as _ from "lodash";
                     </tr>
                     </thead>
                     <tbody simpleGridDraggable (dragCompleted)="_onDragComplete($event)">
-                    <tr class="simpleGridRecord" [attr.data-id]="item.getKey('id')" simpleGridRecord *ngFor="let item of m_events; let index=index" [item]="item" [index]="index">
+                    <tr class="simpleGridRecord" simpleGridRecord *ngFor="let item of m_events; let index=index" [item]="item" [index]="index">
                         <td style="width: 30%" [editable]="true" (labelEdited)="_onLabelEdited($event,index)" field="event" simpleGridData [item]="item"></td>
                         <td style="width: 35%" simpleGridDataDropdown [testSelection]="_selectedAction()" (changed)="_setAction($event,index)" field="name" [item]="item" [dropdown]="m_actions"></td>
                         <td style="width: 35%" [editable]="true" (labelEdited)="_onUrlEdited($event,index)" field="url" simpleGridData [item]="item"></td>
@@ -80,7 +80,6 @@ export class JsonEventGrid extends Compbaser implements AfterViewInit {
         list.forEach((item:StoreModel,i)=>{
             con(i + ' ' + item.getKey('event'))
         })
-        // this.simpleGrid.getOrder();
     }
 
     /**
