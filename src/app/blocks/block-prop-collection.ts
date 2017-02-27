@@ -9,16 +9,7 @@ import {StoreModel} from "../../store/model/StoreModel";
 import {SimpleGridRecord} from "../../comps/simple-grid-module/SimpleGridRecord";
 import {SimpleGridTable} from "../../comps/simple-grid-module/SimpleGridTable";
 import {ISimpleGridDraggedData} from "../../comps/simple-grid-module/SimpleGridDraggable";
-
-// interface ICollectionItem {
-//     rowIndex: number;
-//     checkbox: boolean;
-//     name: string;
-//     duration: any;
-//     type: string;
-//     resource_hResource: number;
-//     scene_hDataSrc: number;
-// }
+import {JsonEventResourceModel} from "./json-event-grid";
 
 @Component({
     selector: 'block-prop-collection',
@@ -39,10 +30,10 @@ import {ISimpleGridDraggedData} from "../../comps/simple-grid-module/SimpleGridD
             <div class="row">
                 <li class="list-group-item">
                     <span i18n>Kiosk mode</span><br/>
-                    <button (click)="_onAddNewEvent()" type="button" title="add event" class="btn btn-default btn-sm">
+                    <button (click)="_onAddNewCollectionItem()" type="button" title="add event" class="btn btn-default btn-sm">
                         <span class="fa fa-plus"></span>
                     </button>
-                    <button (click)="_onRemoveEvent()" type="button" title="remove event" class="btn btn-default btn-sm">
+                    <button (click)="_onRemoveCollectionItem()" type="button" title="remove event" class="btn btn-default btn-sm">
                         <span class="fa fa-minus"></span>
                     </button>
                     <div class="material-switch pull-right">
@@ -74,7 +65,7 @@ import {ISimpleGridDraggedData} from "../../comps/simple-grid-module/SimpleGridD
                     </div>
                 </li>
                 <li *ngIf="m_contGroup.controls['mode'].value == 1" class="list-group-item">
-                    <json-event-grid [setBlockData]="m_blockData"></json-event-grid>
+                    <json-event-grid [collectionList]="m_collectionList" [resources]="this.m_jsonEventResources" [showOption]="'page'" [setBlockData]="m_blockData"></json-event-grid>
                 </li>
             </div>
         </form><h5>block id {{m_blockData.blockID}}</h5>
@@ -86,6 +77,7 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
     private m_contGroup: FormGroup;
     private m_blockData: IBlockData;
     m_collectionList: List<StoreModel>;
+    m_jsonEventResources: Array<JsonEventResourceModel>;
 
     constructor(private fb: FormBuilder, private cd: ChangeDetectorRef, private bs: BlockService, private ngmslibService: NgmslibService) {
         super();
@@ -102,12 +94,8 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
 
     @Input()
     set setBlockData(i_blockData) {
-        if (this.m_blockData && this.m_blockData.blockID != i_blockData.blockID) {
-            this.m_blockData = i_blockData;
-            this._render();
-        } else {
-            this.m_blockData = i_blockData;
-        }
+        this.m_blockData = i_blockData;
+        this._render();
     }
 
     ngAfterViewInit() {
@@ -140,20 +128,23 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
         }
     }
 
-    _onRemoveEvent() {
+    _onRemoveCollectionItem() {
         var record: SimpleGridRecord = this.simpleGrid.getSelected();
         if (_.isUndefined(record)) return;
+        var rowIndex = this.simpleGrid.getSelected().index;
         var domPlayerData = this.m_blockData.playerDataDom;
-        jQuery(domPlayerData).find('EventCommands').children().eq(record.index).remove();
+        $(domPlayerData).find('Collection').children().eq(rowIndex).remove();
+        // self._populateTableCollection(domPlayerData);
+        this._populateTableEvents();
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
     }
 
-    _onAddNewEvent() {
-        var domPlayerData = this.m_blockData.playerDataDom;
-        var buff = '<EventCommand from="event" condition="" command="firstPage" />';
-        jQuery(domPlayerData).find('EventCommands').append(jQuery(buff));
-        // domPlayerData = this.rp.xmlToStringIEfix(domPlayerData)
-        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+    _onAddNewCollectionItem() {
+        // var domPlayerData = this.m_blockData.playerDataDom;
+        // var buff = '<EventCommand from="event" condition="" command="firstPage" />';
+        // jQuery(domPlayerData).find('EventCommands').append(jQuery(buff));
+        // // domPlayerData = this.rp.xmlToStringIEfix(domPlayerData)
+        // this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
     _onDurationEdited(event: ISimpleGridEdit, index) {
@@ -179,7 +170,7 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
             } else {
                 scene_hDataSrc = $(page).find('Player').attr('hDataSrc');
             }
-            con('populating ' + resource_hResource);
+            //con('populating ' + resource_hResource);
 
             var storeModel = new StoreModel({
                 rowIndex: rowIndex,
@@ -194,6 +185,36 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
             rowIndex++;
         });
         this.m_collectionList = this._sortCollection(this.m_collectionList);
+    }
+
+    /**
+     Load event list to block props UI
+     @method _populateTableEvents
+     **/
+    _populateTableEvents() {
+        var data: Array<JsonEventResourceModel> = [], rowIndex = 0;
+        var domPlayerData = this.m_blockData.playerDataDom;
+        // self.m_collectionEventTable.bootstrapTable('removeAll');
+        $(domPlayerData).find('EventCommands').children().each(function (k, eventCommand) {
+            var pageName = '';
+            if ($(eventCommand).attr('command') == 'selectPage')
+                pageName = $(eventCommand).find('Page').attr('name');
+            var storeModel = new JsonEventResourceModel({
+                    rowIndex: rowIndex,
+                    checkbox: true,
+                    event: $(eventCommand).attr('from'),
+                    pageName: pageName,
+                    action: $(eventCommand).attr('command')
+                }
+            )
+            data.push(storeModel)
+            rowIndex++;
+        });
+        this.m_jsonEventResources = data;
+        // self.m_collectionEventTable.bootstrapTable('load', data);
+        // self._listenDropdownEvenActionSelection();
+        // self._listenDropdownEvenActionGoToSelection();
+
     }
 
     _sortCollection(i_collection: List<StoreModel>): List<StoreModel> {
@@ -214,6 +235,7 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
         var mode = $(xSnippetCollection).attr('mode') == 'kiosk' ? 1 : 0;
         this.formInputs['mode'].setValue(mode);
         this._populateTableCollection();
+        this._populateTableEvents();
         this.cd.markForCheck();
     }
 

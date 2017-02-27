@@ -9,6 +9,19 @@ import {SimpleGridTable} from "../../comps/simple-grid-module/SimpleGridTable";
 import {List} from "immutable";
 import * as _ from "lodash";
 
+
+export class JsonEventResourceModel extends StoreModel {
+    constructor(data: {
+                    rowIndex: number;
+                    checkbox: boolean;
+                    event: string;
+                    pageName: string;
+                    action: string;
+                }) {
+        super(data);
+    }
+}
+
 @Component({
     selector: 'json-event-grid',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,14 +43,20 @@ import * as _ from "lodash";
                     <tr>
                         <th>event</th>
                         <th>action</th>
-                        <th>url</th>
+                        <th>go to</th>
                     </tr>
                     </thead>
                     <tbody simpleGridDraggable (dragCompleted)="_onDragComplete($event)">
                     <tr class="simpleGridRecord" simpleGridRecord *ngFor="let item of m_events; let index=index" [item]="item" [index]="index">
                         <td style="width: 30%" [editable]="true" (labelEdited)="_onLabelEdited($event,index)" field="event" simpleGridData [item]="item"></td>
                         <td style="width: 35%" simpleGridDataDropdown [testSelection]="_selectedAction()" (changed)="_setAction($event,index)" field="name" [item]="item" [dropdown]="m_actions"></td>
-                        <td style="width: 35%" [editable]="true" (labelEdited)="_onUrlEdited($event,index)" field="url" simpleGridData [item]="item"></td>
+                        <td *ngIf="m_mode == 'url'" style="width: 35%" [editable]="true" (labelEdited)="_onUrlEdited($event,index)" field="url" simpleGridData [item]="item"></td>
+                        <td *ngIf="m_mode == 'page'" style="width: 35%" simpleGridDataDropdown 
+                            [testSelection]="_selectedResource()" 
+                            (changed)="_setAction($event,index)" field="name" [item]="item"
+                            [dropdown]="m_collectionList">
+                            
+                        </td>                        
                     </tr>
                     </tbody>
                 </simpleGridTable>
@@ -50,6 +69,9 @@ export class JsonEventGrid extends Compbaser implements AfterViewInit {
     private m_blockData: IBlockData;
     private m_events: List<StoreModel>;
     private m_actions: List<StoreModel>;
+    m_collectionList: List<StoreModel>;
+    m_mode: 'url' | 'page';
+    m_jsonEventResources: Array<JsonEventResourceModel>;
 
     constructor(private yp: YellowPepperService, private bs: BlockService) {
         super();
@@ -58,7 +80,8 @@ export class JsonEventGrid extends Compbaser implements AfterViewInit {
             new StoreModel({name: 'nextPage'}),
             new StoreModel({name: 'prevPage'}),
             new StoreModel({name: 'lastPage'}),
-            new StoreModel({name: 'loadUrl'})
+            new StoreModel({name: 'loadUrl'}),
+            new StoreModel({name: 'selectPage'})
         ]);
     }
 
@@ -71,13 +94,40 @@ export class JsonEventGrid extends Compbaser implements AfterViewInit {
         this._render();
     }
 
+    @Input()
+    set resources(i_jsonEventResources: Array<JsonEventResourceModel>) {
+        this.m_jsonEventResources = i_jsonEventResources;
+    }
+
+    @Input()
+    set collectionList(i_collectionList) {
+        this.m_collectionList = i_collectionList;
+    }
+
+    @Input()
+    set showOption(i_value: 'url' | 'page') {
+        this.m_mode = i_value;
+        if (i_value == 'url') {
+            this.m_actions = this.m_actions.filter((v: StoreModel) => {
+                return v.getKey('name') != 'selectPage';
+            }) as List<any>;
+            return;
+        }
+        if (i_value == 'page') {
+            this.m_actions = this.m_actions.filter((v: StoreModel) => {
+                return v.getKey('name') != 'loadUrl';
+            }) as List<any>;
+            return;
+        }
+    }
+
     _render() {
         this._initEventTable();
     }
 
-    _onDragComplete(list:Array<any>) {
+    _onDragComplete(list: Array<any>) {
         con('---------------------');
-        list.forEach((item:StoreModel,i)=>{
+        list.forEach((item: StoreModel, i) => {
             con(i + ' ' + item.getKey('event'))
         })
     }
@@ -134,6 +184,19 @@ export class JsonEventGrid extends Compbaser implements AfterViewInit {
     _selectedAction() {
         return (a: StoreModel, b: StoreModel) => {
             return a.getKey('name') == b.getKey('action') ? 'selected' : '';
+        }
+    }
+
+    _selectedResource() {
+        return (a: StoreModel, b: StoreModel) => {
+            console.log(a,b);
+            if (a.getKey('name') == b.getKey('action'))
+                return 'selected';
+            var X = a.getKey('type');
+            var Y = b.getKey('type');
+            var Z = b.getKey('action');
+            if (a.getKey('type') == 'resource' || a.getKey('type') == 'scene' && b.getKey('action') == 'selectPage')
+                return 'selected';
         }
     }
 

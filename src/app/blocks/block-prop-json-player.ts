@@ -4,14 +4,10 @@ import {BlockService, IBlockData} from "./block-service";
 import {RedPepperService} from "../../services/redpepper.service";
 import {Compbaser} from "ng-mslib";
 import {urlRegExp} from "../../Lib";
-import * as _ from "lodash";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {Once} from "../../decorators/once-decorator";
-import {StoreModel} from "../../store/model/StoreModel";
-import {Map, List} from 'immutable';
-import {ISimpleGridEdit} from "../../comps/simple-grid-module/SimpleGrid";
 import {SimpleGridTable} from "../../comps/simple-grid-module/SimpleGridTable";
-import {SimpleGridRecord} from "../../comps/simple-grid-module/SimpleGridRecord";
+import * as _ from "lodash";
 
 @Component({
     selector: 'block-prop-json-player',
@@ -21,7 +17,7 @@ import {SimpleGridRecord} from "../../comps/simple-grid-module/SimpleGridRecord"
         <small class="debug">{{me}}</small>
         <form class="inner15" novalidate autocomplete="off" [formGroup]="m_contGroup">
             <div class="row">
-                <ul class="list-group">                    
+                <ul class="list-group">
                     <li *ngIf="standAlone" class="list-group-item">
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
@@ -77,7 +73,7 @@ import {SimpleGridRecord} from "../../comps/simple-grid-module/SimpleGridRecord"
                     </li>
 
                     <li *ngIf="!m_slideShowMode" class="list-group-item">
-                        <json-event-grid [setBlockData]="m_blockData"></json-event-grid>
+                        <json-event-grid [showOption]="'url'" [setBlockData]="m_blockData"></json-event-grid>
                     </li>
                 </ul>
             </div>
