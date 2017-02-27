@@ -148,12 +148,20 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
     }
 
     _onDurationEdited(event: ISimpleGridEdit, index) {
-        var url = event.value;
+        var duration = event.value;
         var domPlayerData = this.m_blockData.playerDataDom;
-        var target = jQuery(domPlayerData).find('EventCommands').children().get(parseInt(index));
-        jQuery(target).find('Params').remove();
-        jQuery(target).append('<Params> <Url name="' + url + '" /></Params>');
-        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+        var item = $(domPlayerData).find('Collection').children().get(index);
+        $(item).attr('duration', duration);
+        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
+        // $(item).attr('page', newName).attr('duration', newDuration);
+        // self._setBlockPlayerData(domPlayerData, BB.CONSTS.NO_NOTIFICATION);
+        // self._populateTableCollection(domPlayerData);
+        // self._populateTableEvents();
+        //
+        // var target = jQuery(domPlayerData).find('EventCommands').children().get(parseInt(index));
+        // jQuery(target).find('Params').remove();
+        // jQuery(target).append('<Params> <Url name="' + url + '" /></Params>');
+        // this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
 
