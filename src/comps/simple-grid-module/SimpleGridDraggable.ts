@@ -14,6 +14,12 @@ import {SimpleGridRecord} from "./SimpleGridRecord";
 import {Subscription} from "rxjs";
 import {StoreModel} from "../../models/StoreModel";
 
+export interface ISimpleGridDraggedData {
+    newIndex: number;
+    currentIndex: number;
+    items: Array<any>;
+}
+
 @Directive({
     selector: 'tbody[simpleGridDraggable]'
 })
@@ -36,7 +42,7 @@ export class SimpleGridDraggable {
     @ContentChildren(SimpleGridRecord) simpleGridRecords: QueryList<SimpleGridRecord>;
 
     @Output()
-    dragCompleted: EventEmitter<any> = new EventEmitter<any>();
+    dragCompleted: EventEmitter<ISimpleGridDraggedData> = new EventEmitter<ISimpleGridDraggedData>();
 
     ngAfterViewInit() {
         this.createSortable();
@@ -73,25 +79,29 @@ export class SimpleGridDraggable {
             liveSnap: self._sortableSnap,
             onDragEnd: function () {
                 self.m_selectedIdx = -1;
-                var t = this.target,
-                    max = t.kids.length - 1,
-                    newIndex = Math.round(this.y / t.currentHeight);
+                var t = this.target
+                var max = t.kids.length - 1;
+                var newIndex = Math.round(this.y / t.currentHeight);
                 newIndex += (newIndex < 0 ? -1 : 0) + t.currentIndex;
                 if (newIndex === max) {
                     t.parentNode.appendChild(t);
                 } else {
                     t.parentNode.insertBefore(t, t.kids[newIndex + 1]);
                 }
+                var result:ISimpleGridDraggedData = {
+                    items: [],
+                    newIndex: newIndex < t.currentIndex ? newIndex + 1 : newIndex,
+                    currentIndex: t.currentIndex
+                };
                 TweenLite.set(t.kids, {yPercent: 0, overwrite: "all"});
                 TweenLite.set(t, {y: 0, color: ""});
-                var result = [];
                 jQuery(self.el.nativeElement).children().each((i, child) => {
                     var oldIndex = jQuery.data(child, "idx");
                     var found: SimpleGridRecord = self.simpleGridRecords.find((rec: SimpleGridRecord) => {
                         return rec.index == oldIndex;
                     })
                     // con(i + ' ' + found.item.getKey('event'));
-                    result.push(found.item)
+                    result.items.push(found.item)
                 })
                 self.dragCompleted.emit(result)
             }
