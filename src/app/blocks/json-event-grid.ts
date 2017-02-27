@@ -48,15 +48,10 @@ export class JsonEventResourceModel extends StoreModel {
                     </thead>
                     <tbody>
                     <tr class="simpleGridRecord" simpleGridRecord *ngFor="let item of m_events; let index=index" [item]="item" [index]="index">
-                        <td style="width: 30%" [editable]="true" (labelEdited)="_onLabelEdited($event,index)" field="event" simpleGridData [item]="item"></td>
-                        <td style="width: 35%" simpleGridDataDropdown [testSelection]="_selectedAction()" (changed)="_setAction($event,index)" field="name" [item]="item" [dropdown]="m_actions"></td>
-                        <td *ngIf="m_mode == 'url'" style="width: 35%" [editable]="true" (labelEdited)="_onUrlEdited($event,index)" field="url" simpleGridData [item]="item"></td>
-                        <td *ngIf="m_mode == 'page'" style="width: 35%" simpleGridDataDropdown 
-                            [testSelection]="_selectedResource()" 
-                            (changed)="_setAction($event,index)" field="name" [item]="item"
-                            [dropdown]="m_collectionList">
-                            
-                        </td>                        
+                        <td simpleGridData style="width: 30%" [editable]="true" (labelEdited)="_onLabelEdited($event,index)" field="event" [item]="item"></td>
+                        <td simpleGridDataDropdown style="width: 35%" [testSelection]="_selectedAction()" (changed)="_setAction($event,index)" field="name" [item]="item" [dropdown]="m_actions"></td>
+                        <td simpleGridData *ngIf="m_mode == 'url'" style="width: 35%" [editable]="true" (labelEdited)="_onUrlEdited($event,index)" field="url" [item]="item"></td>
+                        <td simpleGridDataDropdown *ngIf="m_mode == 'page'" style="width: 35%" [testSelection]="_selectedResource()" (changed)="_onPageEdited($event,index)" field="name" [item]="item" [dropdown]="m_collectionList"></td>
                     </tr>
                     </tbody>
                 </simpleGridTable>
@@ -194,6 +189,15 @@ export class JsonEventGrid extends Compbaser implements AfterViewInit {
         var target = jQuery(domPlayerData).find('EventCommands').children().get(parseInt(index));
         jQuery(target).find('Params').remove();
         jQuery(target).append('<Params> <Url name="' + url + '" /></Params>');
+        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+    }
+
+    _onPageEdited(event: ISimpleGridEdit, index) {
+        var page = event.value;
+        var domPlayerData = this.m_blockData.playerDataDom;
+        var target = jQuery(domPlayerData).find('EventCommands').children().get(parseInt(index));
+        jQuery(target).find('Params').remove();
+        jQuery(target).append('<Params><Page name="' + page + '"/></Params>');
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 

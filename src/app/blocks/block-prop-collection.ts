@@ -211,10 +211,6 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
             rowIndex++;
         });
         this.m_jsonEventResources = data;
-        // self.m_collectionEventTable.bootstrapTable('load', data);
-        // self._listenDropdownEvenActionSelection();
-        // self._listenDropdownEvenActionGoToSelection();
-
     }
 
     _sortCollection(i_collection: List<StoreModel>): List<StoreModel> {
