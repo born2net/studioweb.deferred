@@ -10,6 +10,7 @@ import {SimpleGridRecord} from "../../comps/simple-grid-module/SimpleGridRecord"
 import {SimpleGridTable} from "../../comps/simple-grid-module/SimpleGridTable";
 import {ISimpleGridDraggedData} from "../../comps/simple-grid-module/SimpleGridDraggable";
 import {JsonEventResourceModel} from "./json-event-grid";
+import {Lib} from "../../Lib";
 
 @Component({
     selector: 'block-prop-collection',
@@ -55,7 +56,7 @@ import {JsonEventResourceModel} from "./json-event-grid";
                                 </thead>
                                 <tbody simpleGridDraggable (dragCompleted)="_onDragComplete($event)">
                                 <tr class="simpleGridRecord" simpleGridRecord *ngFor="let item of m_collectionList; let index=index" [item]="item" [index]="index">
-                                    <td style="width: 45%" [editable]="true" (labelEdited)="_onNameEdited($event,index)" field="name" simpleGridData [item]="item"></td>
+                                    <td style="width: 45%" [editable]="true" (labelEdited)="_onPageNameEdited($event,index)" field="name" simpleGridData [item]="item"></td>
                                     <td style="width: 45%" [editable]="true" (labelEdited)="_onDurationEdited($event,index)" field="duration" simpleGridData [item]="item"></td>
                                     <td style="width: 10%" simpleGridDataImage [item]="item" [color]="'blue'" [field]="'fa-arrows-v'"></td>
                                 </tr>
@@ -103,9 +104,7 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
     }
 
     _onDragComplete(dragData: ISimpleGridDraggedData) {
-        // dragData.items.forEach((item: StoreModel, i) => {
-        //     con(i + ' ' + item.getKey('name'))
-        // })
+        // dragData.items.forEach((item: StoreModel, i) => con(i + ' ' + item.getKey('name')) );
         var currentIndex = dragData.currentIndex;
         var newIndex = dragData.newIndex;
         var domPlayerData = this.m_blockData.playerDataDom;
@@ -113,19 +112,6 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
         var source = $(domPlayerData).find('Collection').children().get(currentIndex);
         newIndex > currentIndex ? $(target).after(source) : $(target).before(source);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
-    }
-
-    _onNameEdited(event: ISimpleGridEdit, index) {
-        var domPlayerData = this.m_blockData.playerDataDom;
-        var target = jQuery(domPlayerData).find('EventCommands').children().get(index);
-        jQuery(target).attr('from', event.value);
-        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
-    }
-
-    _selectedAction() {
-        return (a: StoreModel, b: StoreModel) => {
-            return a.getKey('name') == b.getKey('action') ? 'selected' : '';
-        }
     }
 
     _onRemoveCollectionItem() {
@@ -139,6 +125,7 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
     }
 
+    //todo: to be added collection insertion
     _onAddNewCollectionItem() {
         // var domPlayerData = this.m_blockData.playerDataDom;
         // var buff = '<EventCommand from="event" condition="" command="firstPage" />';
@@ -148,20 +135,20 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
     }
 
     _onDurationEdited(event: ISimpleGridEdit, index) {
-        var duration = event.value;
+        var value = event.value;
+        if (!Lib.IsNumber(value)) return;
         var domPlayerData = this.m_blockData.playerDataDom;
         var item = $(domPlayerData).find('Collection').children().get(index);
-        $(item).attr('duration', duration);
+        $(item).attr('duration', value);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
-        // $(item).attr('page', newName).attr('duration', newDuration);
-        // self._setBlockPlayerData(domPlayerData, BB.CONSTS.NO_NOTIFICATION);
-        // self._populateTableCollection(domPlayerData);
-        // self._populateTableEvents();
-        //
-        // var target = jQuery(domPlayerData).find('EventCommands').children().get(parseInt(index));
-        // jQuery(target).find('Params').remove();
-        // jQuery(target).append('<Params> <Url name="' + url + '" /></Params>');
-        // this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+    }
+
+    _onPageNameEdited(event: ISimpleGridEdit, index) {
+        var value = event.value;
+        var domPlayerData = this.m_blockData.playerDataDom;
+        var item = $(domPlayerData).find('Collection').children().get(index);
+        $(item).attr('page', value);
+        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
     }
 
 

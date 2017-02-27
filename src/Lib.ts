@@ -177,7 +177,7 @@ export class Lib {
     /**
      Remove characters that a problemtaic to app / js
      **/
-    static CleanProbCharacters(i_string:string, i_restriction:number) {
+    static CleanProbCharacters(i_string: string, i_restriction: number) {
         switch (i_restriction) {
             case 1: {
                 i_string = i_string.replace(/{/ig, "(");
@@ -196,6 +196,11 @@ export class Lib {
             }
         }
         return i_string;
+    }
+
+    static IsNumber(value) {
+        if (_.isNaN(Number(value))) return false;
+        return true;
     }
 
     static CleanCharForXml(value: any): any {
