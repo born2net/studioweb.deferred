@@ -7,6 +7,7 @@ import {BlockLabels, BlockService, PLACEMENT_CHANNEL, PLACEMENT_SCENE} from "../
 import {Lib} from "../../Lib";
 import * as _ from 'lodash';
 import {UserModel} from "../../models/UserModel";
+import {Once} from "../../decorators/once-decorator";
 
 @Component({
     selector: 'add-content',
@@ -22,9 +23,17 @@ export class AddContent extends Compbaser implements AfterViewInit {
 
     m_placement;
     m_sceneMime;
+    m_userModel: UserModel;
 
     constructor(private yp: YellowPepperService, private bs: BlockService, @Inject('HYBRID_PRIVATE') private hybrid_private: boolean) {
         super();
+
+        this.cancelOnDestroy(
+            this.yp.getUserModel()
+                .subscribe((i_userModel: UserModel) => {
+                    this.m_userModel = i_userModel;
+                }, (e) => console.error(e))
+        )
     }
 
     @Output()
@@ -258,26 +267,20 @@ export class AddContent extends Compbaser implements AfterViewInit {
             return 1;
         }
 
-        this.yp.getUserModel().subscribe((i_userModel: UserModel) => {
-
-            var appID = this.bs.getBlockBoilerplate(i_componentID).app_id;
-            if (_.isUndefined(appID))
-                return 1;
-
-            // component is prime, account is free type, upgradable
-            if (i_userModel.getKey('resellerId') == 1)
-                return 2;
-
-            // account is under a reseller and component not available, hide it
-            if (i_userModel.getKey('resellerId') != 1 && _.isUndefined(i_userModel.getKey('components')[appID]))
-                return 0;
-
-            // account is under a reseller and component is available, show it
+        var appID = this.bs.getBlockBoilerplate(i_componentID).app_id;
+        if (_.isUndefined(appID))
             return 1;
 
-        }, (e) => console.error(e))
+        // component is prime, account is free type, upgradable
+        if (this.m_userModel.getKey('resellerId') == 1)
+            return 2;
 
+        // account is under a reseller and component not available, hide it
+        if (this.m_userModel.getKey('resellerId') != 1 && _.isUndefined(this.m_userModel.getKey('components')[appID]))
+            return 0;
 
+        // account is under a reseller and component is available, show it
+        return 1;
     }
 
     destroy() {
