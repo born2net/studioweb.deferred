@@ -51,6 +51,9 @@ import {Tab} from "../../comps/tabs/tab";
                     <div *ngSwitchCase="m_blockLabels.HTML">
                         <block-prop-html [setBlockData]="m_blockData"></block-prop-html>
                     </div>
+                    <div *ngSwitchCase="m_blockLabels.YOUTUBE">
+                        <block-prop-youtube [setBlockData]="m_blockData"></block-prop-youtube>
+                    </div>
                     <div *ngSwitchCase="m_blockLabels.BLOCKCODE_JSON">
                         <block-prop-json-player [standAlone]="true" [setBlockData]="m_blockData"></block-prop-json-player>
                     </div>
