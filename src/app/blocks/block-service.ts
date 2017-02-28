@@ -804,10 +804,13 @@ export class BlockService {
                 };
                 return Observable.of(data)
 
-                /** for resources (images, videos) fill additional resource data, make an exception for collection don't build resource type **/
+                /** for resources (images, videos) fill additional resource data, make an exception for collection / location don't build resource type **/
             }).mergeMap((blockData: IBlockData) => {
 
-                if (Number(blockData.blockCode) == BlockLabels.BLOCKCODE_COLLECTION) return Observable.of(blockData);
+                if (
+                    Number(blockData.blockCode) == BlockLabels.BLOCKCODE_COLLECTION
+                    || Number(blockData.blockCode) == BlockLabels.LOCATION
+                ) return Observable.of(blockData);
 
                 var domPlayerData = blockData.playerDataDom;
                 var xSnippet = jQuery(domPlayerData).find('Resource');

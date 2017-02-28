@@ -1,8 +1,7 @@
 import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input} from "@angular/core";
 import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
 import {BlockService, IBlockData} from "./block-service";
-import {Compbaser, NgmslibService} from "ng-mslib";
-import {Lib} from "../../Lib";
+import {Compbaser} from "ng-mslib";
 import * as _ from "lodash";
 import {Subject} from "rxjs";
 import {timeout} from "../../decorators/timeout-decorator";
@@ -71,7 +70,7 @@ export class BlockPropFasterQ extends Compbaser implements AfterViewInit {
     private m_blockData: IBlockData;
     private m_borderColorChanged = new Subject();
     private m_moveColorPickerOnce = false;
-    m_color = '#ff0000';
+    m_color = '#ffffff';
 
     constructor(private fb: FormBuilder, private el: ElementRef, private bs: BlockService, private cd: ChangeDetectorRef) {
         super();
@@ -96,13 +95,6 @@ export class BlockPropFasterQ extends Compbaser implements AfterViewInit {
         } else {
             this.m_blockData = i_blockData;
         }
-    }
-
-    @timeout(1)
-    _moveColorPicker() {
-        if (this.m_moveColorPickerOnce) return;
-        this.m_moveColorPickerOnce = true;
-        jQuery(".color-picker", this.el.nativeElement).css("left", "+=100");
     }
 
     _listenColorChanged() {
@@ -136,8 +128,15 @@ export class BlockPropFasterQ extends Compbaser implements AfterViewInit {
         // this.m_color = Lib.ColorToHex(Lib.DecimalToHex($(xWebKitData).attr('bgColor')));
     }
 
-    @timeout(1)
-    private setNewColor(i_color){
+    @timeout()
+    _moveColorPicker() {
+        if (this.m_moveColorPickerOnce) return;
+        this.m_moveColorPickerOnce = true;
+        jQuery(".color-picker", this.el.nativeElement).css("left", "+=100");
+    }
+    
+    @timeout()
+    private setNewColor(i_color) {
         this.m_color = i_color
         this.cd.markForCheck();
     }
@@ -149,12 +148,12 @@ export class BlockPropFasterQ extends Compbaser implements AfterViewInit {
         var domPlayerData = this.m_blockData.playerDataDom;
         var xWebKit = $(domPlayerData).find('Webkit');
         var xWebKitData = $(xWebKit).find('Data');
-        $(xWebKitData).attr('lineID1',this.formInputs['lineID1'].value);
-        $(xWebKitData).attr('lineID2',this.formInputs['lineID2'].value);
-        $(xWebKitData).attr('lineID3',this.formInputs['lineID3'].value);
-        $(xWebKitData).attr('lineID4',this.formInputs['lineID4'].value);
-        $(xWebKitData).attr('lineID5',this.formInputs['lineID5'].value);
-        $(xWebKitData).attr('bgColor',this.m_color);
+        $(xWebKitData).attr('lineID1', this.formInputs['lineID1'].value);
+        $(xWebKitData).attr('lineID2', this.formInputs['lineID2'].value);
+        $(xWebKitData).attr('lineID3', this.formInputs['lineID3'].value);
+        $(xWebKitData).attr('lineID4', this.formInputs['lineID4'].value);
+        $(xWebKitData).attr('lineID5', this.formInputs['lineID5'].value);
+        $(xWebKitData).attr('bgColor', this.m_color);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 

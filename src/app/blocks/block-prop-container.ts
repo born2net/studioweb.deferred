@@ -54,6 +54,9 @@ import {Tab} from "../../comps/tabs/tab";
                     <div *ngSwitchCase="m_blockLabels.FASTERQ">
                         <block-prop-fasterq [setBlockData]="m_blockData"></block-prop-fasterq>
                     </div>
+                    <div *ngSwitchCase="m_blockLabels.LOCATION">
+                        <block-prop-location [setBlockData]="m_blockData"></block-prop-location>
+                    </div>
                     <div *ngSwitchCase="m_blockLabels.YOUTUBE">
                         <block-prop-youtube [setBlockData]="m_blockData"></block-prop-youtube>
                     </div>
