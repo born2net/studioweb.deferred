@@ -43,7 +43,7 @@ import {Tab} from "../../comps/tabs/tab";
                         <block-prop-label [setBlockData]="m_blockData"></block-prop-label>
                     </div>
                     <div *ngSwitchCase="m_blockLabels.QR">
-                        <h1>QR</h1>
+                        <block-prop-qr [setBlockData]="m_blockData"></block-prop-qr>
                     </div>
                     <div *ngSwitchCase="m_blockLabels.CLOCK">
                         <block-prop-clock [setBlockData]="m_blockData"></block-prop-clock>
