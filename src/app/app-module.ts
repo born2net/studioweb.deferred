@@ -51,6 +51,10 @@ export var providing = [CommBroker, AUTH_PROVIDERS, RedPepperService, YellowPepp
     {
         provide: "OFFLINE_ENV",
         useValue: window['offlineDevMode']
+    },
+    {
+        provide: "HYBRID_PRIVATE",
+        useValue: false
     }
 ];
 

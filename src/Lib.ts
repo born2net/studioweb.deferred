@@ -175,6 +175,16 @@ export class Lib {
     }
 
     /**
+     Capitilize first letter
+     @method capitaliseFirst
+     @param {String} string
+     @return {String} string
+     **/
+    static  CapitaliseFirst(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+    }
+
+    /**
      Remove characters that a problemtaic to app / js
      **/
     static CleanProbCharacters(i_string: string, i_restriction: number) {

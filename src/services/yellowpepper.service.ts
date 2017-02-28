@@ -18,6 +18,7 @@ import {IScreenTemplateData} from "../comps/screen-template/screen-template";
 import {OrientationEnum} from "../app/campaigns/campaign-orientation";
 import {List} from "immutable";
 import * as _ from "lodash";
+import {UserModel} from "../models/UserModel";
 
 @Injectable()
 export class YellowPepperService {
@@ -262,6 +263,14 @@ export class YellowPepperService {
                     return result;
                 }, '')
             }).take(1);
+    }
+
+    /**
+     Get logged in user info
+     **/
+    getUserModel(): Observable<UserModel> {
+        return this.store.select(store => store.appDb.userModel)
+            .take(1)
     }
 
     /**

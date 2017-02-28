@@ -33,6 +33,10 @@ export class UserModel extends StoreModel {
         return this.setKey<UserModel>(UserModel, 'authenticated', value);
     }
 
+    setComponents(value) {
+        return this.setKey<UserModel>(UserModel, 'components', value);
+    }
+
     getAuthenticated(): boolean {
         return this.getKey('authenticated');
     }

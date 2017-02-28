@@ -7,6 +7,8 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
 import {RedPepperService} from "../../services/redpepper.service";
 import {Once} from "../../decorators/once-decorator";
 import {IScreenTemplateData} from "../../comps/screen-template/screen-template";
+import {PLACEMENT_CHANNEL} from "../blocks/block-service";
+
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -41,7 +43,8 @@ import {IScreenTemplateData} from "../../comps/screen-template/screen-template";
             </Slideritem>
             <Slideritem [templateRef]="f" #sliderItemCampaignEditor (onChange)="_onSlideChange($event)" [showFromButton]="false" class="page left campaignEditor" [fromDirection]="'left'" [from]="'campaignList'">
                 <template #f>
-                    <campaign-editor (onToAddContent)="sliderAddContent.slideTo('addContent','right')" (onToScreenLayoutEditor)="_onOpenScreenLayoutEditor() ; sliderScreenLayoutEditor.slideTo('screenLayoutEditor','right')" (onGoBack)="sliderItemCampaignEditor.slideTo('campaignList','left')"></campaign-editor>
+                    <campaign-editor (onToAddContent)="sliderAddContent.slideTo('addContent','right')" (onToScreenLayoutEditor)="_onOpenScreenLayoutEditor() ; sliderScreenLayoutEditor.slideTo('screenLayoutEditor','right')"
+                                     (onGoBack)="sliderItemCampaignEditor.slideTo('campaignList','left')"></campaign-editor>
                 </template>
             </Slideritem>
             <Slideritem [templateRef]="g" #sliderScreenLayoutEditor (onChange)="_onSlideChange($event)" [showFromButton]="false" class="page left screenLayoutEditor" [fromDirection]="'left'" [from]="'campaignList'">
@@ -51,11 +54,11 @@ import {IScreenTemplateData} from "../../comps/screen-template/screen-template";
             </Slideritem>
             <Slideritem [templateRef]="h" #sliderAddContent [showFromButton]="false" class="page left addContent" [fromDirection]="'left'" [from]="'campaignList'">
                 <template #h>
-                    <add-content #addContent (onGoBack)="sliderItemCampaignEditor.slideTo('campaignEditor','left')"></add-content>
+                    <add-content #addContent [setPlacement]="PLACEMENT_CHANNEL" (onGoBack)="sliderItemCampaignEditor.slideTo('campaignEditor','left')"></add-content>
                 </template>
             </Slideritem>
-            
-            
+
+
         </Sliderpanel>
     `
 })

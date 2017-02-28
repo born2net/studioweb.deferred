@@ -13,6 +13,7 @@ import {UserModel} from "../../models/UserModel";
 import {AuthenticateFlags} from "../actions/appdb.actions";
 import {RedPepperService} from "../../services/redpepper.service";
 import {IPepperConnection} from "../../store/imsdb.interfaces";
+import * as _ from 'lodash';
 
 export const EFFECT_AUTH_START = 'EFFECT_AUTH_START';
 export const EFFECT_AUTH_END = 'EFFECT_AUTH_END';
@@ -132,6 +133,13 @@ export class AppDbEffects {
                 var resellerId = jQuery(pepperConnection.loadManager.m_resellerInfo).find('BusinessInfo');//.attr('businessId'));
                 var resellerDataString = jQuery(pepperConnection.loadManager.m_resellerInfo).children()[0].innerHTML;
 
+                var componentList = {};
+                var components = jQuery(pepperConnection.loadManager.m_resellerInfo).find('InstalledApps').find('App');
+                _.each(components, function (component) {
+                    if (jQuery(component).attr('installed') == '1')
+                        componentList[jQuery(component).attr('id')] = 1;
+                });
+                userModel = userModel.setComponents(componentList)
 
                 var resellerDataJson = {};
                 const boundCallback = Observable.bindCallback(this.processXml, (xmlData: any) => xmlData);
