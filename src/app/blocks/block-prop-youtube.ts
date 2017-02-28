@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, Input} from "@angular/core";
+import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input} from "@angular/core";
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {BlockService, IBlockData} from "./block-service";
 import {RedPepperService} from "../../services/redpepper.service";
@@ -18,9 +18,38 @@ import * as _ from "lodash";
             <div class="row">
                 <ul class="list-group">
                     <li class="list-group-item">
-                        <span i18n>QR code</span><br/>
-                        <input class="default-prop-width" type="text" [formControl]="m_contGroup.controls['text']"/>
+                        <span i18n>volume</span>
+                        <input formControlName="volume" type="range" min="0" max="100" step="1"/>
                     </li>
+                    <li class="list-group-item">
+                        <span i18n>video quality</span>
+                        <select #sceneSelection class="default-prop-width" formControlName="quality">
+                            <option [value]="'default'">default</option>
+                            <option [value]="'small'">small</option>
+                            <option [value]="'medium'">medium</option>
+                            <option [value]="'large'">large</option>
+                            <option [value]="'hd720'">HD</option>
+                        </select>
+                    </li>
+                    <li *ngIf="m_contGroup.controls['listType'].value == 'most_viewed'" class="list-group-item">
+                        <span i18n>region</span>
+                        <select #sceneSelection class="default-prop-width" formControlName="region">
+                            <option [value]="region" *ngFor="let region of m_regions">{{region}}</option>
+                        </select>
+                    </li>
+                    <li class="list-group-item">
+                        <input type="radio" value="most_viewed" name="listType" formControlName="listType">
+                        <span i18n>most viewed</span>
+                        <br/>
+                        <input type="radio" value="manually" name="listType" formControlName="listType">
+                        <span i18n>custom list</span>
+                    </li>
+                    <li *ngIf="m_contGroup.controls['listType'].value != 'most_viewed'" class="list-group-item">
+                        <span i18n>video ids</span><br/>
+                        <textarea  placeholder="enter comma separated video IDs, for example: SIFUUhN3TVo, pZH1itk6Udg, azZo59ayLS4"  class="default-prop-width" spellcheck="false" rows="10" cols="50" type="textarea" [formControl]="m_contGroup.controls['customList']">
+                        </textarea>
+                    </li>
+                    
                 </ul>
             </div>
         </form>
@@ -32,10 +61,16 @@ export class BlockPropYouTube extends Compbaser implements AfterViewInit {
     private formInputs = {};
     private m_contGroup: FormGroup;
     private m_blockData: IBlockData;
+    m_regions = ['US','AR','AU','AT','BE','BR','CA','CL','CO','CZ','EG','FR','DE','GB','HK','HU','IN','IE','IL','IT','JP','JO','MY','MX','MA','NL','NZ','PE','PH','PL','RU','SA','SG','ZA','KR','ES','SE','CH','TW','AE'];
 
-    constructor(private fb: FormBuilder, private bs: BlockService) {
+    constructor(private fb: FormBuilder, private bs: BlockService, private cd:ChangeDetectorRef) {
         super();
         this.m_contGroup = fb.group({
+            'volume': [100],
+            'listType': [0],
+            'quality': [5],
+            'region': ['US'],
+            'customList': [''],
             'text': []
         });
         _.forEach(this.m_contGroup.controls, (value, key: string) => {
@@ -59,16 +94,36 @@ export class BlockPropYouTube extends Compbaser implements AfterViewInit {
 
     _render() {
         var domPlayerData = this.m_blockData.playerDataDom
-        var xSnippet = $(domPlayerData).find('Text');
-        this.formInputs['text'].setValue(xSnippet.text());
+        var xSnippetYouTube = $(domPlayerData).find('YouTube');
+        var xSnippetYouTubeManualList = $(domPlayerData).find('VideoIdList');
+        var videoIDs = $(xSnippetYouTubeManualList).text();
+        var listType = $(xSnippetYouTube).attr('listType'); //manually most_viewed
+        var region = $(xSnippetYouTube).attr('listRegion');
+        var volume = parseFloat(xSnippetYouTube.attr('volume'));
+        var quality = $(xSnippetYouTube).attr('quality');
+        this.formInputs['volume'].setValue(volume);
+        this.formInputs['listType'].setValue(listType);
+        this.formInputs['quality'].setValue(quality);
+        this.formInputs['region'].setValue(region);
+        this.formInputs['customList'].setValue(videoIDs);
+        this.cd.markForCheck();
     }
 
     private saveToStore() {
         if (this.m_contGroup.status != 'VALID')
             return;
         var domPlayerData = this.m_blockData.playerDataDom;
-        var xSnippet = $(domPlayerData).find('Text');
-        $(xSnippet).text(this.m_contGroup.value.text);
+        var xSnippet = $(domPlayerData).find('YouTube');
+        $(xSnippet).attr('volume', this.m_contGroup.value.volume);
+        $(xSnippet).attr('quality', this.m_contGroup.value.quality);
+        $(xSnippet).attr('listRegion', this.m_contGroup.value.region);
+        $(xSnippet).attr('listType', this.m_contGroup.value.listType);
+        $(xSnippet).find('VideoIdList').remove();
+        if (this.m_contGroup.value.listType == 'manually') {
+            $(xSnippet).append($(`<VideoIdList>${this.m_contGroup.value.customList}</VideoIdList>`));
+        } else {
+            $(xSnippet).find('VideoIdList').remove();
+        }
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
