@@ -187,6 +187,7 @@ export class Sequencer extends Compbaser {
                     i_screenTemplate.deselectDivisons();
                 }
                 var uiState: IUiState = {campaign: {
+                    campaignTimelineChannelSelected: -1,
                     campaignTimelineBoardViewerSelected: -1
                 }}
                 this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))

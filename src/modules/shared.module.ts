@@ -44,8 +44,9 @@ import {BlockPropYouTube} from "../app/blocks/block-prop-youtube";
 import {BlockPropDigg} from "../app/blocks/block-prop.digg";
 import {BlockPropFasterQ} from "../app/blocks/block-prop-fasterq";
 import {BlockPropLocation} from "../app/blocks/block-prop-location";
+import {AddContent} from "../app/campaigns/add-content";
 
-var sharedComponents = [Tabs, Tab, Infobox, Sliderpanel, Slideritem, PanelSplitMain, PanelSplitSide, PanelSplitContainer, ListToArrayPipe, FormatSecondsPipe, MatchBodyHeight, ScreenTemplate, BlurForwarder, DraggableList,
+var sharedComponents = [Tabs, Tab, Infobox, Sliderpanel, Slideritem, PanelSplitMain, PanelSplitSide, PanelSplitContainer, ListToArrayPipe, FormatSecondsPipe, MatchBodyHeight, ScreenTemplate, BlurForwarder, DraggableList, AddContent,
     FontSelector, BlockPropContainer, BlockPropCommon, BlockPropHtml, BlockPropClock, BlockPropWeather, BlockPropInstagram, BlockPropJsonPlayer,
     BlockPropCalendar, BlockPropSheets, BlockPropTwitter, BlockPropVideo, BlockPropImage, BlockPropLabel, BlockPropMrss, BlockPropLocation, BlockPropRss, BlockPropDigg, BlockPropFasterQ, BlockPropCollection, BlockPropQR, BlockPropYouTube, JsonEventGrid];
 

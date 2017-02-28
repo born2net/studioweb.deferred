@@ -2,7 +2,7 @@ import {animate, ChangeDetectionStrategy, Component, EventEmitter, Output, state
 import {Compbaser} from "ng-mslib";
 import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
 import {YellowPepperService} from "../../services/yellowpepper.service";
-import {CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
+import {CampaignTimelineChanelsModel, CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 import {List} from "immutable";
 import {Once} from "../../decorators/once-decorator";
 import {ACTION_UISTATE_UPDATE, AppdbAction, SideProps} from "../../store/actions/appdb.actions";
@@ -33,6 +33,8 @@ export class CampaignEditor extends Compbaser {
 
     private campaignModel: CampaignsModelExt;
     private campaignTimelinesModel: CampaignTimelinesModel;
+    private channelModel: CampaignTimelineChanelsModel;
+
     m_campaignTimelinesModels: List<CampaignTimelinesModel>;
     m_isVisible1 = true;
     m_isVisible2 = true;
@@ -57,6 +59,21 @@ export class CampaignEditor extends Compbaser {
                     this.campaignTimelinesModel = i_campaignTimelinesModel;
                 }, (e) => console.error(e))
         );
+        this.cancelOnDestroy(
+            this.yp.listenChannelSelected(true)
+                .subscribe((channel: CampaignTimelineChanelsModel) => {
+                    this.channelModel = channel;
+                }, (e) => {
+                    console.error(e)
+                })
+        );
+    }
+
+    _onAddContent() {
+        if (!this.channelModel)
+            return bootbox.alert('Select channel to add content to. First be sure to select a timeline and next, click the [NEXT CHANNEL] button');
+        this.onToAddContent.emit();
+
     }
 
     _onEditScreenLayout() {
@@ -69,6 +86,9 @@ export class CampaignEditor extends Compbaser {
 
     @Output()
     onToScreenLayoutEditor: EventEmitter<any> = new EventEmitter<any>();
+
+    @Output()
+    onToAddContent: EventEmitter<any> = new EventEmitter<any>();
 
     @Output()
     onGoBack: EventEmitter<any> = new EventEmitter<any>();
