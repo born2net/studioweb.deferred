@@ -52,12 +52,17 @@ export interface IBlockData {
     blockMinWidth: number;
     blockMinHeight: number;
     playerDataJson: {};
-    playerMimeScene: string;
     playerDataDom: XMLDocument,
+    playerMimeScene: string;
     playerDataJsonHandle: number;
     campaignTimelineChanelPlayersModelExt: CampaignTimelineChanelPlayersModelExt,
     duration: number;
     offset: number;
+    scene?: {
+        handle: string,
+        playerDataJson: {};
+        playerDataDom: XMLDocument,
+    },
     resource?: {
         name: string,
         handle: string,
@@ -755,25 +760,29 @@ export class BlockService {
         return this.blockPlacement;
     }
 
-    /**
-     Get block data as a json formatted object literal and return to caller
-     @method getBlockData
-     @return {object} data
-     The entire block data members which can be made public
-     **/
     public getBlockData(blockId): Observable<IBlockData> {
 
         return this.yp.getBlockRecord(blockId)
             .mergeMap((i_campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModelExt) => {
                 // var t0 = performance.now();
                 var xml = i_campaignTimelineChanelPlayersModel.getPlayerData();
+                var code: any;
+                var playerMimeScene;
+                var sceneHandle;
+                var playerDataJsonHandle;
                 var playerDataDom = $.parseXML(xml);
                 let playerDataJson = this.parser.xml2js(xml);
                 if (playerDataJson['Player']['_player']) {
 
-                    /** Standard block **/
-                    var code = playerDataJson['Player']['_player'];
+                    /************************************
+                     * Block
+                     ************************************/
+
+                    code = playerDataJson['Player']['_player'];
                     var blockType = this.getBlockNameByCode(code)
+                    playerMimeScene = playerDataJson.Player.Data.Json ? `Json.${playerDataJson.Player.Data.Json._providerType}` : null;
+                    playerDataJsonHandle = (playerDataJson.Player.Data.Json && playerDataJson.Player.Data.Json.Player) ? playerDataJson.Player.Data.Json.Player : null;
+
                     if (_.isUndefined(blockType)) {
                         var e = `Panic using a component / block which is not supported yet ${code} ${blockType}`;
                         throw new Error(e)
@@ -781,12 +790,20 @@ export class BlockService {
                     // console.log(`Serialization of block ${code} took ${(performance.now() - t0)} milliseconds`)
 
                 } else {
-                    /** Scene **/
-                    var blockCode = blockCode['BLOCKCODE_SCENE'];
-                    // if (_.isUndefined(i_scene_id)) {
-                    //     var domPlayerData = $.parseXML(i_player_data);
-                    //     i_scene_id = $(domPlayerData).find('Player').attr('hDataSrc');
+
+                    /************************************
+                     * Scene
+                     ************************************/
+
+                    code = BlockLabels['BLOCKCODE_SCENE'];
+                    var blockType = this.getBlockNameByCode(code)
+                    var sceneData = {
+                        handle: jQuery(playerDataDom).find('Player').attr('hDataSrc'),
+                        playerDataJson: null,
+                        playerDataDom: null
+                    }
                 }
+
                 var data: IBlockData = {
                     blockID: blockId,
                     blockType: blockType,
@@ -800,21 +817,36 @@ export class BlockService {
                     blockMinHeight: this.m_minSize.h,
                     playerDataDom: playerDataDom,
                     playerDataJson: playerDataJson,
-                    playerMimeScene: playerDataJson.Player.Data.Json ? `Json.${playerDataJson.Player.Data.Json._providerType}` : null,
-                    playerDataJsonHandle: (playerDataJson.Player.Data.Json && playerDataJson.Player.Data.Json.Player) ? playerDataJson.Player.Data.Json.Player : null,
+                    playerMimeScene: playerMimeScene,
+                    playerDataJsonHandle: playerDataJsonHandle,
                     duration: i_campaignTimelineChanelPlayersModel.getPlayerDurationInt(),
                     offset: i_campaignTimelineChanelPlayersModel.getPlayerOffsetTimeInt(),
-                    campaignTimelineChanelPlayersModelExt: i_campaignTimelineChanelPlayersModel
+                    campaignTimelineChanelPlayersModelExt: i_campaignTimelineChanelPlayersModel,
+                    scene: sceneData
                 };
                 return Observable.of(data)
 
-                /** for resources (images, videos) fill additional resource data, make an exception for collection / location don't build resource type **/
+            }).mergeMap((blockData: any) => {
+
+                /** for scenes fill additional data **/
+                if (blockData.scene) {
+                    return this.yp.getScenePlayerdataDom(blockData.scene.handle)
+                        .map((xml:string) => {
+                            var domPlayerData = $.parseXML(xml)
+                            blockData.blockName = jQuery(domPlayerData).find('Player').eq(0).attr('label');
+                            blockData.scene.playerDataDom = domPlayerData;
+                            blockData.scene.playerDataJson = this.parser.xml2js(xml);;
+                            return Observable.of(blockData);
+                        })
+                } else {
+                    return Observable.of(blockData);
+                }
+
+                /** for resources (images, videos, svg ) fill additional resource data, make an exception for collection / location don't build resource type **/
             }).mergeMap((blockData: IBlockData) => {
 
-                if (
-                    Number(blockData.blockCode) == BlockLabels.BLOCKCODE_COLLECTION
-                    || Number(blockData.blockCode) == BlockLabels.LOCATION
-                ) return Observable.of(blockData);
+                if (Number(blockData.blockCode) == BlockLabels.BLOCKCODE_COLLECTION || Number(blockData.blockCode) == BlockLabels.LOCATION)
+                    return Observable.of(blockData);
 
                 var domPlayerData = blockData.playerDataDom;
                 var xSnippet = jQuery(domPlayerData).find('Resource');

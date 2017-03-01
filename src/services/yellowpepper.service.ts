@@ -325,6 +325,81 @@ export class YellowPepperService {
     }
 
     /**
+     Get Scene player data as dom
+     **/
+    getScenePlayerdataDom(i_scene_id):Observable<string> {
+       return this.sterilizePseudoId(i_scene_id)
+            .mergeMap(scene_id => {
+                return this.getScene(scene_id)
+                    .map((playerDataModel:PlayerDataModel) => {
+                        return playerDataModel.getPlayerDataValue();
+                    })
+            });
+    }
+
+    /**
+     Get player_data via its scene id
+     **/
+    getScene(scene_id):Observable<PlayerDataModel> {
+        return this.store.select(store => store.msDatabase.sdk.table_player_data)
+            .map((playerDataModels: List<PlayerDataModel>) => {
+                return playerDataModels.find((playerDataModel: PlayerDataModel) => {
+                    return scene_id == playerDataModel.getPlayerDataId();
+                })
+            }).take(1);
+    }
+
+    /**
+     Sterilize pseudo id to scene id always returns scene_id as an integer rather pseudo id
+     @method sterilizePseudoId
+     @param {Number} i_id
+     @return {Number} i_id
+     **/
+    sterilizePseudoId(i_id): Observable<number> {
+        var id = parseInt(i_id);
+        if (_.isNaN(id))
+            return this.getSceneIdFromPseudoId(i_id);
+        return Observable.of(i_id);
+    }
+
+    /**
+     Translate an injected id to a table_player_data scene id
+     @method createPseudoSceneID
+     @param {Number} getSceneIdFromPseudoId
+     @return {Number} scene id
+     **/
+    getSceneIdFromPseudoId(i_pseudo_id): Observable<any> {
+        return this.getScenes().find((domPlayerData) => {
+            return i_pseudo_id == jQuery(domPlayerData).find('Player').eq(0).attr('id');
+        }).map((domPlayerData) => {
+            return jQuery(domPlayerData).find('Player').eq(0).attr('id')
+        })
+        // _.each(scenes, function (domPlayerData, scene_id) {
+        //     var pseudo_id = $(domPlayerData).find('Player').eq(0).attr('id');
+        //     if (pseudo_id == i_pseudo_id)
+        //         found = scene_id;
+        // });
+        // return found;
+    }
+
+    /**
+     Get all Scenes and convert them to dom objects
+     @method getScenes
+     @return {Object} all scenes as objects
+     **/
+    getScenes(): Observable<Array<XMLDocument>> {
+        return this.store.select(store => store.msDatabase.sdk.table_player_data)
+            .map((playerDataModels: List<PlayerDataModel>) => {
+                return playerDataModels.reduce((result: Array<any>, playerDataModel) => {
+                    var recPlayerData = playerDataModel.getPlayerDataValue();
+                    var domPlayerData = $.parseXML(recPlayerData)
+                    result.push(domPlayerData);
+                    return result;
+                }, [])
+            }).take(1);
+    }
+
+    /**
      Get all the block IDs of a particular channel.
      Push them into an array so they are properly sorted by player offset time.
      **/
@@ -375,23 +450,6 @@ export class YellowPepperService {
             })
     }
 
-    /**
-     Get all Scenes and convert them to dom objects
-     @method getScenes
-     @return {Object} all scenes as objects
-     **/
-    getScenes(): Observable<Array<XMLDocument>> {
-        return this.store.select(store => store.msDatabase.sdk.table_player_data)
-            .map((playerDataModels: List<PlayerDataModel>) => {
-                return playerDataModels.reduce((result: Array<any>, playerDataModel) => {
-                    var recPlayerData = playerDataModel.getPlayerDataValue();
-                    var domPlayerData = $.parseXML(recPlayerData)
-                    result.push(domPlayerData);
-                    return result;
-                }, [])
-            }).take(1);
-    }
-
     // /**
     //  Get all Scenes and convert them to dom objects returning a hash of object literals
     //  @method getScenes
@@ -427,20 +485,6 @@ export class YellowPepperService {
     //     });
     //     return mimeType;
     // }
-
-    /**
-     get a scene block playerdata
-     **/
-    getScenePlayerdataBlock(i_scene_id, i_player_data_id) {
-
-        // i_scene_id = this.sterilizePseudoId(i_scene_id);
-        // this.databaseManager.table_player_data().openForEdit(i_scene_id);
-        // var recPlayerData = this.databaseManager.table_player_data().getRec(i_scene_id);
-        // var player_data = recPlayerData['player_data_value'];
-        // var domPlayerData = $.parseXML(player_data)
-        // var foundSnippet = $(domPlayerData).find('[id="' + i_player_data_id + '"]');
-        // return foundSnippet[0];
-    }
 
     /**
      Get all the campaign > timeline > channels ids of a timeline
