@@ -9,7 +9,6 @@ import {Once} from "../../decorators/once-decorator";
 import {IScreenTemplateData} from "../../comps/screen-template/screen-template";
 import {PLACEMENT_CHANNEL} from "../blocks/block-service";
 
-
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'campaigns',
@@ -54,7 +53,7 @@ import {PLACEMENT_CHANNEL} from "../blocks/block-service";
             </Slideritem>
             <Slideritem [templateRef]="h" #sliderAddContent [showFromButton]="false" class="page left addContent" [fromDirection]="'left'" [from]="'campaignList'">
                 <template #h>
-                    <add-content #addContent [setPlacement]="PLACEMENT_CHANNEL" (onGoBack)="sliderItemCampaignEditor.slideTo('campaignEditor','left')"></add-content>
+                    <add-content #addContent [setPlacement]="m_placement" (onGoBack)="sliderItemCampaignEditor.slideTo('campaignEditor','left')"></add-content>
                 </template>
             </Slideritem>
 
@@ -63,6 +62,9 @@ import {PLACEMENT_CHANNEL} from "../blocks/block-service";
     `
 })
 export class Campaigns extends Compbaser {
+
+    private m_placement = PLACEMENT_CHANNEL;
+
     constructor(private yp: YellowPepperService, private rp: RedPepperService) {
         super();
         var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}

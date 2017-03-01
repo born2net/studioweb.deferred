@@ -1,26 +1,104 @@
-import {Component, ChangeDetectionStrategy, AfterViewInit, Output, EventEmitter, Input, Inject} from "@angular/core";
+import {AfterViewInit, Component, EventEmitter, Inject, Input, Output} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {IUiState} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
 import {BlockLabels, BlockService, PLACEMENT_CHANNEL, PLACEMENT_LISTS, PLACEMENT_SCENE} from "../blocks/block-service";
 import {Lib} from "../../Lib";
-import * as _ from 'lodash';
+import * as _ from "lodash";
 import {UserModel} from "../../models/UserModel";
-import {Once} from "../../decorators/once-decorator";
-import {PlayerDataModel, ResourcesModel} from "../../store/imsdb.interfaces_auto";
-import {Map, List} from 'immutable';
+import {ResourcesModel} from "../../store/imsdb.interfaces_auto";
+import {List} from "immutable";
 import {RedPepperService} from "../../services/redpepper.service";
 
 
 @Component({
     selector: 'add-content',
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    styles: [`
+        .nowAllowed {
+            opacity: 0.4;
+        }
+
+        .btn-primary {
+            position: relative;
+            top: -45px
+        }
+
+        li:hover {
+            background-color: #dadada;
+            cursor: pointer;
+        }
+    `],
     template: `
         <small class="debug">{{me}}</small>
         <button (click)="_goBack()" id="prev" type="button" class="openPropsButton btn btn-default btn-sm">
             <span class="glyphicon glyphicon-chevron-left"></span>
         </button>
+        <div style="padding-top: 20px; padding-right: 30px" class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingOne">
+                    <h4 class="panel-title">
+                        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                            Components
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body">
+                        <ul class="list-group" id="addComponentBlockList" style="padding:20px">
+                            <li (click)="_onComponentSelected(component)" *ngFor="let component of m_componentList" class="list-group-item ">
+                                <i [ngClass]="{nowAllowed: !component.allow}" style="display: inline" class="fa fa-2x {{component.fa}}"></i>
+                                <h3 [ngClass]="{nowAllowed: !component.allow}" style=" display: inline"> {{component.name}} </h3>
+                                <h6 [ngClass]="{nowAllowed: !component.allow}"> {{component.description}}</h6>
+                                <button (click)="_onUpgEnterprise($event)" class="btn btn-primary pull-right" *ngIf="!component.allow">
+                                    upgrade to enterprise
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingTwo">
+                    <h4 class="panel-title">
+                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            Resources
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                    <div class="panel-body">
+                        <ul class="list-group" id="addComponentBlockList" style="padding:20px">
+                            <li (click)="_onResourceSelected(resource)" *ngFor="let resource of m_resourceList" class="list-group-item ">
+                                <i style="display: inline" class="fa fa-2x {{resource.fa}}"></i>
+                                <h3 style=" display: inline"> {{resource.name}} </h3>
+                                <h6> {{resource.description}}</h6>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingThree">
+                    <h4 class="panel-title">
+                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            Scenes
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                    <div class="panel-body">
+                        <ul class="list-group" id="addComponentBlockList" style="padding:20px">
+                            <li (click)="_onSceneSelected(scene)" *ngFor="let scene of m_sceneList" class="list-group-item ">
+                                <i style="display: inline" class="fa fa-2x {{scene.fa}}"></i>
+                                <h3 style=" display: inline"> {{scene.name}} </h3>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     `
 })
 export class AddContent extends Compbaser implements AfterViewInit {
@@ -33,7 +111,7 @@ export class AddContent extends Compbaser implements AfterViewInit {
 
     m_componentList = [];
     m_resourceList = [];
-    m_scenesList = [];
+    m_sceneList = [];
 
 
     constructor(private yp: YellowPepperService, private rp: RedPepperService, private bs: BlockService, @Inject('HYBRID_PRIVATE') private hybrid_private: boolean) {
@@ -66,6 +144,24 @@ export class AddContent extends Compbaser implements AfterViewInit {
 
     ngAfterViewInit() {
         this._render();
+    }
+
+    _onUpgEnterprise(event: MouseEvent) {
+        event.stopImmediatePropagation();
+        event.preventDefault();
+        console.log();
+    }
+
+    _onComponentSelected(i_component) {
+        console.log(i_component);
+    }
+
+    _onResourceSelected(i_resource){
+
+    }
+
+    _onSceneSelected(i_scnene){
+
     }
 
     _goBack() {
@@ -119,7 +215,7 @@ export class AddContent extends Compbaser implements AfterViewInit {
         // $(Elements.ADD_SCENE_BLOCK_LIST, this.el).empty();
 
         this.m_componentList = [];
-        this.m_scenesList = []
+        this.m_sceneList = []
 
 
         /////////////////////////////////////////////////////////
@@ -215,9 +311,10 @@ export class AddContent extends Compbaser implements AfterViewInit {
         this.m_resourceModels.forEach((i_resourcesModel: ResourcesModel) => {
 
             var size = (i_resourcesModel.getResourceBytesTotal() / 1000).toFixed(2);
-            var resourceDescription = 'size: ' + size + 'K dimension: ' + i_resourcesModel.getResourcePixelWidth() + 'x' + i_resourcesModel.getResourcePixelHeight();
+            var resourceDescription = 'size: ' + size;
 
             this.m_resourceList.push({
+                name: i_resourcesModel.getResourceName(),
                 resourceModel: i_resourcesModel,
                 size: size,
                 fa: this.bs.getFontAwesome(i_resourcesModel.getResourceType()),
@@ -248,10 +345,10 @@ export class AddContent extends Compbaser implements AfterViewInit {
                         return;
                 }
 
-                this.m_scenesList.push({
+                this.m_sceneList.push({
                     id: this.rp.sterilizePseudoIdFromScene(sceneID, scene),
-                    fa: this.bs.getFontAwesome('scene'),
-                    label: label
+                    name: label,
+                    fa: this.bs.getFontAwesome('scene')
                 })
             })
         }
