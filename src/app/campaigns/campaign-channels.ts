@@ -58,7 +58,7 @@ import {DraggableList} from "../../comps/draggable-list";
             <template #customTemplate let-item>
                 <a href="#" [attr.data-block_id]="item.blockID">
                     <i class="fa {{item.blockFontAwesome}}"></i>
-                    <span>{{item.resource?.name || item.blockName}}</span>
+                    <span>{{item.scene?.name || item.resource?.name || item.blockName}}</span>
                     <i class="dragch fa fa-arrows-v"></i>
                     <span class="lengthTimer hidden-xs"> 
                     {{item.duration | FormatSecondsPipe}}

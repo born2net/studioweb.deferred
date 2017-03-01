@@ -59,6 +59,7 @@ export interface IBlockData {
     duration: number;
     offset: number;
     scene?: {
+        name: string,
         handle: string,
         playerDataJson: {};
         playerDataDom: XMLDocument,
@@ -798,6 +799,7 @@ export class BlockService {
                     code = BlockLabels['BLOCKCODE_SCENE'];
                     var blockType = this.getBlockNameByCode(code)
                     var sceneData = {
+                        name: '',
                         handle: jQuery(playerDataDom).find('Player').attr('hDataSrc'),
                         playerDataJson: null,
                         playerDataDom: null
@@ -828,21 +830,21 @@ export class BlockService {
 
             }).mergeMap((blockData: any) => {
 
-                /** for scenes fill additional data **/
+                /** additional data for: scenes **/
                 if (blockData.scene) {
                     return this.yp.getScenePlayerdataDom(blockData.scene.handle)
                         .map((xml:string) => {
                             var domPlayerData = $.parseXML(xml)
-                            blockData.blockName = jQuery(domPlayerData).find('Player').eq(0).attr('label');
+                            blockData.scene.name = jQuery(domPlayerData).find('Player').eq(0).attr('label');
                             blockData.scene.playerDataDom = domPlayerData;
                             blockData.scene.playerDataJson = this.parser.xml2js(xml);;
-                            return Observable.of(blockData);
+                            return blockData;
                         })
                 } else {
                     return Observable.of(blockData);
                 }
 
-                /** for resources (images, videos, svg ) fill additional resource data, make an exception for collection / location don't build resource type **/
+                /** additional data for: resources (images, videos, svg ) fill additional data (make exception for collection | location) **/
             }).mergeMap((blockData: IBlockData) => {
 
                 if (Number(blockData.blockCode) == BlockLabels.BLOCKCODE_COLLECTION || Number(blockData.blockCode) == BlockLabels.LOCATION)
