@@ -1,5 +1,5 @@
 /**
- * Block service is responsible only for procedures related to PlayerData blocks
+ * Block service is responsible only for procedures related to player_data / scene blocks
  */
 
 import {Inject, Injectable} from "@angular/core";

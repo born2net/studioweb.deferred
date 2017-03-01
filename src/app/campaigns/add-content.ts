@@ -31,7 +31,12 @@ export class AddContent extends Compbaser implements AfterViewInit {
     m_resourceModels: List<ResourcesModel>;
     m_playerDataModels: Array<XMLDocument>;
 
-    constructor(private yp: YellowPepperService, private rp:RedPepperService, private bs: BlockService, @Inject('HYBRID_PRIVATE') private hybrid_private: boolean) {
+    m_componentList = [];
+    m_resourceList = [];
+    m_scenesList = [];
+
+
+    constructor(private yp: YellowPepperService, private rp: RedPepperService, private bs: BlockService, @Inject('HYBRID_PRIVATE') private hybrid_private: boolean) {
         super();
 
         this.cancelOnDestroy(
@@ -113,9 +118,9 @@ export class AddContent extends Compbaser implements AfterViewInit {
         // $(Elements.ADD_RESOURCE_BLOCK_LIST, this.el).empty();
         // $(Elements.ADD_SCENE_BLOCK_LIST, this.el).empty();
 
-        var componentList = [];
-        var sceneList = [];
-        var scenesList = [];
+        this.m_componentList = [];
+        this.m_scenesList = []
+
 
         /////////////////////////////////////////////////////////
         // component selection list
@@ -175,9 +180,9 @@ export class AddContent extends Compbaser implements AfterViewInit {
 
                 case 1:
                 case 2: {
-                    componentList.push({
+                    this.m_componentList.push({
                         allow: status == 1 ? true : false,
-                        componentID: componentID,
+                        id: componentID,
                         name: components[componentID].name,
                         fa: components[componentID].fontAwesome,
                         specialJsonItemName: specialJsonItemName,
@@ -212,6 +217,13 @@ export class AddContent extends Compbaser implements AfterViewInit {
             var size = (i_resourcesModel.getResourceBytesTotal() / 1000).toFixed(2);
             var resourceDescription = 'size: ' + size + 'K dimension: ' + i_resourcesModel.getResourcePixelWidth() + 'x' + i_resourcesModel.getResourcePixelHeight();
 
+            this.m_resourceList.push({
+                resourceModel: i_resourcesModel,
+                size: size,
+                fa: this.bs.getFontAwesome(i_resourcesModel.getResourceType()),
+                description: resourceDescription
+            })
+
             // var snippet = '<li class="list-group-item ' + BB.lib.unclass(Elements.CLASS_ADD_BLOCK_LIST_ITEMS, this.el) + '" data-resource_id="' + recResources[i]['resource_id'] + '" data-resource_name="' + recResources[i]['resource_name'] + '">' +
             //     '<i class="fa ' + BB.PepperHelper.getFontAwesome(recResources[i]['resource_type']) + '"></i>' +
             //     '<span>' + recResources[i]['resource_name'] + '</span>' +
@@ -220,14 +232,12 @@ export class AddContent extends Compbaser implements AfterViewInit {
             // $(Elements.ADD_RESOURCE_BLOCK_LIST, this.el).append(snippet);
         })
 
-
         /////////////////////////////////////////////////////////
         // show scene selection list in Scene or block list modes
         /////////////////////////////////////////////////////////
 
         if (this.m_placement == PLACEMENT_CHANNEL || this.m_placement == PLACEMENT_LISTS) {
-            this.m_playerDataModels.forEach((scene, i)=>{
-                // var scene:XMLDocument = i_playerDataModel.getPlayerDataValue();
+            this.m_playerDataModels.forEach((scene: XMLDocument, i: number) => {
                 var label = $(scene).find('Player').eq(0).attr('label');
                 var sceneID = $(scene).find('Player').eq(0).attr('id');
                 var mimeType = $(scene).find('Player').eq(0).attr('mimeType');
@@ -238,17 +248,12 @@ export class AddContent extends Compbaser implements AfterViewInit {
                         return;
                 }
 
-                // sceneID = this.rp.sterilizePseudoId(sceneID);
-                // sceneID = this.rp.sterilizePseudoIdFromScene(scene);
-                // var snippet = '<li class="list-group-item ' + BB.lib.unclass(Elements.CLASS_ADD_BLOCK_LIST_ITEMS, this.el) + '" data-scene_id="' + sceneID + '">' +
-                //     '<i class="fa ' + BB.PepperHelper.getFontAwesome('scene') + '"></i>' +
-                //     '<span>' + label + '</span>' +
-                //     '<br/><small></small>' +
-                //     '</li>';
-                // $(Elements.ADD_SCENE_BLOCK_LIST, this.el).append(snippet);
+                this.m_scenesList.push({
+                    id: this.rp.sterilizePseudoIdFromScene(sceneID, scene),
+                    fa: this.bs.getFontAwesome('scene'),
+                    label: label
+                })
             })
-
-
         }
 
         // if (this.m_placement == BB.CONSTS.PLACEMENT_CHANNEL || this.m_placement == BB.CONSTS.PLACEMENT_LISTS) {

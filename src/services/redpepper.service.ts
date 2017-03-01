@@ -1714,10 +1714,21 @@ export class RedPepperService {
      @return {Number} i_id
      **/
     sterilizePseudoId(i_id) {
-
         var id = parseInt(i_id);
         if (_.isNaN(id))
             return this.getSceneIdFromPseudoId(i_id);
+        return i_id;
+    }
+
+    /**
+     Sterilize pseudo id to scene id always returns scene_id as an integer rather pseudo id
+     @method sterilizePseudoId
+     **/
+    sterilizePseudoIdFromScene(i_id, domPlayerData:XMLDocument) {
+        var id = parseInt(i_id);
+        if (_.isNaN(id)){
+            return $(domPlayerData).find('Player').eq(0).attr('id');
+        }
         return i_id;
     }
 
