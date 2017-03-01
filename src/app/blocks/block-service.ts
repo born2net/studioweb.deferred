@@ -1,3 +1,7 @@
+/**
+ * Block service is responsible only for procedures related to PlayerData blocks
+ */
+
 import {Inject, Injectable} from "@angular/core";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import X2JS from "x2js";

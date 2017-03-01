@@ -2,7 +2,7 @@ import {Injectable} from "@angular/core";
 import {Observable} from "rxjs";
 import {IDataBaseManager, ILoadManager, IPepperAuthReply, IPepperConnection} from "../store/imsdb.interfaces";
 import * as MsdbModels from "../store/imsdb.interfaces_auto";
-import {ISDK, TableNames} from "../store/imsdb.interfaces_auto";
+import {ISDK, PlayerDataModel, TableNames} from "../store/imsdb.interfaces_auto";
 import * as MsdbModelsExtended from "../store/model/msdb-models-extended";
 import {StoreModel} from "../store/model/StoreModel";
 import {List} from "immutable";
@@ -639,6 +639,20 @@ export class RedPepperService {
             campaignsIds.push(campaign_id);
         });
         return campaignsIds;
+    }
+
+    /**
+     Returns all scenes
+     @method getSceneMime
+     @param {Number} i_sceneID
+     @return {Object} scene names
+     **/
+    getSceneMimeType(i_sceneID, i_playerDataModels:List<PlayerDataModel>):string {
+        var found = i_playerDataModels.find((i_playerDataModel:PlayerDataModel)=> {
+            var domPlayerData = i_playerDataModel.getPlayerDataValue();
+            return i_sceneID == jQuery(domPlayerData).find('Player').attr('id')
+        })
+        return jQuery(found).find('Player').attr('mimeType');
     }
 
     /**

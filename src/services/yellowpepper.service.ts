@@ -364,6 +364,71 @@ export class YellowPepperService {
     }
 
     /**
+     Get all none deleted (!=3) resources per current account
+     **/
+    getResources(): Observable<List<ResourcesModel>> {
+        return this.store.select(store => store.msDatabase.sdk.table_resources)
+            .map((resourceModels: List<ResourcesModel>) => {
+                return resourceModels.filter((i_resourceModel: ResourcesModel) => {
+                    return i_resourceModel.getChangeType() != 3
+                })
+            })
+    }
+
+    /**
+     Get all Scenes and convert them to dom objects
+     @method getScenes
+     @return {Object} all scenes as objects
+     **/
+    getScenes(): Observable<Array<XMLDocument>> {
+        return this.store.select(store => store.msDatabase.sdk.table_player_data)
+            .map((playerDataModels: List<PlayerDataModel>) => {
+                return playerDataModels.reduce((result: Array<any>, playerDataModel) => {
+                    var recPlayerData = playerDataModel.getPlayerDataValue();
+                    var domPlayerData = $.parseXML(recPlayerData)
+                    result.push(domPlayerData);
+                    return result;
+                }, [])
+            }).take(1);
+    }
+
+    // /**
+    //  Get all Scenes and convert them to dom objects returning a hash of object literals
+    //  @method getScenes
+    //  @return {Object} all scenes as objects
+    //  **/
+    // getSceneMime(i_sceneID): Observable<any> {
+    //     return this.store.select(store => store.msDatabase.sdk.table_player_data)
+    //         .map((playerDataModels: List<PlayerDataModel>) => {
+    //             return playerDataModels.reduce((result: Array<any>, playerDataModel) => {
+    //                 var recPlayerData = playerDataModel.getPlayerDataValue();
+    //                 var domPlayerData = $.parseXML(recPlayerData)
+    //                 result.push(domPlayerData);
+    //                 return result;
+    //             }, [])
+    //         }).take(1);
+    // }
+    //
+    // /**
+    //  Returns all scenes
+    //  @method getSceneMime
+    //  @param {Number} i_sceneID
+    //  @return {Object} scene names
+    //  **/
+    // getSceneMime(i_sceneID) {
+    //
+    //     var mimeType = '';
+    //     $(this.databaseManager.table_player_data().getAllPrimaryKeys()).each(function (k, player_data_id) {
+    //         var recPlayerData = this.databaseManager.table_player_data().getRec(player_data_id);
+    //         var domPlayerData = $.parseXML(recPlayerData['player_data_value'])
+    //         var id = $(domPlayerData).find('Player').attr('id');
+    //         if (id == i_sceneID)
+    //             mimeType = $(domPlayerData).find('Player').attr('mimeType');
+    //     });
+    //     return mimeType;
+    // }
+
+    /**
      get a scene block playerdata
      **/
     getScenePlayerdataBlock(i_scene_id, i_player_data_id) {

@@ -3,11 +3,15 @@ import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {IUiState} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
-import {BlockLabels, BlockService, PLACEMENT_CHANNEL, PLACEMENT_SCENE} from "../blocks/block-service";
+import {BlockLabels, BlockService, PLACEMENT_CHANNEL, PLACEMENT_LISTS, PLACEMENT_SCENE} from "../blocks/block-service";
 import {Lib} from "../../Lib";
 import * as _ from 'lodash';
 import {UserModel} from "../../models/UserModel";
 import {Once} from "../../decorators/once-decorator";
+import {PlayerDataModel, ResourcesModel} from "../../store/imsdb.interfaces_auto";
+import {Map, List} from 'immutable';
+import {RedPepperService} from "../../services/redpepper.service";
+
 
 @Component({
     selector: 'add-content',
@@ -24,14 +28,30 @@ export class AddContent extends Compbaser implements AfterViewInit {
     m_placement;
     m_sceneMime;
     m_userModel: UserModel;
+    m_resourceModels: List<ResourcesModel>;
+    m_playerDataModels: Array<XMLDocument>;
 
-    constructor(private yp: YellowPepperService, private bs: BlockService, @Inject('HYBRID_PRIVATE') private hybrid_private: boolean) {
+    constructor(private yp: YellowPepperService, private rp:RedPepperService, private bs: BlockService, @Inject('HYBRID_PRIVATE') private hybrid_private: boolean) {
         super();
 
         this.cancelOnDestroy(
             this.yp.getUserModel()
                 .subscribe((i_userModel: UserModel) => {
                     this.m_userModel = i_userModel;
+                }, (e) => console.error(e))
+        )
+
+        this.cancelOnDestroy(
+            this.yp.getResources()
+                .subscribe((i_resources: List<ResourcesModel>) => {
+                    this.m_resourceModels = i_resources;
+                }, (e) => console.error(e))
+        )
+
+        this.cancelOnDestroy(
+            this.yp.getScenes()
+                .subscribe((i_playerDataModels) => {
+                    this.m_playerDataModels = i_playerDataModels;
                 }, (e) => console.error(e))
         )
     }
@@ -93,8 +113,12 @@ export class AddContent extends Compbaser implements AfterViewInit {
         // $(Elements.ADD_RESOURCE_BLOCK_LIST, this.el).empty();
         // $(Elements.ADD_SCENE_BLOCK_LIST, this.el).empty();
 
+        var componentList = [];
+        var sceneList = [];
+        var scenesList = [];
+
         /////////////////////////////////////////////////////////
-        // show component selection list
+        // component selection list
         /////////////////////////////////////////////////////////
         var components = this.bs.getBlocks();
         var primeUpgradeText = 'Upgrade to an enterprise account and get all the benefits of the SignageStudio Pro account plus a lot more…';
@@ -103,6 +127,7 @@ export class AddContent extends Compbaser implements AfterViewInit {
         var specialJsonItemName = '';
         var specialJsonItemColor = '';
         //var sceneHasMimeType = '';
+
         for (var i_componentID in components) {
             var componentID: any = i_componentID;
             var primeSnippet = '';
@@ -142,22 +167,24 @@ export class AddContent extends Compbaser implements AfterViewInit {
             }
 
             // check if and how to render components depending on user account type
-            switch (this._checkAllowedComponent(componentID)) {
+            var status = this._checkAllowedComponent(componentID)
+            switch (status) {
                 case 0: {
                     continue;
                 }
 
-                case 1: {
-                    bufferSwitch = 1;
-                    primeSnippet = '';
-                    faOpacity = 1;
-                    break;
-                }
-
+                case 1:
                 case 2: {
-                    bufferSwitch = 2;
-                    primeSnippet = '<button type="button" class="primeComponent btn btn-primary btn-xs">' + primeUpgradeText + '</button>'
-                    faOpacity = 0.7;
+                    componentList.push({
+                        allow: status == 1 ? true : false,
+                        componentID: componentID,
+                        name: components[componentID].name,
+                        fa: components[componentID].fontAwesome,
+                        specialJsonItemName: specialJsonItemName,
+                        specialJsonItemColor: specialJsonItemColor,
+                        description: components[componentID].description
+
+                    })
                     break;
                 }
             }
@@ -171,78 +198,102 @@ export class AddContent extends Compbaser implements AfterViewInit {
             // bufferSwitch == 1 ? bufferFreeComp += snippet : bufferPrimeComp += snippet;
         }
 
-        /*
-         $(Elements.ADD_COMPONENT_BLOCK_LIST, this.el).append(bufferFreeComp);
-         $(Elements.ADD_COMPONENT_BLOCK_LIST, this.el).append(bufferPrimeComp);
 
-         /////////////////////////////////////////////////////////
-         // show resource selection list
-         /////////////////////////////////////////////////////////
+        // $(Elements.ADD_COMPONENT_BLOCK_LIST, this.el).append(bufferFreeComp);
+        // $(Elements.ADD_COMPONENT_BLOCK_LIST, this.el).append(bufferPrimeComp);
 
-         var recResources = pepper.getResources();
-         $(recResources).each(function (i) {
+        /////////////////////////////////////////////////////////
+        // show resource selection list
+        /////////////////////////////////////////////////////////
 
-         // dont process deleted resources
-         if (recResources[i]['change_type'] == 3)
-         return;
+        // var recResources = pepper.getResources();
+        this.m_resourceModels.forEach((i_resourcesModel: ResourcesModel) => {
 
-         var size = (parseInt(recResources[i]['resource_bytes_total']) / 1000).toFixed(2);
-         var resourceDescription = 'size: ' + size + 'K dimension: ' + recResources[i]['resource_pixel_width'] + 'x' + recResources[i]['resource_pixel_height'];
-         var snippet = '<li class="list-group-item ' + BB.lib.unclass(Elements.CLASS_ADD_BLOCK_LIST_ITEMS, this.el) + '" data-resource_id="' + recResources[i]['resource_id'] + '" data-resource_name="' + recResources[i]['resource_name'] + '">' +
-         '<i class="fa ' + BB.PepperHelper.getFontAwesome(recResources[i]['resource_type']) + '"></i>' +
-         '<span>' + recResources[i]['resource_name'] + '</span>' +
-         '<br/><small>' + resourceDescription + '</small>' +
-         '</li>';
-         $(Elements.ADD_RESOURCE_BLOCK_LIST, this.el).append(snippet);
-         });
+            var size = (i_resourcesModel.getResourceBytesTotal() / 1000).toFixed(2);
+            var resourceDescription = 'size: ' + size + 'K dimension: ' + i_resourcesModel.getResourcePixelWidth() + 'x' + i_resourcesModel.getResourcePixelHeight();
 
-         /////////////////////////////////////////////////////////
-         // show scene selection list in Scene or block list modes
-         /////////////////////////////////////////////////////////
-
-         if (this.m_placement == BB.CONSTS.PLACEMENT_CHANNEL || this.m_placement == BB.CONSTS.PLACEMENT_LISTS) {
-         var scenes = pepper.getScenes();
-         _.each(scenes, function (scene, i) {
-         var label = $(scene).find('Player').eq(0).attr('label');
-         var sceneID = $(scene).find('Player').eq(0).attr('id');
-
-         // don't allow adding mimetype scenes to channels directly as needs to be added via Player block
-         if (this.m_placement == BB.CONSTS.PLACEMENT_CHANNEL) {
-         var mimeType = BB.Pepper.getSceneMime(sceneID);
-         if (!_.isUndefined(mimeType))
-         return;
-         }
-
-         sceneID = pepper.sterilizePseudoId(sceneID);
-         var snippet = '<li class="list-group-item ' + BB.lib.unclass(Elements.CLASS_ADD_BLOCK_LIST_ITEMS, this.el) + '" data-scene_id="' + sceneID + '">' +
-         '<i class="fa ' + BB.PepperHelper.getFontAwesome('scene') + '"></i>' +
-         '<span>' + label + '</span>' +
-         '<br/><small></small>' +
-         '</li>';
-         $(Elements.ADD_SCENE_BLOCK_LIST, this.el).append(snippet);
-         });
-         }
-
-         if (this.m_placement == BB.CONSTS.PLACEMENT_SCENE) {
-         $(Elements.ADD_COMPONENTS_BLOCK_LIST_CONTAINER, this.el).show();
-         $(Elements.ADD_SCENE_BLOCK_LIST_CONTAINER, this.el).hide();
-         }
+            // var snippet = '<li class="list-group-item ' + BB.lib.unclass(Elements.CLASS_ADD_BLOCK_LIST_ITEMS, this.el) + '" data-resource_id="' + recResources[i]['resource_id'] + '" data-resource_name="' + recResources[i]['resource_name'] + '">' +
+            //     '<i class="fa ' + BB.PepperHelper.getFontAwesome(recResources[i]['resource_type']) + '"></i>' +
+            //     '<span>' + recResources[i]['resource_name'] + '</span>' +
+            //     '<br/><small>' + resourceDescription + '</small>' +
+            //     '</li>';
+            // $(Elements.ADD_RESOURCE_BLOCK_LIST, this.el).append(snippet);
+        })
 
 
-         if (this.m_placement == BB.CONSTS.PLACEMENT_LISTS) {
-         $(Elements.ADD_COMPONENTS_BLOCK_LIST_CONTAINER, this.el).hide();
-         $(Elements.ADD_SCENE_BLOCK_LIST_CONTAINER, this.el).show();
-         }
+        /////////////////////////////////////////////////////////
+        // show scene selection list in Scene or block list modes
+        /////////////////////////////////////////////////////////
+
+        if (this.m_placement == PLACEMENT_CHANNEL || this.m_placement == PLACEMENT_LISTS) {
+            this.m_playerDataModels.forEach((scene, i)=>{
+                // var scene:XMLDocument = i_playerDataModel.getPlayerDataValue();
+                var label = $(scene).find('Player').eq(0).attr('label');
+                var sceneID = $(scene).find('Player').eq(0).attr('id');
+                var mimeType = $(scene).find('Player').eq(0).attr('mimeType');
+
+                // don't allow adding mimetype scenes to channels directly as needs to be added via Player block
+                if (this.m_placement == PLACEMENT_CHANNEL) {
+                    if (!_.isUndefined(mimeType))
+                        return;
+                }
+
+                // sceneID = this.rp.sterilizePseudoId(sceneID);
+                // sceneID = this.rp.sterilizePseudoIdFromScene(scene);
+                // var snippet = '<li class="list-group-item ' + BB.lib.unclass(Elements.CLASS_ADD_BLOCK_LIST_ITEMS, this.el) + '" data-scene_id="' + sceneID + '">' +
+                //     '<i class="fa ' + BB.PepperHelper.getFontAwesome('scene') + '"></i>' +
+                //     '<span>' + label + '</span>' +
+                //     '<br/><small></small>' +
+                //     '</li>';
+                // $(Elements.ADD_SCENE_BLOCK_LIST, this.el).append(snippet);
+            })
 
 
-         if (this.m_placement == BB.CONSTS.PLACEMENT_CHANNEL) {
-         $(Elements.ADD_COMPONENTS_BLOCK_LIST_CONTAINER, this.el).show();
-         $(Elements.ADD_SCENE_BLOCK_LIST_CONTAINER, this.el).show();
-         }
+        }
 
-         this._listenSelection();
+        // if (this.m_placement == BB.CONSTS.PLACEMENT_CHANNEL || this.m_placement == BB.CONSTS.PLACEMENT_LISTS) {
+        //     var scenes = pepper.getScenes();
+        //     _.each(scenes, function (scene, i) {
+        //         var label = $(scene).find('Player').eq(0).attr('label');
+        //         var sceneID = $(scene).find('Player').eq(0).attr('id');
+        //
+        //         // don't allow adding mimetype scenes to channels directly as needs to be added via Player block
+        //         if (this.m_placement == BB.CONSTS.PLACEMENT_CHANNEL) {
+        //             var mimeType = BB.Pepper.getSceneMime(sceneID);
+        //             if (!_.isUndefined(mimeType))
+        //                 return;
+        //         }
+        //
+        //         sceneID = pepper.sterilizePseudoId(sceneID);
+        //         var snippet = '<li class="list-group-item ' + BB.lib.unclass(Elements.CLASS_ADD_BLOCK_LIST_ITEMS, this.el) + '" data-scene_id="' + sceneID + '">' +
+        //             '<i class="fa ' + BB.PepperHelper.getFontAwesome('scene') + '"></i>' +
+        //             '<span>' + label + '</span>' +
+        //             '<br/><small></small>' +
+        //             '</li>';
+        //         $(Elements.ADD_SCENE_BLOCK_LIST, this.el).append(snippet);
+        //     });
+        // }
 
-         */
+
+        if (this.m_placement == PLACEMENT_SCENE) {
+            // $(Elements.ADD_COMPONENTS_BLOCK_LIST_CONTAINER, this.el).show();
+            // $(Elements.ADD_SCENE_BLOCK_LIST_CONTAINER, this.el).hide();
+        }
+
+
+        if (this.m_placement == PLACEMENT_LISTS) {
+            // $(Elements.ADD_COMPONENTS_BLOCK_LIST_CONTAINER, this.el).hide();
+            // $(Elements.ADD_SCENE_BLOCK_LIST_CONTAINER, this.el).show();
+        }
+
+
+        if (this.m_placement == PLACEMENT_CHANNEL) {
+            // $(Elements.ADD_COMPONENTS_BLOCK_LIST_CONTAINER, this.el).show();
+            // $(Elements.ADD_SCENE_BLOCK_LIST_CONTAINER, this.el).show();
+        }
+
+        // this._listenSelection();
+
 
         //reset mimetype
         this.m_sceneMime = undefined;
