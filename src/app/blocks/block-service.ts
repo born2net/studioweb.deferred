@@ -53,6 +53,7 @@ export interface IBlockData {
     blockMinHeight: number;
     playerDataJson: {};
     playerDataDom: XMLDocument,
+    playerDataString: string,
     playerMimeScene: string;
     playerDataJsonHandle: number;
     campaignTimelineChanelPlayersModelExt: CampaignTimelineChanelPlayersModelExt,
@@ -63,6 +64,7 @@ export interface IBlockData {
         handle: string,
         playerDataJson: {};
         playerDataDom: XMLDocument,
+        playerDataString: XMLDocument,
     },
     resource?: {
         name: string,
@@ -771,6 +773,7 @@ export class BlockService {
                 var playerMimeScene;
                 var playerDataJsonHandle;
                 var playerDataDom = $.parseXML(xml);
+                var playerDataString = xml;
                 let playerDataJson = this.parser.xml2js(xml);
                 if (playerDataJson['Player']['_player']) {
 
@@ -801,6 +804,7 @@ export class BlockService {
                         name: '',
                         handle: jXML(playerDataDom).find('Player').attr('hDataSrc'),
                         playerDataJson: null,
+                        playerDataString: null,
                         playerDataDom: null
                     }
                 }
@@ -817,6 +821,7 @@ export class BlockService {
                     blockMinWidth: this.m_minSize.w,
                     blockMinHeight: this.m_minSize.h,
                     playerDataDom: playerDataDom,
+                    playerDataString: playerDataString,
                     playerDataJson: playerDataJson,
                     playerMimeScene: playerMimeScene,
                     playerDataJsonHandle: playerDataJsonHandle,
@@ -832,11 +837,13 @@ export class BlockService {
                 /** additional data for: scenes **/
                 if (blockData.scene) {
                     return this.yp.getScenePlayerdataDom(blockData.scene.handle)
-                        .map((xml:string) => {
+                        .map((xml: string) => {
                             var domPlayerData = $.parseXML(xml)
                             blockData.scene.name = jXML(domPlayerData).find('Player').eq(0).attr('label');
                             blockData.scene.playerDataDom = domPlayerData;
-                            blockData.scene.playerDataJson = this.parser.xml2js(xml);;
+                            blockData.scene.playerDataString = xml;
+                            blockData.scene.playerDataJson = this.parser.xml2js(xml);
+                            ;
                             return blockData;
                         })
                 } else {
@@ -962,11 +969,13 @@ export class BlockService {
      @return {String} common xml
      **/
     getCommonBackgroundXML() {
-        var common = '<Background style="Gradient" gradientType="linear" angle="0" offsetX="0" offsetY="0">' +
-            '<GradientPoints>' +
-            '<Point color="4361162" opacity="1" midpoint="125" />' +
-            '</GradientPoints>' +
-            '</Background>'
+        var common = `
+            <Background style="Gradient" gradientType="linear" angle="0" offsetX="0" offsetY="0">' 
+                <GradientPoints> 
+                    <Point color="4361162" opacity="1" midpoint="125" /> 
+                </GradientPoints> 
+            </Background>
+            `
         return common;
     }
 

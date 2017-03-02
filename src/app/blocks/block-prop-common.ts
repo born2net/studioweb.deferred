@@ -28,7 +28,7 @@ import * as _ from "lodash";
                     </li>
                     <li class="list-group-item">
                         background
-                        <button style="position: relative; top: 15px" (click)="_onRemoveBackground()" class="btn btn-default btn-sm pull-right" type="button">
+                        <button style="position: relative; top: 15px" (click)="_onRemoveBackgroundClicked()" class="btn btn-default btn-sm pull-right" type="button">
                             <i class="fa fa-times"></i>
                         </button>
                         <div id="bgColorGradientSelector"></div>
@@ -79,21 +79,6 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         this._listenBorderChanged();
     }
 
-    _listenBorderChanged() {
-        this.cancelOnDestroy(
-            //
-            this.m_borderColorChanged
-                .debounceTime(500)
-                .distinct()
-                .subscribe((i_color) => {
-                    var domPlayerData = this.m_blockData.playerDataDom;
-                    var border = this._findBorder(domPlayerData);
-                    jXML(border).attr('borderColor', Lib.HexToDecimal(i_color));
-                    this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
-                }, (e) => console.error(e))
-        )
-    }
-
     /**
      * set block data for the component.
      * on first selection we just set the blockData, in subsequent calls we only
@@ -113,7 +98,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
 
     ngAfterViewInit() {
         this._listenBorderChanged();
-        this._bgGradientInit();
+        this._bgGradientWidgetInit();
         this._render();
     }
 
@@ -126,9 +111,24 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         this._borderPropsPopulate();
     }
 
+    _listenBorderChanged() {
+        this.cancelOnDestroy(
+            //
+            this.m_borderColorChanged
+                .debounceTime(500)
+                .distinct()
+                .subscribe((i_color) => {
+                    var domPlayerData = this.m_blockData.playerDataDom;
+                    var border = this._findBorder(domPlayerData);
+                    jXML(border).attr('borderColor', Lib.HexToDecimal(i_color));
+                    this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+                }, (e) => console.error(e))
+        )
+    }
+
     /**
      Toggle block background on UI checkbox selection
-     @method _toggleBackgroundColorHandler
+     @method _toggleBorder
      @param {event} e
      **/
     _toggleBorder(i_checked: boolean) {
@@ -182,10 +182,67 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
     }
 
     /**
-     Load jXML gradient component once
-     @method _bgGradientInit
+     On changes in msdb model updated UI common border properties
+     @method _borderPropsPopulate
      **/
-    _bgGradientInit() {
+    _borderPropsPopulate() {
+        var self = this;
+        var domPlayerData = self.m_blockData.playerDataDom;
+        var xSnippet = self._findBorder(domPlayerData);
+        if (xSnippet.length > 0) {
+            var color = jXML(xSnippet).attr('borderColor');
+            this._updateBorderColor(true, color)
+        } else {
+            this._updateBorderColor(false, '16777215')
+        }
+    }
+
+    _updateBorderColor(i_value, i_color) {
+        this.formInputs['border'].setValue(i_value);
+        this.m_color = '#' + Lib.DecimalToHex(i_color);
+        // this.cd.markForCheck();
+    }
+
+    /**
+     Find the border section in player_data for selected block
+     @method _findBorder
+     @param  {object} i_domPlayerData
+     @return {Xml} xSnippet
+     **/
+    _findBorder(i_domPlayerData) {
+        return jXML(i_domPlayerData).find('Border');
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     Load jXML gradient component once
+     @method _bgGradientWidgetInit
+     **/
+    _bgGradientWidgetInit() {
         var self = this;
         var lazyUpdateBgColor = _.debounce(function (points, styles) {
             if (points.length == 0)
@@ -219,24 +276,47 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         var self = this;
         var gradient = jXML('#bgColorGradientSelector', self.el.nativeElement).data("gradientPicker-sel");
         // gradient.changeFillDirection("top"); /* change direction future support */
-        gradient.removeAllPoints();
+        this._bgGradientWidgetClear();
         var domPlayerData = self.m_blockData.playerDataDom;
         var xSnippet = self._findGradientPoints(domPlayerData);
-        var points = jXML(xSnippet).find('Point');
-        if (points.length == 0)
-            return this._bgGradientClear();
-        jXML.each(points, function (i, point) {
-            var pointColor = Lib.DecimalToHex(jXML(point).attr('color'));
-            var pointMidpoint = (parseInt(jXML(point).attr('midpoint')) / 250);
-            gradient.addPoint(pointMidpoint, pointColor, true);
-        });
+        if (xSnippet.length > 0) {
+            var points = jXML(xSnippet).find('Point');
+            $.each(points, function (i, point) {
+                var pointColor = Lib.DecimalToHex(jXML(point).attr('color'));
+                var pointMidpoint = (parseInt(jXML(point).attr('midpoint')) / 250);
+                gradient.addPoint(pointMidpoint, pointColor, true);
+            });
+        }
     }
 
-    _bgGradientClear() {
-        var self = this;
-        var gradient = jXML('#bgColorGradientSelector', self.el.nativeElement).data("gradientPicker-sel");
+    _bgGradientWidgetClear() {
+        var gradient = jQuery('#bgColorGradientSelector', this.el.nativeElement).data("gradientPicker-sel");
         gradient.removeAllPoints();
         gradient.clear();
+    }
+
+    _gradientChanged(e) {
+        var self = this;
+        var points: any = e.points;
+        var styles = e.styles;
+        if (points.length == 0)
+            return;
+        var domPlayerData = self.m_blockData.playerDataDom;
+        jXML(domPlayerData).find('Background').remove();
+        var pointsXML = "";
+        for (var i = 0; i < points.length; ++i) {
+            var pointMidpoint: any = (points[i].position * 250);
+            var color = Lib.ColorToDecimal(points[i].color);
+            var xPoint = '<Point color="' + color + '" opacity="1" midpoint="' + pointMidpoint + '" />';
+            // log(xPoint);
+            // jXML(gradientPoints).append(xPoint);
+            pointsXML += xPoint;
+        }
+        var xPointsSnippet = jXML.parseXML(this.bs.getCommonBackgroundXML());
+        jXML(xPointsSnippet).find('GradientPoints').empty().append(pointsXML);
+        var c = (new XMLSerializer()).serializeToString(xPointsSnippet);
+        jXML(domPlayerData).find('Data').append(c)
+        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
     /**
@@ -250,8 +330,9 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         return xSnippet;
     }
 
-    _onRemoveBackground() {
-        this._bgGradientClear();
+
+    _onRemoveBackgroundClicked() {
+        this._bgGradientWidgetClear();
         var domPlayerData = this.m_blockData.playerDataDom;
         var gradientPoints = this._findGradientPoints(domPlayerData);
         jXML(gradientPoints).empty();
@@ -259,81 +340,45 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
     }
 
 
-    /**
-     Update a block's player_data with new gradient background
-     @method _listenGradientChange
-     **/
-    _gradientChanged(e) {
-        var self = this;
-        var points: any = e.points;
-        var styles = e.styles;
-        if (points.length == 0)
-            return;
-        var domPlayerData = self.m_blockData.playerDataDom;
-        var gradientPoints = self._findGradientPoints(domPlayerData);
-        jXML(gradientPoints).empty();
-        var pointsXML = "";
-        for (var i = 0; i < points.length; ++i) {
-            var pointMidpoint: any = (points[i].position * 250);
-            var color = Lib.ColorToDecimal(points[i].color);
-            var xPoint = '<Point color="' + color + '" opacity="1" midpoint="' + pointMidpoint + '" />';
-            // log(xPoint);
-            // jXML(gradientPoints).append(xPoint);
-            pointsXML += xPoint;
-        }
-        // jXML(domPlayerData).find('GradientPoints').html(pointsXML);
-        var xmlString = (new XMLSerializer()).serializeToString(domPlayerData);
-        xmlString = xmlString.replace(/<GradientPoints[ ]*\/>/, '<GradientPoints>' + pointsXML + '</GradientPoints>');
-        domPlayerData = jXML.parseXML(xmlString);
-        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
-    }
+
+
 
     /**
-     On changes in msdb model updated UI common border properties
-     @method _borderPropsPopulate
-     **/
-    _borderPropsPopulate() {
-        var self = this;
-        var domPlayerData = self.m_blockData.playerDataDom;
-        var xSnippet = self._findBorder(domPlayerData);
-        if (xSnippet.length > 0) {
-            var color = jXML(xSnippet).attr('borderColor');
-            this._updateBorderColor(true, color)
-        } else {
-            this._updateBorderColor(false, '16777215')
-        }
-    }
-
-    _updateBorderColor(i_value, i_color) {
-        this.m_color = '#' + Lib.DecimalToHex(i_color);
-        this.formInputs['border'].setValue(i_value);
-        // this.cd.markForCheck();
-    }
-
-    /**
-     Find the border section in player_data for selected block
-     @method _findBorder
+     Find the background section in player_data for selected block
+     @method _findBackground
      @param  {object} i_domPlayerData
      @return {Xml} xSnippet
      **/
-    _findBorder(i_domPlayerData) {
-        return jXML(i_domPlayerData).find('Border');
+    _findBackground(i_domPlayerData) {
+        var xSnippet = jXML(i_domPlayerData).find('Background');
+        return xSnippet;
     }
-
-    // @timeout()
-    // private saveToStore() {
-    //     // console.log(this.contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.contGroup.value)));
-    //     if (this.contGroup.status != 'VALID')
-    //         return;
-    //     // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_name', this.contGroup.value.campaign_name);
-    //     // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_playlist_mode', this.contGroup.value.campaign_playlist_mode);
-    //     // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_timeline_id', 0); //todo: you need to fix this as zero is arbitrary number right now
-    //     // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_mode', this.contGroup.value.kiosk_mode);
-    //     // this.rp.reduxCommit()
-    // }
 
     destroy() {
         var gradient = jXML('#bgColorGradientSelector', this.el.nativeElement).data("gradientPicker-sel");
         gradient.destroyed();
     }
 }
+
+// /**
+//  Disable the gradient background UI
+//  @method _bgPropsUnpopulate
+//  **/
+// _bgPropsUnpopulate() {
+//     var domPlayerData = this.m_blockData.playerDataDom;
+//     var gradientPoints = this._findGradientPoints(domPlayerData);
+//     jXML(gradientPoints).empty();
+// }
+
+
+// @timeout()
+// private saveToStore() {
+//     // console.log(this.contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.contGroup.value)));
+//     if (this.contGroup.status != 'VALID')
+//         return;
+//     // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_name', this.contGroup.value.campaign_name);
+//     // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_playlist_mode', this.contGroup.value.campaign_playlist_mode);
+//     // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_timeline_id', 0); //todo: you need to fix this as zero is arbitrary number right now
+//     // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_mode', this.contGroup.value.kiosk_mode);
+//     // this.rp.reduxCommit()
+// }
