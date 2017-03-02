@@ -765,6 +765,16 @@ export class BlockService {
 
     public getBlockData(blockId): Observable<IBlockData> {
 
+        // todo: add support for getBlockRecord when placement is SCENE
+        // case BB.CONSTS.PLACEMENT_IS_SCENE:
+        //     {
+        //         var blockID = pepper.getSceneIdFromPseudoId(self.m_block_id);
+        //         var recPlayerData = BB.Pepper.getScenePlayerRecord(blockID);
+        //         var xPlayerdata = recPlayerData['player_data_value'];
+        //         return $.parseXML(xPlayerdata);
+        //         break;
+        //     }
+
         return this.yp.getBlockRecord(blockId)
             .mergeMap((i_campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModelExt) => {
                 // var t0 = performance.now();
@@ -807,6 +817,7 @@ export class BlockService {
                         playerDataString: null,
                         playerDataDom: null
                     }
+
                 }
 
                 var data: IBlockData = {
@@ -876,11 +887,21 @@ export class BlockService {
     }
 
     /**
+     Help method to get the proper playerDataDom depending of we are dealing with a regular block or a scene block
+     **/
+    getBlockPlayerData(i_blockData:IBlockData): XMLDocument {
+        switch (Number(i_blockData.blockCode)) {
+            case BlockLabels.BLOCKCODE_SCENE: {
+                return i_blockData.scene.playerDataDom;
+            }
+            default: {
+                return i_blockData.playerDataDom;
+            }
+        }
+    }
+
+    /**
      Update the msdb for the block with new values inside its player_data
-     @method _setBlockPlayerData
-     @param {Object} i_xmlDoc the dom object to save to local msdb
-     @param {String} [i_noNotify] if set, fire event announcing data saved
-     @param {Boolean} [i_xmlIsString] if set, bypass serializeToString since already in string format
      **/
     setBlockPlayerData(blockData: IBlockData, i_xmlDoc: XMLDocument | string) {
         var player_data: string, player_data_json;
@@ -892,31 +913,37 @@ export class BlockService {
         }
         player_data_json = this.parser.xml2js(player_data);
         player_data = this.rp.ieFixEscaped(player_data);
-
+        var playerCode = Number(player_data_json.Player._player);
         switch (this.blockPlacement) {
+
             case 'CHANNEL': {
 
-                if (player_data_json.Player._player == BlockLabels.BLOCKCODE_SCENE) {
-                    /***** CHANNEL > Block scene *****/
+                switch (playerCode) {
 
-                    this.yp.getBlockRecord(blockData.blockID)
-                        .subscribe((i_campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModelExt) => {
-                            var domPlayerData = $.parseXML(i_campaignTimelineChanelPlayersModel.getPlayerData());
-                            var scene_id = jXML(domPlayerData).find('Player').attr('hDataSrc');
-                            this.rp.setScenePlayerData(scene_id, player_data);
-                            this.rp.reduxCommit();
-                        })
+                    /***** SCENE *****/
+                    case BlockLabels.BLOCKCODE_SCENE: {
+                        this.yp.getBlockRecord(blockData.blockID)
+                            .subscribe((i_campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModelExt) => {
+                                var domPlayerData = $.parseXML(i_campaignTimelineChanelPlayersModel.getPlayerData());
+                                var scene_id = jXML(domPlayerData).find('Player').attr('hDataSrc');
+                                this.rp.setScenePlayerData(scene_id, player_data);
+                                this.rp.reduxCommit();
+                            })
+                        break;
+                    }
 
-                } else {
-
-                    /***** CHANNEL > Block item *****/
-                    this.rp.setCampaignTimelineChannelPlayerRecord(blockData.blockID, 'player_data', player_data);
+                    /***** BLOCK *****/
+                    default: {
+                        this.rp.setCampaignTimelineChannelPlayerRecord(blockData.blockID, 'player_data', player_data);
+                    }
                 }
 
                 break;
             }
+
             //todo: fix scene
             case 'SCENE': {
+
                 //     pepper.setScenePlayerdataBlock(self.m_sceneID, self.m_block_id, player_data);
                 //     if (!i_noNotify)
                 //         self._announceBlockChanged();
@@ -943,7 +970,6 @@ export class BlockService {
      @return {String} common xml
      **/
     getCommonSceneLayout(i_placement, w?, h?) {
-        var self = this;
         w = w == undefined ? 100 : w;
         h = h == undefined ? 100 : h;
         if (i_placement == PLACEMENT_CHANNEL)

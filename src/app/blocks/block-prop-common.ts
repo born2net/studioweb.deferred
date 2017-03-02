@@ -1,6 +1,6 @@
-import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input} from "@angular/core";
+import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, Input} from "@angular/core";
 import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
-import {BlockService, IBlockData} from "./block-service";
+import {BlockLabels, BlockService, IBlockData} from "./block-service";
 import {timeout} from "../../decorators/timeout-decorator";
 import {Subject} from "rxjs";
 import {RedPepperService} from "../../services/redpepper.service";
@@ -66,7 +66,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
     private m_borderColorChanged = new Subject();
     m_color;
 
-    constructor(private cd: ChangeDetectorRef, private fb: FormBuilder, private rp: RedPepperService, private bs: BlockService, private el: ElementRef) {
+    constructor(@Inject('BLOCK_PLACEMENT') private blockPlacement: string, private cd: ChangeDetectorRef, private fb: FormBuilder, private rp: RedPepperService, private bs: BlockService, private el: ElementRef) {
         super();
         this.contGroup = fb.group({
             'alpha': [0],
@@ -164,8 +164,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
      @method _alphaPopulate
      **/
     _alphaPopulate() {
-        var self = this;
-        var domPlayerData = self.m_blockData.playerDataDom;
+        var domPlayerData = this.bs.getBlockPlayerData(this.m_blockData);
         var data = jXML(domPlayerData).find('Data').eq(0);
         var xSnippet = jXML(data).find('Appearance').eq(0);
         var a1: any = jXML(xSnippet).attr('alpha');
@@ -174,7 +173,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
     }
 
     _onAlphaChange(event) {
-        var domPlayerData = this.m_blockData.playerDataDom;
+        var domPlayerData = this.bs.getBlockPlayerData(this.m_blockData);
         var data = jXML(domPlayerData).find('Data').eq(0);
         var xSnippet = jXML(data).find('Appearance').eq(0);
         jXML(xSnippet).attr('alpha', event.target.value);
