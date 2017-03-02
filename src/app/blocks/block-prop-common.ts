@@ -26,7 +26,7 @@ import * as _ from "lodash";
                         alpha
                         <input id="slider1" (change)="_onAlphaChange($event)" [formControl]="contGroup.controls['alpha']" type="range" min="0" max="1" step="0.1"/>
                     </li>
-                    <li class="list-group-item">
+                    <li *ngIf="!m_blockPropsForScene" class="list-group-item">
                         background
                         <button style="position: relative; top: 15px" (click)="_onRemoveBackgroundClicked()" class="btn btn-default btn-sm pull-right" type="button">
                             <i class="fa fa-times"></i>
@@ -55,7 +55,6 @@ import * as _ from "lodash";
                 </ul>
             </div>
         </form>
-        <h5>block id {{m_blockData.blockID}}</h5>
     `
 })
 export class BlockPropCommon extends Compbaser implements AfterViewInit {
@@ -63,6 +62,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
     private formInputs = {};
     private contGroup: FormGroup;
     private m_blockData: IBlockData;
+    private m_blockPropsForScene: boolean = false;
     private m_borderColorChanged = new Subject();
     m_color;
 
@@ -106,9 +106,11 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
      * Render the component with latest data from BlockData
      */
     _render() {
+        this.m_blockPropsForScene = this.m_blockData.scene ? true : false;
         this._alphaPopulate();
-        this._gradientPopulate();
         this._borderPropsPopulate();
+        if (!this.m_blockPropsForScene)
+            this._gradientPopulate();
     }
 
     _listenBorderChanged() {
@@ -118,7 +120,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
                 .debounceTime(500)
                 .distinct()
                 .subscribe((i_color) => {
-                    var domPlayerData = this.m_blockData.playerDataDom;
+                    var domPlayerData = this.bs.getBlockPlayerData(this.m_blockData)
                     var border = this._findBorder(domPlayerData);
                     jXML(border).attr('borderColor', Lib.HexToDecimal(i_color));
                     this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
@@ -132,29 +134,21 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
      @param {event} e
      **/
     _toggleBorder(i_checked: boolean) {
-        var self = this;
-        var xBgSnippet = undefined;
-        var domPlayerData = self.m_blockData.playerDataDom;
+        var domPlayerData = this.bs.getBlockPlayerData(this.m_blockData)
         var checked = i_checked == true ? 1 : 0;
         if (checked) {
-            // self._enableBorderSelection();
-            xBgSnippet = self.bs.getCommonBorderXML();
+            var xBgSnippet = this.bs.getCommonBorderXML();
             var data = jXML(domPlayerData).find('Data').eq(0);
-            var bgData: any = self._findBorder(data);
+            var bgData: any = this._findBorder(data);
             if (bgData.length > 0 && !_.isUndefined(bgData.replace)) { // ie bug workaround
                 bgData.replace(jXML(xBgSnippet));
             } else {
                 jXML(data).append(jXML(xBgSnippet));
             }
-            // var player_data = self.rp.xmlToStringIEfix(domPlayerData);
-            // domPlayerData = jXML.parseXML(player_data);
             this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
-            // self._borderPropsPopulate();
-            //self._announceBlockChanged();
         } else {
-            var xSnippet = self._findBorder(domPlayerData);
+            var xSnippet = this._findBorder(domPlayerData);
             jXML(xSnippet).remove();
-            // self._borderPropsUnpopulate();
             this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
         }
     }
@@ -186,7 +180,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
      **/
     _borderPropsPopulate() {
         var self = this;
-        var domPlayerData = self.m_blockData.playerDataDom;
+        var domPlayerData = this.bs.getBlockPlayerData(this.m_blockData)
         var xSnippet = self._findBorder(domPlayerData);
         if (xSnippet.length > 0) {
             var color = jXML(xSnippet).attr('borderColor');
