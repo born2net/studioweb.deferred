@@ -26,7 +26,7 @@ import * as _ from "lodash";
                         alpha
                         <input id="slider1" (change)="_onAlphaChange($event)" [formControl]="contGroup.controls['alpha']" type="range" min="0" max="1" step="0.1"/>
                     </li>
-                    <li *ngIf="!m_blockPropsForScene" class="list-group-item">
+                    <li [ngClass]="{hidden: m_isPropsForScene}" class="list-group-item">
                         background
                         <button style="position: relative; top: 15px" (click)="_onRemoveBackgroundClicked()" class="btn btn-default btn-sm pull-right" type="button">
                             <i class="fa fa-times"></i>
@@ -55,6 +55,7 @@ import * as _ from "lodash";
                 </ul>
             </div>
         </form>
+        <h5>block id {{m_blockData.blockID}}</h5>
     `
 })
 export class BlockPropCommon extends Compbaser implements AfterViewInit {
@@ -62,7 +63,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
     private formInputs = {};
     private contGroup: FormGroup;
     private m_blockData: IBlockData;
-    private m_blockPropsForScene: boolean = false;
+    private m_isPropsForScene:boolean = false;
     private m_borderColorChanged = new Subject();
     m_color;
 
@@ -106,11 +107,10 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
      * Render the component with latest data from BlockData
      */
     _render() {
-        this.m_blockPropsForScene = this.m_blockData.scene ? true : false;
+        this.m_isPropsForScene = this.m_blockData.scene ? true : false;
         this._alphaPopulate();
+        this._gradientPopulate();
         this._borderPropsPopulate();
-        if (!this.m_blockPropsForScene)
-            this._gradientPopulate();
     }
 
     _listenBorderChanged() {
@@ -306,10 +306,8 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
     }
 
     destroy() {
-        if (!this.m_blockPropsForScene){
-            var gradient = jXML('#bgColorGradientSelector', this.el.nativeElement).data("gradientPicker-sel");
-            gradient.destroyed();
-        }
+        var gradient = jXML('#bgColorGradientSelector', this.el.nativeElement).data("gradientPicker-sel");
+        gradient.destroyed();
     }
 }
 
