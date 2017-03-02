@@ -94,7 +94,7 @@ export class BlockPropSheets extends Compbaser implements AfterViewInit {
         var self = this;
         try {
             jXML.ajax({
-                url: `https://secure.digitalsignage.com/GoogleSheetsList/jXML{self.m_contGroup.value.token}`,
+                url: `https://secure.digitalsignage.com/GoogleSheetsList/${self.m_contGroup.value.token}`,
                 dataType: "json",
                 type: "post",
                 complete: function (response, status) {

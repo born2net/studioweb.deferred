@@ -128,15 +128,15 @@ export class BlockPropCalendar extends Compbaser implements AfterViewInit {
 
     private _render() {
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom
-        var jXMLdata = jXML(domPlayerData).find('Json').find('Data');
-        var mode = jXMLdata.attr('mode');
+        var $data = jXML(domPlayerData).find('Json').find('Data');
+        var mode = $data.attr('mode');
         this.m_mode = (mode == 'fixed') ? false : true;
-        var before = jXMLdata.attr('before');
-        var after = jXMLdata.attr('after');
+        var before = $data.attr('before');
+        var after = $data.attr('after');
         this.m_formInputs['mode'].setValue(this.m_mode);
         this.m_formInputs['after'].setValue(after);
         this.m_formInputs['before'].setValue(before);
-        this.m_formInputs['token'].setValue(jXMLdata.attr('token'));
+        this.m_formInputs['token'].setValue($data.attr('token'));
         this._getGoogleCalendars();
         this._populateStartEndDates();
     }
@@ -190,7 +190,7 @@ export class BlockPropCalendar extends Compbaser implements AfterViewInit {
         var self = this;
         try {
             jQuery.ajax({
-                url: `https://secure.digitalsignage.com/GoogleCalendarList/jXML{self.m_contGroup.value.token}/100`,
+                url: `https://secure.digitalsignage.com/GoogleCalendarList/${self.m_contGroup.value.token}/100`,
                 dataType: "json",
                 type: "post",
                 complete: function (response, status) {
