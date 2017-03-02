@@ -515,6 +515,19 @@ export class RedPepperService {
     }
 
     /**
+     set entire scene playerdata
+     @method setScenePlayerData
+     @return {Number} scene player_data id
+     **/
+    setScenePlayerData(i_scene_id, i_player_data) {
+        i_scene_id = this.sterilizePseudoId(i_scene_id);
+        this.databaseManager.table_player_data().openForEdit(i_scene_id);
+        var recPlayerData = this.databaseManager.table_player_data().getRec(i_scene_id);
+        recPlayerData['player_data_value'] = i_player_data;
+        this.addPendingTables(['table_player_data']);
+    }
+
+    /**
      Set a channel_id record in channels table using key and value
      The method uses generic key / value fields so it can set any part of the record.
      @method setCampaignTimelineChannelRecord
@@ -1685,18 +1698,6 @@ export class RedPepperService {
         recPlayerData['player_data_value'] = player_data;
     }
 
-    /**
-     set entire scene playerdata
-     @method setScenePlayerData
-     @return {Number} scene player_data id
-     **/
-    setScenePlayerData(i_scene_id, i_player_data) {
-
-        i_scene_id = this.sterilizePseudoId(i_scene_id);
-        this.databaseManager.table_player_data().openForEdit(i_scene_id);
-        var recPlayerData = this.databaseManager.table_player_data().getRec(i_scene_id);
-        recPlayerData['player_data_value'] = i_player_data;
-    }
 
     /**
      Get a unique scene > player id

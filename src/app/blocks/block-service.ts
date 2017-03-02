@@ -883,17 +883,36 @@ export class BlockService {
      @param {Boolean} [i_xmlIsString] if set, bypass serializeToString since already in string format
      **/
     setBlockPlayerData(blockData: IBlockData, i_xmlDoc: XMLDocument | string) {
-        var self = this;
-        var player_data: string;
+        var player_data: string, player_data_json;
+
         if (i_xmlDoc instanceof XMLDocument) {
             player_data = (new XMLSerializer()).serializeToString(i_xmlDoc as XMLDocument);
         } else {
             player_data = i_xmlDoc as string;
         }
+        player_data_json = this.parser.xml2js(player_data);
         player_data = this.rp.ieFixEscaped(player_data);
-        switch (self.blockPlacement) {
+
+        switch (this.blockPlacement) {
             case 'CHANNEL': {
-                this.rp.setCampaignTimelineChannelPlayerRecord(blockData.blockID, 'player_data', player_data);
+
+                if (player_data_json.Player._player == BlockLabels.BLOCKCODE_SCENE) {
+                    /***** CHANNEL > Block scene *****/
+
+                    this.yp.getBlockRecord(blockData.blockID)
+                        .subscribe((i_campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModelExt) => {
+                            var domPlayerData = $.parseXML(i_campaignTimelineChanelPlayersModel.getPlayerData());
+                            var scene_id = jXML(domPlayerData).find('Player').attr('hDataSrc');
+                            this.rp.setScenePlayerData(scene_id, player_data);
+                            this.rp.reduxCommit();
+                        })
+
+                } else {
+
+                    /***** CHANNEL > Block item *****/
+                    this.rp.setCampaignTimelineChannelPlayerRecord(blockData.blockID, 'player_data', player_data);
+                }
+
                 break;
             }
             //todo: fix scene
