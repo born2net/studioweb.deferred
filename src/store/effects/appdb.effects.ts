@@ -129,15 +129,15 @@ export class AppDbEffects {
                     // console.log('lite account');
                 }
 
-                var whiteLabel = jQuery(pepperConnection.loadManager.m_resellerInfo).find('WhiteLabel');//.attr('enabled'));
-                var resellerId = jQuery(pepperConnection.loadManager.m_resellerInfo).find('BusinessInfo');//.attr('businessId'));
-                var resellerDataString = jQuery(pepperConnection.loadManager.m_resellerInfo).children()[0].innerHTML;
+                var whiteLabel = jXML(pepperConnection.loadManager.m_resellerInfo).find('WhiteLabel');//.attr('enabled'));
+                var resellerId = jXML(pepperConnection.loadManager.m_resellerInfo).find('BusinessInfo');//.attr('businessId'));
+                var resellerDataString = jXML(pepperConnection.loadManager.m_resellerInfo).children()[0].innerHTML;
 
                 var componentList = {};
-                var components = jQuery(pepperConnection.loadManager.m_resellerInfo).find('InstalledApps').find('App');
+                var components = jXML(pepperConnection.loadManager.m_resellerInfo).find('InstalledApps').find('App');
                 _.each(components, function (component) {
-                    if (jQuery(component).attr('installed') == '1')
-                        componentList[jQuery(component).attr('id')] = 1;
+                    if (jXML(component).attr('installed') == '1')
+                        componentList[jXML(component).attr('id')] = 1;
                 });
                 userModel = userModel.setComponents(componentList)
 
@@ -150,12 +150,12 @@ export class AppDbEffects {
                 userModel = userModel.setAccountType(AuthenticateFlags.USER_ACCOUNT);
                 userModel = userModel.setResellerInfo(pepperConnection.loadManager.m_resellerInfo);
                 userModel = userModel.setResellerName(
-                    jQuery(pepperConnection.loadManager.m_resellerInfo)
+                    jXML(pepperConnection.loadManager.m_resellerInfo)
                         .find('BusinessInfo')
                         .attr('name')
                 );
                 userModel = userModel.setResellerId(
-                    Number(jQuery(pepperConnection.loadManager.m_resellerInfo)
+                    Number(jXML(pepperConnection.loadManager.m_resellerInfo)
                         .find('BusinessInfo')
                         .attr('businessId'))
                 );

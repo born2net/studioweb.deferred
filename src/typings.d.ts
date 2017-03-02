@@ -73,6 +73,8 @@ declare module 'xml2js' {
 interface jQueryModal extends JQuery {
 }
 
+
+
 // interface JQuery {
 //     modal: any;
 // }
@@ -80,6 +82,7 @@ interface jQueryModal extends JQuery {
 declare var jQueryAny: any;
 declare var Draggable;
 declare var con:Con;
+declare var jXML: JQueryStatic;
 
 interface Con {
     (msg:any, stringify?:boolean):void;

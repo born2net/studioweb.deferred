@@ -650,9 +650,9 @@ export class RedPepperService {
     getSceneMimeType(i_sceneID, i_playerDataModels:List<PlayerDataModel>):string {
         var found = i_playerDataModels.find((i_playerDataModel:PlayerDataModel)=> {
             var domPlayerData = i_playerDataModel.getPlayerDataValue();
-            return i_sceneID == jQuery(domPlayerData).find('Player').attr('id')
+            return i_sceneID == jXML(domPlayerData).find('Player').attr('id')
         })
-        return jQuery(found).find('Player').attr('mimeType');
+        return jXML(found).find('Player').attr('mimeType');
     }
 
     /**
@@ -1579,13 +1579,13 @@ export class RedPepperService {
     }
 
     /**
-     "Good" old IE, always a headache, jQuery workarounds....
+     "Good" old IE, always a headache, jXML workarounds....
      @method ieFixEscaped
      @param {String} escapedHTML
      @return {String}
      **/
     /**
-     "Good" old IE, always a headache, jQuery workarounds....
+     "Good" old IE, always a headache, jXML workarounds....
      @method ieFixEscaped
      @param {String} escapedHTML
      @return {String}
@@ -1678,7 +1678,7 @@ export class RedPepperService {
         var scene_player_data = recPlayerData['player_data_value'];
         var sceneDomPlayerData = $.parseXML(scene_player_data);
         var playerData: any = $.parseXML(i_player_data);
-        // use first child to overcome the removal by jquery of the HTML tag
+        // use first child to overcome the removal by jXML of the HTML tag
         $(sceneDomPlayerData).find('Players').append(playerData.firstChild);
         // $(sceneDomPlayerData).find('Players').append($(i_player_data));
         var player_data = this.xmlToStringIEfix(sceneDomPlayerData);
@@ -1916,7 +1916,7 @@ export class RedPepperService {
         var player_data = recPlayerData['player_data_value'];
         var domPlayerData = $.parseXML(player_data);
         var playerData: any = $.parseXML(i_player_data);
-        // use first child to overcome the removal by jquery of the HTML tag
+        // use first child to overcome the removal by jXML of the HTML tag
         $(domPlayerData).find('[id="' + i_player_data_id + '"]').replaceWith(playerData.firstChild);
         player_data = this.xmlToStringIEfix(domPlayerData);
         this.setScenePlayerData(i_scene_id, player_data);
@@ -2964,7 +2964,7 @@ export class RedPepperService {
     }
 
     /**
-     The jQuery.Event constructor is exposed and can be used when calling trigger. The new operator is optional.
+     The jXML.Event constructor is exposed and can be used when calling trigger. The new operator is optional.
      @method event
      @param {Event} i_event
      @param {Object} i_context

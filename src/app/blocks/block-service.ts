@@ -769,7 +769,6 @@ export class BlockService {
                 var xml = i_campaignTimelineChanelPlayersModel.getPlayerData();
                 var code: any;
                 var playerMimeScene;
-                var sceneHandle;
                 var playerDataJsonHandle;
                 var playerDataDom = $.parseXML(xml);
                 let playerDataJson = this.parser.xml2js(xml);
@@ -800,7 +799,7 @@ export class BlockService {
                     var blockType = this.getBlockNameByCode(code)
                     var sceneData = {
                         name: '',
-                        handle: jQuery(playerDataDom).find('Player').attr('hDataSrc'),
+                        handle: jXML(playerDataDom).find('Player').attr('hDataSrc'),
                         playerDataJson: null,
                         playerDataDom: null
                     }
@@ -835,7 +834,7 @@ export class BlockService {
                     return this.yp.getScenePlayerdataDom(blockData.scene.handle)
                         .map((xml:string) => {
                             var domPlayerData = $.parseXML(xml)
-                            blockData.scene.name = jQuery(domPlayerData).find('Player').eq(0).attr('label');
+                            blockData.scene.name = jXML(domPlayerData).find('Player').eq(0).attr('label');
                             blockData.scene.playerDataDom = domPlayerData;
                             blockData.scene.playerDataJson = this.parser.xml2js(xml);;
                             return blockData;
@@ -851,10 +850,10 @@ export class BlockService {
                     return Observable.of(blockData);
 
                 var domPlayerData = blockData.playerDataDom;
-                var xSnippet = jQuery(domPlayerData).find('Resource');
+                var xSnippet = jXML(domPlayerData).find('Resource');
                 if (xSnippet.length > 0) {
                     blockData.resource = {
-                        handle: jQuery(xSnippet).attr('hResource'),
+                        handle: jXML(xSnippet).attr('hResource'),
                         name: '',
                         type: ''
                     };

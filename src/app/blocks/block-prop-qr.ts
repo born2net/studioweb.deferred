@@ -59,7 +59,7 @@ export class BlockPropQR extends Compbaser implements AfterViewInit {
 
     _render() {
         var domPlayerData = this.m_blockData.playerDataDom
-        var xSnippet = $(domPlayerData).find('Text');
+        var xSnippet = jXML(domPlayerData).find('Text');
         this.formInputs['text'].setValue(xSnippet.text());
     }
 
@@ -67,8 +67,8 @@ export class BlockPropQR extends Compbaser implements AfterViewInit {
         if (this.m_contGroup.status != 'VALID')
             return;
         var domPlayerData = this.m_blockData.playerDataDom;
-        var xSnippet = $(domPlayerData).find('Text');
-        $(xSnippet).text(this.m_contGroup.value.text);
+        var xSnippet = jXML(domPlayerData).find('Text');
+        jXML(xSnippet).text(this.m_contGroup.value.text);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 

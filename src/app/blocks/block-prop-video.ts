@@ -67,19 +67,19 @@ export class BlockPropVideo extends Compbaser implements AfterViewInit {
     _toggleAspectRatio(i_value) {
         i_value = StringJS(i_value).booleanToNumber()
         var domPlayerData = this.m_blockData.playerDataDom;
-        var xSnippet = jQuery(domPlayerData).find('AspectRatio');
-        jQuery(xSnippet).attr('maintain', i_value);
+        var xSnippet = jXML(domPlayerData).find('AspectRatio');
+        jXML(xSnippet).attr('maintain', i_value);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
     }
 
     private _render() {
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom
         if (this.external) {
-            var xSnippet = $(domPlayerData).find('LINK');
+            var xSnippet = jXML(domPlayerData).find('LINK');
             this.m_formInputs['url'].setValue(xSnippet.attr('src'));
         } else {
-            var xSnippet = $(domPlayerData).find('AspectRatio');
-            var maintain = StringJS(jQuery(xSnippet).attr('maintain')).booleanToNumber();
+            var xSnippet = jXML(domPlayerData).find('AspectRatio');
+            var maintain = StringJS(jXML(xSnippet).attr('maintain')).booleanToNumber();
             this.m_formInputs['maintain'].setValue(maintain);
         }
     }
@@ -93,7 +93,7 @@ export class BlockPropVideo extends Compbaser implements AfterViewInit {
         if (this.m_contGroup.status != 'VALID')
             return;
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
-        var xSnippet = $(domPlayerData).find('LINK');
+        var xSnippet = jXML(domPlayerData).find('LINK');
         xSnippet.attr('src', this.m_contGroup.value.url);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }

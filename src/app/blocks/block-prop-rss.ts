@@ -98,11 +98,11 @@ export class BlockPropRss extends Compbaser implements AfterViewInit {
         _.forEach(this.m_contGroup.controls, (value, key: string) => {
             this.m_formInputs[key] = this.m_contGroup.controls[key] as FormControl;
         })
-        var links = jQuery(jQuery.parseXML(this.m_mrssLinks)).find('Rss');
+        var links = jXML(jXML.parseXML(this.m_mrssLinks)).find('Rss');
         _.forEach(links, (k, v) => {
             this.m_mrssLinksData.push({
-                url: jQuery(k).attr('url'),
-                label: jQuery(k).attr('label')
+                url: jXML(k).attr('url'),
+                label: jXML(k).attr('label')
             })
         });
     }
@@ -132,8 +132,8 @@ export class BlockPropRss extends Compbaser implements AfterViewInit {
 
     _onFontChanged(config: IFontSelector) {
         var domPlayerData = this.m_blockData.playerDataDom;
-        var xSnippet = jQuery(domPlayerData).find('Rss');
-        var xSnippetFont = jQuery(xSnippet).find('Font').eq(0);
+        var xSnippet = jXML(domPlayerData).find('Rss');
+        var xSnippetFont = jXML(xSnippet).find('Font').eq(0);
         config.bold == true ? xSnippetFont.attr('fontWeight', 'bold') : xSnippetFont.attr('fontWeight', 'normal');
         config.italic == true ? xSnippetFont.attr('fontStyle', 'italic') : xSnippetFont.attr('fontStyle', 'normal');
         config.underline == true ? xSnippetFont.attr('textDecoration', 'underline') : xSnippetFont.attr('textDecoration', 'none');
@@ -146,12 +146,12 @@ export class BlockPropRss extends Compbaser implements AfterViewInit {
 
     private _render() {
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom
-        var xSnippet = $(domPlayerData).find('Rss');
-        var xSnippetFont = jQuery(xSnippet).find('Font').eq(0);
+        var xSnippet = jXML(domPlayerData).find('Rss');
+        var xSnippetFont = jXML(xSnippet).find('Font').eq(0);
         var url = xSnippet.attr('url');
-        var vertical = $(xSnippet).attr('vertical');
-        var minRefreshTime = $(xSnippet).attr('minRefreshTime')
-        var speed = $(xSnippet).attr('speed')
+        var vertical = jXML(xSnippet).attr('vertical');
+        var minRefreshTime = jXML(xSnippet).attr('minRefreshTime')
+        var speed = jXML(xSnippet).attr('speed')
 
         if (this._isUrlCustom(url)) {
             this.m_showCustomUrl = true;
@@ -185,15 +185,15 @@ export class BlockPropRss extends Compbaser implements AfterViewInit {
         if (this.m_contGroup.status != 'VALID')
             return;
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
-        var xSnippet = $(domPlayerData).find('Rss');
+        var xSnippet = jXML(domPlayerData).find('Rss');
         if (this.m_contGroup.value.rssSelection == ''){
-            $(xSnippet).attr('url', this.m_contGroup.value.url);
+            jXML(xSnippet).attr('url', this.m_contGroup.value.url);
         } else {
-            $(xSnippet).attr('url', this.m_contGroup.value.rssSelection);
+            jXML(xSnippet).attr('url', this.m_contGroup.value.rssSelection);
         }
-        $(xSnippet).attr('minRefreshTime', this.m_contGroup.value.minRefreshTime);
-        $(xSnippet).attr('speed', this.m_contGroup.value.speed);
-        $(xSnippet).attr('vertical', this.m_contGroup.value.vertical);
+        jXML(xSnippet).attr('minRefreshTime', this.m_contGroup.value.minRefreshTime);
+        jXML(xSnippet).attr('speed', this.m_contGroup.value.speed);
+        jXML(xSnippet).attr('vertical', this.m_contGroup.value.vertical);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 

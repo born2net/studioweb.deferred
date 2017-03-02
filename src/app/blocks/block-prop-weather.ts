@@ -82,10 +82,10 @@ export class BlockPropWeather extends Compbaser implements AfterViewInit {
 
     private _render() {
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom
-        var $data = $(domPlayerData).find('Json').find('Data');
-        this.m_formInputs['unit'].setValue($data.attr('unit'));
-        this.m_formInputs['style'].setValue($data.attr('style'));
-        this.m_formInputs['address'].setValue($data.attr('address'));
+        var jXMLdata = jXML(domPlayerData).find('Json').find('Data');
+        this.m_formInputs['unit'].setValue(jXMLdata.attr('unit'));
+        this.m_formInputs['style'].setValue(jXMLdata.attr('style'));
+        this.m_formInputs['address'].setValue(jXMLdata.attr('address'));
         //this.cd.markForCheck();
     }
 
@@ -98,10 +98,10 @@ export class BlockPropWeather extends Compbaser implements AfterViewInit {
         if (this.m_contGroup.status != 'VALID')
             return;
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
-        var item = jQuery(domPlayerData).find('Json').find('Data');
-        jQuery(item).attr('unit', this.m_contGroup.value.unit);
-        jQuery(item).attr('style', this.m_contGroup.value.style);
-        jQuery(item).attr('address', this.m_contGroup.value.address);
+        var item = jXML(domPlayerData).find('Json').find('Data');
+        jXML(item).attr('unit', this.m_contGroup.value.unit);
+        jXML(item).attr('style', this.m_contGroup.value.style);
+        jXML(item).attr('address', this.m_contGroup.value.address);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 

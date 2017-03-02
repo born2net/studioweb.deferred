@@ -75,8 +75,8 @@ export class BlockPropClock extends Compbaser implements AfterViewInit {
 
     _onFontChanged(config: IFontSelector) {
         var domPlayerData = this.m_blockData.playerDataDom;
-        var xSnippet = jQuery(domPlayerData).find('Clock');
-        var xSnippetFont = jQuery(xSnippet).find('Font');
+        var xSnippet = jXML(domPlayerData).find('Clock');
+        var xSnippetFont = jXML(xSnippet).find('Font');
         config.bold == true ? xSnippetFont.attr('fontWeight', 'bold') : xSnippetFont.attr('fontWeight', 'normal');
         config.italic == true ? xSnippetFont.attr('fontStyle', 'italic') : xSnippetFont.attr('fontStyle', 'normal');
         config.underline == true ? xSnippetFont.attr('textDecoration', 'underline') : xSnippetFont.attr('textDecoration', 'none');
@@ -90,7 +90,7 @@ export class BlockPropClock extends Compbaser implements AfterViewInit {
     _onFormatChanged(e) {
         var mask = this.bs.getBlockBoilerplate(this.m_blockData.blockCode).getDateTimeMask(e.type);
         var domPlayerData = this.m_blockData.playerDataDom;
-        var xSnippet = jQuery(domPlayerData).find('Clock');
+        var xSnippet = jXML(domPlayerData).find('Clock');
         xSnippet.attr('clockMask', mask);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
@@ -102,9 +102,9 @@ export class BlockPropClock extends Compbaser implements AfterViewInit {
     _render() {
         var self = this;
         var domPlayerData = this.m_blockData.playerDataDom;
-        var xSnippet = jQuery(domPlayerData).find('Clock');
-        var mask = jQuery(xSnippet).attr('clockMask');
-        var xSnippetFont = jQuery(xSnippet).find('Font');
+        var xSnippet = jXML(domPlayerData).find('Clock');
+        var mask = jXML(xSnippet).attr('clockMask');
+        var xSnippetFont = jXML(xSnippet).find('Font');
 
         this.m_clockFormats.forEach(i_clockFormat => {
             var currMask = self.bs.getBlockBoilerplate(self.m_blockData.blockCode).getDateTimeMask(i_clockFormat.type);

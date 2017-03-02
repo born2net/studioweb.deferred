@@ -135,16 +135,16 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
     _onPlayVideoInFull(i_value) {
         i_value = StringJS(i_value).booleanToNumber()
         var domPlayerData = this.m_blockData.playerDataDom;
-        var xSnippet = jQuery(domPlayerData).find('Json');
-        jQuery(xSnippet).attr('playVideoInFull', i_value);
+        var xSnippet = jXML(domPlayerData).find('Json');
+        jXML(xSnippet).attr('playVideoInFull', i_value);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
     }
 
     _onRandomPlay(i_value) {
         i_value = StringJS(i_value).booleanToNumber()
         var domPlayerData = this.m_blockData.playerDataDom;
-        var xSnippet = jQuery(domPlayerData).find('Json');
-        jQuery(xSnippet).attr('randomOrder', i_value);
+        var xSnippet = jXML(domPlayerData).find('Json');
+        jXML(xSnippet).attr('randomOrder', i_value);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
     }
 
@@ -152,16 +152,16 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
         i_value = StringJS(i_value).booleanToNumber()
         this.m_slideShowMode = i_value;
         var domPlayerData = this.m_blockData.playerDataDom;
-        var xSnippet = jQuery(domPlayerData).find('Json');
-        jQuery(xSnippet).attr('slideShow', i_value);
+        var xSnippet = jXML(domPlayerData).find('Json');
+        jXML(xSnippet).attr('slideShow', i_value);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
     }
 
     _onSceneSelectionChanged(i_scene_id) {
         var domPlayerData = this.m_blockData.playerDataDom;
-        var xSnippet = jQuery(domPlayerData).find('Json');
-        var xSnippetPlayer = jQuery(xSnippet).find('Player');
-        jQuery(xSnippetPlayer).attr('hDataSrc', i_scene_id.value.id);
+        var xSnippet = jXML(domPlayerData).find('Json');
+        var xSnippetPlayer = jXML(xSnippet).find('Player');
+        jXML(xSnippetPlayer).attr('hDataSrc', i_scene_id.value.id);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
     }
 
@@ -178,9 +178,9 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
             .subscribe((scenes) => {
                 this.m_sceneSelection = [];
                 var domPlayerData = this.m_blockData.playerDataDom;
-                var xSnippet = jQuery(domPlayerData).find('Json');
-                var xSnippetPlayer = jQuery(xSnippet).find('Player');
-                var selectedSceneID = jQuery(xSnippetPlayer).attr('hDataSrc');
+                var xSnippet = jXML(domPlayerData).find('Json');
+                var xSnippetPlayer = jXML(xSnippet).find('Player');
+                var selectedSceneID = jXML(xSnippetPlayer).attr('hDataSrc');
                 for (var scene in scenes) {
                     var mimeType = scenes[scene].mimeType;
                     var label = scenes[scene].label;
@@ -202,23 +202,23 @@ export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
         this._initSceneDropdown();
         // this._initEventTable();
         var domPlayerData = this.m_blockData.playerDataDom
-        var xSnippet = jQuery(domPlayerData).find('Json');
-        var playVideoInFull = StringJS(jQuery(xSnippet).attr('playVideoInFull')).booleanToNumber();
+        var xSnippet = jXML(domPlayerData).find('Json');
+        var playVideoInFull = StringJS(jXML(xSnippet).attr('playVideoInFull')).booleanToNumber();
         this.formInputs['playVideoInFull'].setValue(playVideoInFull);
-        var randomOrder = StringJS(jQuery(xSnippet).attr('randomOrder')).booleanToNumber();
+        var randomOrder = StringJS(jXML(xSnippet).attr('randomOrder')).booleanToNumber();
         this.formInputs['randomOrder'].setValue(randomOrder);
-        this.m_slideShowMode = StringJS(jQuery(xSnippet).attr('slideShow')).booleanToNumber(true) as number;
+        this.m_slideShowMode = StringJS(jXML(xSnippet).attr('slideShow')).booleanToNumber(true) as number;
         this.formInputs['slideShow'].setValue(this.m_slideShowMode);
-        this.formInputs['itemsPath'].setValue(jQuery(xSnippet).attr('itemsPath'));
-        this.formInputs['itemInterval'].setValue(jQuery(xSnippet).attr('itemInterval'));
-        this.formInputs['itemsUrl'].setValue(jQuery(xSnippet).attr('url'));
+        this.formInputs['itemsPath'].setValue(jXML(xSnippet).attr('itemsPath'));
+        this.formInputs['itemInterval'].setValue(jXML(xSnippet).attr('itemInterval'));
+        this.formInputs['itemsUrl'].setValue(jXML(xSnippet).attr('url'));
     }
 
     private saveToStore() {
         if (this.m_contGroup.status != 'VALID')
             return;
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
-        var xSnippet = jQuery(domPlayerData).find('Json');
+        var xSnippet = jXML(domPlayerData).find('Json');
         xSnippet.attr('itemsPath', this.m_contGroup.value.itemsPath);
         xSnippet.attr('url', this.m_contGroup.value.itemsUrl);
         xSnippet.attr('itemInterval', this.m_contGroup.value.itemInterval);

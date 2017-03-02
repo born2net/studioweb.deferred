@@ -119,6 +119,7 @@ export class AppModule {
         Lib.Con(`running in dev mode: ${Lib.DevMode()}`);
         Lib.Con(`App in ${(compiler instanceof Compiler) ? 'AOT' : 'JIT'} mode`);
         window['jQueryAny'] = jQuery;
+        window['jXML'] = jQuery;
         this.ngmslibService.globalizeStringJS();
         Lib.Con(StringJS('app-loaded-and-ready').humanize().s);
     }

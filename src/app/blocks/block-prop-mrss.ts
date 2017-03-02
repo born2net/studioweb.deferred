@@ -245,11 +245,11 @@ export class BlockPropMrss extends Compbaser implements AfterViewInit {
         _.forEach(this.m_contGroup.controls, (value, key: string) => {
             this.m_formInputs[key] = this.m_contGroup.controls[key] as FormControl;
         })
-        var links = jQuery(jQuery.parseXML(this.m_mrssLinks)).find('Rss');
+        var links = jXML(jXML.parseXML(this.m_mrssLinks)).find('Rss');
         _.forEach(links, (k, v) => {
             this.m_mrssLinksData.push({
-                url: jQuery(k).attr('url'),
-                label: jQuery(k).attr('label')
+                url: jXML(k).attr('url'),
+                label: jXML(k).attr('label')
             })
         });
     }
@@ -272,8 +272,8 @@ export class BlockPropMrss extends Compbaser implements AfterViewInit {
     _toggleAspectRatio(i_value) {
         i_value = StringJS(i_value).booleanToNumber()
         var domPlayerData = this.m_blockData.playerDataDom;
-        var xSnippet = $(domPlayerData).find('Rss');
-        jQuery(xSnippet).attr('maintainAspectRatio', i_value);
+        var xSnippet = jXML(domPlayerData).find('Rss');
+        jXML(xSnippet).attr('maintainAspectRatio', i_value);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
     }
 
@@ -290,9 +290,9 @@ export class BlockPropMrss extends Compbaser implements AfterViewInit {
 
     private _render() {
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom
-        var xSnippet = $(domPlayerData).find('Rss');
+        var xSnippet = jXML(domPlayerData).find('Rss');
         var url = xSnippet.attr('url');
-        var maintain = StringJS(jQuery(xSnippet).attr('maintainAspectRatio')).booleanToNumber();
+        var maintain = StringJS(jXML(xSnippet).attr('maintainAspectRatio')).booleanToNumber();
         this.m_formInputs['maintain'].setValue(maintain);
 
         if (this._isUrlCustom(url)) {
@@ -315,11 +315,11 @@ export class BlockPropMrss extends Compbaser implements AfterViewInit {
         if (this.m_contGroup.status != 'VALID')
             return;
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
-        var xSnippet = $(domPlayerData).find('Rss');
+        var xSnippet = jXML(domPlayerData).find('Rss');
         if (this.m_contGroup.value.rssSelection == ''){
-            $(xSnippet).attr('url', this.m_contGroup.value.url);
+            jXML(xSnippet).attr('url', this.m_contGroup.value.url);
         } else {
-            $(xSnippet).attr('url', this.m_contGroup.value.rssSelection);
+            jXML(xSnippet).attr('url', this.m_contGroup.value.rssSelection);
         }
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }

@@ -117,22 +117,22 @@ export class BlockPropFasterQ extends Compbaser implements AfterViewInit {
 
     _render() {
         var domPlayerData = this.m_blockData.playerDataDom
-        var xWebKit = $(domPlayerData).find('Webkit');
-        var xWebKitData = $(xWebKit).find('Data');
-        this.formInputs['lineID1'].setValue($(xWebKitData).attr('lineID1'));
-        this.formInputs['lineID2'].setValue($(xWebKitData).attr('lineID2'));
-        this.formInputs['lineID3'].setValue($(xWebKitData).attr('lineID3'));
-        this.formInputs['lineID4'].setValue($(xWebKitData).attr('lineID4'));
-        this.formInputs['lineID5'].setValue($(xWebKitData).attr('lineID5'));
-        this.setNewColor($(xWebKitData).attr('bgColor'));
-        // this.m_color = Lib.ColorToHex(Lib.DecimalToHex($(xWebKitData).attr('bgColor')));
+        var xWebKit = jXML(domPlayerData).find('Webkit');
+        var xWebKitData = jXML(xWebKit).find('Data');
+        this.formInputs['lineID1'].setValue(jXML(xWebKitData).attr('lineID1'));
+        this.formInputs['lineID2'].setValue(jXML(xWebKitData).attr('lineID2'));
+        this.formInputs['lineID3'].setValue(jXML(xWebKitData).attr('lineID3'));
+        this.formInputs['lineID4'].setValue(jXML(xWebKitData).attr('lineID4'));
+        this.formInputs['lineID5'].setValue(jXML(xWebKitData).attr('lineID5'));
+        this.setNewColor(jXML(xWebKitData).attr('bgColor'));
+        // this.m_color = Lib.ColorToHex(Lib.DecimalToHex(jXML(xWebKitData).attr('bgColor')));
     }
 
     @timeout()
     _moveColorPicker() {
         if (this.m_moveColorPickerOnce) return;
         this.m_moveColorPickerOnce = true;
-        jQuery(".color-picker", this.el.nativeElement).css("left", "+=100");
+        jXML(".color-picker", this.el.nativeElement).css("left", "+=100");
     }
     
     @timeout()
@@ -146,14 +146,14 @@ export class BlockPropFasterQ extends Compbaser implements AfterViewInit {
         if (this.m_contGroup.status != 'VALID')
             return;
         var domPlayerData = this.m_blockData.playerDataDom;
-        var xWebKit = $(domPlayerData).find('Webkit');
-        var xWebKitData = $(xWebKit).find('Data');
-        $(xWebKitData).attr('lineID1', this.formInputs['lineID1'].value);
-        $(xWebKitData).attr('lineID2', this.formInputs['lineID2'].value);
-        $(xWebKitData).attr('lineID3', this.formInputs['lineID3'].value);
-        $(xWebKitData).attr('lineID4', this.formInputs['lineID4'].value);
-        $(xWebKitData).attr('lineID5', this.formInputs['lineID5'].value);
-        $(xWebKitData).attr('bgColor', this.m_color);
+        var xWebKit = jXML(domPlayerData).find('Webkit');
+        var xWebKitData = jXML(xWebKit).find('Data');
+        jXML(xWebKitData).attr('lineID1', this.formInputs['lineID1'].value);
+        jXML(xWebKitData).attr('lineID2', this.formInputs['lineID2'].value);
+        jXML(xWebKitData).attr('lineID3', this.formInputs['lineID3'].value);
+        jXML(xWebKitData).attr('lineID4', this.formInputs['lineID4'].value);
+        jXML(xWebKitData).attr('lineID5', this.formInputs['lineID5'].value);
+        jXML(xWebKitData).attr('bgColor', this.m_color);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 

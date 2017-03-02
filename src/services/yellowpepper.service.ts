@@ -242,8 +242,8 @@ export class YellowPepperService {
                     var player_data_id = i_layerDataModel.getPlayerDataId();
                     var scene = {
                         id: player_data_id,
-                        label: (jQuery(domPlayerData).find('Player').attr('label')),
-                        mimeType: jQuery(domPlayerData).find('Player').attr('mimeType')
+                        label: (jXML(domPlayerData).find('Player').attr('label')),
+                        mimeType: jXML(domPlayerData).find('Player').attr('mimeType')
                     };
                     result.push(scene)
                     return result;
@@ -334,7 +334,7 @@ export class YellowPepperService {
                     .map((playerDataModel:PlayerDataModel) => {
                         return playerDataModel.getPlayerDataValue();
                     })
-            });
+            }).take(1);
     }
 
     /**
@@ -370,16 +370,10 @@ export class YellowPepperService {
      **/
     getSceneIdFromPseudoId(i_pseudo_id): Observable<any> {
         return this.getScenes().find((domPlayerData) => {
-            return i_pseudo_id == jQuery(domPlayerData).find('Player').eq(0).attr('id');
+            return i_pseudo_id == jXML(domPlayerData).find('Player').eq(0).attr('id');
         }).map((domPlayerData) => {
-            return jQuery(domPlayerData).find('Player').eq(0).attr('id')
-        })
-        // _.each(scenes, function (domPlayerData, scene_id) {
-        //     var pseudo_id = $(domPlayerData).find('Player').eq(0).attr('id');
-        //     if (pseudo_id == i_pseudo_id)
-        //         found = scene_id;
-        // });
-        // return found;
+            return jXML(domPlayerData).find('Player').eq(0).attr('id')
+        }).take(1);
     }
 
     /**

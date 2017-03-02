@@ -77,24 +77,24 @@ export class BlockPropSheets extends Compbaser implements AfterViewInit {
     _onSheetSelected(event) {
         var calId = event.target.value;
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
-        var item = $(domPlayerData).find('Json').find('Data');
-        $(item).attr('id', calId);
+        var item = jXML(domPlayerData).find('Json').find('Data');
+        jXML(item).attr('id', calId);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
     private _render() {
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom
-        var $data = $(domPlayerData).find('Json').find('Data');
-        var mode = $data.attr('mode');
-        this.m_formInputs['token'].setValue($data.attr('token'));
+        var jXMLdata = jXML(domPlayerData).find('Json').find('Data');
+        var mode = jXMLdata.attr('mode');
+        this.m_formInputs['token'].setValue(jXMLdata.attr('token'));
         this._getGoogleSheets();
     }
 
     _getGoogleSheets() {
         var self = this;
         try {
-            jQuery.ajax({
-                url: `https://secure.digitalsignage.com/GoogleSheetsList/${self.m_contGroup.value.token}`,
+            jXML.ajax({
+                url: `https://secure.digitalsignage.com/GoogleSheetsList/jXML{self.m_contGroup.value.token}`,
                 dataType: "json",
                 type: "post",
                 complete: function (response, status) {
@@ -127,8 +127,8 @@ export class BlockPropSheets extends Compbaser implements AfterViewInit {
 
     private _getFileId(): string {
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
-        var item = $(domPlayerData).find('Json').find('Data');
-        return $(item).attr('id');
+        var item = jXML(domPlayerData).find('Json').find('Data');
+        return jXML(item).attr('id');
     }
 
     ngAfterViewInit() {
@@ -149,8 +149,8 @@ export class BlockPropSheets extends Compbaser implements AfterViewInit {
         if (this.m_contGroup.status != 'VALID')
             return;
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
-        var item = jQuery(domPlayerData).find('Json').find('Data');
-        jQuery(item).attr('token', this.m_contGroup.value.token);
+        var item = jXML(domPlayerData).find('Json').find('Data');
+        jXML(item).attr('token', this.m_contGroup.value.token);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 

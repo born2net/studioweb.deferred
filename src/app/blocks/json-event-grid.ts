@@ -128,19 +128,19 @@ export class JsonEventGrid extends Compbaser implements AfterViewInit {
         var rowIndex = 0;
         var domPlayerData = this.m_blockData.playerDataDom;
         var events = [];
-        jQuery(domPlayerData).find('EventCommands').children().each((k, eventCommand) => {
+        jXML(domPlayerData).find('EventCommands').children().each((k, eventCommand) => {
             var url = '';
-            if (jQuery(eventCommand).attr('command') == 'loadUrl')
-                url = jQuery(eventCommand).find('Url').attr('name');
-            if (jQuery(eventCommand).attr('command') == 'selectPage')
-                url = $(eventCommand).find('Page').attr('name');
+            if (jXML(eventCommand).attr('command') == 'loadUrl')
+                url = jXML(eventCommand).find('Url').attr('name');
+            if (jXML(eventCommand).attr('command') == 'selectPage')
+                url = jXML(eventCommand).find('Page').attr('name');
             if (_.isUndefined(url) || _.isEmpty(url))
                 url = '---';
             var storeModel = new StoreModel({
                 id: rowIndex,
-                event: jQuery(eventCommand).attr('from'),
+                event: jXML(eventCommand).attr('from'),
                 url: url,
-                action: jQuery(eventCommand).attr('command')
+                action: jXML(eventCommand).attr('command')
             });
             events.push(storeModel)
             rowIndex++;
@@ -150,8 +150,8 @@ export class JsonEventGrid extends Compbaser implements AfterViewInit {
 
     _setAction(event: ISimpleGridEdit, index: number) {
         var domPlayerData = this.m_blockData.playerDataDom;
-        var target = jQuery(domPlayerData).find('EventCommands').children().get(index);
-        jQuery(target).attr('command', event.value);
+        var target = jXML(domPlayerData).find('EventCommands').children().get(index);
+        jXML(target).attr('command', event.value);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
@@ -159,14 +159,14 @@ export class JsonEventGrid extends Compbaser implements AfterViewInit {
         var record: SimpleGridRecord = this.simpleGrid.getSelected();
         if (_.isUndefined(record)) return;
         var domPlayerData = this.m_blockData.playerDataDom;
-        jQuery(domPlayerData).find('EventCommands').children().eq(record.index).remove();
+        jXML(domPlayerData).find('EventCommands').children().eq(record.index).remove();
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
     }
 
     _onAddNewEvent() {
         var domPlayerData = this.m_blockData.playerDataDom;
         var buff = '<EventCommand from="event" condition="" command="firstPage" />';
-        jQuery(domPlayerData).find('EventCommands').append(jQuery(buff));
+        jXML(domPlayerData).find('EventCommands').append(jXML(buff));
         // domPlayerData = this.rp.xmlToStringIEfix(domPlayerData)
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
@@ -186,25 +186,25 @@ export class JsonEventGrid extends Compbaser implements AfterViewInit {
     _onUrlEdited(event: ISimpleGridEdit, index) {
         var url = event.value;
         var domPlayerData = this.m_blockData.playerDataDom;
-        var target = jQuery(domPlayerData).find('EventCommands').children().get(parseInt(index));
-        jQuery(target).find('Params').remove();
-        jQuery(target).append('<Params> <Url name="' + url + '" /></Params>');
+        var target = jXML(domPlayerData).find('EventCommands').children().get(parseInt(index));
+        jXML(target).find('Params').remove();
+        jXML(target).append('<Params> <Url name="' + url + '" /></Params>');
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
     _onPageEdited(event: ISimpleGridEdit, index) {
         var page = event.value;
         var domPlayerData = this.m_blockData.playerDataDom;
-        var target = jQuery(domPlayerData).find('EventCommands').children().get(parseInt(index));
-        jQuery(target).find('Params').remove();
-        jQuery(target).append('<Params><Page name="' + page + '"/></Params>');
+        var target = jXML(domPlayerData).find('EventCommands').children().get(parseInt(index));
+        jXML(target).find('Params').remove();
+        jXML(target).append('<Params><Page name="' + page + '"/></Params>');
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
     _onLabelEdited(event: ISimpleGridEdit, index) {
         var domPlayerData = this.m_blockData.playerDataDom;
-        var target = jQuery(domPlayerData).find('EventCommands').children().get(index);
-        jQuery(target).attr('from', event.value);
+        var target = jXML(domPlayerData).find('EventCommands').children().get(index);
+        jXML(target).attr('from', event.value);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 

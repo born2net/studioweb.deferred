@@ -66,9 +66,9 @@ export class BlockPropTwitter extends Compbaser implements AfterViewInit {
 
     private _render() {
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom
-        var $data = $(domPlayerData).find('Json').find('Data');
-        this.m_formInputs['token'].setValue($data.attr('token'));
-        this.m_formInputs['screenName'].setValue($data.attr('screenName'));
+        var jXMLdata = jXML(domPlayerData).find('Json').find('Data');
+        this.m_formInputs['token'].setValue(jXMLdata.attr('token'));
+        this.m_formInputs['screenName'].setValue(jXMLdata.attr('screenName'));
     }
 
     ngAfterViewInit() {
@@ -89,9 +89,9 @@ export class BlockPropTwitter extends Compbaser implements AfterViewInit {
         if (this.m_contGroup.status != 'VALID')
             return;
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
-        var item = jQuery(domPlayerData).find('Json').find('Data');
-        jQuery(item).attr('screenName', this.m_contGroup.value.screenName);
-        jQuery(item).attr('token', this.m_contGroup.value.token);
+        var item = jXML(domPlayerData).find('Json').find('Data');
+        jXML(item).attr('screenName', this.m_contGroup.value.screenName);
+        jXML(item).attr('token', this.m_contGroup.value.token);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 

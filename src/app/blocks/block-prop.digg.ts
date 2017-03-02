@@ -51,7 +51,7 @@ export class BlockPropDigg extends Compbaser implements AfterViewInit {
 
     private _render() {
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom
-        var $data = $(domPlayerData).find('Json').find('Data');
+        jXML(domPlayerData).find('Json').find('Data');
     }
 
     ngAfterViewInit() {

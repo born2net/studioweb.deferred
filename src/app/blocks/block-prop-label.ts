@@ -64,9 +64,9 @@ export class BlockPropLabel extends Compbaser implements AfterViewInit {
 
     _render() {
         var domPlayerData = this.m_blockData.playerDataDom
-        var xSnippetLabel = $(domPlayerData).find('Label');
-        var xSnippetText = $(xSnippetLabel).find('Text');
-        var xSnippetFont = $(xSnippetLabel).find('Font');
+        var xSnippetLabel = jXML(domPlayerData).find('Label');
+        var xSnippetText = jXML(xSnippetLabel).find('Text');
+        var xSnippetFont = jXML(xSnippetLabel).find('Font');
         this.m_fontConfig = {
             bold: xSnippetFont.attr('fontWeight') == 'bold' ? true : false,
             italic: xSnippetFont.attr('fontStyle') == 'italic' ? true : false,
@@ -81,8 +81,8 @@ export class BlockPropLabel extends Compbaser implements AfterViewInit {
 
     _onFontChanged(config: IFontSelector) {
         var domPlayerData = this.m_blockData.playerDataDom;
-        var xSnippet = $(domPlayerData).find('Label');
-        var xSnippetFont = $(xSnippet).find('Font');
+        var xSnippet = jXML(domPlayerData).find('Label');
+        var xSnippetFont = jXML(xSnippet).find('Font');
         config.bold == true ? xSnippetFont.attr('fontWeight', 'bold') : xSnippetFont.attr('fontWeight', 'normal');
         config.italic == true ? xSnippetFont.attr('fontStyle', 'italic') : xSnippetFont.attr('fontStyle', 'normal');
         config.underline == true ? xSnippetFont.attr('textDecoration', 'underline') : xSnippetFont.attr('textDecoration', 'none');
@@ -100,14 +100,14 @@ export class BlockPropLabel extends Compbaser implements AfterViewInit {
         var text = this.formInputs['text'].value;
         text = Lib.CleanProbCharacters(text, 1);
         var domPlayerData = this.m_blockData.playerDataDom;
-        var xSnippet = $(domPlayerData).find('Label');
-        var xSnippetText = $(xSnippet).find('Text');
+        var xSnippet = jXML(domPlayerData).find('Label');
+        var xSnippetText = jXML(xSnippet).find('Text');
         if (text != xSnippetText.text()){
-            $(xSnippetText).text(text);
+            jXML(xSnippetText).text(text);
         }
 
 
-        var xSnippet = $(domPlayerData).find('HTML');
+        var xSnippet = jXML(domPlayerData).find('HTML');
         xSnippet.attr('src', this.formInputs['text'].value);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }

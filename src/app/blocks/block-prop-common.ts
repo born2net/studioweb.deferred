@@ -88,7 +88,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
                 .subscribe((i_color) => {
                     var domPlayerData = this.m_blockData.playerDataDom;
                     var border = this._findBorder(domPlayerData);
-                    jQuery(border).attr('borderColor', Lib.HexToDecimal(i_color));
+                    jXML(border).attr('borderColor', Lib.HexToDecimal(i_color));
                     this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
                 }, (e) => console.error(e))
         )
@@ -139,21 +139,21 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         if (checked) {
             // self._enableBorderSelection();
             xBgSnippet = self.bs.getCommonBorderXML();
-            var data = jQuery(domPlayerData).find('Data').eq(0);
+            var data = jXML(domPlayerData).find('Data').eq(0);
             var bgData: any = self._findBorder(data);
             if (bgData.length > 0 && !_.isUndefined(bgData.replace)) { // ie bug workaround
-                bgData.replace(jQuery(xBgSnippet));
+                bgData.replace(jXML(xBgSnippet));
             } else {
-                jQuery(data).append(jQuery(xBgSnippet));
+                jXML(data).append(jXML(xBgSnippet));
             }
             // var player_data = self.rp.xmlToStringIEfix(domPlayerData);
-            // domPlayerData = jQuery.parseXML(player_data);
+            // domPlayerData = jXML.parseXML(player_data);
             this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
             // self._borderPropsPopulate();
             //self._announceBlockChanged();
         } else {
             var xSnippet = self._findBorder(domPlayerData);
-            jQuery(xSnippet).remove();
+            jXML(xSnippet).remove();
             // self._borderPropsUnpopulate();
             this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
         }
@@ -166,23 +166,23 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
     _alphaPopulate() {
         var self = this;
         var domPlayerData = self.m_blockData.playerDataDom;
-        var data = jQuery(domPlayerData).find('Data').eq(0);
-        var xSnippet = jQuery(data).find('Appearance').eq(0);
-        var a1: any = jQuery(xSnippet).attr('alpha');
+        var data = jXML(domPlayerData).find('Data').eq(0);
+        var xSnippet = jXML(data).find('Appearance').eq(0);
+        var a1: any = jXML(xSnippet).attr('alpha');
         if (_.isUndefined(a1)) a1 = 1;
         this.formInputs['alpha'].setValue(a1)
     }
 
     _onAlphaChange(event) {
         var domPlayerData = this.m_blockData.playerDataDom;
-        var data = jQuery(domPlayerData).find('Data').eq(0);
-        var xSnippet = jQuery(data).find('Appearance').eq(0);
-        jQuery(xSnippet).attr('alpha', event.target.value);
+        var data = jXML(domPlayerData).find('Data').eq(0);
+        var xSnippet = jXML(data).find('Appearance').eq(0);
+        jXML(xSnippet).attr('alpha', event.target.value);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
     /**
-     Load jquery gradient component once
+     Load jXML gradient component once
      @method _bgGradientInit
      **/
     _bgGradientInit() {
@@ -205,8 +205,8 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         });
 
         // always close gradient color picker on mouseout
-        // jQuery('.colorpicker').on('mouseleave', function (e) {
-        //     jQuery(document).trigger('mousedown');
+        // jXML('.colorpicker').on('mouseleave', function (e) {
+        //     jXML(document).trigger('mousedown');
         //     console.log('gradient 3');
         // });
     }
@@ -217,24 +217,24 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
      **/
     _gradientPopulate() {
         var self = this;
-        var gradient = jQuery('#bgColorGradientSelector', self.el.nativeElement).data("gradientPicker-sel");
+        var gradient = jXML('#bgColorGradientSelector', self.el.nativeElement).data("gradientPicker-sel");
         // gradient.changeFillDirection("top"); /* change direction future support */
         gradient.removeAllPoints();
         var domPlayerData = self.m_blockData.playerDataDom;
         var xSnippet = self._findGradientPoints(domPlayerData);
-        var points = jQuery(xSnippet).find('Point');
+        var points = jXML(xSnippet).find('Point');
         if (points.length == 0)
             return this._bgGradientClear();
-        jQuery.each(points, function (i, point) {
-            var pointColor = Lib.DecimalToHex(jQuery(point).attr('color'));
-            var pointMidpoint = (parseInt(jQuery(point).attr('midpoint')) / 250);
+        jXML.each(points, function (i, point) {
+            var pointColor = Lib.DecimalToHex(jXML(point).attr('color'));
+            var pointMidpoint = (parseInt(jXML(point).attr('midpoint')) / 250);
             gradient.addPoint(pointMidpoint, pointColor, true);
         });
     }
 
     _bgGradientClear() {
         var self = this;
-        var gradient = jQuery('#bgColorGradientSelector', self.el.nativeElement).data("gradientPicker-sel");
+        var gradient = jXML('#bgColorGradientSelector', self.el.nativeElement).data("gradientPicker-sel");
         gradient.removeAllPoints();
         gradient.clear();
     }
@@ -246,7 +246,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
      @return {Xml} xSnippet
      **/
     _findGradientPoints(i_domPlayerData) {
-        var xSnippet = jQuery(i_domPlayerData).find('GradientPoints');
+        var xSnippet = jXML(i_domPlayerData).find('GradientPoints');
         return xSnippet;
     }
 
@@ -254,7 +254,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         this._bgGradientClear();
         var domPlayerData = this.m_blockData.playerDataDom;
         var gradientPoints = this._findGradientPoints(domPlayerData);
-        jQuery(gradientPoints).empty();
+        jXML(gradientPoints).empty();
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
@@ -271,20 +271,20 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
             return;
         var domPlayerData = self.m_blockData.playerDataDom;
         var gradientPoints = self._findGradientPoints(domPlayerData);
-        jQuery(gradientPoints).empty();
+        jXML(gradientPoints).empty();
         var pointsXML = "";
         for (var i = 0; i < points.length; ++i) {
             var pointMidpoint: any = (points[i].position * 250);
             var color = Lib.ColorToDecimal(points[i].color);
             var xPoint = '<Point color="' + color + '" opacity="1" midpoint="' + pointMidpoint + '" />';
             // log(xPoint);
-            // jQuery(gradientPoints).append(xPoint);
+            // jXML(gradientPoints).append(xPoint);
             pointsXML += xPoint;
         }
-        // jQuery(domPlayerData).find('GradientPoints').html(pointsXML);
+        // jXML(domPlayerData).find('GradientPoints').html(pointsXML);
         var xmlString = (new XMLSerializer()).serializeToString(domPlayerData);
         xmlString = xmlString.replace(/<GradientPoints[ ]*\/>/, '<GradientPoints>' + pointsXML + '</GradientPoints>');
-        domPlayerData = jQuery.parseXML(xmlString);
+        domPlayerData = jXML.parseXML(xmlString);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
@@ -297,7 +297,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         var domPlayerData = self.m_blockData.playerDataDom;
         var xSnippet = self._findBorder(domPlayerData);
         if (xSnippet.length > 0) {
-            var color = jQuery(xSnippet).attr('borderColor');
+            var color = jXML(xSnippet).attr('borderColor');
             this._updateBorderColor(true, color)
         } else {
             this._updateBorderColor(false, '16777215')
@@ -317,7 +317,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
      @return {Xml} xSnippet
      **/
     _findBorder(i_domPlayerData) {
-        return jQuery(i_domPlayerData).find('Border');
+        return jXML(i_domPlayerData).find('Border');
     }
 
     // @timeout()
@@ -333,7 +333,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
     // }
 
     destroy() {
-        var gradient = jQuery('#bgColorGradientSelector', this.el.nativeElement).data("gradientPicker-sel");
+        var gradient = jXML('#bgColorGradientSelector', this.el.nativeElement).data("gradientPicker-sel");
         gradient.destroyed();
     }
 }

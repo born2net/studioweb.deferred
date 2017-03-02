@@ -94,13 +94,13 @@ export class BlockPropYouTube extends Compbaser implements AfterViewInit {
 
     _render() {
         var domPlayerData = this.m_blockData.playerDataDom
-        var xSnippetYouTube = $(domPlayerData).find('YouTube');
-        var xSnippetYouTubeManualList = $(domPlayerData).find('VideoIdList');
-        var videoIDs = $(xSnippetYouTubeManualList).text();
-        var listType = $(xSnippetYouTube).attr('listType'); //manually most_viewed
-        var region = $(xSnippetYouTube).attr('listRegion');
+        var xSnippetYouTube = jXML(domPlayerData).find('YouTube');
+        var xSnippetYouTubeManualList = jXML(domPlayerData).find('VideoIdList');
+        var videoIDs = jXML(xSnippetYouTubeManualList).text();
+        var listType = jXML(xSnippetYouTube).attr('listType'); //manually most_viewed
+        var region = jXML(xSnippetYouTube).attr('listRegion');
         var volume = parseFloat(xSnippetYouTube.attr('volume'));
-        var quality = $(xSnippetYouTube).attr('quality');
+        var quality = jXML(xSnippetYouTube).attr('quality');
         this.formInputs['volume'].setValue(volume);
         this.formInputs['listType'].setValue(listType);
         this.formInputs['quality'].setValue(quality);
@@ -113,16 +113,16 @@ export class BlockPropYouTube extends Compbaser implements AfterViewInit {
         if (this.m_contGroup.status != 'VALID')
             return;
         var domPlayerData = this.m_blockData.playerDataDom;
-        var xSnippet = $(domPlayerData).find('YouTube');
-        $(xSnippet).attr('volume', this.m_contGroup.value.volume);
-        $(xSnippet).attr('quality', this.m_contGroup.value.quality);
-        $(xSnippet).attr('listRegion', this.m_contGroup.value.region);
-        $(xSnippet).attr('listType', this.m_contGroup.value.listType);
-        $(xSnippet).find('VideoIdList').remove();
+        var xSnippet = jXML(domPlayerData).find('YouTube');
+        jXML(xSnippet).attr('volume', this.m_contGroup.value.volume);
+        jXML(xSnippet).attr('quality', this.m_contGroup.value.quality);
+        jXML(xSnippet).attr('listRegion', this.m_contGroup.value.region);
+        jXML(xSnippet).attr('listType', this.m_contGroup.value.listType);
+        jXML(xSnippet).find('VideoIdList').remove();
         if (this.m_contGroup.value.listType == 'manually') {
-            $(xSnippet).append($(`<VideoIdList>${this.m_contGroup.value.customList}</VideoIdList>`));
+            jXML(xSnippet).append(jXML(`<VideoIdList>jXML{this.m_contGroup.value.customList}</VideoIdList>`));
         } else {
-            $(xSnippet).find('VideoIdList').remove();
+            jXML(xSnippet).find('VideoIdList').remove();
         }
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }

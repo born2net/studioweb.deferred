@@ -61,7 +61,7 @@ export class BlockPropHtml extends Compbaser implements AfterViewInit {
     _render() {
         this.m_contGroup.reset();
         var domPlayerData = this.m_blockData.playerDataDom
-        var xSnippet = jQuery(domPlayerData).find('HTML');
+        var xSnippet = jXML(domPlayerData).find('HTML');
         this.formInputs['url'].setValue(xSnippet.attr('src'));
     }
 
@@ -71,7 +71,7 @@ export class BlockPropHtml extends Compbaser implements AfterViewInit {
         if (this.m_contGroup.status != 'VALID')
             return;
         var domPlayerData = this.m_blockData.playerDataDom;
-        var xSnippet = $(domPlayerData).find('HTML');
+        var xSnippet = jXML(domPlayerData).find('HTML');
         xSnippet.attr('src', this.m_contGroup.value.url);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }

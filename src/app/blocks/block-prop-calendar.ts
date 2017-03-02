@@ -121,22 +121,22 @@ export class BlockPropCalendar extends Compbaser implements AfterViewInit {
     _onCalSelected(event) {
         var calId = event.target.value;
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
-        var item = $(domPlayerData).find('Json').find('Data');
-        $(item).attr('id', calId);
+        var item = jXML(domPlayerData).find('Json').find('Data');
+        jXML(item).attr('id', calId);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
     private _render() {
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom
-        var $data = $(domPlayerData).find('Json').find('Data');
-        var mode = $data.attr('mode');
+        var jXMLdata = jXML(domPlayerData).find('Json').find('Data');
+        var mode = jXMLdata.attr('mode');
         this.m_mode = (mode == 'fixed') ? false : true;
-        var before = $data.attr('before');
-        var after = $data.attr('after');
+        var before = jXMLdata.attr('before');
+        var after = jXMLdata.attr('after');
         this.m_formInputs['mode'].setValue(this.m_mode);
         this.m_formInputs['after'].setValue(after);
         this.m_formInputs['before'].setValue(before);
-        this.m_formInputs['token'].setValue($data.attr('token'));
+        this.m_formInputs['token'].setValue(jXMLdata.attr('token'));
         this._getGoogleCalendars();
         this._populateStartEndDates();
     }
@@ -156,16 +156,16 @@ export class BlockPropCalendar extends Compbaser implements AfterViewInit {
 
     _setRangeDate(i_field: 'startDate' | 'endDate', i_value): void {
         var domPlayerData = this.m_blockData.playerDataDom;
-        var xSnippet = $(domPlayerData).find('Json').find('Data');
+        var xSnippet = jXML(domPlayerData).find('Json').find('Data');
         var value = moment(i_value).unix() + '000';
-        $(xSnippet).attr(i_field, value);
+        jXML(xSnippet).attr(i_field, value);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
     _getRangeDate(i_field): string {
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
-        var item = $(domPlayerData).find('Json').find('Data');
-        var value: any = $(item).attr(i_field);
+        var item = jXML(domPlayerData).find('Json').find('Data');
+        var value: any = jXML(item).attr(i_field);
         if (_.isEmpty(value)) {
             var date = new Date();
             var lastWeek: number = date.setDate(new Date().getDate() - 7);
@@ -181,8 +181,8 @@ export class BlockPropCalendar extends Compbaser implements AfterViewInit {
         var mode = i_value == true ? 'offset' : 'fixed';
         this.m_mode = i_value;
         var domPlayerData = this.m_blockData.playerDataDom;
-        var xSnippet = $(domPlayerData).find('Json').find('Data');
-        $(xSnippet).attr('mode', mode);
+        var xSnippet = jXML(domPlayerData).find('Json').find('Data');
+        jXML(xSnippet).attr('mode', mode);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
@@ -190,7 +190,7 @@ export class BlockPropCalendar extends Compbaser implements AfterViewInit {
         var self = this;
         try {
             jQuery.ajax({
-                url: `https://secure.digitalsignage.com/GoogleCalendarList/${self.m_contGroup.value.token}/100`,
+                url: `https://secure.digitalsignage.com/GoogleCalendarList/jXML{self.m_contGroup.value.token}/100`,
                 dataType: "json",
                 type: "post",
                 complete: function (response, status) {
@@ -222,8 +222,8 @@ export class BlockPropCalendar extends Compbaser implements AfterViewInit {
 
     private _getFileId(): string {
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
-        var item = $(domPlayerData).find('Json').find('Data');
-        return $(item).attr('id');
+        var item = jXML(domPlayerData).find('Json').find('Data');
+        return jXML(item).attr('id');
     }
 
     ngAfterViewInit() {
@@ -244,10 +244,10 @@ export class BlockPropCalendar extends Compbaser implements AfterViewInit {
         if (this.m_contGroup.status != 'VALID')
             return;
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
-        var item = jQuery(domPlayerData).find('Json').find('Data');
-        jQuery(item).attr('before', this.m_contGroup.value.before);
-        jQuery(item).attr('after', this.m_contGroup.value.after);
-        jQuery(item).attr('token', this.m_contGroup.value.token);
+        var item = jXML(domPlayerData).find('Json').find('Data');
+        jXML(item).attr('before', this.m_contGroup.value.before);
+        jXML(item).attr('after', this.m_contGroup.value.after);
+        jXML(item).attr('token', this.m_contGroup.value.token);
         this._setRangeDate('startDate',this.m_contGroup.value.startDate)
         this._setRangeDate('endDate',this.m_contGroup.value.endDate)
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);

@@ -108,9 +108,9 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
         var currentIndex = dragData.currentIndex;
         var newIndex = dragData.newIndex;
         var domPlayerData = this.m_blockData.playerDataDom;
-        var target = $(domPlayerData).find('Collection').children().get(newIndex);
-        var source = $(domPlayerData).find('Collection').children().get(currentIndex);
-        newIndex > currentIndex ? $(target).after(source) : $(target).before(source);
+        var target = jXML(domPlayerData).find('Collection').children().get(newIndex);
+        var source = jXML(domPlayerData).find('Collection').children().get(currentIndex);
+        newIndex > currentIndex ? jXML(target).after(source) : jXML(target).before(source);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
@@ -119,7 +119,7 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
         if (_.isUndefined(record)) return;
         var rowIndex = this.simpleGrid.getSelected().index;
         var domPlayerData = this.m_blockData.playerDataDom;
-        $(domPlayerData).find('Collection').children().eq(rowIndex).remove();
+        jXML(domPlayerData).find('Collection').children().eq(rowIndex).remove();
         // self._populateTableCollection(domPlayerData);
         this._populateTableEvents();
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
@@ -129,7 +129,7 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
     _onAddNewCollectionItem() {
         // var domPlayerData = this.m_blockData.playerDataDom;
         // var buff = '<EventCommand from="event" condition="" command="firstPage" />';
-        // jQuery(domPlayerData).find('EventCommands').append(jQuery(buff));
+        // jXML(domPlayerData).find('EventCommands').append(jXML(buff));
         // // domPlayerData = this.rp.xmlToStringIEfix(domPlayerData)
         // this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
@@ -138,16 +138,16 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
         var value = event.value;
         if (!Lib.IsNumber(value)) return;
         var domPlayerData = this.m_blockData.playerDataDom;
-        var item = $(domPlayerData).find('Collection').children().get(index);
-        $(item).attr('duration', value);
+        var item = jXML(domPlayerData).find('Collection').children().get(index);
+        jXML(item).attr('duration', value);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
     }
 
     _onPageNameEdited(event: ISimpleGridEdit, index) {
         var value = event.value;
         var domPlayerData = this.m_blockData.playerDataDom;
-        var item = $(domPlayerData).find('Collection').children().get(index);
-        $(item).attr('page', value);
+        var item = jXML(domPlayerData).find('Collection').children().get(index);
+        jXML(item).attr('page', value);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
     }
 
@@ -157,21 +157,21 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
         var domPlayerData = this.m_blockData.playerDataDom as any
         var rowIndex = 0;
 
-        jQuery(domPlayerData).find('Collection').children().each((k, page) => {
+        jXML(domPlayerData).find('Collection').children().each((k, page) => {
             var resource_hResource, scene_hDataSrc;
-            var type = jQuery(page).attr('type');
+            var type = jXML(page).attr('type');
             if (type == 'resource') {
-                resource_hResource = $(page).find('Resource').attr('hResource');
+                resource_hResource = jXML(page).find('Resource').attr('hResource');
             } else {
-                scene_hDataSrc = $(page).find('Player').attr('hDataSrc');
+                scene_hDataSrc = jXML(page).find('Player').attr('hDataSrc');
             }
             //con('populating ' + resource_hResource);
 
             var storeModel = new StoreModel({
                 rowIndex: rowIndex,
                 checkbox: true,
-                name: $(page).attr('page'),
-                duration: $(page).attr('duration'),
+                name: jXML(page).attr('page'),
+                duration: jXML(page).attr('duration'),
                 type: type,
                 resource_hResource: resource_hResource,
                 scene_hDataSrc: scene_hDataSrc
@@ -190,16 +190,16 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
         var data: Array<JsonEventResourceModel> = [], rowIndex = 0;
         var domPlayerData = this.m_blockData.playerDataDom;
         // self.m_collectionEventTable.bootstrapTable('removeAll');
-        $(domPlayerData).find('EventCommands').children().each(function (k, eventCommand) {
+        jXML(domPlayerData).find('EventCommands').children().each(function (k, eventCommand) {
             var pageName = '';
-            if ($(eventCommand).attr('command') == 'selectPage')
-                pageName = $(eventCommand).find('Page').attr('name');
+            if (jXML(eventCommand).attr('command') == 'selectPage')
+                pageName = jXML(eventCommand).find('Page').attr('name');
             var storeModel = new JsonEventResourceModel({
                     rowIndex: rowIndex,
                     checkbox: true,
-                    event: $(eventCommand).attr('from'),
+                    event: jXML(eventCommand).attr('from'),
                     pageName: pageName,
-                    action: $(eventCommand).attr('command')
+                    action: jXML(eventCommand).attr('command')
                 }
             )
             data.push(storeModel)
@@ -222,8 +222,8 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
     _render() {
         this.m_contGroup.reset();
         var domPlayerData = this.m_blockData.playerDataDom
-        var xSnippetCollection = $(domPlayerData).find('Collection');
-        var mode = $(xSnippetCollection).attr('mode') == 'kiosk' ? 1 : 0;
+        var xSnippetCollection = jXML(domPlayerData).find('Collection');
+        var mode = jXML(xSnippetCollection).attr('mode') == 'kiosk' ? 1 : 0;
         this.formInputs['mode'].setValue(mode);
         this._populateTableCollection();
         this._populateTableEvents();
@@ -233,7 +233,7 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
     _toggleKioskMode(i_value) {
         i_value = StringJS(i_value).booleanToNumber()
         var domPlayerData = this.m_blockData.playerDataDom;
-        $(domPlayerData).find('Collection').attr('mode', i_value ? 'kiosk' : 'slideshow');
+        jXML(domPlayerData).find('Collection').attr('mode', i_value ? 'kiosk' : 'slideshow');
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
     }
 
@@ -242,7 +242,7 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
         if (this.m_contGroup.status != 'VALID')
             return;
         // var domPlayerData = this.m_blockData.playerDataDom;
-        // var xSnippet = $(domPlayerData).find('HTML');
+        // var xSnippet = jXML(domPlayerData).find('HTML');
         // xSnippet.attr('src', this.m_contGroup.value.url);
         // this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
