@@ -306,8 +306,10 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
     }
 
     destroy() {
-        var gradient = jXML('#bgColorGradientSelector', this.el.nativeElement).data("gradientPicker-sel");
-        gradient.destroyed();
+        if (!this.m_blockPropsForScene){
+            var gradient = jXML('#bgColorGradientSelector', this.el.nativeElement).data("gradientPicker-sel");
+            gradient.destroyed();
+        }
     }
 }
 
