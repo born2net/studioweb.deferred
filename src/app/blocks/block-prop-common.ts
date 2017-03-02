@@ -213,31 +213,6 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         return jXML(i_domPlayerData).find('Border');
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      Load jXML gradient component once
      @method _bgGradientWidgetInit
@@ -314,22 +289,15 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         }
         var xPointsSnippet = jXML.parseXML(this.bs.getCommonBackgroundXML());
         jXML(xPointsSnippet).find('GradientPoints').empty().append(pointsXML);
-        var c = (new XMLSerializer()).serializeToString(xPointsSnippet);
-        jXML(domPlayerData).find('Data').append(c)
+        var newGradientPoints = (new XMLSerializer()).serializeToString(xPointsSnippet);
+        jXML(domPlayerData).find('Data').append(newGradientPoints)
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
-    /**
-     Find the gradient blocks in player_data for selected block
-     @method _findGradientPoints
-     @param  {object} i_domPlayerData
-     @return {Xml} xSnippet
-     **/
     _findGradientPoints(i_domPlayerData) {
         var xSnippet = jXML(i_domPlayerData).find('GradientPoints');
         return xSnippet;
     }
-
 
     _onRemoveBackgroundClicked() {
         this._bgGradientWidgetClear();
@@ -339,16 +307,6 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
-
-
-
-
-    /**
-     Find the background section in player_data for selected block
-     @method _findBackground
-     @param  {object} i_domPlayerData
-     @return {Xml} xSnippet
-     **/
     _findBackground(i_domPlayerData) {
         var xSnippet = jXML(i_domPlayerData).find('Background');
         return xSnippet;
@@ -360,25 +318,3 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
     }
 }
 
-// /**
-//  Disable the gradient background UI
-//  @method _bgPropsUnpopulate
-//  **/
-// _bgPropsUnpopulate() {
-//     var domPlayerData = this.m_blockData.playerDataDom;
-//     var gradientPoints = this._findGradientPoints(domPlayerData);
-//     jXML(gradientPoints).empty();
-// }
-
-
-// @timeout()
-// private saveToStore() {
-//     // console.log(this.contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.contGroup.value)));
-//     if (this.contGroup.status != 'VALID')
-//         return;
-//     // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_name', this.contGroup.value.campaign_name);
-//     // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_playlist_mode', this.contGroup.value.campaign_playlist_mode);
-//     // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_timeline_id', 0); //todo: you need to fix this as zero is arbitrary number right now
-//     // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_mode', this.contGroup.value.kiosk_mode);
-//     // this.rp.reduxCommit()
-// }
