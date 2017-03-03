@@ -75,37 +75,21 @@ export interface IBlockData {
 
 /**
  All blocks and related property modules loaded by require.js
- @event BLOCKS_LOADED
- @param {This} caller
- @static
- @final
  **/
 export const BLOCKS_LOADED = 'BLOCKS_LOADED';
 
 /**
  block.PLACEMENT_SCENE indicates the insertion is inside a Scene
- @property Block.PLACEMENT_SCENE
- @static
- @final
- @type String
  */
 export const PLACEMENT_SCENE = 'PLACEMENT_SCENE';
 
 /**
  block.PLACEMENT_CHANNEL indicates the insertion is on the timeline_channel
- @property Block.PLACEMENT_CHANNEL
- @static
- @final
- @type String
  */
 export const PLACEMENT_CHANNEL = 'PLACEMENT_CHANNEL';
 
 /**
  block.PLACEMENT_IS_SCENE indicates the insertion is itself a Scene
- @property Block.PLACEMENT_IS_SCENE
- @static
- @final
- @type String
  */
 export const PLACEMENT_IS_SCENE = 'PLACEMENT_IS_SCENE';
 
@@ -113,10 +97,6 @@ export const PLACEMENT_IS_SCENE = 'PLACEMENT_IS_SCENE';
  block.PLACEMENT_LISTS indicates the insertion is inside a collection list such
  as the Collection Block or the Location based block. This event is used for example
  when building the list of available blocks in AddBlockView
- @property Block.PLACEMENT_LISTS
- @static
- @final
- @type String
  */
 export const PLACEMENT_LISTS = 'PLACEMENT_LISTS';
 

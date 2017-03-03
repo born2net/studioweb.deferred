@@ -34,7 +34,7 @@ import {RedPepperService} from "../../services/redpepper.service";
         <button (click)="_goBack()" id="prev" type="button" class="openPropsButton btn btn-default btn-sm">
             <span class="glyphicon glyphicon-chevron-left"></span>
         </button>
-        <div style="padding-top: 20px; padding-right: 30px" class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+        <div *ngIf="m_placement == m_PLACEMENT_SCENE || m_placement == m_PLACEMENT_CHANNEL" style="padding-top: 20px; padding-right: 30px" class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
             <div class="panel panel-default">
                 <div class="panel-heading" role="tab" id="headingOne">
                     <h4 class="panel-title">
@@ -77,8 +77,8 @@ import {RedPepperService} from "../../services/redpepper.service";
                         </ul>
                     </div>
                 </div>
-            </div>
-            <div class="panel panel-default">
+            </div>            
+            <div *ngIf="m_placement == m_PLACEMENT_LISTS || m_placement == m_PLACEMENT_CHANNEL" class="panel panel-default">
                 <div class="panel-heading" role="tab" id="headingThree">
                     <h4 class="panel-title">
                         <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
@@ -108,11 +108,12 @@ export class AddContent extends Compbaser implements AfterViewInit {
     m_userModel: UserModel;
     m_resourceModels: List<ResourcesModel>;
     m_playerDataModels: Array<XMLDocument>;
-
     m_componentList = [];
     m_resourceList = [];
     m_sceneList = [];
-
+    m_PLACEMENT_SCENE = PLACEMENT_SCENE;
+    m_PLACEMENT_LISTS = PLACEMENT_LISTS;
+    m_PLACEMENT_CHANNEL = PLACEMENT_CHANNEL;
 
     constructor(private yp: YellowPepperService, private rp: RedPepperService, private bs: BlockService, @Inject('HYBRID_PRIVATE') private hybrid_private: boolean) {
         super();
@@ -137,44 +138,13 @@ export class AddContent extends Compbaser implements AfterViewInit {
                     this.m_playerDataModels = i_playerDataModels;
                 }, (e) => console.error(e))
         )
+
+        var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
+        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 
     @Output()
     onGoBack: EventEmitter<any> = new EventEmitter<any>();
-
-    ngAfterViewInit() {
-        this._render();
-    }
-
-    _onUpgEnterprise(event: MouseEvent) {
-        event.stopImmediatePropagation();
-        event.preventDefault();
-        console.log();
-    }
-
-    _onComponentSelected(i_component) {
-        console.log(i_component);
-    }
-
-    _onResourceSelected(i_resource){
-
-    }
-
-    _onSceneSelected(i_scnene){
-
-    }
-
-    _goBack() {
-        var uiState: IUiState = {
-            uiSideProps: SideProps.miniDashboard,
-            campaign: {
-                campaignTimelineChannelSelected: -1,
-                campaignTimelineBoardViewerSelected: -1
-            }
-        }
-        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
-        this.onGoBack.emit();
-    }
 
     /**
      Allow us to control the current placement of the module so the behaviour can be according
@@ -198,6 +168,40 @@ export class AddContent extends Compbaser implements AfterViewInit {
     @Input()
     setSceneMime(m_sceneMime) {
         this.m_sceneMime = m_sceneMime;
+    }
+
+    ngAfterViewInit() {
+        this._render();
+    }
+
+    _onUpgEnterprise(event: MouseEvent) {
+        event.stopImmediatePropagation();
+        event.preventDefault();
+        con('upg ent');
+    }
+
+    _onComponentSelected(i_component) {
+        con('add component ' + i_component);
+    }
+
+    _onResourceSelected(i_resource){
+        con('add resource ' + i_resource);
+    }
+
+    _onSceneSelected(i_scnene){
+        con('add scnene ' + i_scnene);
+    }
+
+    _goBack() {
+        var uiState: IUiState = {
+            uiSideProps: SideProps.miniDashboard,
+            campaign: {
+                campaignTimelineChannelSelected: -1,
+                campaignTimelineBoardViewerSelected: -1
+            }
+        }
+        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+        this.onGoBack.emit();
     }
 
     /**
