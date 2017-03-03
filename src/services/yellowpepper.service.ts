@@ -20,6 +20,12 @@ import {List} from "immutable";
 import * as _ from "lodash";
 import {UserModel} from "../models/UserModel";
 
+
+export interface ISceneData {
+    scene_id: number;
+    domPlayerData: XMLDocument;
+}
+
 @Injectable()
 export class YellowPepperService {
 
@@ -329,7 +335,6 @@ export class YellowPepperService {
     getScenePlayerdataDom(i_scene_id): Observable<string> {
         return this.sterilizePseudoId(i_scene_id)
             .mergeMap(scene_id => {
-                console.log(scene_id);
                 return this.getScene(scene_id)
                     .map((playerDataModel: PlayerDataModel) => {
                         return playerDataModel.getPlayerDataValue();
@@ -368,12 +373,15 @@ export class YellowPepperService {
      @param {Number} getSceneIdFromPseudoId
      @return {Number} scene id
      **/
-    getSceneIdFromPseudoId(i_pseudo_id): Observable<any> {
-        return this.getScenes().find((domPlayerData) => {
-            return i_pseudo_id == jXML(domPlayerData).find('Player').eq(0).attr('id');
-        }).map((domPlayerData) => {
-            return jXML(domPlayerData).find('Player').eq(0).attr('id')
-        }).take(1);
+    getSceneIdFromPseudoId(i_pseudo_id): Observable<number> {
+        return this.getScenes()
+            .mergeMap((i_sceneList: Array<ISceneData>) => {
+                return Observable.from(i_sceneList)
+            }).filter((i_scene: ISceneData) => {
+                return i_pseudo_id == jXML(i_scene.domPlayerData).find('Player').eq(0).attr('id');
+            }).map((i_scene: ISceneData) => {
+                return i_scene.scene_id;
+            }).take(1);
     }
 
     /**
@@ -381,13 +389,14 @@ export class YellowPepperService {
      @method getScenes
      @return {Object} all scenes as objects
      **/
-    getScenes(): Observable<Array<XMLDocument>> {
+    getScenes(): Observable<Array<ISceneData>> {
         return this.store.select(store => store.msDatabase.sdk.table_player_data)
             .map((playerDataModels: List<PlayerDataModel>) => {
-                return playerDataModels.reduce((result: Array<any>, playerDataModel) => {
+                return playerDataModels.reduce((result: Array<ISceneData>, playerDataModel) => {
+                    var playerDataId = playerDataModel.getPlayerDataId();
                     var recPlayerData = playerDataModel.getPlayerDataValue();
                     var domPlayerData = $.parseXML(recPlayerData)
-                    result.push(domPlayerData);
+                    result.push({scene_id: playerDataId, domPlayerData});
                     return result;
                 }, [])
             }).take(1);

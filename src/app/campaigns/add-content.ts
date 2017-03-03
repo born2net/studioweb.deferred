@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, EventEmitter, Inject, Input, Output} from "@angular/core";
 import {Compbaser} from "ng-mslib";
-import {YellowPepperService} from "../../services/yellowpepper.service";
+import {ISceneData, YellowPepperService} from "../../services/yellowpepper.service";
 import {IUiState} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
 import {BlockService} from "../blocks/block-service";
@@ -109,7 +109,7 @@ export class AddContent extends Compbaser implements AfterViewInit {
     m_sceneMime;
     m_userModel: UserModel;
     m_resourceModels: List<ResourcesModel>;
-    m_playerDataModels: Array<XMLDocument>;
+    m_playerDataModels: Array<ISceneData>;
     m_componentList:Array<IAddContents> = [];
     m_resourceList:Array<IAddContents> = [];
     m_sceneList:Array<IAddContents> = [];
@@ -325,23 +325,27 @@ export class AddContent extends Compbaser implements AfterViewInit {
         /////////////////////////////////////////////////////////
 
         if (this.m_placement == PLACEMENT_CHANNEL || this.m_placement == PLACEMENT_LISTS) {
-            this.m_playerDataModels.forEach((scene: XMLDocument, i: number) => {
-                var label = $(scene).find('Player').eq(0).attr('label');
-                var sceneID = $(scene).find('Player').eq(0).attr('id');
-                var mimeType = $(scene).find('Player').eq(0).attr('mimeType');
+            this.m_playerDataModels.forEach((i_sceneData: ISceneData, i: number) => {
+                var label = $(i_sceneData.domPlayerData).find('Player').eq(0).attr('label');
+                var sceneID = $(i_sceneData.domPlayerData).find('Player').eq(0).attr('id');
+                var mimeType = $(i_sceneData.domPlayerData).find('Player').eq(0).attr('mimeType');
 
                 // don't allow adding mimetype scenes to channels directly as needs to be added via Player block
                 if (this.m_placement == PLACEMENT_CHANNEL) {
                     if (!_.isUndefined(mimeType))
                         return;
                 }
+
+                this.yp.getSceneIdFromPseudoId(sceneID).subscribe(a=>{
+                    console.log(a);
+                })
                 sceneID = this.rp.sterilizePseudoId(sceneID);
                 this.m_sceneList.push({
-                    sceneId: sceneID as any,
+                    sceneId: i_sceneData.scene_id,
                     type: BlockTypeEnum.SCENE,
                     blockCode: 3510,
                     name: label,
-                    data: scene,
+                    data: i_sceneData.domPlayerData,
                     fa: this.bs.getFontAwesome('scene'),
                     allow: true,
                     description: 'scene'
