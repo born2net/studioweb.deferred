@@ -771,28 +771,28 @@ export class RedPepperService {
      @method createNewChannelPlayer
      **/
     createNewChannelPlayer(i_campaign_timeline_chanel_id:number, i_addContents:IAddContents, i_boilerPlate, i_offset:number) {
-
         var timelinePlayers = this.databaseManager.table_campaign_timeline_chanel_players();
         var recTimelinePlayer = timelinePlayers.createRecord();
-        // var component = BB.PepperHelper.getBlockBoilerplate(i_playerCode);
         var player_data = i_boilerPlate.getDefaultPlayerData(PLACEMENT_CHANNEL, i_addContents.resourceId);
 
-        // // dealing with embedded scene, override player_data with scene handle
-        // if (!_.isUndefined(i_sceneID))
-        //     player_data = '<Player hDataSrc="' + i_sceneID + '"/>';
-        //
-        // recTimelinePlayer.player_data = player_data;
-        // recTimelinePlayer.campaign_timeline_chanel_id = i_campaign_timeline_chanel_id;
-        // recTimelinePlayer.player_duration = 10;
-        // recTimelinePlayer.player_offset_time = i_offset;
-        // timelinePlayers.addRecord(recTimelinePlayer,null);
-        //
-        // var returnData = {
+        // dealing with embedded scene, override player_data with scene handle
+        if (!_.isUndefined(i_addContents.sceneId))
+            player_data = '<Player hDataSrc="' + i_addContents.sceneId + '"/>';
+
+        recTimelinePlayer.player_data = player_data;
+        recTimelinePlayer.campaign_timeline_chanel_id = i_campaign_timeline_chanel_id;
+        recTimelinePlayer.player_duration = 10;
+        recTimelinePlayer.player_offset_time = i_offset;
+        timelinePlayers.addRecord(recTimelinePlayer,null);
+
+        this.addPendingTables(['table_campaign_timeline_chanel_players']);
+
+        // return {
         //     campaign_timeline_chanel_player_id: recTimelinePlayer['campaign_timeline_chanel_player_id'],
         //     campaign_timeline_chanel_player_data: recTimelinePlayer['player_data']
         // };
         // // pepper.fire(Pepper['NEW_PLAYER_CREATED'], self, null, returnData);
-        // // return returnData;
+
     }
 
     /**

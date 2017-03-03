@@ -102,12 +102,10 @@ export class CampaignChannels extends Compbaser implements AfterViewInit {
      Create a new block (player) on the current channel and refresh UI bindings such as properties open events.
      **/
     _createNewChannelBlock(i_addContents:IAddContents, i_boilerPlate, i_totalChannelLength) {
-
-        var jData = this.rp.createNewChannelPlayer(this.selected_campaign_timeline_chanel_id, i_addContents, i_boilerPlate, i_totalChannelLength);
-
+        this.rp.createNewChannelPlayer(this.selected_campaign_timeline_chanel_id, i_addContents, i_boilerPlate, i_totalChannelLength);
+        this.rp.reduxCommit();
         // var campaign_timeline_chanel_player_id = jData['campaign_timeline_chanel_player_id'];
         // var campaign_timeline_chanel_player_data = jData['campaign_timeline_chanel_player_data'];
-        //
         // var timeline = BB.comBroker.getService(BB.SERVICES.CAMPAIGN_VIEW).getTimelineInstance(self.selected_campaign_timeline_id);
         // var channel = timeline.getChannelInstance(self.selected_campaign_timeline_chanel_id);
         // channel.createChannelBlock(campaign_timeline_chanel_player_id, campaign_timeline_chanel_player_data);
@@ -123,7 +121,7 @@ export class CampaignChannels extends Compbaser implements AfterViewInit {
         // // self._deselectBlocksFromChannel();
         // self._selectLastBlockOnChannel();
         // self._reOrderChannelBlocks();
-        // return false;
+
     }
 
     ngAfterViewInit() {
