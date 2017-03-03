@@ -197,7 +197,6 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         this.formInputs['border'].setValue(i_value);
         this.m_color = '#' + Lib.DecimalToHex(i_color);
         // this.formInputs['border_input'].setValue(this.m_color);
-        con('setting color ' + this.m_color);
         this.cd.markForCheck();
     }
 
