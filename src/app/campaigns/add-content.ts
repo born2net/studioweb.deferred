@@ -203,7 +203,7 @@ export class AddContent extends Compbaser implements AfterViewInit {
         this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
         this.onGoBack.emit();
     }
-
+      
     /**
      Build lists of components, resources and scenes (respectively showing what's needed per placement mode)
      Once an LI is selected proper event fired to announce block is added.
