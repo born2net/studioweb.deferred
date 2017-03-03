@@ -385,9 +385,7 @@ export class YellowPepperService {
     }
 
     /**
-     Get all Scenes and convert them to dom objects
-     @method getScenes
-     @return {Object} all scenes as objects
+     Get all Scenes and return array of player_data_id domPlayerData : ISceneData
      **/
     getScenes(): Observable<Array<ISceneData>> {
         return this.store.select(store => store.msDatabase.sdk.table_player_data)

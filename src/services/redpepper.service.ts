@@ -786,13 +786,6 @@ export class RedPepperService {
         timelinePlayers.addRecord(recTimelinePlayer,null);
 
         this.addPendingTables(['table_campaign_timeline_chanel_players']);
-
-        // return {
-        //     campaign_timeline_chanel_player_id: recTimelinePlayer['campaign_timeline_chanel_player_id'],
-        //     campaign_timeline_chanel_player_data: recTimelinePlayer['player_data']
-        // };
-        // // pepper.fire(Pepper['NEW_PLAYER_CREATED'], self, null, returnData);
-
     }
 
     /**
@@ -3020,3 +3013,9 @@ export class RedPepperService {
         });
     }
 }
+
+// return {
+//     campaign_timeline_chanel_player_id: recTimelinePlayer['campaign_timeline_chanel_player_id'],
+//     campaign_timeline_chanel_player_data: recTimelinePlayer['player_data']
+// };
+// // pepper.fire(Pepper['NEW_PLAYER_CREATED'], self, null, returnData);

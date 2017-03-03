@@ -109,10 +109,12 @@ export class AddContent extends Compbaser implements AfterViewInit {
     m_sceneMime;
     m_userModel: UserModel;
     m_resourceModels: List<ResourcesModel>;
-    m_playerDataModels: Array<ISceneData>;
+    m_sceneDatas: Array<ISceneData>;
+    
     m_componentList:Array<IAddContents> = [];
     m_resourceList:Array<IAddContents> = [];
     m_sceneList:Array<IAddContents> = [];
+
     m_PLACEMENT_SCENE = PLACEMENT_SCENE;
     m_PLACEMENT_LISTS = PLACEMENT_LISTS;
     m_PLACEMENT_CHANNEL = PLACEMENT_CHANNEL;
@@ -136,8 +138,8 @@ export class AddContent extends Compbaser implements AfterViewInit {
 
         this.cancelOnDestroy(
             this.yp.getScenes()
-                .subscribe((i_playerDataModels) => {
-                    this.m_playerDataModels = i_playerDataModels;
+                .subscribe((i_playerDatas:Array<ISceneData>) => {
+                    this.m_sceneDatas = i_playerDatas;
                 }, (e) => console.error(e))
         )
 
@@ -325,9 +327,8 @@ export class AddContent extends Compbaser implements AfterViewInit {
         /////////////////////////////////////////////////////////
 
         if (this.m_placement == PLACEMENT_CHANNEL || this.m_placement == PLACEMENT_LISTS) {
-            this.m_playerDataModels.forEach((i_sceneData: ISceneData, i: number) => {
+            this.m_sceneDatas.forEach((i_sceneData: ISceneData) => {
                 var label = $(i_sceneData.domPlayerData).find('Player').eq(0).attr('label');
-                var sceneID = $(i_sceneData.domPlayerData).find('Player').eq(0).attr('id');
                 var mimeType = $(i_sceneData.domPlayerData).find('Player').eq(0).attr('mimeType');
 
                 // don't allow adding mimetype scenes to channels directly as needs to be added via Player block
@@ -335,11 +336,6 @@ export class AddContent extends Compbaser implements AfterViewInit {
                     if (!_.isUndefined(mimeType))
                         return;
                 }
-
-                this.yp.getSceneIdFromPseudoId(sceneID).subscribe(a=>{
-                    console.log(a);
-                })
-                sceneID = this.rp.sterilizePseudoId(sceneID);
                 this.m_sceneList.push({
                     sceneId: i_sceneData.scene_id,
                     type: BlockTypeEnum.SCENE,
@@ -395,3 +391,9 @@ export class AddContent extends Compbaser implements AfterViewInit {
     destroy() {
     }
 }
+
+// var sceneID = $(i_sceneData.domPlayerData).find('Player').eq(0).attr('id');
+// this.yp.getSceneIdFromPseudoId(sceneID).subscribe(a=>{
+//     console.log(a);
+// })
+// sceneID = this.rp.sterilizePseudoId(sceneID);
