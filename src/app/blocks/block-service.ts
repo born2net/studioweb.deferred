@@ -11,6 +11,7 @@ import {CampaignTimelineChanelPlayersModelExt} from "../../store/model/msdb-mode
 import {RedPepperService} from "../../services/redpepper.service";
 import {ResourcesModel} from "../../store/imsdb.interfaces_auto";
 
+
 export const BlockLabels = {
     'BLOCKCODE_SCENE': 3510,
     'BLOCKCODE_COLLECTION': 4100,

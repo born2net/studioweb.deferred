@@ -10,6 +10,8 @@ import {List} from "immutable";
 import {IUiState} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
 import {DraggableList} from "../../comps/draggable-list";
+import {IAddContents} from "../../interfaces/IAddContent";
+
 
 @Component({
     selector: 'campaign-channels',
@@ -84,7 +86,7 @@ export class CampaignChannels extends Compbaser implements AfterViewInit {
     draggableList: DraggableList;
 
     @Input()
-    set addBlock(i_value) {
+    set addBlock(i_value:IAddContents) {
         console.log(i_value);
     }
 

@@ -9,6 +9,23 @@ import {ACTION_UISTATE_UPDATE, AppdbAction, SideProps} from "../../store/actions
 import {IUiState} from "../../store/store.data";
 import {Lib} from "../../Lib";
 import {CampaignChannels} from "./campaign-channels";
+import {IAddContents} from "../../interfaces/IAddContent";
+
+
+export interface IAddContent {
+    id: any;
+    type:any;
+    name: string;
+    allow: boolean;
+    fa: string;
+    description: string;
+    data?: any;
+    size?:string;
+    specialJsonItemName?: string;
+    specialJsonItemColor?: string;
+}
+
+
 
 @Component({
     selector: 'campaign-editor',
@@ -89,7 +106,7 @@ export class CampaignEditor extends Compbaser {
     }
 
     @Input()
-    set setContentToAdd(i_value) {
+    set setContentToAdd(i_value:IAddContents) {
         this.m_campaignChannels.addBlock = i_value;
     }
 

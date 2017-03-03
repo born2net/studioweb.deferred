@@ -10,6 +10,15 @@ import {UserModel} from "../../models/UserModel";
 import {ResourcesModel} from "../../store/imsdb.interfaces_auto";
 import {List} from "immutable";
 import {RedPepperService} from "../../services/redpepper.service";
+import {IAddContents} from "../../interfaces/IAddContent";
+import {BlockTypeEnum} from "../../interfaces/BlockTypeEnum";
+
+// export enum BlockTypeEnum {
+//     'COMPONENT',
+//     'RESOURCE',
+//     'SCENE'
+// }
+
 
 
 @Component({
@@ -108,9 +117,9 @@ export class AddContent extends Compbaser implements AfterViewInit {
     m_userModel: UserModel;
     m_resourceModels: List<ResourcesModel>;
     m_playerDataModels: Array<XMLDocument>;
-    m_componentList = [];
-    m_resourceList = [];
-    m_sceneList = [];
+    m_componentList:Array<IAddContents> = [];
+    m_resourceList:Array<IAddContents> = [];
+    m_sceneList:Array<IAddContents> = [];
     m_PLACEMENT_SCENE = PLACEMENT_SCENE;
     m_PLACEMENT_LISTS = PLACEMENT_LISTS;
     m_PLACEMENT_CHANNEL = PLACEMENT_CHANNEL;
@@ -282,8 +291,9 @@ export class AddContent extends Compbaser implements AfterViewInit {
                 case 1:
                 case 2: {
                     this.m_componentList.push({
-                        allow: status == 1 ? true : false,
                         id: componentID,
+                        type: BlockTypeEnum.COMPONENT,
+                        allow: status == 1 ? true : false,
                         name: components[componentID].name,
                         fa: components[componentID].fontAwesome,
                         specialJsonItemName: specialJsonItemName,
@@ -308,9 +318,12 @@ export class AddContent extends Compbaser implements AfterViewInit {
             var resourceDescription = 'size: ' + size;
 
             this.m_resourceList.push({
+                id:  i_resourcesModel.getResourceId(),
+                type: BlockTypeEnum.RESOURCE,
                 name: i_resourcesModel.getResourceName(),
-                resourceModel: i_resourcesModel,
+                data: i_resourcesModel,
                 size: size,
+                allow: true,
                 fa: this.bs.getFontAwesome(i_resourcesModel.getResourceType()),
                 description: resourceDescription
             })
@@ -334,8 +347,12 @@ export class AddContent extends Compbaser implements AfterViewInit {
 
                 this.m_sceneList.push({
                     id: this.rp.sterilizePseudoIdFromScene(sceneID, scene),
+                    type: BlockTypeEnum.SCENE,
                     name: label,
-                    fa: this.bs.getFontAwesome('scene')
+                    data: scene,
+                    fa: this.bs.getFontAwesome('scene'),
+                    allow: true,
+                    description: 'scene'
                 })
             })
         }
