@@ -39,8 +39,11 @@ export interface IFontSelector {
                         </button>
                         <button (click)="_moveColorPicker()" #borderColor (colorPickerChange)="m_borderColorChanged.next($event)"
                                 [cpOKButton]="true" [cpOKButtonClass]="'btn btn-primary btn-xs'"
-                                [(colorPicker)]="m_config.color" [cpPosition]="'left'" style="width: 59px"
+                                [(colorPicker)]="m_config.color"
+                                [cpPosition]="'left'"
+                                [cpWidth]="'230px'"
                                 [cpAlphaChannel]="'disabled'" class="colorPicker offSet"
+                                [cpFallbackColor]="'#123'"
                                 [style.background]="m_config.color" [value]="m_config.color">
                         </button>
                     </div>
@@ -99,7 +102,6 @@ export interface IFontSelector {
             background: #ffffff;
             padding: 10px 20px 10px 20px;
             text-decoration: none;
-            text-decoration: none;
         }
     `]
 
@@ -145,7 +147,7 @@ export class FontSelector extends Compbaser implements AfterViewInit {
             //
             this.m_borderColorChanged
                 .debounceTime(500)
-                .distinct()
+                .filter(v => v != '#123')
                 .skip(1)
                 .subscribe((i_color) => {
                     this.m_config.color = String(i_color);
@@ -158,7 +160,7 @@ export class FontSelector extends Compbaser implements AfterViewInit {
     _moveColorPicker() {
         if (this.m_moveColorPickerOnce) return;
         this.m_moveColorPickerOnce = true;
-        jQuery(".color-picker", this.el.nativeElement).css("left", "+=100");
+        jQuery(".color-picker", this.el.nativeElement).css("left", "+=100").css("top", "-=100");;
     }
 
     _onFontChanged(e) {

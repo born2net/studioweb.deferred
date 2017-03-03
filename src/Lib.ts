@@ -574,7 +574,22 @@ export class Lib {
      @return {Number} decimal
      **/
     static HexToDecimal(h) {
+        function hexfix(str) {
+            var v, w;
+            v = parseInt(str, 16);	// in rrggbb
+            if (str.length == 3) {
+                // nybble colors - fix to hex colors
+                //  0x00000rgb              -> 0x000r0g0b
+                //  0x000r0g0b | 0x00r0g0b0 -> 0x00rrggbb
+                w = ((v & 0xF00) << 8) | ((v & 0x0F0) << 4) | (v & 0x00F);
+                v = w | (w << 4);
+            }
+            return v.toString(16).toUpperCase();
+        }
+
+
         var h = h.replace(/#/gi, '');
+        h = hexfix(h);
         return parseInt(h, 16);
     }
 

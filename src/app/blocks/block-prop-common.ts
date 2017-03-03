@@ -47,6 +47,8 @@ import * as _ from "lodash";
                             </div>
                             <input #borderColor [disabled]="!borderSelection.checked" (colorPickerChange)="m_borderColorChanged.next($event)"
                                    [cpOKButton]="true" [cpOKButtonClass]="'btn btn-primary btn-xs'"
+                                   [cpFallbackColor]="'#123'"
+                                   [cpPresetColors]="[]"
                                    [(colorPicker)]="m_color" [cpPosition]="'bottom'"
                                    [cpAlphaChannel]="'disabled'" style="width: 185px"
                                    [style.background]="m_color" [value]="m_color"/>
@@ -63,7 +65,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
     private formInputs = {};
     private contGroup: FormGroup;
     private m_blockData: IBlockData;
-    private m_isPropsForScene:boolean = false;
+    private m_isPropsForScene: boolean = false;
     private m_borderColorChanged = new Subject();
     m_color;
 
@@ -118,8 +120,8 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
             //
             this.m_borderColorChanged
                 .debounceTime(500)
-                .distinct()
-                .subscribe((i_color) => {
+                .filter(v => v != '#123')
+                .subscribe((i_color: any) => {
                     var domPlayerData = this.bs.getBlockPlayerData(this.m_blockData)
                     var border = this._findBorder(domPlayerData);
                     jXML(border).attr('borderColor', Lib.HexToDecimal(i_color));
@@ -190,10 +192,13 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         }
     }
 
+    @timeout(50)
     _updateBorderColor(i_value, i_color) {
         this.formInputs['border'].setValue(i_value);
         this.m_color = '#' + Lib.DecimalToHex(i_color);
-        // this.cd.markForCheck();
+        // this.formInputs['border_input'].setValue(this.m_color);
+        con('setting color ' + this.m_color);
+        this.cd.markForCheck();
     }
 
     /**
