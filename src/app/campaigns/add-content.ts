@@ -3,7 +3,7 @@ import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {IUiState} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
-import {BlockLabels, BlockService, PLACEMENT_CHANNEL, PLACEMENT_LISTS, PLACEMENT_SCENE} from "../blocks/block-service";
+import {BlockService} from "../blocks/block-service";
 import {Lib} from "../../Lib";
 import * as _ from "lodash";
 import {UserModel} from "../../models/UserModel";
@@ -12,14 +12,7 @@ import {List} from "immutable";
 import {RedPepperService} from "../../services/redpepper.service";
 import {IAddContents} from "../../interfaces/IAddContent";
 import {BlockTypeEnum} from "../../interfaces/BlockTypeEnum";
-
-// export enum BlockTypeEnum {
-//     'COMPONENT',
-//     'RESOURCE',
-//     'SCENE'
-// }
-
-
+import {BlockLabels, PLACEMENT_CHANNEL, PLACEMENT_LISTS, PLACEMENT_SCENE} from "../../interfaces/Consts";
 
 @Component({
     selector: 'add-content',
@@ -196,16 +189,15 @@ export class AddContent extends Compbaser implements AfterViewInit {
     _onComponentSelected(i_component) {
         if (!i_component.allow)
             return bootbox.alert('Please upgrade to the Enterprise edition')
-        con('add component ' + i_component);
         this.onContentToAdd.emit(i_component);
     }
 
     _onResourceSelected(i_resource) {
-        con('add resource ' + i_resource);
+        this.onContentToAdd.emit(i_resource);
     }
 
     _onSceneSelected(i_scnene) {
-        con('add scnene ' + i_scnene);
+        this.onContentToAdd.emit(i_scnene);
     }
 
     _goBack() {
@@ -287,13 +279,13 @@ export class AddContent extends Compbaser implements AfterViewInit {
                 case 0: {
                     continue;
                 }
-
                 case 1:
                 case 2: {
                     this.m_componentList.push({
-                        id: componentID,
+                        blockId: componentID,
                         type: BlockTypeEnum.COMPONENT,
                         allow: status == 1 ? true : false,
+                        blockCode: componentID,
                         name: components[componentID].name,
                         fa: components[componentID].fontAwesome,
                         specialJsonItemName: specialJsonItemName,
@@ -313,14 +305,13 @@ export class AddContent extends Compbaser implements AfterViewInit {
 
         // var recResources = pepper.getResources();
         this.m_resourceModels.forEach((i_resourcesModel: ResourcesModel) => {
-
             var size = (i_resourcesModel.getResourceBytesTotal() / 1000).toFixed(2);
             var resourceDescription = 'size: ' + size;
-
             this.m_resourceList.push({
-                id:  i_resourcesModel.getResourceId(),
+                resourceId:  i_resourcesModel.getResourceId(),
                 type: BlockTypeEnum.RESOURCE,
                 name: i_resourcesModel.getResourceName(),
+                blockCode: this.bs.getBlockCodeFromFileExt(i_resourcesModel.getResourceType()) as number,
                 data: i_resourcesModel,
                 size: size,
                 allow: true,
@@ -346,8 +337,9 @@ export class AddContent extends Compbaser implements AfterViewInit {
                 }
 
                 this.m_sceneList.push({
-                    id: this.rp.sterilizePseudoIdFromScene(sceneID, scene),
+                    sceneId: this.rp.sterilizePseudoIdFromScene(sceneID, scene),
                     type: BlockTypeEnum.SCENE,
+                    blockCode: 3510,
                     name: label,
                     data: scene,
                     fa: this.bs.getFontAwesome('scene'),

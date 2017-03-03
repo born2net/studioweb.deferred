@@ -1,6 +1,6 @@
 import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, Input} from "@angular/core";
 import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
-import {BlockLabels, BlockService, IBlockData} from "./block-service";
+import {BlockService, IBlockData} from "./block-service";
 import {timeout} from "../../decorators/timeout-decorator";
 import {Subject} from "rxjs";
 import {RedPepperService} from "../../services/redpepper.service";

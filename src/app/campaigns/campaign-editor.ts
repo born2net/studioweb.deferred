@@ -11,22 +11,6 @@ import {Lib} from "../../Lib";
 import {CampaignChannels} from "./campaign-channels";
 import {IAddContents} from "../../interfaces/IAddContent";
 
-
-export interface IAddContent {
-    id: any;
-    type:any;
-    name: string;
-    allow: boolean;
-    fa: string;
-    description: string;
-    data?: any;
-    size?:string;
-    specialJsonItemName?: string;
-    specialJsonItemColor?: string;
-}
-
-
-
 @Component({
     selector: 'campaign-editor',
     templateUrl: './campaign-editors.html',

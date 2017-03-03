@@ -7,8 +7,8 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
 import {RedPepperService} from "../../services/redpepper.service";
 import {Once} from "../../decorators/once-decorator";
 import {IScreenTemplateData} from "../../comps/screen-template/screen-template";
-import {PLACEMENT_CHANNEL} from "../blocks/block-service";
 import {CampaignEditor} from "./campaign-editor";
+import {PLACEMENT_CHANNEL} from "../../interfaces/Consts";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,

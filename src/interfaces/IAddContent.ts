@@ -1,8 +1,11 @@
 import {BlockTypeEnum} from "./BlockTypeEnum";
 
 export interface IAddContents {
-    id: any;
+    resourceId?: number;
+    sceneId?:number;
+    blockId?:number;
     type:BlockTypeEnum;
+    blockCode: number;
     name: string;
     allow: boolean;
     fa: string;

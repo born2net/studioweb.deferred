@@ -311,7 +311,6 @@ export class YellowPepperService {
 
     /**
      Get all the block IDs of a particular channel.
-     Push them into an array so they are properly sorted by player offset time.
      **/
     getChannelBlocks(i_campaign_timeline_chanel_id): Observable<Array<number>> {
         return this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_chanel_players)
@@ -327,11 +326,11 @@ export class YellowPepperService {
     /**
      Get Scene player data as dom
      **/
-    getScenePlayerdataDom(i_scene_id):Observable<string> {
-       return this.sterilizePseudoId(i_scene_id)
+    getScenePlayerdataDom(i_scene_id): Observable<string> {
+        return this.sterilizePseudoId(i_scene_id)
             .mergeMap(scene_id => {
                 return this.getScene(scene_id)
-                    .map((playerDataModel:PlayerDataModel) => {
+                    .map((playerDataModel: PlayerDataModel) => {
                         return playerDataModel.getPlayerDataValue();
                     })
             }).take(1);
@@ -340,7 +339,7 @@ export class YellowPepperService {
     /**
      Get player_data via its scene id
      **/
-    getScene(scene_id):Observable<PlayerDataModel> {
+    getScene(scene_id): Observable<PlayerDataModel> {
         return this.store.select(store => store.msDatabase.sdk.table_player_data)
             .map((playerDataModels: List<PlayerDataModel>) => {
                 return playerDataModels.find((playerDataModel: PlayerDataModel) => {
@@ -394,7 +393,7 @@ export class YellowPepperService {
     }
 
     /**
-     Get all the block IDs of a particular channel.
+     Get all the model of a particular channel.
      Push them into an array so they are properly sorted by player offset time.
      **/
     getChannelBlockModels(i_campaign_timeline_chanel_id): Observable<List<CampaignTimelineChanelPlayersModel>> {
@@ -518,6 +517,21 @@ export class YellowPepperService {
                     return result;
                 }, 0)
             }).take(1);
+    }
+
+    /**
+     Get the total duration in seconds of the channel
+     @method getTotalDurationChannel
+     **/
+    getTotalDurationChannel(i_selected_campaign_timeline_chanel_id) {
+        return this.getChannelBlocks(i_selected_campaign_timeline_chanel_id)
+            .concatMap((i_blockIds) => {
+                return Observable.from(i_blockIds);
+            }).flatMap((i_blockId) => {
+                return this.getBlockTimelineChannelBlockLength(i_blockId)
+            }).reduce((acc: number, x: number) => {
+                return acc + Number(x);
+            }, 0).take(1);
     }
 
     /**

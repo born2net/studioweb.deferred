@@ -1,11 +1,12 @@
 import {AfterViewInit, ChangeDetectorRef, Component, ViewChild} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
-import {BlockLabels, BlockService, IBlockData} from "./block-service";
+import {BlockService, IBlockData} from "./block-service";
 import {CampaignTimelineChanelPlayersModel} from "../../store/imsdb.interfaces_auto";
 import {ColorPickerService} from "ngx-color-picker";
 import {Tabs} from "../../comps/tabs/tabs";
 import {Tab} from "../../comps/tabs/tab";
+import {BlockLabels} from "../../interfaces/Consts";
 
 
 @Component({

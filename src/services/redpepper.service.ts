@@ -11,6 +11,8 @@ import {Store} from "@ngrx/store";
 import {ApplicationState} from "../store/application.state";
 import * as _ from "lodash";
 import {NgmslibService} from "ng-mslib";
+import {IAddContents} from "../interfaces/IAddContent";
+import {PLACEMENT_CHANNEL} from "../interfaces/Consts";
 
 export type redpepperTables = {
     tables: ISDK
@@ -767,36 +769,30 @@ export class RedPepperService {
     /**
      Create a new player (a.k.a block) and add it to the specified channel_id
      @method createNewChannelPlayer
-     @param {Number} i_campaign_timeline_chanel_id is the channel id assign player to
-     @param {Number} i_playerCode is a unique pre-set code that exists per type of block (see component list for all available code)
-     @param {Number} i_offset set in seconds of when to begin playing the content with respect to timeline_channel
-     @param {Number} i_resourceID optional param used when creating a block with embedded resource (i.e.: video / image / swf)
-     @param {Number} i_sceneID optional param used when creating a block with embedded scene
-     @return {Object} campaign_timeline_chanel_player_id and campaign_timeline_chanel_player_data as json object
      **/
-    createNewChannelPlayer(i_campaign_timeline_chanel_id, i_playerCode, i_offset, i_resourceID, i_sceneID, player_data) {
+    createNewChannelPlayer(i_campaign_timeline_chanel_id:number, i_addContents:IAddContents, i_boilerPlate, i_offset:number) {
+
         var timelinePlayers = this.databaseManager.table_campaign_timeline_chanel_players();
         var recTimelinePlayer = timelinePlayers.createRecord();
-
         // var component = BB.PepperHelper.getBlockBoilerplate(i_playerCode);
-        // var player_data = component.getDefaultPlayerData('CONSTS.PLACEMENT_CHANNEL', i_resourceID);
+        var player_data = i_boilerPlate.getDefaultPlayerData(PLACEMENT_CHANNEL, i_addContents.resourceId);
 
-        // dealing with embedded scene, override player_data with scene handle
-        if (!_.isUndefined(i_sceneID))
-            player_data = '<Player hDataSrc="' + i_sceneID + '"/>';
-
-        recTimelinePlayer.player_data = player_data;
-        recTimelinePlayer.campaign_timeline_chanel_id = i_campaign_timeline_chanel_id;
-        recTimelinePlayer.player_duration = 10;
-        recTimelinePlayer.player_offset_time = i_offset;
-        timelinePlayers.addRecord(recTimelinePlayer, null);
-
-        var returnData = {
-            campaign_timeline_chanel_player_id: recTimelinePlayer['campaign_timeline_chanel_player_id'],
-            campaign_timeline_chanel_player_data: recTimelinePlayer['player_data']
-        };
-        // this.databaseManager.fire(Pepper['NEW_PLAYER_CREATED'], this, null, returnData);
-        // return returnData;
+        // // dealing with embedded scene, override player_data with scene handle
+        // if (!_.isUndefined(i_sceneID))
+        //     player_data = '<Player hDataSrc="' + i_sceneID + '"/>';
+        //
+        // recTimelinePlayer.player_data = player_data;
+        // recTimelinePlayer.campaign_timeline_chanel_id = i_campaign_timeline_chanel_id;
+        // recTimelinePlayer.player_duration = 10;
+        // recTimelinePlayer.player_offset_time = i_offset;
+        // timelinePlayers.addRecord(recTimelinePlayer,null);
+        //
+        // var returnData = {
+        //     campaign_timeline_chanel_player_id: recTimelinePlayer['campaign_timeline_chanel_player_id'],
+        //     campaign_timeline_chanel_player_data: recTimelinePlayer['player_data']
+        // };
+        // // pepper.fire(Pepper['NEW_PLAYER_CREATED'], self, null, returnData);
+        // // return returnData;
     }
 
     /**
