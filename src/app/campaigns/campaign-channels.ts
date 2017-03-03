@@ -85,45 +85,6 @@ export class CampaignChannels extends Compbaser implements AfterViewInit {
     @ViewChild(DraggableList)
     draggableList: DraggableList;
 
-    /**
-     Create a new block (player) on the current channel and refresh UI bindings such as properties open events.
-     **/
-    @Input()
-    set addBlock(i_addContents: IAddContents) {
-        this.yp.getTotalDurationChannel(this.selected_campaign_timeline_chanel_id)
-            .subscribe((i_totalChannelLength) => {
-                var boilerPlate = this.bs.getBlockBoilerplate(i_addContents.blockCode);
-                this._createNewChannelBlock(i_addContents, boilerPlate, i_totalChannelLength);
-            }, (e) => console.error(e))
-
-    }
-
-    /**
-     Create a new block (player) on the current channel and refresh UI bindings such as properties open events.
-     **/
-    _createNewChannelBlock(i_addContents:IAddContents, i_boilerPlate, i_totalChannelLength) {
-        this.rp.createNewChannelPlayer(this.selected_campaign_timeline_chanel_id, i_addContents, i_boilerPlate, i_totalChannelLength);
-        this.rp.reduxCommit();
-        // var campaign_timeline_chanel_player_id = jData['campaign_timeline_chanel_player_id'];
-        // var campaign_timeline_chanel_player_data = jData['campaign_timeline_chanel_player_data'];
-        // var timeline = BB.comBroker.getService(BB.SERVICES.CAMPAIGN_VIEW).getTimelineInstance(self.selected_campaign_timeline_id);
-        // var channel = timeline.getChannelInstance(self.selected_campaign_timeline_chanel_id);
-        // channel.createChannelBlock(campaign_timeline_chanel_player_id, campaign_timeline_chanel_player_data);
-        //
-        // var campaign_timeline_board_viewer_id = self.selected_campaign_timeline_board_viewer_id;
-        // var campaign_timeline_id = self.selected_campaign_timeline_id;
-        // var campaign_timeline_chanel_id = self.selected_campaign_timeline_chanel_id;
-        //
-        // // self._resetChannel();
-        // $(Elements.SORTABLE).empty();
-        // self._loadChannelBlocks(campaign_timeline_id, campaign_timeline_chanel_id);
-        // self._listenBlockSelected();
-        // // self._deselectBlocksFromChannel();
-        // self._selectLastBlockOnChannel();
-        // self._reOrderChannelBlocks();
-
-    }
-
     ngAfterViewInit() {
         this.listenChannelSelected();
         this.preventRedirect(true);
@@ -209,21 +170,6 @@ export class CampaignChannels extends Compbaser implements AfterViewInit {
                 return 0;
         })
         return sorted;
-
-        // var blocksSorted = {};
-        // _.forEach(i_blockList, (i_block: IBlockData) => {
-        //     var player_data = i_block.campaignTimelineChanelPlayersModelExt.getPlayerData();
-        //     var domPlayerData = $.parseXML(player_data);
-        //     var sceneHandle = jQuery(domPlayerData).find('Player').attr('player');
-        //     // workaround to remove scenes listed inside table campaign_timeline_chanel_players
-        //     if (sceneHandle == '3510')
-        //         return;
-        //     var a = i_block.campaignTimelineChanelPlayersModelExt.getKey('player_offset_time');
-        //     var offsetTime = i_block.campaignTimelineChanelPlayersModelExt.getPlayerOffsetTimeInt();
-        //     console.log(i_block.blockName + ' duration: ' + i_block.length + ' offset: ' + offsetTime);
-        //     blocksSorted[offsetTime] = i_block;
-        // });
-        // return _.values(blocksSorted) as Array<IBlockData>;
     }
 
     /**
@@ -261,5 +207,40 @@ export class CampaignChannels extends Compbaser implements AfterViewInit {
     }
 
     destroy() {
+        this.selected_campaign_timeline_chanel_id = -1;
+        this.selected_campaign_timeline_id = -1;
     }
 }
+
+
+// var campaign_timeline_chanel_player_id = jData['campaign_timeline_chanel_player_id'];
+// var campaign_timeline_chanel_player_data = jData['campaign_timeline_chanel_player_data'];
+// var timeline = BB.comBroker.getService(BB.SERVICES.CAMPAIGN_VIEW).getTimelineInstance(self.selected_campaign_timeline_id);
+// var channel = timeline.getChannelInstance(self.selected_campaign_timeline_chanel_id);
+// channel.createChannelBlock(campaign_timeline_chanel_player_id, campaign_timeline_chanel_player_data);
+//
+// var campaign_timeline_board_viewer_id = self.selected_campaign_timeline_board_viewer_id;
+// var campaign_timeline_id = self.selected_campaign_timeline_id;
+// var campaign_timeline_chanel_id = self.selected_campaign_timeline_chanel_id;
+//
+// // self._resetChannel();
+// $(Elements.SORTABLE).empty();
+// self._loadChannelBlocks(campaign_timeline_id, campaign_timeline_chanel_id);
+// self._listenBlockSelected();
+// // self._deselectBlocksFromChannel();
+// self._selectLastBlockOnChannel();
+// self._reOrderChannelBlocks();
+// var blocksSorted = {};
+// _.forEach(i_blockList, (i_block: IBlockData) => {
+//     var player_data = i_block.campaignTimelineChanelPlayersModelExt.getPlayerData();
+//     var domPlayerData = $.parseXML(player_data);
+//     var sceneHandle = jQuery(domPlayerData).find('Player').attr('player');
+//     // workaround to remove scenes listed inside table campaign_timeline_chanel_players
+//     if (sceneHandle == '3510')
+//         return;
+//     var a = i_block.campaignTimelineChanelPlayersModelExt.getKey('player_offset_time');
+//     var offsetTime = i_block.campaignTimelineChanelPlayersModelExt.getPlayerOffsetTimeInt();
+//     console.log(i_block.blockName + ' duration: ' + i_block.length + ' offset: ' + offsetTime);
+//     blocksSorted[offsetTime] = i_block;
+// });
+// return _.values(blocksSorted) as Array<IBlockData>;

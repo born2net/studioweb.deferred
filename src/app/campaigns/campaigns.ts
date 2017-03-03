@@ -54,11 +54,9 @@ import {PLACEMENT_CHANNEL} from "../../interfaces/Consts";
             </Slideritem>
             <Slideritem [templateRef]="h" #sliderAddContent [showFromButton]="false" class="page left addContent" [fromDirection]="'left'" [from]="'campaignList'">
                 <template #h>
-                    <add-content #addContent [setPlacement]="m_placement" (onContentToAdd)="_onContentToAdd($event)" (onGoBack)="sliderItemCampaignEditor.slideTo('campaignEditor','left')"></add-content>
+                    <add-content #addContent [setPlacement]="m_placement" (onGoBack)="sliderItemCampaignEditor.slideTo('campaignEditor','left')"></add-content>
                 </template>
             </Slideritem>
-
-
         </Sliderpanel>
     `
 })
@@ -72,15 +70,7 @@ export class Campaigns extends Compbaser {
         this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 
-    @ViewChild('campaignEditor')
-    m_campaignEditor:CampaignEditor;
-
     _onOpenScreenLayoutEditor(){
-
-    }
-
-    _onContentToAdd(event){
-        this.m_campaignEditor.setContentToAdd = event;
     }
 
     _onSlideChange(event: ISliderItemData) {

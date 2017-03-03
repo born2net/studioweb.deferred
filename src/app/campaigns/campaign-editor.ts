@@ -71,9 +71,6 @@ export class CampaignEditor extends Compbaser {
         );
     }
 
-    @ViewChild(CampaignChannels)
-    m_campaignChannels:CampaignChannels;
-
     _onAddContent() {
         if (!this.channelModel)
             return bootbox.alert('Select channel to add content to. First be sure to select a timeline and next, click the [NEXT CHANNEL] button');
@@ -87,11 +84,6 @@ export class CampaignEditor extends Compbaser {
         var uiState: IUiState = {uiSideProps: SideProps.screenLayoutEditor}
         this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
         this.onToScreenLayoutEditor.emit();
-    }
-
-    @Input()
-    set setContentToAdd(i_value:IAddContents) {
-        this.m_campaignChannels.addBlock = i_value;
     }
 
     @Output()

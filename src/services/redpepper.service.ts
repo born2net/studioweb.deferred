@@ -771,6 +771,7 @@ export class RedPepperService {
      @method createNewChannelPlayer
      **/
     createNewChannelPlayer(i_campaign_timeline_chanel_id:number, i_addContents:IAddContents, i_boilerPlate, i_offset:number) {
+        con('adding block to channel ' + i_campaign_timeline_chanel_id);
         var timelinePlayers = this.databaseManager.table_campaign_timeline_chanel_players();
         var recTimelinePlayer = timelinePlayers.createRecord();
         var player_data = i_boilerPlate.getDefaultPlayerData(PLACEMENT_CHANNEL, i_addContents.resourceId);

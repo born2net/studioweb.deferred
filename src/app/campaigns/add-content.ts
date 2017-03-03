@@ -7,7 +7,7 @@ import {BlockService} from "../blocks/block-service";
 import {Lib} from "../../Lib";
 import * as _ from "lodash";
 import {UserModel} from "../../models/UserModel";
-import {ResourcesModel} from "../../store/imsdb.interfaces_auto";
+import {CampaignTimelineBoardViewerChanelsModel, ResourcesModel} from "../../store/imsdb.interfaces_auto";
 import {List} from "immutable";
 import {RedPepperService} from "../../services/redpepper.service";
 import {IAddContents} from "../../interfaces/IAddContent";
@@ -110,14 +110,16 @@ export class AddContent extends Compbaser implements AfterViewInit {
     m_userModel: UserModel;
     m_resourceModels: List<ResourcesModel>;
     m_sceneDatas: Array<ISceneData>;
-    
-    m_componentList:Array<IAddContents> = [];
-    m_resourceList:Array<IAddContents> = [];
-    m_sceneList:Array<IAddContents> = [];
+
+    m_componentList: Array<IAddContents> = [];
+    m_resourceList: Array<IAddContents> = [];
+    m_sceneList: Array<IAddContents> = [];
 
     m_PLACEMENT_SCENE = PLACEMENT_SCENE;
     m_PLACEMENT_LISTS = PLACEMENT_LISTS;
     m_PLACEMENT_CHANNEL = PLACEMENT_CHANNEL;
+
+    m_selected_campaign_timeline_chanel_id = -1;
 
     constructor(private yp: YellowPepperService, private rp: RedPepperService, private bs: BlockService, @Inject('HYBRID_PRIVATE') private hybrid_private: boolean) {
         super();
@@ -138,9 +140,16 @@ export class AddContent extends Compbaser implements AfterViewInit {
 
         this.cancelOnDestroy(
             this.yp.getScenes()
-                .subscribe((i_playerDatas:Array<ISceneData>) => {
+                .subscribe((i_playerDatas: Array<ISceneData>) => {
                     this.m_sceneDatas = i_playerDatas;
                 }, (e) => console.error(e))
+        )
+
+        this.cancelOnDestroy(
+            this.yp.listenCampaignTimelineBoardViewerSelected(true)
+                .subscribe((i_campaignTimelineBoardViewerChanelsModel:CampaignTimelineBoardViewerChanelsModel) => {
+                    this.m_selected_campaign_timeline_chanel_id = i_campaignTimelineBoardViewerChanelsModel.getCampaignTimelineChanelId();
+            }, (e) => console.error(e)) //cancelOnDestroy please
         )
 
         var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
@@ -174,8 +183,22 @@ export class AddContent extends Compbaser implements AfterViewInit {
         this.m_sceneMime = m_sceneMime;
     }
 
-    @Output()
-    onContentToAdd:EventEmitter<any> = new EventEmitter<any>();
+    _addBlock(i_addContents: IAddContents) {
+        this.yp.getTotalDurationChannel(this.m_selected_campaign_timeline_chanel_id)
+            .subscribe((i_totalChannelLength) => {
+                var boilerPlate = this.bs.getBlockBoilerplate(i_addContents.blockCode);
+                this._createNewChannelBlock(i_addContents, boilerPlate, i_totalChannelLength);
+            }, (e) => console.error(e))
+    }
+
+    /**
+     Create a new block (player) on the current channel and refresh UI bindings such as properties open events.
+     **/
+    _createNewChannelBlock(i_addContents: IAddContents, i_boilerPlate, i_totalChannelLength) {
+        this.rp.createNewChannelPlayer(this.m_selected_campaign_timeline_chanel_id, i_addContents, i_boilerPlate, i_totalChannelLength);
+        // this.rp.createNewChannelPlayer(this.selected_campaign_timeline_chanel_id, i_addContents, i_boilerPlate, i_totalChannelLength);
+        this.rp.reduxCommit();
+    }
 
 
     ngAfterViewInit() {
@@ -191,25 +214,32 @@ export class AddContent extends Compbaser implements AfterViewInit {
     _onComponentSelected(i_component) {
         if (!i_component.allow)
             return bootbox.alert('Please upgrade to the Enterprise edition')
-        this.onContentToAdd.emit(i_component);
+        this._addBlock(i_component);
+        // this.onContentToAdd.emit(i_component);
+        // this._goBack();
     }
 
     _onResourceSelected(i_resource) {
-        this.onContentToAdd.emit(i_resource);
+        // this.onContentToAdd.emit(i_resource);
+        this._addBlock(i_resource);
+        // this._goBack();
     }
 
     _onSceneSelected(i_scnene) {
-        this.onContentToAdd.emit(i_scnene);
+        // this.onContentToAdd.emit(i_scnene);
+        this._addBlock(i_scnene);
+        // this._goBack();
     }
 
     _goBack() {
-        var uiState: IUiState = {
-            uiSideProps: SideProps.miniDashboard,
-            campaign: {
-                campaignTimelineChannelSelected: -1,
-                campaignTimelineBoardViewerSelected: -1
-            }
-        }
+        var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
+        // var uiState: IUiState = {
+        //     uiSideProps: SideProps.miniDashboard,
+        //     campaign: {
+        //         campaignTimelineChannelSelected: -1,
+        //         campaignTimelineBoardViewerSelected: -1
+        //     }
+        // }
         this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
         this.onGoBack.emit();
     }
@@ -310,7 +340,7 @@ export class AddContent extends Compbaser implements AfterViewInit {
             var size = (i_resourcesModel.getResourceBytesTotal() / 1000).toFixed(2);
             var resourceDescription = 'size: ' + size;
             this.m_resourceList.push({
-                resourceId:  i_resourcesModel.getResourceId(),
+                resourceId: i_resourcesModel.getResourceId(),
                 type: BlockTypeEnum.RESOURCE,
                 name: i_resourcesModel.getResourceName(),
                 blockCode: this.bs.getBlockCodeFromFileExt(i_resourcesModel.getResourceType()) as number,
