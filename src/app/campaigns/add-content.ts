@@ -335,9 +335,9 @@ export class AddContent extends Compbaser implements AfterViewInit {
                     if (!_.isUndefined(mimeType))
                         return;
                 }
-
+                sceneID = this.rp.sterilizePseudoId(sceneID);
                 this.m_sceneList.push({
-                    sceneId: this.rp.sterilizePseudoIdFromScene(sceneID, scene),
+                    sceneId: sceneID as any,
                     type: BlockTypeEnum.SCENE,
                     blockCode: 3510,
                     name: label,

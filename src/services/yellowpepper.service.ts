@@ -329,6 +329,7 @@ export class YellowPepperService {
     getScenePlayerdataDom(i_scene_id): Observable<string> {
         return this.sterilizePseudoId(i_scene_id)
             .mergeMap(scene_id => {
+                console.log(scene_id);
                 return this.getScene(scene_id)
                     .map((playerDataModel: PlayerDataModel) => {
                         return playerDataModel.getPlayerDataValue();

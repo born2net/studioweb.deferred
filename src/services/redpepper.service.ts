@@ -1759,7 +1759,8 @@ export class RedPepperService {
     sterilizePseudoIdFromScene(i_id, domPlayerData:XMLDocument) {
         var id = parseInt(i_id);
         if (_.isNaN(id)){
-            return $(domPlayerData).find('Player').eq(0).attr('id');
+            var f = $(domPlayerData).find('Player').eq(0).attr('id');
+            return f;
         }
         return i_id;
     }
@@ -1960,9 +1961,8 @@ export class RedPepperService {
      @return {Object} all scenes as objects
      **/
     getScenes() {
-
         var scenes = {};
-        $(this.databaseManager.table_player_data().getAllPrimaryKeys()).each(function (k, player_data_id) {
+        $(this.databaseManager.table_player_data().getAllPrimaryKeys()).each((k, player_data_id) => {
             var recPlayerData = this.databaseManager.table_player_data().getRec(player_data_id);
             var domPlayerData = $.parseXML(recPlayerData['player_data_value'])
             scenes[recPlayerData['player_data_id']] = domPlayerData;
