@@ -215,20 +215,17 @@ export class AddContent extends Compbaser implements AfterViewInit {
         if (!i_component.allow)
             return bootbox.alert('Please upgrade to the Enterprise edition')
         this._addBlock(i_component);
-        // this.onContentToAdd.emit(i_component);
-        // this._goBack();
+        this._goBack();
     }
 
     _onResourceSelected(i_resource) {
-        // this.onContentToAdd.emit(i_resource);
         this._addBlock(i_resource);
-        // this._goBack();
+        this._goBack();
     }
 
     _onSceneSelected(i_scnene) {
-        // this.onContentToAdd.emit(i_scnene);
         this._addBlock(i_scnene);
-        // this._goBack();
+        this._goBack();
     }
 
     _goBack() {
