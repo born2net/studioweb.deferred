@@ -1,4 +1,4 @@
-import {animate, ChangeDetectionStrategy, Component, EventEmitter, Output, state, style, transition, trigger} from "@angular/core";
+import {animate, ChangeDetectionStrategy, Component, EventEmitter, Input, Output, state, style, transition, trigger, ViewChild} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
 import {YellowPepperService} from "../../services/yellowpepper.service";
@@ -8,6 +8,7 @@ import {Once} from "../../decorators/once-decorator";
 import {ACTION_UISTATE_UPDATE, AppdbAction, SideProps} from "../../store/actions/appdb.actions";
 import {IUiState} from "../../store/store.data";
 import {Lib} from "../../Lib";
+import {CampaignChannels} from "./campaign-channels";
 
 @Component({
     selector: 'campaign-editor',
@@ -69,6 +70,9 @@ export class CampaignEditor extends Compbaser {
         );
     }
 
+    @ViewChild(CampaignChannels)
+    m_campaignChannels:CampaignChannels;
+
     _onAddContent() {
         if (!this.channelModel)
             return bootbox.alert('Select channel to add content to. First be sure to select a timeline and next, click the [NEXT CHANNEL] button');
@@ -82,6 +86,11 @@ export class CampaignEditor extends Compbaser {
         var uiState: IUiState = {uiSideProps: SideProps.screenLayoutEditor}
         this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
         this.onToScreenLayoutEditor.emit();
+    }
+
+    @Input()
+    set setContentToAdd(i_value) {
+        this.m_campaignChannels.addBlock = i_value;
     }
 
     @Output()

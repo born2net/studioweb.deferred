@@ -77,7 +77,7 @@ import {RedPepperService} from "../../services/redpepper.service";
                         </ul>
                     </div>
                 </div>
-            </div>            
+            </div>
             <div *ngIf="m_placement == m_PLACEMENT_LISTS || m_placement == m_PLACEMENT_CHANNEL" class="panel panel-default">
                 <div class="panel-heading" role="tab" id="headingThree">
                     <h4 class="panel-title">
@@ -170,6 +170,10 @@ export class AddContent extends Compbaser implements AfterViewInit {
         this.m_sceneMime = m_sceneMime;
     }
 
+    @Output()
+    onContentToAdd:EventEmitter<any> = new EventEmitter<any>();
+
+
     ngAfterViewInit() {
         this._render();
     }
@@ -181,14 +185,17 @@ export class AddContent extends Compbaser implements AfterViewInit {
     }
 
     _onComponentSelected(i_component) {
+        if (!i_component.allow)
+            return bootbox.alert('Please upgrade to the Enterprise edition')
         con('add component ' + i_component);
+        this.onContentToAdd.emit(i_component);
     }
 
-    _onResourceSelected(i_resource){
+    _onResourceSelected(i_resource) {
         con('add resource ' + i_resource);
     }
 
-    _onSceneSelected(i_scnene){
+    _onSceneSelected(i_scnene) {
         con('add scnene ' + i_scnene);
     }
 
@@ -203,7 +210,7 @@ export class AddContent extends Compbaser implements AfterViewInit {
         this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
         this.onGoBack.emit();
     }
-      
+
     /**
      Build lists of components, resources and scenes (respectively showing what's needed per placement mode)
      Once an LI is selected proper event fired to announce block is added.
@@ -226,18 +233,12 @@ export class AddContent extends Compbaser implements AfterViewInit {
         // component selection list
         /////////////////////////////////////////////////////////
         var components = this.bs.getBlocks();
-        var primeUpgradeText = 'Upgrade to an enterprise account and get all the benefits of the SignageStudio Pro account plus a lot more…';
-        var bufferFreeComp = '';
-        var bufferPrimeComp = '';
         var specialJsonItemName = '';
         var specialJsonItemColor = '';
         //var sceneHasMimeType = '';
 
         for (var i_componentID in components) {
             var componentID: any = i_componentID;
-            var primeSnippet = '';
-            var faOpacity = 1;
-            var bufferSwitch = 0;
 
             if (componentID == BlockLabels.BLOCKCODE_IMAGE ||
                 componentID == BlockLabels.BLOCKCODE_SVG ||
@@ -293,19 +294,8 @@ export class AddContent extends Compbaser implements AfterViewInit {
                     break;
                 }
             }
-
-            // var snippet = ' <li style="background-color: ' + specialJsonItemColor + '" class="list-group-item ' + BB.lib.unclass(Elements.CLASS_ADD_BLOCK_LIST_ITEMS, this.el) + '" data-component_id="' + componentID + '" data-component_name="' + (specialJsonItemName != '' ? specialJsonItemName : components[componentID].name) + '">';
-            // snippet += '        <i style="opacity: ' + faOpacity + '" class="fa ' + components[componentID].fontAwesome + '"></i>';
-            // snippet += '        <span style="opacity: ' + faOpacity + '"> ' + (specialJsonItemName != '' ? specialJsonItemName : components[componentID].name) + '</span>';
-            // snippet += '        <h6 style="opacity: ' + faOpacity + '"> ' + components[componentID].description + '</h6>' + primeSnippet;
-            // snippet += '    </li>';
-            //
-            // bufferSwitch == 1 ? bufferFreeComp += snippet : bufferPrimeComp += snippet;
         }
 
-
-        // $(Elements.ADD_COMPONENT_BLOCK_LIST, this.el).append(bufferFreeComp);
-        // $(Elements.ADD_COMPONENT_BLOCK_LIST, this.el).append(bufferPrimeComp);
 
         /////////////////////////////////////////////////////////
         // show resource selection list
@@ -324,13 +314,6 @@ export class AddContent extends Compbaser implements AfterViewInit {
                 fa: this.bs.getFontAwesome(i_resourcesModel.getResourceType()),
                 description: resourceDescription
             })
-
-            // var snippet = '<li class="list-group-item ' + BB.lib.unclass(Elements.CLASS_ADD_BLOCK_LIST_ITEMS, this.el) + '" data-resource_id="' + recResources[i]['resource_id'] + '" data-resource_name="' + recResources[i]['resource_name'] + '">' +
-            //     '<i class="fa ' + BB.PepperHelper.getFontAwesome(recResources[i]['resource_type']) + '"></i>' +
-            //     '<span>' + recResources[i]['resource_name'] + '</span>' +
-            //     '<br/><small>' + resourceDescription + '</small>' +
-            //     '</li>';
-            // $(Elements.ADD_RESOURCE_BLOCK_LIST, this.el).append(snippet);
         })
 
         /////////////////////////////////////////////////////////
@@ -356,50 +339,6 @@ export class AddContent extends Compbaser implements AfterViewInit {
                 })
             })
         }
-
-        // if (this.m_placement == BB.CONSTS.PLACEMENT_CHANNEL || this.m_placement == BB.CONSTS.PLACEMENT_LISTS) {
-        //     var scenes = pepper.getScenes();
-        //     _.each(scenes, function (scene, i) {
-        //         var label = $(scene).find('Player').eq(0).attr('label');
-        //         var sceneID = $(scene).find('Player').eq(0).attr('id');
-        //
-        //         // don't allow adding mimetype scenes to channels directly as needs to be added via Player block
-        //         if (this.m_placement == BB.CONSTS.PLACEMENT_CHANNEL) {
-        //             var mimeType = BB.Pepper.getSceneMime(sceneID);
-        //             if (!_.isUndefined(mimeType))
-        //                 return;
-        //         }
-        //
-        //         sceneID = pepper.sterilizePseudoId(sceneID);
-        //         var snippet = '<li class="list-group-item ' + BB.lib.unclass(Elements.CLASS_ADD_BLOCK_LIST_ITEMS, this.el) + '" data-scene_id="' + sceneID + '">' +
-        //             '<i class="fa ' + BB.PepperHelper.getFontAwesome('scene') + '"></i>' +
-        //             '<span>' + label + '</span>' +
-        //             '<br/><small></small>' +
-        //             '</li>';
-        //         $(Elements.ADD_SCENE_BLOCK_LIST, this.el).append(snippet);
-        //     });
-        // }
-
-
-        if (this.m_placement == PLACEMENT_SCENE) {
-            // $(Elements.ADD_COMPONENTS_BLOCK_LIST_CONTAINER, this.el).show();
-            // $(Elements.ADD_SCENE_BLOCK_LIST_CONTAINER, this.el).hide();
-        }
-
-
-        if (this.m_placement == PLACEMENT_LISTS) {
-            // $(Elements.ADD_COMPONENTS_BLOCK_LIST_CONTAINER, this.el).hide();
-            // $(Elements.ADD_SCENE_BLOCK_LIST_CONTAINER, this.el).show();
-        }
-
-
-        if (this.m_placement == PLACEMENT_CHANNEL) {
-            // $(Elements.ADD_COMPONENTS_BLOCK_LIST_CONTAINER, this.el).show();
-            // $(Elements.ADD_SCENE_BLOCK_LIST_CONTAINER, this.el).show();
-        }
-
-        // this._listenSelection();
-
 
         //reset mimetype
         this.m_sceneMime = undefined;

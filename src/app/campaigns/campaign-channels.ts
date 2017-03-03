@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, ViewChild} from "@angular/core";
+import {AfterViewInit, Component, ElementRef, Input, ViewChild} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {CampaignTimelineBoardViewerChanelsModel, CampaignTimelineChanelPlayersModel, CampaignTimelineChanelsModel, CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 import {BlockService, IBlockData} from "../blocks/block-service";
@@ -76,12 +76,17 @@ export class CampaignChannels extends Compbaser implements AfterViewInit {
     private durationChanged$ = new Subject();
     m_blockList: List<IBlockData> = List([]);
 
-    constructor(private yp: YellowPepperService, private rp: RedPepperService, private el: ElementRef, private blockService: BlockService) {
+    constructor(private yp: YellowPepperService, private rp: RedPepperService, private bs: BlockService, private blockService: BlockService) {
         super();
     }
 
     @ViewChild(DraggableList)
     draggableList: DraggableList;
+
+    @Input()
+    set addBlock(i_value) {
+        console.log(i_value);
+    }
 
     ngAfterViewInit() {
         this.listenChannelSelected();
@@ -140,6 +145,57 @@ export class CampaignChannels extends Compbaser implements AfterViewInit {
                     this.durationChanged$.next(totalDuration);
                 })
         )
+    }
+
+    /**
+     Create a new block (player) on the current channel and refresh UI bindings such as properties open events.
+     @method _createNewChannelBlock
+     @param {Number} i_blockID
+     @param {Number} i_resourceID optional param used when creating a block with embedded resource (i.e.: video / image / swf)
+     @param {Number} i_sceneID optional param used when creating a block with embedded scene
+     @return {Boolean} false
+     **/
+    _createNewChannelBlock(i_blockID, i_resourceID, i_sceneID) {
+        var self = this;
+        var totalChannelLength = self._getTotalDurationChannel();
+        var component = this.bs.getBlockBoilerplate(i_blockID);
+        var player_data = component.getDefaultPlayerData('CONSTS.PLACEMENT_CHANNEL', i_resourceID);
+        // var jData = this.rp.createNewChannelPlayer(self.selected_campaign_timeline_chanel_id, i_blockID, totalChannelLength, i_resourceID, i_sceneID, player_data);
+        // var campaign_timeline_chanel_player_id = jData['campaign_timeline_chanel_player_id'];
+        // var campaign_timeline_chanel_player_data = jData['campaign_timeline_chanel_player_data'];
+
+        // var timeline = BB.comBroker.getService(BB.SERVICES.CAMPAIGN_VIEW).getTimelineInstance(self.selected_campaign_timeline_id);
+        // var channel = timeline.getChannelInstance(self.selected_campaign_timeline_chanel_id);
+        // channel.createChannelBlock(campaign_timeline_chanel_player_id, campaign_timeline_chanel_player_data);
+        //
+        // var campaign_timeline_board_viewer_id = self.selected_campaign_timeline_board_viewer_id;
+        // var campaign_timeline_id = self.selected_campaign_timeline_id;
+        // var campaign_timeline_chanel_id = self.selected_campaign_timeline_chanel_id;
+        //
+        // // self._resetChannel();
+        // $(Elements.SORTABLE).empty();
+        // self._loadChannelBlocks(campaign_timeline_id, campaign_timeline_chanel_id);
+        // self._listenBlockSelected();
+        // // self._deselectBlocksFromChannel();
+        // self._selectLastBlockOnChannel();
+        // self._reOrderChannelBlocks();
+        // return false;
+    }
+
+    /**
+     Get the total duration in seconds of the channel
+     @method _getTotalDurationChannel
+     @return {Number} totalChannelLength
+     **/
+    _getTotalDurationChannel() {
+        // var blocks = $(Elements.SORTABLE).children();
+        // var blocksIDs = [];
+        // $(blocks).each(function (i) {
+        //     var block_id = $(this).data('block_id');
+        //     blocksIDs.push(block_id);
+        // });
+        // var totalChannelLength = pepper.getTotalDurationOfBlocks(blocksIDs);
+        // return totalChannelLength;
     }
 
     _onItemSelected(event) {
