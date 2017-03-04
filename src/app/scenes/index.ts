@@ -9,6 +9,7 @@ import {SceneList} from "./scene-list";
 import {SceneManager} from "./scene-manager";
 import {Scenes} from "./scenes";
 import {SceneEditor} from "./scene-editor";
+import {SceneToolbar} from "./scene-toolbar";
 
 export const LAZY_ROUTES = [
     {path: ':folder', component: ScenesNavigation},
@@ -18,7 +19,7 @@ export const LAZY_ROUTES = [
 
 @NgModule({
     imports: [DropdownModulePrime, SharedModule, CommonModule, RouterModule.forChild(LAZY_ROUTES)],
-    declarations: [Scenes, SceneEditor, ScenesNavigation, ScenePropsManager, SceneManager, SceneList ]
+    declarations: [Scenes, SceneEditor, SceneToolbar, ScenesNavigation, ScenePropsManager, SceneManager, SceneList ]
 })
 export class ScenesLazyModule {
 }

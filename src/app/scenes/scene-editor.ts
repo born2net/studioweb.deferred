@@ -1,4 +1,4 @@
-import {Component, ChangeDetectionStrategy, AfterViewInit, ViewChild} from "@angular/core";
+import {Component, ChangeDetectionStrategy, AfterViewInit, ViewChild, ChangeDetectorRef} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {ISceneData, YellowPepperService} from "../../services/yellowpepper.service";
 
@@ -6,12 +6,14 @@ import {ISceneData, YellowPepperService} from "../../services/yellowpepper.servi
     selector: 'scene-editor',
     // changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-               <small class="debug">{{me}}</small>
-               <div style="display: flex">
-                   <canvas #canvas1 width="300" height="300"></canvas>
-                   <canvas #canvas2 width="300" height="300"></canvas>
-               </div>
-           `
+        <small class="debug">{{me}}</small>
+        <scene-toolbar (onToolbarAction)="_onToolbarAction($event)"></scene-toolbar>
+        <div id="sceneCanvasContainer" data-toggle="context" data-target="#sceneContextMenu" class="yScroll context sceneElements" style=" overflow-x: visible" align="center"></div>
+        <div style="display: flex">
+            <canvas #canvas1 width="300" height="300"></canvas>
+            <canvas #canvas2 width="300" height="300"></canvas>
+        </div>
+    `
 })
 export class SceneEditor extends Compbaser implements AfterViewInit {
 
@@ -24,17 +26,19 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
     @ViewChild('canvas2')
     canvas2;
 
-    constructor(private yp:YellowPepperService) {
+    constructor(private yp: YellowPepperService, private cd: ChangeDetectorRef) {
         super();
+        this.cd.detach();
+
         this.cancelOnDestroy(
             this.yp.listenSceneSelected()
                 .subscribe((i_scene: ISceneData) => {
-                console.log(i_scene.scene_id);
+                    // console.log(i_scene.scene_id);
                 }, (e) => console.error(e))
         );
     }
 
-    ngAfterViewInit(){
+    ngAfterViewInit() {
     }
 
     ngOnInit() {
@@ -55,6 +59,10 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
             fill: 'green'
         });
         this.fabricCanvas2.add(circle);
+    }
+
+    _onToolbarAction(event){
+        con('toolbar ' + event);
     }
 
     destroy() {
