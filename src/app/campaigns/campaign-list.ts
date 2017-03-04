@@ -11,7 +11,7 @@ import {SideProps} from "../../store/actions/appdb.actions";
         <small class="debug">{{me}}</small>
         <ul (click)="$event.preventDefault()" class="appList list-group">
 
-            <a *ngFor="let campaign of m_campaigns$; let i = index" (click)="_onCampaignSelected($event, campaign, i)"
+            <a *ngFor="let campaign of m_campaigns; let i = index" (click)="_onCampaignSelected($event, campaign, i)"
                [ngClass]="{'selectedItem': selectedIdx == i}" href="#" class="list-group-item">
 
                 <h4>{{campaign?.getCampaignName()}}</h4>
@@ -25,7 +25,7 @@ import {SideProps} from "../../store/actions/appdb.actions";
 })
 export class CampaignList extends Compbaser {
     selectedIdx = -1;
-    m_campaigns$: List<CampaignsModelExt>;
+    m_campaigns: List<CampaignsModelExt>;
     m_selectedCampaign: CampaignsModelExt;
 
     constructor() {
@@ -34,7 +34,7 @@ export class CampaignList extends Compbaser {
 
     @Input()
     set campaigns(i_campaigns: List<CampaignsModelExt>) {
-        this.m_campaigns$ = i_campaigns;
+        this.m_campaigns = i_campaigns;
     }
 
     @Output()

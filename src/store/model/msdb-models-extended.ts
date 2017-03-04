@@ -4,7 +4,7 @@
  */
 
 
-import {CampaignsModel, CampaignTimelineChanelPlayersModel} from "../imsdb.interfaces_auto";
+import {CampaignsModel, CampaignTimelineChanelPlayersModel, PlayerDataModel} from "../imsdb.interfaces_auto";
 
 export class CampaignsModelExt extends CampaignsModel {
 
@@ -25,6 +25,21 @@ export class CampaignTimelineChanelPlayersModelExt extends CampaignTimelineChane
 
     public getPlayerDurationInt() {
         return parseFloat(this.getKey('player_duration'));
+    }
+
+}
+
+
+export class PlayerDataModelExt extends PlayerDataModel {
+
+    public getSceneName() {
+        var domPlayerData = jXML.parseXML(this.getPlayerDataValue())
+        return jXML(domPlayerData).find('Player').attr('label');
+    }
+
+    public getSceneMime() {
+        var domPlayerData = jXML.parseXML(this.getPlayerDataValue())
+        return jXML(domPlayerData).find('Player').attr('mimeType');
     }
 
 }

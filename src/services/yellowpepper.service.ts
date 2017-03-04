@@ -2,7 +2,7 @@ import {Injectable} from "@angular/core";
 import {Action, Store} from "@ngrx/store";
 import {ApplicationState} from "../store/application.state";
 import {Observable} from "rxjs";
-import {CampaignsModelExt} from "../store/model/msdb-models-extended";
+import {CampaignsModelExt, PlayerDataModelExt} from "../store/model/msdb-models-extended";
 import {
     BoardsModel,
     BoardTemplatesModel,
@@ -23,6 +23,7 @@ import {UserModel} from "../models/UserModel";
 
 export interface ISceneData {
     scene_id: number;
+    playerDataModel: PlayerDataModelExt,
     domPlayerData: XMLDocument;
 }
 
@@ -390,11 +391,11 @@ export class YellowPepperService {
     getScenes(): Observable<Array<ISceneData>> {
         return this.store.select(store => store.msDatabase.sdk.table_player_data)
             .map((playerDataModels: List<PlayerDataModel>) => {
-                return playerDataModels.reduce((result: Array<ISceneData>, playerDataModel) => {
+                return playerDataModels.reduce((result: Array<ISceneData>, playerDataModel:PlayerDataModelExt) => {
                     var playerDataId = playerDataModel.getPlayerDataId();
                     var recPlayerData = playerDataModel.getPlayerDataValue();
                     var domPlayerData = $.parseXML(recPlayerData)
-                    result.push({scene_id: playerDataId, domPlayerData});
+                    result.push({scene_id: playerDataId, domPlayerData, playerDataModel});
                     return result;
                 }, [])
             }).take(1);

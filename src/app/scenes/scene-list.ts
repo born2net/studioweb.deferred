@@ -4,6 +4,7 @@ import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
 import {List} from "immutable";
 import {IUiState} from "../../store/store.data";
 import {SideProps} from "../../store/actions/appdb.actions";
+import {ISceneData} from "../../services/yellowpepper.service";
 
 @Component({
     selector: 'scene-list',
@@ -11,21 +12,20 @@ import {SideProps} from "../../store/actions/appdb.actions";
         <small class="debug">{{me}}</small>
         <ul (click)="$event.preventDefault()" class="appList list-group">
 
-            <a *ngFor="let campaign of m_campaigns$; let i = index" (click)="_onCampaignSelected($event, campaign, i)"
+            <a *ngFor="let scene of m_scenes; let i = index" (click)="_onCampaignSelected($event, campaign, i)"
                [ngClass]="{'selectedItem': selectedIdx == i}" href="#" class="list-group-item">
-
-                <h4>{{campaign?.getCampaignName()}}</h4>
-                <p class="list-group-item-text">play list mode: {{campaign?.getCampaignPlaylistModeName()}} </p>
-                <div class="openProps">
-                    <button type="button" class="props btn btn-default btn-sm"><i style="font-size: 1.5em" class="props fa fa-gear"></i></button>
-                </div>
+                <h4>{{scene?.playerDataModel.getSceneName()}}</h4>
+                <!--<p class="list-group-item-text">play list mode: {{scene?.getCampaignPlaylistModeName()}} </p>-->
+                <!--<div class="openProps">-->
+                    <!--<button type="button" class="props btn btn-default btn-sm"><i style="font-size: 1.5em" class="props fa fa-gear"></i></button>-->
+                <!--</div>-->
             </a>
         </ul>
     `,
 })
 export class SceneList extends Compbaser {
     selectedIdx = -1;
-    m_campaigns$: List<CampaignsModelExt>;
+    m_scenes: Array<ISceneData>;
     m_selectedCampaign: CampaignsModelExt;
 
     constructor() {
@@ -33,8 +33,8 @@ export class SceneList extends Compbaser {
     }
 
     @Input()
-    set campaigns(i_campaigns: List<CampaignsModelExt>) {
-        this.m_campaigns$ = i_campaigns;
+    set scenes(i_scenes: Array<ISceneData>) {
+        this.m_scenes = i_scenes;
     }
 
     @Output()
