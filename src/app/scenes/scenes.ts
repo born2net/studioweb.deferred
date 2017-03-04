@@ -14,16 +14,16 @@ import {PLACEMENT_SCENE} from "../../interfaces/Consts";
         <Sliderpanel>
             <Slideritem [templateRef]="a" #sliderItemSceneManager class="page center sceneList selected" [showToButton]="false" [toDirection]="'right'" [to]="'sceneEditor'">
                 <template #a>
-                    <scene-manager (slideToCampaignName)="sliderItemSceneManager.slideTo('campaignName','right')" (slideToCampaignEditor)="sliderItemSceneManager.onNext()"></scene-manager>
+                    <scene-manager (slideToSceneEditor)="sliderItemSceneManager.onNext()"></scene-manager>
                 </template>
             </Slideritem>
-            <Slideritem [templateRef]="f" #sliderItemCampaignEditor (onChange)="_onSlideChange($event)" [showFromButton]="false" class="page left campaignEditor" [fromDirection]="'left'" [from]="'sceneList'">
+            <Slideritem [templateRef]="b" #sliderItemCampaignEditor (onChange)="_onSlideChange($event)" [showFromButton]="false" class="page left sceneEditor" [fromDirection]="'left'" [from]="'sceneList'">
                 <template #b>
-                    <scene-editor #campaignEditor (onToAddContent)="sliderAddContent.slideTo('addContent','right')" (onToScreenLayoutEditor)="_onOpenScreenLayoutEditor() ; sliderScreenLayoutEditor.slideTo('screenLayoutEditor','right')"
-                                  (onGoBack)="sliderItemCampaignEditor.slideTo('sceneList','left')"></scene-editor>
+                    <scene-editor #sceneEditor (onToAddContent)="sliderAddContent.slideTo('addContent','right')" 
+                                  (onGoBack)="sliderItemCampaignEditor.slideTo('sceneList','left')">
+                    </scene-editor>
                 </template>
             </Slideritem>
-
 
             <!--<Slideritem [templateRef]="h" #sliderAddContent [showFromButton]="false" class="page left addContent" [fromDirection]="'left'" [from]="'sceneList'">-->
             <!--<template #h>-->

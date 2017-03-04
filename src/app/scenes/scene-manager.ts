@@ -37,10 +37,10 @@ import {ISceneData, YellowPepperService} from "../../services/yellowpepper.servi
         <div class="responsive-pad-right">
             <div matchBodyHeight="350" style="overflow: scroll">
 
-                <scene-list [scenes]="scenes$ | async">
+                <scene-list [scenes]="scenes$ | async"  (slideToSceneEditor)="slideToSceneEditor.emit($event)" (onSceneSelected)="_onSceneSelected($event)">
                 </scene-list>
 
-                <!--<scene-list (onCampaignSelected)="_onCampaignSelected($event)"-->
+                <!--<scene-list (onCampaignSelected)="_onSceneSelected($event)"-->
                 <!--(slideToCampaignName)="slideToCampaignName.emit($event)"-->
                 <!--(slideToCampaignEditor)="slideToCampaignEditor.emit($event)"-->
                 <!--[scenes]="scenes$ | async">-->
@@ -75,7 +75,7 @@ export class SceneManager extends Compbaser {
     }
 
     @Output()
-    slideToCampaignEditor: EventEmitter<any> = new EventEmitter<any>();
+    slideToSceneEditor: EventEmitter<any> = new EventEmitter<any>();
 
     @Output()
     slideToCampaignName: EventEmitter<any> = new EventEmitter<any>();
@@ -93,7 +93,7 @@ export class SceneManager extends Compbaser {
         });
     }
 
-    _onCampaignSelected(i_uiState: IUiState) {
+    _onSceneSelected(i_uiState: IUiState) {
         this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: i_uiState}))
     }
 

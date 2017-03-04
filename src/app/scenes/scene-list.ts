@@ -1,7 +1,5 @@
 import {Component, ChangeDetectionStrategy, Input, Output, EventEmitter} from "@angular/core";
 import {Compbaser} from "ng-mslib";
-import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
-import {List} from "immutable";
 import {IUiState} from "../../store/store.data";
 import {SideProps} from "../../store/actions/appdb.actions";
 import {ISceneData} from "../../services/yellowpepper.service";
@@ -32,7 +30,7 @@ export class SceneList extends Compbaser {
     m_scenes: Array<ISceneData>;
     m_selectedScene: ISceneData;
 
-    constructor(private bs:BlockService) {
+    constructor(private bs: BlockService) {
         super();
     }
 
@@ -42,7 +40,7 @@ export class SceneList extends Compbaser {
     }
 
     @Output()
-    slideToCampaignEditor: EventEmitter<any> = new EventEmitter<any>();
+    slideToSceneEditor: EventEmitter<any> = new EventEmitter<any>();
 
     @Output()
     slideToSceneName: EventEmitter<any> = new EventEmitter<any>();
@@ -56,19 +54,15 @@ export class SceneList extends Compbaser {
         if (jQuery(event.target).hasClass('props')) {
             uiState = {
                 uiSideProps: SideProps.sceneProps,
-                scene: {
-                    sceneSelected: scene.scene_id
-                }
+                scene: {sceneSelected: scene.scene_id}
             }
             this.onSceneSelected.emit(uiState)
         } else {
             uiState = {
                 uiSideProps: SideProps.sceneEditor,
-                scene: {
-                    sceneSelected: scene.scene_id
-                }
+                scene: {sceneSelected: scene.scene_id}
             }
-            this.slideToCampaignEditor.emit();
+            this.slideToSceneEditor.emit();
             this.onSceneSelected.emit(uiState)
         }
         this.m_selectedScene = scene;
