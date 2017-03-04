@@ -57,16 +57,15 @@ import * as _ from "lodash";
                 </ul>
             </div>
         </form>
-        <h5>block id {{m_blockData.blockID}}</h5>
     `
 })
 export class BlockPropCommon extends Compbaser implements AfterViewInit {
 
     private formInputs = {};
-    private contGroup: FormGroup;
-    private m_blockData: IBlockData;
-    private m_isPropsForScene: boolean = false;
-    private m_borderColorChanged = new Subject();
+    contGroup: FormGroup;
+    m_blockData: IBlockData;
+    m_isPropsForScene: boolean = false;
+    m_borderColorChanged = new Subject();
     m_color;
 
     constructor(@Inject('BLOCK_PLACEMENT') private blockPlacement: string, private cd: ChangeDetectorRef, private fb: FormBuilder, private rp: RedPepperService, private bs: BlockService, private el: ElementRef) {

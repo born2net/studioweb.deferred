@@ -16,8 +16,8 @@ import {StoreModel} from "../../models/StoreModel";
     `
 })
 export class SimpleGridDataImage {
-    private value;
-    private style;
+    value;
+    style;
     storeModel:StoreModel;
 
     @Input()

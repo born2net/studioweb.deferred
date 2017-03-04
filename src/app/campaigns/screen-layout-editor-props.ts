@@ -68,7 +68,7 @@ export class ScreenLayoutEditorProps extends Compbaser {
 
     private boardTemplateModel: BoardTemplateViewersModel;
     private formInputs = {};
-    private contGroup: FormGroup;
+    contGroup: FormGroup;
 
     constructor(private fb: FormBuilder, private yp: YellowPepperService, private rp: RedPepperService) {
         super();

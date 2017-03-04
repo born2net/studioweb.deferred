@@ -25,13 +25,12 @@ import * as _ from "lodash";
                 </ul>
             </div>
         </form>
-        <h5>block id {{m_blockData.blockID}}</h5>
     `
 })
 export class BlockPropHtml extends Compbaser implements AfterViewInit {
 
     private formInputs = {};
-    private m_contGroup: FormGroup;
+    m_contGroup: FormGroup;
     private m_blockData: IBlockData;
 
     constructor(private fb: FormBuilder, private rp: RedPepperService, private bs: BlockService, private ngmslibService: NgmslibService) {

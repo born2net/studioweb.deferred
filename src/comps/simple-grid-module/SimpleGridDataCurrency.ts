@@ -16,8 +16,8 @@ import {ISimpleGridEdit} from "./SimpleGrid";
     `
 })
 export class SimpleGridDataCurrency {
-    private value:string = '';
-    private storeModel:StoreModel;
+    value:string = '';
+    storeModel:StoreModel;
 
     @Input()
     set item(i_storeModel:StoreModel) {

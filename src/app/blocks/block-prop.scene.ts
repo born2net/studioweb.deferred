@@ -30,8 +30,8 @@ import * as _ from "lodash";
 export class BlockPropScene extends Compbaser implements AfterViewInit {
 
     private formInputs = {};
-    private m_contGroup: FormGroup;
-    private m_blockData: IBlockData;
+    m_contGroup: FormGroup;
+    m_blockData: IBlockData;
 
     constructor(private fb: FormBuilder, private rp: RedPepperService, private bs: BlockService, private ngmslibService: NgmslibService) {
         super();

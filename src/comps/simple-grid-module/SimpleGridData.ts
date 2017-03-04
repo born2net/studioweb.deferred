@@ -34,10 +34,10 @@ import {timeout} from "../../decorators/timeout-decorator";
     `
 })
 export class SimpleGridData {
-    private value:string = '';
+    value:string = '';
     private storeModel:StoreModel;
     private _editable:boolean|string = false;
-    private _editing:boolean = false;
+    _editing:boolean = false;
 
     @Input()
     set item(i_storeModel:StoreModel) {

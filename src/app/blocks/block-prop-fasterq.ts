@@ -66,8 +66,8 @@ import {timeout} from "../../decorators/timeout-decorator";
 export class BlockPropFasterQ extends Compbaser implements AfterViewInit {
 
     private formInputs = {};
-    private m_contGroup: FormGroup;
-    private m_blockData: IBlockData;
+    m_contGroup: FormGroup;
+    m_blockData: IBlockData;
     private m_borderColorChanged = new Subject();
     private m_moveColorPickerOnce = false;
     m_color = '#ffffff';
