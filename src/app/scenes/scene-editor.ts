@@ -29,7 +29,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         this.cancelOnDestroy(
             this.yp.listenSceneSelected()
                 .subscribe((i_scene: ISceneData) => {
-                console.log(i_scene);
+                console.log(i_scene.scene_id);
                 }, (e) => console.error(e))
         );
     }
