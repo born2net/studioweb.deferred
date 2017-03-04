@@ -1,7 +1,5 @@
-import {Component, ChangeDetectionStrategy} from "@angular/core";
+import {ChangeDetectionStrategy, Component} from "@angular/core";
 import {Compbaser} from "ng-mslib";
-import {ApplicationState} from "../../store/application.state";
-import {Store} from "@ngrx/store";
 import {Observable} from "rxjs";
 import {SideProps} from "../../store/actions/appdb.actions";
 import {YellowPepperService} from "../../services/yellowpepper.service";
@@ -21,8 +19,12 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
                 <h5>scene editor</h5>
                 <!--<block-prop-container></block-prop-container>-->
             </div>
+            <div *ngSwitchCase="m_uiUserFocusItemEnum.sceneProps">
+                <h5>scene props</h5>
+                <!--<block-prop-container></block-prop-container>-->
+            </div>
             <div *ngSwitchCase="m_uiUserFocusItemEnum.sceneBlock">
-                <h5>block props</h5>
+                <h5>block block</h5>
                 <!--<block-prop-container></block-prop-container>-->
             </div>
             <div *ngSwitchCase="m_uiUserFocusItemEnum.miniDashboard">
