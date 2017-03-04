@@ -196,7 +196,6 @@ export class AddContent extends Compbaser implements AfterViewInit {
      **/
     _createNewChannelBlock(i_addContents: IAddContents, i_boilerPlate, i_totalChannelLength) {
         this.rp.createNewChannelPlayer(this.m_selected_campaign_timeline_chanel_id, i_addContents, i_boilerPlate, i_totalChannelLength);
-        // this.rp.createNewChannelPlayer(this.selected_campaign_timeline_chanel_id, i_addContents, i_boilerPlate, i_totalChannelLength);
         this.rp.reduxCommit();
     }
 

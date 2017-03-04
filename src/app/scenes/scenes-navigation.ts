@@ -1,9 +1,5 @@
-import {Component, ChangeDetectionStrategy, ViewChild, trigger, transition, animate, state, style} from "@angular/core";
-import {ApplicationState} from "../../store/application.state";
-import {Store} from "@ngrx/store";
+import {animate, ChangeDetectionStrategy, ChangeDetectorRef, Component, state, style, transition, trigger, ViewChild} from "@angular/core";
 import {Compbaser} from "ng-mslib";
-import {Router} from "@angular/router";
-import {RedPepperService} from "../../services/redpepper.service";
 import {BlockService} from "../blocks/block-service";
 
 @Component({
@@ -35,11 +31,13 @@ import {BlockService} from "../blocks/block-service";
     `],
     template: `
         <h2>Scenes</h2>
+        <button (click)="_onClick($event)"></button>
         <div style="display: flex">
             <canvas #canvas1 width="300" height="300"></canvas>
             <canvas #canvas2 width="300" height="300"></canvas>
         </div>
-        <scene-props-manager></scene-props-manager>
+        <scene-manager></scene-manager>
+        <!--<scene-props-manager></scene-props-manager>-->
     `,
 })
 export class ScenesNavigation extends Compbaser {
@@ -53,8 +51,12 @@ export class ScenesNavigation extends Compbaser {
     @ViewChild('canvas2')
     canvas2;
 
-    constructor(private blockService: BlockService) {
+    constructor(private blockService: BlockService, private cd: ChangeDetectorRef) {
         super();
+    }
+
+    ngAfterViewInit() {
+        this.cd.detach();
     }
 
     ngOnInit() {
@@ -77,6 +79,9 @@ export class ScenesNavigation extends Compbaser {
         this.fabricCanvas2.add(circle);
     }
 
+    _onClick(event) {
+        console.log(event);
+    }
 
     destroy() {
     }

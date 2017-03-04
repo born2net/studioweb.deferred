@@ -4,8 +4,8 @@ import {RouterModule} from "@angular/router";
 import {ScenesNavigation} from "./scenes-navigation";
 import {DropdownModule as DropdownModulePrime} from "primeng/primeng";
 import {SharedModule} from "../../modules/shared.module";
+import {SceneManager} from "./scene-manager";
 import {ScenePropsManager} from "./scene-props-manager";
-import {BlockService} from "../blocks/block-service";
 
 export const LAZY_ROUTES = [
     {path: ':folder', component: ScenesNavigation},
@@ -15,7 +15,7 @@ export const LAZY_ROUTES = [
 
 @NgModule({
     imports: [DropdownModulePrime, SharedModule, CommonModule, RouterModule.forChild(LAZY_ROUTES)],
-    declarations: [ScenesNavigation, ScenePropsManager]
+    declarations: [ScenesNavigation, ScenePropsManager, SceneManager ]
 })
 export class ScenesLazyModule {
 }

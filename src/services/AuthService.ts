@@ -44,7 +44,7 @@ export class AuthService {
     private requestedRoute: string;
 
     private listenEvents() {
-        this.store.select(store => store.appDb.appAuthStatus).subscribe((i_authStatus: Map<string,AuthenticateFlags>) => {
+        this.store.select(store => store.appDb.appAuthStatus).subscribe((i_authStatus: Map<string, AuthenticateFlags>) => {
             let authStatus: AuthenticateFlags = i_authStatus.get('authStatus')
             switch (authStatus) {
                 case AuthenticateFlags.WRONG_PASS: {
@@ -79,15 +79,17 @@ export class AuthService {
         this.router.events.filter(event => event instanceof NavigationStart).take(1).subscribe(event => {
             this.requestedRoute = event.url;
             // this.requestedRoute = event.url == '/' ? '/App1/Campaigns' : event.url;
-        }, (e) =>  console.error(e));
+        }, (e) => console.error(e));
     }
 
     private enterApplication() {
         setTimeout(() => {
-            Lib.Con('enter app');
             // this.router.navigate(['/App1/Dashboard']);
             if (Lib.DevMode()) {
-                this.router.navigate(['/App1/Campaigns']);
+                var nav = '/App1/Scenes';
+                // var nav = '/App1/Campaigns';
+                Lib.Con(`in dev mode entering:  ${nav}`);
+                this.router.navigate([nav]);
             } else {
                 this.router.navigate([this.requestedRoute]);
             }
