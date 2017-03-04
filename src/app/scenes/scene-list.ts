@@ -5,20 +5,24 @@ import {List} from "immutable";
 import {IUiState} from "../../store/store.data";
 import {SideProps} from "../../store/actions/appdb.actions";
 import {ISceneData} from "../../services/yellowpepper.service";
+import {BlockService} from "../blocks/block-service";
 
 @Component({
     selector: 'scene-list',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <small class="debug">{{me}}</small>
         <ul (click)="$event.preventDefault()" class="appList list-group">
 
-            <a *ngFor="let scene of m_scenes; let i = index" (click)="_onCampaignSelected($event, campaign, i)"
+            <a *ngFor="let scene of m_scenes; let i = index" (click)="_onSceneSelected($event, scene, i)"
                [ngClass]="{'selectedItem': selectedIdx == i}" href="#" class="list-group-item">
-                <h4>{{scene?.playerDataModel.getSceneName()}}</h4>
-                <!--<p class="list-group-item-text">play list mode: {{scene?.getCampaignPlaylistModeName()}} </p>-->
-                <!--<div class="openProps">-->
-                    <!--<button type="button" class="props btn btn-default btn-sm"><i style="font-size: 1.5em" class="props fa fa-gear"></i></button>-->
-                <!--</div>-->
+                <h4>{{scene?.playerDataModel.getSceneName}}</h4>
+                <!-- todo: build local array from playerDataModel on use it as data source so we can remove XML processing from getSceneName and show font awesome -->
+                <!--<i class="fa {{item.blockFontAwesome}}"></i>-->
+                <p class="list-group-item-text">scene type: {{scene?.playerDataModel.getSceneMime}} </p>
+                <div class="openProps">
+                    <button type="button" class="props btn btn-default btn-sm"><i style="font-size: 1.5em" class="props fa fa-gear"></i></button>
+                </div>
             </a>
         </ul>
     `,
@@ -26,9 +30,9 @@ import {ISceneData} from "../../services/yellowpepper.service";
 export class SceneList extends Compbaser {
     selectedIdx = -1;
     m_scenes: Array<ISceneData>;
-    m_selectedCampaign: CampaignsModelExt;
+    m_selectedScene: ISceneData;
 
-    constructor() {
+    constructor(private bs:BlockService) {
         super();
     }
 
@@ -41,35 +45,33 @@ export class SceneList extends Compbaser {
     slideToCampaignEditor: EventEmitter<any> = new EventEmitter<any>();
 
     @Output()
-    slideToCampaignName: EventEmitter<any> = new EventEmitter<any>();
+    slideToSceneName: EventEmitter<any> = new EventEmitter<any>();
 
     @Output()
-    onCampaignSelected: EventEmitter<any> = new EventEmitter<any>();
+    onSceneSelected: EventEmitter<any> = new EventEmitter<any>();
 
-    _onCampaignSelected(event: MouseEvent, campaign: CampaignsModelExt, index) {
-        // event.stopPropagation();
-        // event.preventDefault();
+    _onSceneSelected(event: MouseEvent, scene: ISceneData, index) {
         this.selectedIdx = index;
         let uiState: IUiState;
         if (jQuery(event.target).hasClass('props')) {
             uiState = {
-                uiSideProps: SideProps.campaignProps,
-                campaign: {
-                    campaignSelected: campaign.getCampaignId()
+                uiSideProps: SideProps.sceneProps,
+                scene: {
+                    sceneSelected: scene.scene_id
                 }
             }
-            this.onCampaignSelected.emit(uiState)
+            this.onSceneSelected.emit(uiState)
         } else {
             uiState = {
-                uiSideProps: SideProps.campaignEditor,
-                campaign: {
-                    campaignSelected: campaign.getCampaignId()
+                uiSideProps: SideProps.sceneEditor,
+                scene: {
+                    sceneSelected: scene.scene_id
                 }
             }
             this.slideToCampaignEditor.emit();
-            this.onCampaignSelected.emit(uiState)
+            this.onSceneSelected.emit(uiState)
         }
-        this.m_selectedCampaign = campaign;
+        this.m_selectedScene = scene;
     }
 
     ngOnInit() {

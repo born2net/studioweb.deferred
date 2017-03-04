@@ -34,9 +34,15 @@ export interface IUiStateCampaign  {
     blockChannelSelected?:number;
 }
 
+export interface IUiStateScene  {
+    sceneSelected?: number;
+    blockSelected?: number;
+}
+
 export interface IUiState {
     uiSideProps?:number;
-    campaign?: IUiStateCampaign
+    campaign?: IUiStateCampaign;
+    scene?: IUiStateScene;
 }
 
 export interface IAppDb {
@@ -69,7 +75,11 @@ export const INITIAL_APP_DB: IAppDb = {
             campaignCreateOrientation: -1,
             blockChannelSelected: -1,
             campaignCreateResolution: '',
-            campaignCreateName: '',
+            campaignCreateName: ''
+        },
+        scene: {
+            sceneSelected: -1,
+            blockSelected: -1
         }
     },
     totalStations: '',

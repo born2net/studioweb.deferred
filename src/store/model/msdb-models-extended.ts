@@ -32,12 +32,12 @@ export class CampaignTimelineChanelPlayersModelExt extends CampaignTimelineChane
 
 export class PlayerDataModelExt extends PlayerDataModel {
 
-    public getSceneName() {
+    public get getSceneName() {
         var domPlayerData = jXML.parseXML(this.getPlayerDataValue())
         return jXML(domPlayerData).find('Player').attr('label');
     }
 
-    public getSceneMime() {
+    public get getSceneMime() {
         var domPlayerData = jXML.parseXML(this.getPlayerDataValue())
         return jXML(domPlayerData).find('Player').attr('mimeType');
     }

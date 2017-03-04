@@ -38,7 +38,9 @@ export enum SideProps {
     sceneBlock,
     channelBlock,
     channel,
-    screenLayoutEditor
+    screenLayoutEditor,
+    sceneProps,
+    sceneEditor,
 }
 
 

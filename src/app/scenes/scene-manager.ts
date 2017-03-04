@@ -1,11 +1,8 @@
-import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Output} from "@angular/core";
+import {Component, ElementRef, EventEmitter, Output} from "@angular/core";
 import {Observable} from "rxjs";
-import {List} from "immutable";
 import {Compbaser} from "ng-mslib";
 import {Router} from "@angular/router";
-import {UserModel} from "../../models/UserModel";
 import {RedPepperService} from "../../services/redpepper.service";
-import {CampaignsModelExt, PlayerDataModelExt} from "../../store/model/msdb-models-extended";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
 import {IUiState} from "../../store/store.data";
 import {ISceneData, YellowPepperService} from "../../services/yellowpepper.service";
@@ -40,13 +37,13 @@ import {ISceneData, YellowPepperService} from "../../services/yellowpepper.servi
         <div class="responsive-pad-right">
             <div matchBodyHeight="350" style="overflow: scroll">
 
-                <scene-list  [scenes]="scenes$ | async">
+                <scene-list [scenes]="scenes$ | async">
                 </scene-list>
-                
+
                 <!--<scene-list (onCampaignSelected)="_onCampaignSelected($event)"-->
-                            <!--(slideToCampaignName)="slideToCampaignName.emit($event)"-->
-                            <!--(slideToCampaignEditor)="slideToCampaignEditor.emit($event)"-->
-                            <!--[scenes]="scenes$ | async">-->
+                <!--(slideToCampaignName)="slideToCampaignName.emit($event)"-->
+                <!--(slideToCampaignEditor)="slideToCampaignEditor.emit($event)"-->
+                <!--[scenes]="scenes$ | async">-->
                 <!--</scene-list>-->
             </div>
         </div>
