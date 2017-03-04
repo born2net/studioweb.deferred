@@ -148,6 +148,18 @@ export class YellowPepperService {
             }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
     }
 
+    listenSceneSelected(emitOnEmpty: boolean = false): Observable<any> {
+        var sceneSelected$ = this.store.select(store => store.appDb.uiState.scene.sceneSelected);
+        return sceneSelected$
+            .withLatestFrom(
+                this.getScenes(),
+                (sceneId, scenes:Array<ISceneData>) => {
+                    return scenes.find((scene: ISceneData) => {
+                        return scene.scene_id == sceneId;
+                    });
+                }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
+    }
+
     /**
      Listen to ONLY when a campaign is selected via the store state uiState.campaign.campaignSelected and grab latest CampaignModel
      **/
