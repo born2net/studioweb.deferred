@@ -1,6 +1,8 @@
 import {Component, ChangeDetectionStrategy, AfterViewInit, ViewChild, ChangeDetectorRef, Output, EventEmitter} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {ISceneData, YellowPepperService} from "../../services/yellowpepper.service";
+import {BlockSceneBase} from "../blocks/block-scene-base";
+import {BlockService} from "../blocks/block-service";
 
 @Component({
     selector: 'scene-editor',
@@ -26,9 +28,11 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
     @ViewChild('canvas2')
     canvas2;
 
-    constructor(private yp: YellowPepperService, private cd: ChangeDetectorRef) {
+    constructor(private yp: YellowPepperService, private cd: ChangeDetectorRef, private bs:BlockService) {
         super();
         this.cd.detach();
+
+        var a = new BlockSceneBase(bs);
 
         this.cancelOnDestroy(
             this.yp.listenSceneSelected()
