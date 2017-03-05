@@ -196,7 +196,7 @@ export class CampaignChannels extends Compbaser implements AfterViewInit {
 
     @Once()
     private _getBlockRecord(i_blockId, i_cb: (i_blockId: CampaignTimelineChanelPlayersModel) => void) {
-        return this.yp.getBlockRecord(i_blockId)
+        return this.yp.getChannelBlockRecord(i_blockId)
             .subscribe((block: CampaignTimelineChanelPlayersModel) => {
                 i_cb(block);
             }, (e) => console.error(e));

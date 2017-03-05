@@ -46,34 +46,6 @@ export interface IBlockData {
     }
 }
 
-// /**
-//  All blocks and related property modules loaded by require.js
-//  **/
-// export const BLOCKS_LOADED = 'BLOCKS_LOADED';
-//
-// /**
-//  block.PLACEMENT_SCENE indicates the insertion is inside a Scene
-//  */
-// export const PLACEMENT_SCENE = 'PLACEMENT_SCENE';
-//
-// /**
-//  block.PLACEMENT_CHANNEL indicates the insertion is on the timeline_channel
-//  */
-// export const PLACEMENT_CHANNEL = 'PLACEMENT_CHANNEL';
-//
-// /**
-//  block.PLACEMENT_IS_SCENE indicates the insertion is itself a Scene
-//  */
-// export const PLACEMENT_IS_SCENE = 'PLACEMENT_IS_SCENE';
-//
-// /**
-//  block.PLACEMENT_LISTS indicates the insertion is inside a collection list such
-//  as the Collection Block or the Location based block. This event is used for example
-//  when building the list of available blocks in AddBlockView
-//  */
-// export const PLACEMENT_LISTS = 'PLACEMENT_LISTS';
-
-
 @Injectable()
 export class BlockService {
     parser;
@@ -721,6 +693,10 @@ export class BlockService {
         // todo: add support for getBlockRecord when placement is SCENE
         // case BB.CONSTS.PLACEMENT_IS_SCENE:
         //     {
+
+        // >>>> return pepper.getScenePlayerdataBlock(self.m_sceneID, self.m_block_id);
+        // to view data debug domPlayerData.children[0].outerHTML
+
         //         var blockID = pepper.getSceneIdFromPseudoId(self.m_block_id);
         //         var recPlayerData = BB.Pepper.getScenePlayerRecord(blockID);
         //         var xPlayerdata = recPlayerData['player_data_value'];
@@ -728,7 +704,7 @@ export class BlockService {
         //         break;
         //     }
 
-        return this.yp.getBlockRecord(blockId)
+        return this.yp.getChannelBlockRecord(blockId)
             .mergeMap((i_campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModelExt) => {
                 // var t0 = performance.now();
                 var xml = i_campaignTimelineChanelPlayersModel.getPlayerData();
@@ -807,7 +783,6 @@ export class BlockService {
                             blockData.scene.playerDataDom = domPlayerData;
                             blockData.scene.playerDataString = xml;
                             blockData.scene.playerDataJson = this.parser.xml2js(xml);
-                            ;
                             return blockData;
                         })
                 } else {
@@ -875,7 +850,7 @@ export class BlockService {
 
                     /***** SCENE *****/
                     case BlockLabels.BLOCKCODE_SCENE: {
-                        this.yp.getBlockRecord(blockData.blockID)
+                        this.yp.getChannelBlockRecord(blockData.blockID)
                             .subscribe((i_campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModelExt) => {
                                 var domPlayerData = $.parseXML(i_campaignTimelineChanelPlayersModel.getPlayerData());
                                 var scene_id = jXML(domPlayerData).find('Player').attr('hDataSrc');

@@ -1,10 +1,9 @@
-import {Injectable} from "@angular/core";
 import * as _ from 'lodash';
 import {Lib} from "../../Lib";
 import {BlockService} from "./block-service";
 
 
-export class BlockSceneBase extends fabric.Group {
+export class BlockFabric extends fabric.Group {
 
     m_placement;
     m_block_id;
@@ -21,7 +20,7 @@ export class BlockSceneBase extends fabric.Group {
     m_blockSvg;// = BB.PepperHelper.getBlockBoilerplate(m_blockType).svg;
     m_resourceID;// = undefined;
     m_blockProperty;// = BB.comBroker.getService(BB.SERVICES['BLOCK_PROPERTIES']);
-    m_blockService:BlockService;
+    m_blockService: BlockService;
 
     constructor(i_blockService) {
         super()
@@ -34,9 +33,11 @@ export class BlockSceneBase extends fabric.Group {
      @method _getBlockPlayerData
      @return {Object} player data of block (aka player) parsed as DOM
      **/
-    _getBlockPlayerData():XMLDocument {
+    _getBlockPlayerData(): XMLDocument {
         var self = this;
         var recBlock = undefined;
+
+        //this.m_blockService.getBlockData(this.m_block_id)
 
         // switch (self.m_placement) {
         //
@@ -221,7 +222,7 @@ export class BlockSceneBase extends fabric.Group {
     _fabricLock() {
         var self = this;
         var domPlayerData = self._getBlockPlayerData();
-        var locked: any = $(domPlayerData).attr('locked');
+        var locked:any = $(domPlayerData).attr('locked');
         if (_.isUndefined(locked) || locked == '0') {
             locked = false;
         } else {
@@ -230,12 +231,12 @@ export class BlockSceneBase extends fabric.Group {
         self.lockMovementX = locked;
         self.lockMovementY = locked;
         //self.lockScalingX = locked; self.lockScalingY = locked; self.lockUniScaling = locked; self.lockRotation = locked;
-        // if (!self.m_selected)
-        //     return;
-        // var dimensionProps = BB.comBroker.getService(BB.SERVICES['DIMENSION_PROPS_LAYOUT']);
-        // if (_.isUndefined(dimensionProps))
-        //     return;
-        // dimensionProps.setLock(locked);
+        if (!self.m_selected)
+            return;
+        /////var dimensionProps = BB.comBroker.getService(BB.SERVICES['DIMENSION_PROPS_LAYOUT']);
+        /////if (_.isUndefined(dimensionProps))
+        //////     return;
+        //////dimensionProps.setLock(locked);
     }
 
     /**

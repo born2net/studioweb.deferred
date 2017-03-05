@@ -66,10 +66,10 @@ import * as _ from 'lodash'
 
 
 export interface IMessage {
-    fromInstance: any,
     event: string,
-    context: any,
-    message: any
+    fromInstance: any,
+    context?: any,
+    message?: any
 }
 
 // create an alias type just so it's easier to associate
