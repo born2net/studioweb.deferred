@@ -1,5 +1,5 @@
 /**
- * Block service is responsible only for procedures related to player_data / scene blocks
+ * Block service is responsible only for procedures related to channel and scene blocks
  */
 
 import {Inject, Injectable} from "@angular/core";
@@ -688,15 +688,19 @@ export class BlockService {
         return this.blockPlacement;
     }
 
+    // public getSceneBlockData(i_sceneId, i_blockId): Observable<IBlockData> {
+    //
+    //     this.yp.getScenBlockRecord(i_sceneId, i_blockId)
+    //
+    //     // >>>> return pepper.getScenePlayerdataBlock(self.m_sceneID, self.m_block_id);
+    //     // to view data debug domPlayerData.children[0].outerHTML
+    // }
+
     public getBlockData(blockId): Observable<IBlockData> {
 
         // todo: add support for getBlockRecord when placement is SCENE
         // case BB.CONSTS.PLACEMENT_IS_SCENE:
         //     {
-
-        // >>>> return pepper.getScenePlayerdataBlock(self.m_sceneID, self.m_block_id);
-        // to view data debug domPlayerData.children[0].outerHTML
-
         //         var blockID = pepper.getSceneIdFromPseudoId(self.m_block_id);
         //         var recPlayerData = BB.Pepper.getScenePlayerRecord(blockID);
         //         var xPlayerdata = recPlayerData['player_data_value'];
@@ -734,7 +738,7 @@ export class BlockService {
                 } else {
 
                     /************************************
-                     * Scene
+                     * Block is a scene
                      ************************************/
 
                     code = BlockLabels['BLOCKCODE_SCENE'];
@@ -746,7 +750,6 @@ export class BlockService {
                         playerDataString: null,
                         playerDataDom: null
                     }
-
                 }
 
                 var data: IBlockData = {

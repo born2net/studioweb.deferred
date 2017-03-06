@@ -148,12 +148,12 @@ export class YellowPepperService {
             }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
     }
 
-    listenSceneSelected(emitOnEmpty: boolean = false): Observable<any> {
+    listenSceneSelected(emitOnEmpty: boolean = false): Observable<ISceneData> {
         var sceneSelected$ = this.store.select(store => store.appDb.uiState.scene.sceneSelected);
         return sceneSelected$
             .withLatestFrom(
                 this.getScenes(),
-                (sceneId, scenes:Array<ISceneData>) => {
+                (sceneId, scenes: Array<ISceneData>) => {
                     return scenes.find((scene: ISceneData) => {
                         return scene.scene_id == sceneId;
                     });
@@ -403,7 +403,7 @@ export class YellowPepperService {
     getScenes(): Observable<Array<ISceneData>> {
         return this.store.select(store => store.msDatabase.sdk.table_player_data)
             .map((playerDataModels: List<PlayerDataModel>) => {
-                return playerDataModels.reduce((result: Array<ISceneData>, playerDataModel:PlayerDataModelExt) => {
+                return playerDataModels.reduce((result: Array<ISceneData>, playerDataModel: PlayerDataModelExt) => {
                     var playerDataId = playerDataModel.getPlayerDataId();
                     var recPlayerData = playerDataModel.getPlayerDataValue();
                     var domPlayerData = $.parseXML(recPlayerData)
@@ -425,6 +425,20 @@ export class YellowPepperService {
                 })
             }).take(1);
     }
+
+    /**
+     get a scene block playerdata
+     **/
+    // getScenBlockRecord(i_scene_id, i_player_data_id) {
+    //     var self = this;
+    //     i_scene_id = pepper.sterilizePseudoId(i_scene_id);
+    //     self.m_msdb.table_player_data().openForEdit(i_scene_id);
+    //     var recPlayerData = self.m_msdb.table_player_data().getRec(i_scene_id);
+    //     var player_data = recPlayerData['player_data_value'];
+    //     var domPlayerData = $.parseXML(player_data)
+    //     var foundSnippet = $(domPlayerData).find('[id="' + i_player_data_id + '"]');
+    //     return foundSnippet[0];
+    // }
 
     /**
      Get a player_id record from sdk by player_id primary key.
