@@ -1,5 +1,7 @@
 import {BlockFabric} from "./block-fabric";
 import * as _ from 'lodash';
+import {Lib} from "../../Lib";
+import {PLACEMENT_IS_SCENE} from "../../interfaces/Consts";
 
 
 export const SCENE_BG_COLOR_CHANGED = 'SCENE_BG_COLOR_CHANGED';
@@ -48,13 +50,12 @@ export class BlockFabricScene extends BlockFabric {
      @param {Number} i_playerData
      @return {Number} Unique clientId.
      **/
-    // getBlockData() {
-    // var self = this;
-    // var data = Block.prototype.getBlockData.call(this);
-    // var domPlayerData = self._getBlockPlayerData();
-    // data.blockName = $(domPlayerData).find('Player').eq(0).attr('label');
-    // return data;
-    // }
+    getBlockData() {
+        var data = BlockFabric.prototype.getBlockData.call(this);
+        var domPlayerData = this._getBlockPlayerData();
+        data.blockName = $(domPlayerData).find('Player').eq(0).attr('label');
+        return data;
+    }
 
     /**
      Enable gradient background UI
@@ -184,29 +185,32 @@ export class BlockFabricScene extends BlockFabric {
      @method _getBlockPlayerData
      @return {Object} player data of block (aka player) parsed as DOM
      **/
-    // _getBlockPlayerData() {
-    // var self = this;
-    // var recBlock = undefined;
-    //
-    // switch (self.m_placement) {
-    //
-    //     case BB.CONSTS.PLACEMENT_CHANNEL: {
-    //         recBlock = pepper.getCampaignTimelineChannelPlayerRecord(self.m_block_id);
-    //         var domPlayerData = $.parseXML(recBlock['player_data']);
-    //         var sceneHandle = $(domPlayerData).find('Player').attr('hDataSrc');
-    //         return pepper.getScenePlayerdataDom(sceneHandle);
-    //         break;
-    //     }
-    //
-    //     case BB.CONSTS.PLACEMENT_IS_SCENE: {
-    //         var blockID = pepper.getSceneIdFromPseudoId(self.m_block_id);
-    //         var recPlayerData = BB.Pepper.getScenePlayerRecord(blockID);
-    //         var xPlayerdata = recPlayerData['player_data_value'];
-    //         return $.parseXML(xPlayerdata);
-    //         break;
-    //     }
-    // }
-    // }
+    _getBlockPlayerData() {
+        var blockID = this.m_pepper.getSceneIdFromPseudoId(this.m_block_id);
+        var recPlayerData = this.m_pepper.getScenePlayerRecord(blockID);
+        var xPlayerdata = recPlayerData['player_data_value'];
+        return $.parseXML(xPlayerdata);
+        // var recBlock = undefined;
+        //
+        // switch (self.m_placement) {
+        //
+        //     case BB.CONSTS.PLACEMENT_CHANNEL: {
+        //         recBlock = pepper.getCampaignTimelineChannelPlayerRecord(self.m_block_id);
+        //         var domPlayerData = $.parseXML(recBlock['player_data']);
+        //         var sceneHandle = $(domPlayerData).find('Player').attr('hDataSrc');
+        //         return pepper.getScenePlayerdataDom(sceneHandle);
+        //         break;
+        //     }
+        //
+        //     case BB.CONSTS.PLACEMENT_IS_SCENE: {
+        //         var blockID = pepper.getSceneIdFromPseudoId(self.m_block_id);
+        //         var recPlayerData = BB.Pepper.getScenePlayerRecord(blockID);
+        //         var xPlayerdata = recPlayerData['player_data_value'];
+        //         return $.parseXML(xPlayerdata);
+        //         break;
+        //     }
+        // }
+    }
 
     /**
      Find the border section in player_data for selected block
@@ -215,11 +219,10 @@ export class BlockFabricScene extends BlockFabric {
      @param  {object} i_domPlayerData
      @return {Xml} xSnippet
      **/
-    // _findBorder(i_domPlayerData) {
-    // var self = this;
-    // var xSnippet = $(i_domPlayerData).find('Layout').eq(0).siblings().filter('Border');
-    // return xSnippet;
-    // }
+    _findBorder(i_domPlayerData) {
+        var xSnippet = $(i_domPlayerData).find('Layout').eq(0).siblings().filter('Border');
+        return xSnippet;
+    }
 
     /**
      Find the background section in player_data for selected block
@@ -229,9 +232,8 @@ export class BlockFabricScene extends BlockFabric {
      @return {Xml} xSnippet
      **/
     _findBackground(i_domPlayerData) {
-        // var self = this;
-        // var xSnippet = $(i_domPlayerData).find('Layout').eq(0).siblings().filter('Background');
-        // return xSnippet;
+        var xSnippet = $(i_domPlayerData).find('Layout').eq(0).siblings().filter('Background');
+        return xSnippet;
     }
 
     /**
@@ -242,10 +244,9 @@ export class BlockFabricScene extends BlockFabric {
      @return {Xml} xSnippet
      **/
     _findGradientPoints(i_domPlayerData) {
-        // var self = this;
-        // var xBackground = $(i_domPlayerData).find('Layout').eq(0).siblings().filter('Background');
-        // var xSnippet = $(xBackground).find('GradientPoints').eq(0);
-        // return xSnippet;
+        var xBackground = $(i_domPlayerData).find('Layout').eq(0).siblings().filter('Background');
+        var xSnippet = $(xBackground).find('GradientPoints').eq(0);
+        return xSnippet;
     }
 
     /**
@@ -304,10 +305,10 @@ export class BlockFabricScene extends BlockFabric {
      @param {String} i_image
      **/
     _applySceneBgImage(i_image) {
-        // var self = this;
-        // self.m_canvas.setBackgroundColor('', self.m_canvas.renderAll.bind(self.m_canvas));
-        // $(Elements.SCENE_CANVAS_CONTAINER).find('.canvas-container').removeClass('checkers').removeClass('grid25').removeClass('grid50').addClass(i_image);
-        // self.m_canvas.renderAll();
+        var self = this;
+        self.m_canvas.setBackgroundColor('', self.m_canvas.renderAll.bind(self.m_canvas));
+        $('#sceneCanvasContainer').find('.canvas-container').removeClass('checkers').removeClass('grid25').removeClass('grid50').addClass(i_image);
+        self.m_canvas.renderAll();
     }
 
     /**
@@ -315,34 +316,34 @@ export class BlockFabricScene extends BlockFabric {
      @method _populateSceneBg
      **/
     _populateSceneBg() {
-        // var self = this;
-        // var domPlayerData = self._getBlockPlayerData();
-        // var colorPoints = self._findGradientPoints(domPlayerData)
-        // var color = $(colorPoints).find('Point').attr('color');
-        //
-        // switch (self.m_gridMagneticMode) {
-        //     case 0: {
-        //         if (_.isUndefined(color)) {
-        //             self._applySceneBgImage('checkers');
-        //             return;
-        //         }
-        //         color = '#' + BB.lib.decimalToHex(color);
-        //         if (self.m_canvas.backgroundColor == color)
-        //             return;
-        //         self.m_canvas.setBackgroundColor(color, function () {
-        //         });
-        //         self.m_canvas.renderAll();
-        //         break;
-        //     }
-        //     case 1: {
-        //         self._applySceneBgImage('grid25');
-        //         break;
-        //     }
-        //     case 2: {
-        //         self._applySceneBgImage('grid50');
-        //         break;
-        //     }
-        // }
+        var self = this;
+        var domPlayerData = self._getBlockPlayerData();
+        var colorPoints = self._findGradientPoints(domPlayerData)
+        var color = $(colorPoints).find('Point').attr('color');
+
+        switch (self.m_gridMagneticMode) {
+            case 0: {
+                if (_.isUndefined(color)) {
+                    self._applySceneBgImage('checkers');
+                    return;
+                }
+                color = '#' + Lib.DecimalToHex(color);
+                if (self.m_canvas.backgroundColor == color)
+                    return;
+                self.m_canvas.setBackgroundColor(color, function () {
+                });
+                self.m_canvas.renderAll();
+                break;
+            }
+            case 1: {
+                self._applySceneBgImage('grid25');
+                break;
+            }
+            case 2: {
+                self._applySceneBgImage('grid50');
+                break;
+            }
+        }
     }
 
     /**
@@ -352,11 +353,11 @@ export class BlockFabricScene extends BlockFabric {
      @param {event} e
      **/
     _toggleBackgroundColorHandler(e) {
-        // var self = this;
-        // $(Elements.SCENE_CANVAS_CONTAINER).find('.canvas-container').removeClass('checkers');
+        var self = this;
+        $('#sceneCanvasContainer').find('.canvas-container').removeClass('checkers');
         // Block.prototype._toggleBackgroundColorHandler.call(this, e);
-        // if (self.m_placement == BB.CONSTS.PLACEMENT_IS_SCENE)
-        //     self._populateSceneBg();
+        if (self.m_placement == PLACEMENT_IS_SCENE)
+            self._populateSceneBg();
     }
 
     /**
@@ -366,10 +367,9 @@ export class BlockFabricScene extends BlockFabric {
      @param  {Number} i_magneticGridMode
      **/
     setCanvas(i_canvas, i_magneticGridMode) {
-        // var self = this;
-        // self.m_canvas = i_canvas;
-        // self.m_gridMagneticMode = i_magneticGridMode;
-        // self._populateSceneBg();
+        this.m_canvas = i_canvas;
+        this.m_gridMagneticMode = i_magneticGridMode;
+        this._populateSceneBg();
     }
 
     /**

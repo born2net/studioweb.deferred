@@ -688,6 +688,23 @@ export class RedPepperService {
     }
 
     /**
+     Translate an injected id to a table_player_data scene id
+     @method createPseudoSceneID
+     @param {Number} getSceneIdFromPseudoId
+     @return {Number} scene id
+     **/
+    getSceneIdFromPseudoId(i_pseudo_id) {
+        var found = undefined;
+        var scenes = this.getScenes();
+        _.each(scenes, (domPlayerData, scene_id) => {
+            var pseudo_id = $(domPlayerData).find('Player').eq(0).attr('id');
+            if (pseudo_id == i_pseudo_id)
+                found = scene_id;
+        });
+        return found;
+    }
+
+    /**
      Returns all scenes
      @method getSceneMime
      @param {Number} i_sceneID
@@ -1804,24 +1821,6 @@ export class RedPepperService {
             var injectedID = $(domPlayerData).find('Player').eq(0).attr('id');
             if (i_scene_id == scene_id)
                 found = injectedID;
-        });
-        return found;
-    }
-
-    /**
-     Translate an injected id to a table_player_data scene id
-     @method createPseudoSceneID
-     @param {Number} getSceneIdFromPseudoId
-     @return {Number} scene id
-     **/
-    getSceneIdFromPseudoId(i_pseudo_id) {
-
-        var found = undefined;
-        var scenes = this.getScenes();
-        _.each(scenes, function (domPlayerData, scene_id) {
-            var pseudo_id = $(domPlayerData).find('Player').eq(0).attr('id');
-            if (pseudo_id == i_pseudo_id)
-                found = scene_id;
         });
         return found;
     }

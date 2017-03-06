@@ -200,7 +200,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
     _listenSceneSelection() {
        this.cancelOnDestroy(
            this.yp.listenSceneSelected().subscribe((sceneData: ISceneData) => {
-               this.m_selectedSceneID = sceneData.scene_id;
+               this.m_selectedSceneID = sceneData.pseudo_id;
                this._loadScene();
                this._sceneCanvasSelected();
                // BB.comBroker.getService(BB.SERVICES['PROPERTIES_VIEW']).resetPropertiesView();
@@ -292,9 +292,9 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
      Init a new scene and subclass off a standard Block
      @method _initializeScene
      **/
-    _initializeScene() {
-        var scene_player_data = this.rp.getScenePlayerdata(this.m_selectedSceneID);
-        this.m_sceneBlock = this.blockFactory.createBlock(this.bs, this.rp, this.m_selectedSceneID, scene_player_data, PLACEMENT_IS_SCENE);
+    _initializeScene(i_selectedSceneID) {
+        var scene_player_data = this.rp.getScenePlayerdata(i_selectedSceneID);
+        this.m_sceneBlock = this.blockFactory.createBlock(this.bs, this.rp, i_selectedSceneID, scene_player_data, PLACEMENT_IS_SCENE);
         this.m_sceneBlock.setCanvas(this.m_canvas, this.m_gridMagneticMode);
         //_.extend(this.m_canvas, this.m_sceneBlock);
     }
@@ -343,8 +343,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         var w = $(l).attr('width');
         var h = $(l).attr('height');
         self._initializeCanvas(w, h);
-        // self._initializeScene(self.m_selectedSceneID);
-        self._initializeScene();
+        self._initializeScene(self.m_selectedSceneID);
         self._preRender(domPlayerData);
 
         // this._sceneProcessing(true, jQueryAny.proxy(function () {

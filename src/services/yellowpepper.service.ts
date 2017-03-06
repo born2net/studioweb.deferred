@@ -23,6 +23,7 @@ import {UserModel} from "../models/UserModel";
 
 export interface ISceneData {
     scene_id: number;
+    pseudo_id: string,
     playerDataModel: PlayerDataModelExt,
     domPlayerData: XMLDocument;
 }
@@ -407,7 +408,13 @@ export class YellowPepperService {
                     var playerDataId = playerDataModel.getPlayerDataId();
                     var recPlayerData = playerDataModel.getPlayerDataValue();
                     var domPlayerData = $.parseXML(recPlayerData)
-                    result.push({scene_id: playerDataId, domPlayerData, playerDataModel});
+                    var pseudo_id = $(domPlayerData).find('Player').eq(0).attr('id')
+                    result.push({
+                        scene_id: playerDataId,
+                        pseudo_id,
+                        domPlayerData,
+                        playerDataModel
+                    });
                     return result;
                 }, [])
             }).take(1);
