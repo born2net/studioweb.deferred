@@ -165,6 +165,43 @@ export class RedPepperService {
     }
 
     /**
+     Inject unique player ids for all players within a scene
+     @method injectPseudoScenePlayersIDs
+     @param {Number} i_scene_id
+     **/
+    injectPseudoScenePlayersIDs(i_scene_id?) {
+        var scenes = {};
+        if (!_.isUndefined(i_scene_id)) {
+            var domPlayerData = this.getScenePlayerdataDom(i_scene_id);
+            scenes[i_scene_id] = domPlayerData;
+        } else {
+            scenes = this.getScenes();
+        }
+        _.each(scenes, (domPlayerData: any, scene_id) => {
+            $(domPlayerData).find('Player').eq(0).attr('id', this.generateSceneId());
+            $(domPlayerData).find('Players').find('Player').each((i, player) => {
+                var blockID = this.generateSceneId();
+                $(player).attr('id', blockID);
+            });
+            this.setScenePlayerData(scene_id, (new XMLSerializer()).serializeToString(domPlayerData));
+        });
+    }
+
+    /**
+     set entire scene playerdata
+     @method setScenePlayerData
+     @return {Number} scene player_data id
+     **/
+    setScenePlayerData(i_scene_id, i_player_data) {
+        i_scene_id = this.sterilizePseudoId(i_scene_id);
+        this.databaseManager.table_player_data().openForEdit(i_scene_id);
+        var recPlayerData = this.databaseManager.table_player_data().getRec(i_scene_id);
+        recPlayerData['player_data_value'] = i_player_data;
+        this.addPendingTables(['table_player_data']);
+    }
+
+
+    /**
      Change a viewer's (aka screen division) order (layer) z-order
      @method updateTemplateViewerOrder
      @param {number} i_board_template_viewer_id
@@ -514,19 +551,6 @@ export class RedPepperService {
         campaign_boards.addRecord(campain_board, undefined);
         this.addPendingTables(['table_campaign_boards']);
         return campain_board['campaign_board_id']
-    }
-
-    /**
-     set entire scene playerdata
-     @method setScenePlayerData
-     @return {Number} scene player_data id
-     **/
-    setScenePlayerData(i_scene_id, i_player_data) {
-        i_scene_id = this.sterilizePseudoId(i_scene_id);
-        this.databaseManager.table_player_data().openForEdit(i_scene_id);
-        var recPlayerData = this.databaseManager.table_player_data().getRec(i_scene_id);
-        recPlayerData['player_data_value'] = i_player_data;
-        this.addPendingTables(['table_player_data']);
     }
 
     /**
@@ -1793,30 +1817,6 @@ export class RedPepperService {
                 found = scene_id;
         });
         return found;
-    }
-
-    /**
-     Inject unique player ids for all players within a scene
-     @method injectPseudoScenePlayersIDs
-     @param {Number} i_scene_id
-     **/
-    injectPseudoScenePlayersIDs(i_scene_id) {
-
-        var scenes = {};
-        if (!_.isUndefined(i_scene_id)) {
-            var domPlayerData = this.getScenePlayerdataDom(i_scene_id);
-            scenes[i_scene_id] = domPlayerData;
-        } else {
-            scenes = this.getScenes();
-        }
-        _.each(scenes, function (domPlayerData: any, scene_id) {
-            $(domPlayerData).find('Player').eq(0).attr('id', this.databaseManager.generateSceneId());
-            $(domPlayerData).find('Players').find('Player').each(function (i, player) {
-                var blockID = this.databaseManager.generateSceneId();
-                $(player).attr('id', blockID);
-            });
-            this.databaseManager.setScenePlayerData(scene_id, (new XMLSerializer()).serializeToString(domPlayerData));
-        });
     }
 
     /**

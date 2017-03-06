@@ -10,6 +10,7 @@ import {SceneManager} from "./scene-manager";
 import {Scenes} from "./scenes";
 import {SceneEditor} from "./scene-editor";
 import {SceneToolbar} from "./scene-toolbar";
+import {BlockFactoryService} from "../../services/block-factory-service";
 
 export const LAZY_ROUTES = [
     {path: ':folder', component: ScenesNavigation},
@@ -19,7 +20,8 @@ export const LAZY_ROUTES = [
 
 @NgModule({
     imports: [DropdownModulePrime, SharedModule, CommonModule, RouterModule.forChild(LAZY_ROUTES)],
-    declarations: [Scenes, SceneEditor, SceneToolbar, ScenesNavigation, ScenePropsManager, SceneManager, SceneList ]
+    declarations: [Scenes, SceneEditor, SceneToolbar, ScenesNavigation, ScenePropsManager, SceneManager, SceneList ],
+    providers: [BlockFactoryService]
 })
 export class ScenesLazyModule {
 }

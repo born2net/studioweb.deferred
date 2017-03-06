@@ -1,6 +1,8 @@
 import * as _ from 'lodash';
 import {Lib} from "../../Lib";
 import {BlockService} from "./block-service";
+import {PLACEMENT_CHANNEL, PLACEMENT_IS_SCENE, PLACEMENT_SCENE} from "../../interfaces/Consts";
+import {RedPepperService} from "../../services/redpepper.service";
 
 
 export class BlockFabric extends fabric.Group {
@@ -12,20 +14,76 @@ export class BlockFabric extends fabric.Group {
     m_selected = false;
     m_zIndex = -1;
     m_minSize = {w: 50, h: 50};
-    m_blockName;// = BB.PepperHelper.getBlockBoilerplate(m_blockType).name;
-    m_blockAcronym;// = BB.PepperHelper.getBlockBoilerplate(m_blockType).acronym;
-    m_blockDescription;// = BB.PepperHelper.getBlockBoilerplate(m_blockType).description;
-    m_blockIcon;// = BB.PepperHelper.getBlockBoilerplate(m_blockType).icon;
-    m_blockFontAwesome;// = BB.PepperHelper.getBlockBoilerplate(m_blockType).fontAwesome;
-    m_blockSvg;// = BB.PepperHelper.getBlockBoilerplate(m_blockType).svg;
-    m_resourceID;// = undefined;
-    m_blockProperty;// = BB.comBroker.getService(BB.SERVICES['BLOCK_PROPERTIES']);
+    m_blockName;
+    m_blockAcronym;
+    m_blockDescription;
+    m_blockIcon;
+    m_blockFontAwesome;
+    m_blockSvg;
+    m_resourceID;
+    m_blockProperty;
     m_blockService: BlockService;
+    m_pepper: RedPepperService;
 
-    constructor(i_blockService) {
+    constructor(options, i_blockService, i_pepper, i_blockType) {
         super()
+        this.m_blockType = i_blockType
         this.m_blockService = i_blockService;
+        this.m_pepper = i_pepper;
+        this.m_placement = options.i_placement;
+        this.m_block_id = options.i_block_id;
+        this.m_sceneID = options.i_scene_player_data_id;
+        // this.m_blockType = options.blockType;
+        this.m_selected = false;
+        this.m_zIndex = -1;
+        this.m_minSize = {w: 50, h: 50};
+        console.log(this.m_blockType);
+        this.m_blockName = i_blockService.getBlockBoilerplate(this.m_blockType).name;
+        this.m_blockAcronym = i_blockService.getBlockBoilerplate(this.m_blockType).acronym;
+        this.m_blockDescription = i_blockService.getBlockBoilerplate(this.m_blockType).description;
+        this.m_blockIcon = i_blockService.getBlockBoilerplate(this.m_blockType).icon;
+        this.m_blockFontAwesome = i_blockService.getBlockBoilerplate(this.m_blockType).fontAwesome;
+        this.m_blockSvg = i_blockService.getBlockBoilerplate(this.m_blockType).svg;
+        this.m_resourceID = undefined;
+
     }
+
+    /**
+     Update the msdb for the block with new values inside its player_data
+     @method _setBlockPlayerData
+     @param {Object} i_xmlDoc the dom object to save to local msdb
+     @param {String} [i_noNotify] if set, fire event announcing data saved
+     @param {Boolean} [i_xmlIsString] if set, bypass serializeToString since already in string format
+     **/
+    _setBlockPlayerData(i_xmlDoc, i_noNotify, i_xmlIsString) {
+        var self = this;
+        var player_data;
+        if (i_xmlIsString == true) {
+            player_data = i_xmlDoc;
+        } else {
+            player_data = (new XMLSerializer()).serializeToString(i_xmlDoc);
+        }
+
+        switch (self.m_placement) {
+            case PLACEMENT_CHANNEL: {
+                this.m_pepper.setCampaignTimelineChannelPlayerRecord(self.m_block_id, 'player_data', player_data);
+                break;
+            }
+            case PLACEMENT_SCENE: {
+                this.m_pepper.setScenePlayerdataBlock(self.m_sceneID, self.m_block_id, player_data);
+                if (!i_noNotify)
+                    // self._announceBlockChanged();
+                break;
+            }
+            case PLACEMENT_IS_SCENE: {
+                this.m_pepper.setScenePlayerData(self.m_block_id, player_data);
+                if (!i_noNotify)
+                    // self._announceBlockChanged();
+                break;
+            }
+        }
+    }
+
 
     /**
      Get the XML player data of a block, depending where its placed
@@ -33,29 +91,23 @@ export class BlockFabric extends fabric.Group {
      @method _getBlockPlayerData
      @return {Object} player data of block (aka player) parsed as DOM
      **/
-    _getBlockPlayerData(): XMLDocument {
+    _getBlockPlayerData() {
         var self = this;
         var recBlock = undefined;
 
-        //this.m_blockService.getBlockData(this.m_block_id)
+        switch (self.m_placement) {
 
-        // switch (self.m_placement) {
-        //
-        //     case BB.CONSTS.PLACEMENT_CHANNEL: {
-        //         recBlock = pepper.getCampaignTimelineChannelPlayerRecord(self.m_block_id);
-        //         return $.parseXML(recBlock['player_data']);
-        //         // to view data debug domPlayerData.children[0].outerHTML
-        //         break;
-        //     }
-        //
-        //     case BB.CONSTS.PLACEMENT_SCENE: {
-        //         return pepper.getScenePlayerdataBlock(self.m_sceneID, self.m_block_id);
-        //         // to view data debug domPlayerData.children[0].outerHTML
-        //         break;
-        //     }
-        // }
+            case PLACEMENT_CHANNEL: {
+                recBlock = this.m_pepper.getCampaignTimelineChannelPlayerRecord(self.m_block_id);
+                return $.parseXML(recBlock['player_data']);
+                // to view data debug domPlayerData.children[0].outerHTML
+            }
 
-        return new XMLDocument()
+            case PLACEMENT_SCENE: {
+                return this.m_pepper.getScenePlayerdataBlock(self.m_sceneID, self.m_block_id);
+                // to view data debug domPlayerData.children[0].outerHTML
+            }
+        }
     }
 
     /**
@@ -222,7 +274,7 @@ export class BlockFabric extends fabric.Group {
     _fabricLock() {
         var self = this;
         var domPlayerData = self._getBlockPlayerData();
-        var locked:any = $(domPlayerData).attr('locked');
+        var locked: any = $(domPlayerData).attr('locked');
         if (_.isUndefined(locked) || locked == '0') {
             locked = false;
         } else {

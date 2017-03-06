@@ -3,10 +3,11 @@ import {Store} from "@ngrx/store";
 import {ApplicationState} from "../store/application.state";
 import {AppdbAction} from "../store/actions/appdb.actions";
 import {EFFECT_INIT_REDUXIFY_MSDB} from "../store/effects/msdb.effects";
+import {RedPepperService} from "./redpepper.service";
 
 @Injectable()
 export class StoreService {
-    constructor(private store: Store<ApplicationState>, private appdbAction: AppdbAction) {
+    constructor(private store: Store<ApplicationState>, private appdbAction: AppdbAction, private rp:RedPepperService) {
 
         // todo: disabled injection as broken in AOT
         // constructor(@Inject(forwardRef(() => Store)) private store: Store<ApplicationState>,
@@ -22,6 +23,7 @@ export class StoreService {
     public loadServices() {
         if (this.singleton) return;
         this.singleton = true;
+        this.rp.injectPseudoScenePlayersIDs();
         this.store.dispatch({type: EFFECT_INIT_REDUXIFY_MSDB})
         con('loaded network services...');
     }

@@ -7,6 +7,7 @@ import {RedPepperService} from "../../services/redpepper.service";
 import * as _ from "lodash";
 import {PLACEMENT_IS_SCENE, PLACEMENT_SCENE} from "../../interfaces/Consts";
 import {Consts} from "../../Conts";
+import {BlockFactoryService} from "../../services/block-factory-service";
 
 export const JSON_EVENT_ROW_CHANGED = 'JSON_EVENT_ROW_CHANGED';
 export const STATIONS_POLL_TIME_CHANGED = 'STATIONS_POLL_TIME_CHANGED';
@@ -42,11 +43,17 @@ export const CAMPAIGN_LIST_LOADING = 'CAMPAIGN_LIST_LOADED';
 
 @Component({
     selector: 'scene-editor',
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    // changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <small class="debug">{{me}}</small>
         <scene-toolbar (onToolbarAction)="_onToolbarAction($event)"></scene-toolbar>
-        <div id="sceneCanvasContainer" data-toggle="context" data-target="#sceneContextMenu" class="yScroll context sceneElements" style=" overflow-x: visible" align="center"></div>
+        <div [ngClass]="{hidden: !m_isLoading}" >
+            <div id="sceneCanvasContainer" data-toggle="context" data-target="#sceneContextMenu" class="yScroll context sceneElements" style=" overflow-x: visible" align="center"></div>    
+        </div>
+        <div [ngClass]="{hidden: m_isLoading}" >
+            <h1>Loading</h1>
+        </div>
+        
         <!--<div style="display: flex">-->
         <!--<canvas #canvas1 width="300" height="300"></canvas>-->
         <!--<canvas #canvas2 width="300" height="300"></canvas>-->
@@ -60,6 +67,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
 
 
     // BB.comBroker.setService(BB.SERVICES['SCENE_EDIT_VIEW'], self);
+    m_isLoading = true;
     m_selectedSceneID = undefined;
     m_sceneScrollTop = 0;
     m_sceneScrollLeft = 0;
@@ -90,9 +98,9 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
     @ViewChild('canvas2')
     canvas2;
 
-    constructor(private rp: RedPepperService, private el: ElementRef, private yp: YellowPepperService, private cd: ChangeDetectorRef, private bs: BlockService, private commBroker: CommBroker) {
+    constructor(private blockFactory: BlockFactoryService, private rp: RedPepperService, private el: ElementRef, private yp: YellowPepperService, private cd: ChangeDetectorRef, private bs: BlockService, private commBroker: CommBroker) {
         super();
-        this.cd.detach();
+        // this.cd.detach();
         // var a = new BlockFabric(bs);
     }
 
@@ -190,15 +198,16 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
      @method _listenSceneSelection
      **/
     _listenSceneSelection() {
-
-        this.yp.listenSceneSelected().subscribe((sceneData: ISceneData) => {
-            this.m_selectedSceneID = sceneData.scene_id;
-            this._loadScene();
-            this._sceneCanvasSelected();
-            // BB.comBroker.getService(BB.SERVICES['PROPERTIES_VIEW']).resetPropertiesView();
-            if (this._mementoInit())
-                this._mementoAddState();
-        })
+       this.cancelOnDestroy(
+           this.yp.listenSceneSelected().subscribe((sceneData: ISceneData) => {
+               this.m_selectedSceneID = sceneData.scene_id;
+               this._loadScene();
+               this._sceneCanvasSelected();
+               // BB.comBroker.getService(BB.SERVICES['PROPERTIES_VIEW']).resetPropertiesView();
+               if (this._mementoInit())
+                   this._mementoAddState();
+           })
+       )
     }
 
     /**
@@ -285,7 +294,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
      **/
     _initializeScene() {
         var scene_player_data = this.rp.getScenePlayerdata(this.m_selectedSceneID);
-        // this.m_sceneBlock = this.m_blockFactory.createBlock(this.m_selectedSceneID, scene_player_data, BB.CONSTS.PLACEMENT_IS_SCENE);
+        this.m_sceneBlock = this.blockFactory.createBlock(this.bs, this.rp, this.m_selectedSceneID, scene_player_data, PLACEMENT_IS_SCENE);
         this.m_sceneBlock.setCanvas(this.m_canvas, this.m_gridMagneticMode);
         //_.extend(this.m_canvas, this.m_sceneBlock);
     }
@@ -324,20 +333,34 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         var self = this;
         if (_.isUndefined(this.m_selectedSceneID))
             return -1;
-        this._sceneProcessing(true, jQueryAny.proxy(function () {
-            self._disposeBlocks();
-            self.disposeScene();
-            self._zoomReset();
-            // self.m_property.resetPropertiesView();
-            var domPlayerData = self.rp.getScenePlayerdataDom(self.m_selectedSceneID);
-            var l = $(domPlayerData).find('Layout').eq(0);
-            var w = $(l).attr('width');
-            var h = $(l).attr('height');
-            self._initializeCanvas(w, h);
-            // self._initializeScene(self.m_selectedSceneID);
-            self._initializeScene();
-            self._preRender(domPlayerData);
-        }), this);
+        this.m_isLoading = true;
+        self._disposeBlocks();
+        self.disposeScene();
+        self._zoomReset();
+        // self.m_property.resetPropertiesView();
+        var domPlayerData = self.rp.getScenePlayerdataDom(self.m_selectedSceneID);
+        var l = $(domPlayerData).find('Layout').eq(0);
+        var w = $(l).attr('width');
+        var h = $(l).attr('height');
+        self._initializeCanvas(w, h);
+        // self._initializeScene(self.m_selectedSceneID);
+        self._initializeScene();
+        self._preRender(domPlayerData);
+
+        // this._sceneProcessing(true, jQueryAny.proxy(function () {
+        //     self._disposeBlocks();
+        //     self.disposeScene();
+        //     self._zoomReset();
+        //     // self.m_property.resetPropertiesView();
+        //     var domPlayerData = self.rp.getScenePlayerdataDom(self.m_selectedSceneID);
+        //     var l = $(domPlayerData).find('Layout').eq(0);
+        //     var w = $(l).attr('width');
+        //     var h = $(l).attr('height');
+        //     self._initializeCanvas(w, h);
+        //     // self._initializeScene(self.m_selectedSceneID);
+        //     self._initializeScene();
+        //     self._preRender(domPlayerData);
+        // }), this);
     }
 
     /**
@@ -742,6 +765,8 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
      **/
     _sceneProcessing(i_status, i_callBack, from?) {
         if (i_status) {
+            this.m_isLoading = false;
+            this.cd.markForCheck();
             $('#sceneProcessing', this.el.nativeElement).css({
                 width: $('#scenePanelWrap').width(),
                 height: $('#scenePanelWrap').height()
@@ -1015,14 +1040,13 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
             this._render([i_blockIDs]);
             return;
         }
-        //todo: fix
-        // var newBlock = this.m_blockFactory.createBlock(blockData.blockID, blockData.player_data, PLACEMENT_SCENE, this.m_selectedSceneID);
-        // newBlock.setZindex(blockData.zIndex);
-        // var blockID = newBlock.getBlockData().blockID;
-        // newBlock.fabricateBlock(this.m_canvasScale,  () => {
-        //     this.m_blocks.blocksPost[blockID] = newBlock;
-        //     this._createBlock(i_blockIDs);
-        // });
+        var newBlock = this.blockFactory.createBlock(this.bs, this.rp, blockData.blockID, blockData.player_data, PLACEMENT_SCENE, this.m_selectedSceneID);
+        newBlock.setZindex(blockData.zIndex);
+        var blockID = newBlock.getBlockData().blockID;
+        newBlock.fabricateBlock(this.m_canvasScale,  () => {
+            this.m_blocks.blocksPost[blockID] = newBlock;
+            this._createBlock(i_blockIDs);
+        });
     }
 
     /**
