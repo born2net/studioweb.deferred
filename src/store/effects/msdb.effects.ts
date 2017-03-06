@@ -23,7 +23,7 @@ export class MsdbEffects {
     @Effect({dispatch: false})
     reduxifyMsdb$: Observable<Action> = this.actions$.ofType(EFFECT_INIT_REDUXIFY_MSDB)
         .do(() => {
-            this.redPepperService.reduxCommit();
+            this.redPepperService.reduxCommit(null, true);
         })
 
     //todo: add @Effect() getStations API as it is a pure side effecr

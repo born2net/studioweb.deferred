@@ -25,6 +25,7 @@ export class StoreService {
         this.singleton = true;
         this.rp.injectPseudoScenePlayersIDs();
         this.store.dispatch({type: EFFECT_INIT_REDUXIFY_MSDB})
+        // this.rp.reduxCommit();
         con('loaded network services...');
     }
 }

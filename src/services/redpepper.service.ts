@@ -106,11 +106,18 @@ export class RedPepperService {
      * if passed in table names, use them to sync to redux
      * if not, try and see if any pending pendingTableSync exist, if so sync to redux
      * if not, process the entire msdb table list to redux store
+     * if forceAll, just process all tables
      * @param tableNameTargets
+     * @param forceAll (pass 1st arg as null and 2nd as true)
      * @returns {redpepperTables}
      */
-    reduxCommit(tableNameTargets?: Array<string>): redpepperTables {
+    reduxCommit(tableNameTargets?: Array<string>, forceAll?: boolean): redpepperTables {
         var tablesNames: Array<string> = [];
+
+        if (forceAll){
+            this.m_tablesPendingToProcess = [];
+        }
+
         if (tableNameTargets) {
             tablesNames = tableNameTargets;
         } else {
@@ -686,8 +693,8 @@ export class RedPepperService {
      @param {Number} i_sceneID
      @return {Object} scene names
      **/
-    getSceneMimeType(i_sceneID, i_playerDataModels:List<PlayerDataModel>):string {
-        var found = i_playerDataModels.find((i_playerDataModel:PlayerDataModel)=> {
+    getSceneMimeType(i_sceneID, i_playerDataModels: List<PlayerDataModel>): string {
+        var found = i_playerDataModels.find((i_playerDataModel: PlayerDataModel) => {
             var domPlayerData = i_playerDataModel.getPlayerDataValue();
             return i_sceneID == jXML(domPlayerData).find('Player').attr('id')
         })
@@ -794,7 +801,7 @@ export class RedPepperService {
      Create a new player (a.k.a block) and add it to the specified channel_id
      @method createNewChannelPlayer
      **/
-    createNewChannelPlayer(i_campaign_timeline_chanel_id:number, i_addContents:IAddContents, i_boilerPlate, i_offset:number) {
+    createNewChannelPlayer(i_campaign_timeline_chanel_id: number, i_addContents: IAddContents, i_boilerPlate, i_offset: number) {
         con('adding block to channel ' + i_campaign_timeline_chanel_id);
         var timelinePlayers = this.databaseManager.table_campaign_timeline_chanel_players();
         var recTimelinePlayer = timelinePlayers.createRecord();
@@ -808,7 +815,7 @@ export class RedPepperService {
         recTimelinePlayer.campaign_timeline_chanel_id = i_campaign_timeline_chanel_id;
         recTimelinePlayer.player_duration = 10;
         recTimelinePlayer.player_offset_time = i_offset;
-        timelinePlayers.addRecord(recTimelinePlayer,null);
+        timelinePlayers.addRecord(recTimelinePlayer, null);
 
         this.addPendingTables(['table_campaign_timeline_chanel_players']);
     }
@@ -1774,9 +1781,9 @@ export class RedPepperService {
      Sterilize pseudo id to scene id always returns scene_id as an integer rather pseudo id
      @method sterilizePseudoId
      **/
-    sterilizePseudoIdFromScene(i_id, domPlayerData:XMLDocument) {
+    sterilizePseudoIdFromScene(i_id, domPlayerData: XMLDocument) {
         var id = parseInt(i_id);
-        if (_.isNaN(id)){
+        if (_.isNaN(id)) {
             var f = $(domPlayerData).find('Player').eq(0).attr('id');
             return f;
         }
