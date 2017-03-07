@@ -122,8 +122,6 @@ export class BlockFabricSvg extends BlockFabric {
             });
 
         }, 'text');
-
-
     }
 
     /**
