@@ -48,22 +48,17 @@ export const CAMPAIGN_LIST_LOADING = 'CAMPAIGN_LIST_LOADED';
         <small class="debug">{{me}}</small>
         <scene-toolbar (onToolbarAction)="_onToolbarAction($event)"></scene-toolbar>
         <div [ngClass]="{hidden: !m_isLoading}" >
-            <div id="sceneCanvasContainer" data-toggle="context" data-target="#sceneContextMenu" class="yScroll context sceneElements" style=" overflow-x: visible" align="center"></div>    
-        </div>
-        <div [ngClass]="{hidden: m_isLoading}" >
             <h1>Loading</h1>
         </div>
-        
-        <!--<div style="display: flex">-->
-        <!--<canvas #canvas1 width="300" height="300"></canvas>-->
-        <!--<canvas #canvas2 width="300" height="300"></canvas>-->
-        <!--</div>-->
+        <div [ngClass]="{hidden: m_isLoading}" >
+            <div id="sceneCanvasContainer" data-toggle="context" data-target="#sceneContextMenu" class="yScroll context sceneElements" style=" overflow-x: visible" align="center"></div>    
+        </div>
     `
 })
 export class SceneEditor extends Compbaser implements AfterViewInit {
 
-    public fabricCanvas1: fabric.IStaticCanvas;
-    public fabricCanvas2: fabric.IStaticCanvas;
+    // public fabricCanvas1: fabric.IStaticCanvas;
+    // public fabricCanvas2: fabric.IStaticCanvas;
 
 
     // BB.comBroker.setService(BB.SERVICES['SCENE_EDIT_VIEW'], self);
@@ -139,7 +134,6 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         self.SCALE_FACTOR = 1.2;
 
         self._listenSceneSelection();
-        self._initializeBlockFactory();
         self._listenAddBlockWizard();
         self._listenZoom();
         self._listenToCanvasScroll();
@@ -155,7 +149,6 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         self._listenGridMagnet();
         self._listenCanvasSelectionsFromToolbar();
         self._listenAppResized();
-        self._listenStackViewSelected();
         self._delegateSceneBlockModified();
     }
 
@@ -210,35 +203,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
        )
     }
 
-    /**
-     Init block factory if it hasn't already been loaded
-     @method _initializeBlockFactory
-     **/
-    _initializeBlockFactory() {
-        // var self = this;
-        // self.m_blockFactory = BB.comBroker.getService(BB.SERVICES['BLOCK_FACTORY']);
-        //
-        // if (self.m_blockFactory && self.m_blockFactory.blocksLoaded()) {
-        //     self._initDimensionProps();
-        //
-        // } else {
-        //
-        //     BB.comBroker.listenOnce(BB.EVENTS['BLOCKS_LOADED'],  () =>  {
-        //         self._initDimensionProps();
-        //     });
-        //
-        //     require(['BlockFactory'],  (BlockFactory) => {
-        //         self.m_blockFactory = new BlockFactory();
-        //         self.m_blockFactory.loadBlockModules();
-        //     });
-        // }
-    }
-
-    /**
-     Init the dimension props class
-     @method _initDimensionProps
-     **/
-    _initDimensionProps() {
+    // _initDimensionProps() {
         // var self = this;
         // require(['DimensionProps'],  (DimensionProps) => {
         //     self.m_dimensionProps = new DimensionProps({
@@ -260,7 +225,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         //     });
         //     self._sceneActive();
         // })
-    }
+    // }
 
     /**
      Bring the scene into view
@@ -296,7 +261,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         var scene_player_data = this.rp.getScenePlayerdata(i_selectedSceneID);
         this.m_sceneBlock = this.blockFactory.createBlock(i_selectedSceneID, scene_player_data);
         this.m_sceneBlock.setCanvas(this.m_canvas, this.m_gridMagneticMode);
-        //_.extend(this.m_canvas, this.m_sceneBlock);
+        ////_.extend(this.m_canvas, this.m_sceneBlock);
     }
 
     /**
@@ -764,14 +729,14 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
      **/
     _sceneProcessing(i_status, i_callBack, from?) {
         if (i_status) {
-            this.m_isLoading = false;
-            this.cd.markForCheck();
             $('#sceneProcessing', this.el.nativeElement).css({
                 width: $('#scenePanelWrap').width(),
                 height: $('#scenePanelWrap').height()
             })
             $('#sceneProcessing', this.el.nativeElement).fadeTo('fast', 0.7, i_callBack);
         } else {
+            this.m_isLoading = false;
+            this.cd.markForCheck();
             $('#sceneProcessing', this.el.nativeElement).fadeOut('slow', i_callBack);
         }
     }
