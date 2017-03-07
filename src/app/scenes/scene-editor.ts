@@ -49,6 +49,22 @@ export const CAMPAIGN_LIST_LOADING = 'CAMPAIGN_LIST_LOADED';
         <div [ngClass]="{hidden: m_isLoading}">
             <div id="sceneCanvasContainer" data-toggle="context" data-target="#sceneContextMenu" class="yScroll context sceneElements" style=" overflow-x: visible" align="center"></div>
         </div>
+        <div id="sceneContextMenu">
+            <ul id="sceneContext" class="dropdown-menu" role="menu">
+                <li>
+                    <a tabindex="-1" class="blocksOnly" name="cut" data-localize="cut">cut</a>
+                </li>
+                <li>
+                    <a tabindex="-1" class="blocksOnly" name="copy" data-localize="copy">copy</a>
+                </li>
+                <li>
+                    <a tabindex="-1" name="paste" data-localize="paste">paste</a>
+                </li>
+                <li>
+                    <a tabindex="-1" name="remove" class="blocksOnly" data-localize="remove">remove</a>
+                </li>
+            </ul>
+        </div>
     `
 })
 export class SceneEditor extends Compbaser implements AfterViewInit {
@@ -469,41 +485,45 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
      Listen to any canvas right click
      @method _listenContextMenu
      **/
+    /**
+     Listen to any canvas right click
+     @method _listenContextMenu
+     **/
     _listenContextMenu() {
-        // var self = this;
-        // $('#sceneCanvasContainer', this.el.nativeElement).contextmenu({
-        //     target: Elements.SCENE_CONTEXT_MENU,
-        //     before:  (e, element, target) => {
-        //         e.preventDefault();
-        //         // no canvas
-        //         if (_.isUndefined(self.m_canvas)) {
-        //             this.closemenu();
-        //             return false;
-        //         }
-        //         // remember right click position for pasting
-        //         self.m_mouseX = e.offsetX;
-        //         self.m_mouseY = e.offsetY;
-        //
-        //         // group selected
-        //         var active = self.m_canvas.getActiveGroup();
-        //         if (active) {
-        //             $('.blocksOnly', Elements.SCENE_CONTEXT_MENU).show();
-        //             return true;
-        //         }
-        //         // scene selected
-        //         var block = self.m_canvas.getActiveObject();
-        //         if (_.isNull(block)) {
-        //             $('.blocksOnly', Elements.SCENE_CONTEXT_MENU).hide();
-        //             return true;
-        //         }
-        //         // object selected
-        //         $('.blocksOnly', Elements.SCENE_CONTEXT_MENU).show();
-        //         return true;
-        //     }
-        //     onItem:  (context, e) => {
-        //         self._onContentMenuSelection($(e.target).attr('name'))
-        //     }
-        // });
+        var self = this;
+        jQueryAny('#sceneCanvasContainer', this.el.nativeElement).contextmenu({
+            target: '#sceneContextMenu',
+            before: function (e, element, target) {
+                e.preventDefault();
+                // no canvas
+                if (_.isUndefined(self.m_canvas)) {
+                    this.closemenu();
+                    return false;
+                }
+                // remember right click position for pasting
+                self.m_mouseX = e.offsetX;
+                self.m_mouseY = e.offsetY;
+
+                // group selected
+                var active = self.m_canvas.getActiveGroup();
+                if (active) {
+                    $('.blocksOnly', '#sceneContextMenu').show();
+                    return true;
+                }
+                // scene selected
+                var block = self.m_canvas.getActiveObject();
+                if (_.isNull(block)) {
+                    $('.blocksOnly', '#sceneContextMenu').hide();
+                    return true;
+                }
+                // object selected
+                $('.blocksOnly', '#sceneContextMenu').show();
+                return true;
+            },
+            onItem: function (context, e) {
+                self._onContentMenuSelection($(e.target).attr('name'))
+            }
+        });
     }
 
     /**
@@ -935,7 +955,6 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
             // self._drawGrid();
         }, 200);
     }
-
 
 
     /**
@@ -1605,7 +1624,6 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
 // }), this);
 
 
-
 // /**
 //  Listen to re-order of screen division, putting selected on top
 //  @method _listenPushToTop
@@ -1671,16 +1689,16 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
 // }
 
 // _listenStackViewSelected() {
-    // var appContentFaderView = BB.comBroker.getService(BB.SERVICES['APP_CONTENT_FADER_VIEW']);
-    // appContentFaderView.on(BB.EVENTS.SELECTED_STACK_VIEW,  (e) => {
-    //     if (e == BB.comBroker.getService(BB.SERVICES['SCENES_LOADER_VIEW'])) {
-    //         setTimeout( () => {
-    //             if (_.isUndefined(this.m_canvas))
-    //                 return;
-    //             this.m_canvas.calcOffset();
-    //         }, 500);
-    //     }
-    // });
+// var appContentFaderView = BB.comBroker.getService(BB.SERVICES['APP_CONTENT_FADER_VIEW']);
+// appContentFaderView.on(BB.EVENTS.SELECTED_STACK_VIEW,  (e) => {
+//     if (e == BB.comBroker.getService(BB.SERVICES['SCENES_LOADER_VIEW'])) {
+//         setTimeout( () => {
+//             if (_.isUndefined(this.m_canvas))
+//                 return;
+//             this.m_canvas.calcOffset();
+//         }, 500);
+//     }
+// });
 // }
 
 

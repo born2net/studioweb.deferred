@@ -35,6 +35,7 @@
         "./libs/jquery-ui.js",
         "./libs/jquery.knob.min.js",
         "./libs/bootstrap-timepicker/js/bootstrap-timepicker.min.js",
+        "./libs/contextmenu/bootstrap-contextmenu.js",
         "./store/signage_sdk.js",
         "../node_modules/bootstrap/dist/js/bootstrap.js",
         "../node_modules/bootbox/bootbox.js",
