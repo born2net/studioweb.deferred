@@ -648,6 +648,23 @@ export class RedPepperService {
     }
 
     /**
+     get a scene block playerdata
+     @method getScenePlayerdataBlock
+     @param {Number} i_scene_id
+     @param {Number} i_player_data_id
+     @return {Number} i_player_data_id
+     **/
+    getScenePlayerdataBlock(i_scene_id, i_player_data_id) {
+        i_scene_id = this.sterilizePseudoId(i_scene_id);
+        this.databaseManager.table_player_data().openForEdit(i_scene_id);
+        var recPlayerData = this.databaseManager.table_player_data().getRec(i_scene_id);
+        var player_data = recPlayerData['player_data_value'];
+        var domPlayerData = $.parseXML(player_data)
+        var foundSnippet = $(domPlayerData).find('[id="' + i_player_data_id + '"]');
+        return foundSnippet[0];
+    }
+
+    /**
      Assign viewers (screen divisions) on the timeline to channels, so we get one viewer per channel
      @method assignViewersToTimelineChannels
      @param {Number} i_campaign_timeline_board_template_id
@@ -1938,23 +1955,6 @@ export class RedPepperService {
         });
     }
 
-    /**
-     get a scene block playerdata
-     @method getScenePlayerdataBlock
-     @param {Number} i_scene_id
-     @param {Number} i_player_data_id
-     @return {Number} i_player_data_id
-     **/
-    getScenePlayerdataBlock(i_scene_id, i_player_data_id) {
-
-        i_scene_id = this.sterilizePseudoId(i_scene_id);
-        this.databaseManager.table_player_data().openForEdit(i_scene_id);
-        var recPlayerData = this.databaseManager.table_player_data().getRec(i_scene_id);
-        var player_data = recPlayerData['player_data_value'];
-        var domPlayerData = $.parseXML(player_data)
-        var foundSnippet = $(domPlayerData).find('[id="' + i_player_data_id + '"]');
-        return foundSnippet[0];
-    }
 
     /**
      set a block id inside a scene with new player_data

@@ -1,7 +1,6 @@
 import {BlockFabric} from "./block-fabric";
 import * as _ from "lodash";
 
-
 const blockType = 3130;
 
 export class BlockFabricImage extends BlockFabric {

@@ -352,11 +352,11 @@ export class BlockFabricScene extends BlockFabric {
      @param {event} e
      **/
     _toggleBackgroundColorHandler(e) {
-        var self = this;
-        $('#sceneCanvasContainer').find('.canvas-container').removeClass('checkers');
-        // Block.prototype._toggleBackgroundColorHandler.call(this, e);
-        if (self.m_placement == PLACEMENT_IS_SCENE)
-            self._populateSceneBg();
+        // var self = this;
+        // $('#sceneCanvasContainer').find('.canvas-container').removeClass('checkers');
+        // // Block.prototype._toggleBackgroundColorHandler.call(this, e);
+        // if (self.m_placement == PLACEMENT_IS_SCENE)
+        //     self._populateSceneBg();
     }
 
     /**
