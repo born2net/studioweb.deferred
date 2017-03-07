@@ -52,14 +52,6 @@ import * as _ from 'lodash';
                         <select #sceneSelection style="height: 30px" (change)="_onBlockSelected($event)" formControlName="blocks">
                             <option [value]="block.id" *ngFor="let block of m_blocks">{{block.name}}</option>
                         </select>
-
-                        <div class="input-group-btn">
-                            <button type="button" class="btn btn-default input-sm dropdown-toggle" data-toggle="dropdown">
-                                <span data-localize="sceneBlockList">Scene</span>
-                                <span class="caret"></span>
-                            </button>
-                            <ul id="sceneBlockList" class="selectSceneItemDropDown dropdown-menu"></ul>
-                        </div>
                     </div>
                 </div>
             </div>
