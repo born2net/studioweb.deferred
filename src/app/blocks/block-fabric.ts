@@ -72,14 +72,14 @@ export class BlockFabric extends fabric.Group {
             case PLACEMENT_SCENE: {
                 this.m_pepper.setScenePlayerdataBlock(self.m_sceneID, self.m_block_id, player_data);
                 if (!i_noNotify)
-                    // self._announceBlockChanged();
-                break;
+                // self._announceBlockChanged();
+                    break;
             }
             case PLACEMENT_IS_SCENE: {
                 this.m_pepper.setScenePlayerData(self.m_block_id, player_data);
                 if (!i_noNotify)
-                    // self._announceBlockChanged();
-                break;
+                // self._announceBlockChanged();
+                    break;
             }
         }
     }
@@ -346,6 +346,23 @@ export class BlockFabric extends fabric.Group {
         /* semi-abstract, overridden, do not modify */
         var self = this;
         self._deleteBlock(i_memoryOnly);
+    }
+
+    /**
+     bug fix: backward comparability with player_data that includes deleted resources
+     this was already fixed but we live _selfDestruct for backwards compatability
+     @method _selfDestruct
+     **/
+    _selfDestruct() {
+        setTimeout( () => {
+            //todo: ???
+            // var sceneEditView = BB.comBroker.getService(BB.SERVICES['SCENE_EDIT_VIEW']);
+            // if (!_.isUndefined(sceneEditView)) {
+            //     var selectedSceneID = sceneEditView.getSelectedSceneID();
+            //     pepper.removeScenePlayer(selectedSceneID, self.m_block_id);
+            //     BB.comBroker.fire(BB.EVENTS.LOAD_SCENE, this, null, selectedSceneID);
+            // }
+        }, 2000);
     }
 
     /**

@@ -6,7 +6,6 @@ import {PLACEMENT_IS_SCENE} from "../../interfaces/Consts";
 
 export const SCENE_BG_COLOR_CHANGED = 'SCENE_BG_COLOR_CHANGED';
 export const SCENE_BLOCK_DIMENSIONS_CHANGE = 'SCENE_BLOCK_DIMENSIONS_CHANGE';
-
 const blockType = 3510;
 
 export class BlockFabricScene extends BlockFabric {
@@ -41,7 +40,6 @@ export class BlockFabricScene extends BlockFabric {
         // }
         // $(Elements.SELECTED_CHANNEL_RESOURCE_NAME).text('Scene type: ' + sceneMime.split('.')[1]);
     }
-
 
     /**
      set player data for a scene
@@ -285,6 +283,7 @@ export class BlockFabricScene extends BlockFabric {
         //         break;
         //     }
         // }
+        this._populateSceneBg();
     }
 
     /**

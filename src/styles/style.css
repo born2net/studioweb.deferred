@@ -1090,3 +1090,12 @@ form .list-group, form .list-group-item {
     background-image: url(data:image/gif;base64,R0lGODlhMgAyAKIAAAAAAP///+rq6tLS0v///wAAAAAAAAAAACH5BAEAAAQALAAAAAAyADIAAAN8OLrc/jA6Qau9OOtdFf9gSHliaY7DqYbk6mbtK6NzLcT2iufnzpe+HyslVAWLnCNSo1ximk4LNEqjgqZUbFTr5C69SHBRLCT/zDx0Tm1j19wzuEz+orvsOqI1qd8z+35PgIFSg4RVhxd4RoaHiz2NhI8mk0CRgRKZmpsNCQA7);
     display: inline-block;
 }
+
+.basicBorder {
+    border: 1px solid rgb(170, 170, 170);
+}
+
+.lockPosition input {
+    position: relative;
+    left: 50px;
+}

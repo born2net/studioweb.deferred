@@ -30,6 +30,16 @@ export class RedPepperService {
     private m_tempScenePlayerIDs: any;
     private databaseManager: IDataBaseManager;
 
+    private m_authenticated = false;
+    private m_domain;
+    private m_whiteLabel;
+    private m_resellerId = -1;
+    private m_resellerName = '';
+    private m_businessID = -1;
+    private m_eri = '';
+    private m_authTime;
+
+
     public dbConnect(i_user, i_pass): Observable<any> {
         return Observable.create(observer => {
             this.m_loaderManager = new LoaderManager() as ILoadManager;
@@ -42,6 +52,18 @@ export class RedPepperService {
                     loadManager: this.m_loaderManager,
                 }
                 observer.next(pepperConnection);
+                
+                if (pepperAuthReply.status == true){
+                    this.m_authenticated = true;
+                    this.m_domain = this.m_loaderManager['m_domain'];
+                    var resellerInfo = this.m_loaderManager['m_resellerInfo'];
+                    this.m_whiteLabel = parseInt($(resellerInfo).find('WhiteLabel').attr('enabled'));
+                    this.m_resellerId = parseInt($(resellerInfo).find('BusinessInfo').attr('businessId'));
+                    this.m_resellerName = $(resellerInfo).find('BusinessInfo').attr('name');
+                    this.m_businessID = this.m_loaderManager['m_businessId'];
+                    this.m_eri = this.m_loaderManager['m_eri'];
+                    this.m_authTime = Date.now();
+                }
             });
         })
     }

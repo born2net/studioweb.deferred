@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 import X2JS from "x2js";
 import {RedPepperService} from "./redpepper.service";
 import {BlockFabric} from "../app/blocks/block-fabric";
+import {BlockFabricImage} from "../app/blocks/block-fabric-image";
 
 @Injectable()
 export class BlockFactoryService {
@@ -52,6 +53,8 @@ export class BlockFactoryService {
 
         var blockCode = parseInt(playerData['Player']['_player']);
 
+        con('creating block ' + blockCode);
+        
         switch (blockCode) {
             case BlockLabels.BLOCKCODE_SCENE: {
                 block = new BlockFabricScene({
@@ -61,12 +64,12 @@ export class BlockFactoryService {
                 break;
             }
 
-            case BlockLabels.IMAGE: {
-                block = new BlockFabric({
+            case BlockLabels.BLOCKCODE_IMAGE: {
+                block = new BlockFabricImage({
                     i_placement: i_placement,
                     i_block_id: block_id,
                     i_scene_player_data_id: i_scene_id
-                }, bs, rp, 3241);
+                }, bs, rp);
                 break;
             }
 
