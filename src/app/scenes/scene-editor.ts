@@ -8,6 +8,7 @@ import * as _ from "lodash";
 import {PLACEMENT_IS_SCENE, PLACEMENT_SCENE} from "../../interfaces/Consts";
 import {Consts} from "../../Conts";
 import {BlockFactoryService} from "../../services/block-factory-service";
+import {BlockFabric} from "../blocks/block-fabric";
 
 export const JSON_EVENT_ROW_CHANGED = 'JSON_EVENT_ROW_CHANGED';
 export const STATIONS_POLL_TIME_CHANGED = 'STATIONS_POLL_TIME_CHANGED';
@@ -305,21 +306,20 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
      @return {Number} Unique clientId.
      **/
     _loadScene() {
-        var self = this;
         if (_.isUndefined(this.m_selectedSceneID))
             return -1;
         this.m_isLoading = true;
-        self._disposeBlocks();
-        self.disposeScene();
-        self._zoomReset();
-        // self.m_property.resetPropertiesView();
-        var domPlayerData = self.rp.getScenePlayerdataDom(self.m_selectedSceneID);
+        this._disposeBlocks();
+        this.disposeScene();
+        this._zoomReset();
+        // this.m_property.resetPropertiesView();
+        var domPlayerData = this.rp.getScenePlayerdataDom(this.m_selectedSceneID);
         var l = $(domPlayerData).find('Layout').eq(0);
         var w = $(l).attr('width');
         var h = $(l).attr('height');
-        self._initializeCanvas(w, h);
-        self._initializeScene(self.m_selectedSceneID);
-        self._preRender(domPlayerData);
+        this._initializeCanvas(w, h);
+        this._initializeScene(this.m_selectedSceneID);
+        this._preRender(domPlayerData);
     }
 
     /**
@@ -387,6 +387,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                 // this.m_property.resetPropertiesView();
                 this.m_selectedSceneID = undefined;
                 $('#sceneCanvas', this.el.nativeElement).removeClass('basicBorder');
+                this.rp.reduxCommit();
                 // this._updateBlockCount();
                 // this.commBroker.fire({event: REMOVED_SCENE, fromInstance: this, message: this.m_selected_resource_id});
             })
@@ -559,6 +560,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                     });
                     this.m_canvas.renderAll();
                     // this._updateBlockCount();
+                    this.rp.reduxCommit();
                     break;
                 }
 
@@ -571,6 +573,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                     });
                     this.m_canvas.renderAll();
                     // this._updateBlockCount();
+                    this.rp.reduxCommit();
                     break;
                 }
 
@@ -604,6 +607,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                         this.commBroker.fire({event: SCENE_BLOCK_CHANGE, fromInstance: this, message: blockID});
                     }
                     // this._updateBlockCount();
+                    this.rp.reduxCommit();
                     break;
                 }
             }
@@ -670,6 +674,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                 $(domPlayerData).find('Player').attr('id', blockID);
                 player_data = (new XMLSerializer()).serializeToString(domPlayerData);
                 this.rp.appendScenePlayerBlock(this.m_selectedSceneID, player_data);
+                this.rp.reduxCommit();
                 this.commBroker.fire({event: SCENE_BLOCK_CHANGE, fromInstance: this, message: [blockID]});
             })
         )
@@ -763,6 +768,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         var player_data = this.m_memento[this.m_selectedSceneID].playerData[cursor];
         this.rp.setScenePlayerData(this.m_selectedSceneID, player_data);
         this._loadScene();
+        this.rp.reduxCommit();
         this.commBroker.fire({event: SCENE_LIST_UPDATED, fromInstance: this});
     }
 
@@ -792,6 +798,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
             }
         }
         this.rp.setScenePlayerData(this.m_selectedSceneID, (new XMLSerializer()).serializeToString(sceneDomPlayerData));
+        this.rp.reduxCommit();
     }
 
     /**
@@ -978,18 +985,21 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
      @param {Event} e
      **/
     _sceneBlockScaled(e) {
-        if (this.m_objectScaling)
+        var self = this;
+        if (self.m_objectScaling)
             return;
-        this.m_objectScaling = 1;
+        self.m_objectScaling = 1;
         var block = e.target;
         if (_.isUndefined(block))
             return;
-        block.on('modified', () => {
-            setTimeout(() => {
+        block.on('modified', function () {
+            setTimeout(function () {
                 block.off('modified');
+                if (!(block instanceof BlockFabric))
+                    return;
                 var blockID = block.getBlockData().blockID;
-                this.commBroker.fire({event: SCENE_BLOCK_CHANGE, fromInstance: this, message: [blockID]});
-                this.m_objectScaling = 0;
+                self.commBroker.fire({event: SCENE_BLOCK_CHANGE, fromInstance: this, message: [blockID]});
+                self.m_objectScaling = 0;
             }, 15);
         });
     }
@@ -1195,6 +1205,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         layout.attr('height', parseInt(h));
         var player_data = (new XMLSerializer()).serializeToString(domPlayerData);
         this.rp.setScenePlayerdataBlock(this.m_selectedSceneID, blockID, player_data);
+        this.rp.reduxCommit();
     }
 
     /**
@@ -1520,6 +1531,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         if (i_loadScene)
             this._loadScene();
         this.commBroker.fire({event: SCENE_LIST_UPDATED, fromInstance: this});
+        this.rp.reduxCommit();
     }
 
     /**

@@ -229,6 +229,209 @@ export class RedPepperService {
         this.addPendingTables(['table_player_data']);
     }
 
+    /**
+     Remove a scene
+     @method removeScene
+     **/
+    removeScene(i_scene_player_data_id) {
+        var i_scene_id = this.sterilizePseudoId(i_scene_player_data_id);
+        this.databaseManager.table_player_data().openForDelete(i_scene_id);
+        this.addPendingTables(['table_player_data']);
+    }
+
+    /**
+     Remove all player ids from i_domPlayerData
+     @method stripPlayersID
+     **/
+    stripPlayersID(i_domPlayerData) {
+        $(i_domPlayerData).removeAttr('id');
+        return i_domPlayerData;
+    }
+
+    /**
+     Remove specific player id (i.e.: block) from scene player_data
+     @method removeScenePlayer
+     @param {Number} i_scene_id
+     @param {Number} i_player_id
+     **/
+    removeScenePlayer(i_scene_id, i_player_data_id) {
+        i_scene_id = this.sterilizePseudoId(i_scene_id);
+        this.databaseManager.table_player_data().openForEdit(i_scene_id);
+        var recPlayerData = this.databaseManager.table_player_data().getRec(i_scene_id);
+        var player_data = recPlayerData['player_data_value'];
+        var domPlayerData = $.parseXML(player_data)
+        $(domPlayerData).find('[id="' + i_player_data_id + '"]').remove();
+        this.setScenePlayerData(i_scene_id, (new XMLSerializer()).serializeToString(domPlayerData));
+        this.addPendingTables(['table_player_data']);
+    }
+
+    /**
+     append scene player block to pepper player_data table
+     @method appendScenePlayerBlock
+     @param {Number} i_scene_id
+     @param {XML} i_player_data
+     **/
+    appendScenePlayerBlock(i_scene_id, i_player_data) {
+        i_scene_id = this.sterilizePseudoId(i_scene_id);
+        this.databaseManager.table_player_data().openForEdit(i_scene_id);
+        var recPlayerData = this.databaseManager.table_player_data().getRec(i_scene_id);
+        var scene_player_data = recPlayerData['player_data_value'];
+        var sceneDomPlayerData = $.parseXML(scene_player_data);
+        var playerData: any = $.parseXML(i_player_data);
+        // use first child to overcome the removal by jXML of the HTML tag
+        $(sceneDomPlayerData).find('Players').append(playerData.firstChild);
+        // $(sceneDomPlayerData).find('Players').append($(i_player_data));
+        var player_data = this.xmlToStringIEfix(sceneDomPlayerData);
+        recPlayerData['player_data_value'] = player_data;
+        this.addPendingTables(['table_player_data']);
+    }
+
+    /**
+     set a block id inside a scene with new player_data
+     @method setScenePlayerdataBlock
+     @param {Number} i_scene_id
+     @param {Number} i_player_data_id
+     @param {XML} player_data
+     **/
+    setScenePlayerdataBlock(i_scene_id, i_player_data_id, i_player_data) {
+        i_scene_id = this.sterilizePseudoId(i_scene_id);
+        this.databaseManager.table_player_data().openForEdit(i_scene_id);
+        var recPlayerData = this.databaseManager.table_player_data().getRec(i_scene_id);
+        var player_data = recPlayerData['player_data_value'];
+        var domPlayerData = $.parseXML(player_data);
+        var playerData: any = $.parseXML(i_player_data);
+        // use first child to overcome the removal by jXML of the HTML tag
+        $(domPlayerData).find('[id="' + i_player_data_id + '"]').replaceWith(playerData.firstChild);
+        player_data = this.xmlToStringIEfix(domPlayerData);
+        this.setScenePlayerData(i_scene_id, player_data);
+        this.addPendingTables(['table_player_data']);
+    }
+
+    /**
+     Create a new Scene
+     If mimetype was give as an argument and it's of format
+     Json.xxxx (i.e.: Json.weather, Json.spreadsheet ...) add it to scene table as well
+     @method createScene
+     @optional i_mimeType
+     @optional i_name
+     @return {Number} scene player_data id
+     **/
+    createScene(i_player_data, i_mimeType, i_name) {
+        var table_player_data: any = this.databaseManager.table_player_data();
+        var recPlayerData = table_player_data.createRecord();
+        if (i_mimeType && i_mimeType.match(/Json./)) {
+            i_player_data = $.parseXML(i_player_data);
+            $(i_player_data).find('Player').attr('mimeType', i_mimeType);
+            i_player_data = this.xmlToStringIEfix(i_player_data);
+        }
+        if (!_.isUndefined(i_name)) {
+            i_player_data = $.parseXML(i_player_data);
+            $(i_player_data).find('Player').attr('label', i_name);
+            i_player_data = this.xmlToStringIEfix(i_player_data);
+        }
+        recPlayerData['player_data_value'] = i_player_data;
+        table_player_data.addRecord(recPlayerData);
+        var scene_id = recPlayerData['player_data_id'];
+        this.injectPseudoScenePlayersIDs(scene_id);
+        // this.databaseManager.fire(Pepper['SCENE_CREATED'], this, null, recPlayerData['player_data_id']);
+        this.addPendingTables(['table_player_data']);
+        return this.getPseudoIdFromSceneId(scene_id);
+    }
+
+    /**
+     Translate a scene id to its matching pseudo scene id
+     @method getPseudoIdFromSceneId
+     @param {Number} i_scene_id
+     @return {Number} pseudo id
+     **/
+    getPseudoIdFromSceneId(i_scene_id) {
+        var found = undefined;
+        var scenes = this.getScenes();
+        _.each(scenes, function (domPlayerData, scene_id) {
+            var injectedID = $(domPlayerData).find('Player').eq(0).attr('id');
+            if (i_scene_id == scene_id)
+                found = injectedID;
+        });
+        return found;
+    }
+
+    /**
+     Remove the scene from any block collection which resides in campaign timeline channels that uses that scene in its collection list
+     @method removeSceneFromBlockCollectionsInChannels
+     @param {Number} i_scene_id
+     @return none
+     **/
+    removeSceneFromBlockCollectionsInChannels(i_scene_id) {
+        $(this.databaseManager.table_campaign_timeline_chanel_players().getAllPrimaryKeys()).each(function (k, campaign_timeline_chanel_player_id) {
+            var recCampaignTimelineChannelPlayer = this.databaseManager.table_campaign_timeline_chanel_players().getRec(campaign_timeline_chanel_player_id);
+            var playerData = recCampaignTimelineChannelPlayer['player_data'];
+            var domPlayerData = $.parseXML(playerData);
+            var blockType = $(domPlayerData).find('Player').attr('player');
+            if (blockType == 'CONSTS.BLOCKCODE_COLLECTION') {
+                $(domPlayerData).find('Collection').children().each(function (k, page) {
+                    var scene_hDataSrc;
+                    var type = $(page).attr('type');
+                    if (type == 'scene') {
+                        scene_hDataSrc = $(page).find('Player').attr('hDataSrc');
+                        if (scene_hDataSrc == i_scene_id) {
+                            $(page).remove();
+                            var player_data = this.xmlToStringIEfix(domPlayerData)
+                            this.databaseManager.table_campaign_timeline_chanel_players().openForEdit(campaign_timeline_chanel_player_id);
+                            this.databaseManager.setCampaignTimelineChannelPlayerRecord(campaign_timeline_chanel_player_id, 'player_data', player_data);
+                        }
+                    }
+                });
+            }
+        });
+        this.addPendingTables(['table_campaign_timeline_chanel_players']);
+    }
+
+    /**
+     Remove all refernce to a scene id from within Scenes > BlockCollections that refer to that particulat scene id
+     In other words, check all scenes for existing block collections, and if they refer to scene_id, remove that entry
+     @method removeSceneFromBlockCollectionWithSceneId
+     @param {Number} i_scene_id scene id to search for and remove in all scenes > BlockCollections
+     **/
+    removeSceneFromBlockCollectionInScenes(i_scene_id) {
+        $(this.databaseManager.table_player_data().getAllPrimaryKeys()).each(function (k, player_data_id) {
+            var recPlayerData = this.databaseManager.table_player_data().getRec(player_data_id);
+            var domSceneData = $.parseXML(recPlayerData['player_data_value']);
+            var currentSceneID = $(domSceneData).find('Player').eq(0).attr('id');
+            $(domSceneData).find('Player').each(function (i, playerData) {
+                $(playerData).find('[player="' + 'CONSTS.BLOCKCODE_COLLECTION' + '"]').each(function (i, playerDataBlockCollection) {
+                    $(playerDataBlockCollection).find('Collection').children().each(function (k, page) {
+                        var scene_id = $(page).find('Player').attr('hDataSrc');
+                        if (scene_id == i_scene_id) {
+                            $(page).remove();
+                            currentSceneID = this.sterilizePseudoId(currentSceneID);
+                            this.databaseManager.table_player_data().openForEdit(currentSceneID);
+                            var player_data = this.xmlToStringIEfix(domSceneData);
+                            recPlayerData['player_data_value'] = player_data;
+                        }
+                    });
+                });
+            });
+        });
+        this.addPendingTables(['table_player_data']);
+    }
+
+    /**
+     Remove blocks (a.k.a players) from all campaign timeline  channels that use the specified scene_id
+     @method removeBlocksWithSceneID
+     @param {Number} i_scene_id
+     @return none
+     **/
+    removeBlocksWithSceneID(i_scene_id) {
+        $(this.databaseManager.table_campaign_timeline_chanel_players().getAllPrimaryKeys()).each(function (k, campaign_timeline_chanel_player_id) {
+            var recCampaignTimelineChannelPlayer = this.databaseManager.table_campaign_timeline_chanel_players().getRec(campaign_timeline_chanel_player_id);
+            var playerData = recCampaignTimelineChannelPlayer['player_data'];
+            var domPlayerData = $.parseXML(playerData);
+            var scene_id = $(domPlayerData).find('Player').attr('hDataSrc');
+            if (scene_id == i_scene_id)
+                this.databaseManager.removeBlockFromTimelineChannel(campaign_timeline_chanel_player_id);
+        });
+        this.addPendingTables(['table_campaign_timeline_chanel_players']);
+    }
 
     /**
      Change a viewer's (aka screen division) order (layer) z-order
@@ -917,6 +1120,17 @@ export class RedPepperService {
     }
 
     /**
+     Get Scene player data
+     @method getScenePlayerdata
+     @param {Number} i_scene_id
+     @return {Object} XML scene player data
+     **/
+    getScenePlayerdata(i_scene_id) {
+        i_scene_id = this.sterilizePseudoId(i_scene_id);
+        return this.getScenePlayerRecord(i_scene_id)['player_data_value'];
+    }
+
+    /**
      Get all timeline ids for specified campaign
      @method getCampaignTimelines
      @param {Number} i_campaign_id
@@ -1223,6 +1437,19 @@ export class RedPepperService {
         this.addPendingTables(['table_campaign_timeline_board_templates']);
         return foundTemplatesIDs;
     }
+
+    /**
+     Get Scene player data as dom
+     @method getScenePlayerdataDom
+     @param {Number} i_sceneID
+     @return {Object} dom
+     **/
+    getScenePlayerdataDom(i_scene_id) {
+        i_scene_id = this.sterilizePseudoId(i_scene_id);
+        var scene_player_data = this.getScenePlayerRecord(i_scene_id)['player_data_value'];
+        return $.parseXML(scene_player_data)
+    }
+
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // below here need to review code
@@ -1662,37 +1889,6 @@ export class RedPepperService {
     }
 
     /**
-     Create a new Scene
-     If mimetype was give as an argument and it's of format
-     Json.xxxx (i.e.: Json.weather, Json.spreadsheet ...) add it to scene table as well
-     @method createScene
-     @optional i_mimeType
-     @optional i_name
-     @return {Number} scene player_data id
-     **/
-    createScene(i_player_data, i_mimeType, i_name) {
-
-        var table_player_data: any = this.databaseManager.table_player_data();
-        var recPlayerData = table_player_data.createRecord();
-        if (i_mimeType && i_mimeType.match(/Json./)) {
-            i_player_data = $.parseXML(i_player_data);
-            $(i_player_data).find('Player').attr('mimeType', i_mimeType);
-            i_player_data = this.xmlToStringIEfix(i_player_data);
-        }
-        if (!_.isUndefined(i_name)) {
-            i_player_data = $.parseXML(i_player_data);
-            $(i_player_data).find('Player').attr('label', i_name);
-            i_player_data = this.xmlToStringIEfix(i_player_data);
-        }
-        recPlayerData['player_data_value'] = i_player_data;
-        table_player_data.addRecord(recPlayerData);
-        var scene_id = recPlayerData['player_data_id'];
-        this.injectPseudoScenePlayersIDs(scene_id);
-        // this.databaseManager.fire(Pepper['SCENE_CREATED'], this, null, recPlayerData['player_data_id']);
-        return this.getPseudoIdFromSceneId(scene_id);
-    }
-
-    /**
      Returns this model's attributes as...
      @method xmlToStringIEfix
      @param {Object} i_domPlayerData
@@ -1790,28 +1986,6 @@ export class RedPepperService {
     // }
 
     /**
-     append scene player block to pepper player_data table
-     @method appendScenePlayerBlock
-     @param {Number} i_scene_id
-     @param {XML} i_player_data
-     **/
-    appendScenePlayerBlock(i_scene_id, i_player_data) {
-
-        i_scene_id = this.sterilizePseudoId(i_scene_id);
-        this.databaseManager.table_player_data().openForEdit(i_scene_id);
-        var recPlayerData = this.databaseManager.table_player_data().getRec(i_scene_id);
-        var scene_player_data = recPlayerData['player_data_value'];
-        var sceneDomPlayerData = $.parseXML(scene_player_data);
-        var playerData: any = $.parseXML(i_player_data);
-        // use first child to overcome the removal by jXML of the HTML tag
-        $(sceneDomPlayerData).find('Players').append(playerData.firstChild);
-        // $(sceneDomPlayerData).find('Players').append($(i_player_data));
-        var player_data = this.xmlToStringIEfix(sceneDomPlayerData);
-        recPlayerData['player_data_value'] = player_data;
-    }
-
-
-    /**
      Get a unique scene > player id
      @method generateSceneId
      @return {Number} Unique scene player id
@@ -1847,24 +2021,6 @@ export class RedPepperService {
     }
 
     /**
-     Translate a scene id to its matching pseudo scene id
-     @method getPseudoIdFromSceneId
-     @param {Number} i_scene_id
-     @return {Number} pseudo id
-     **/
-    getPseudoIdFromSceneId(i_scene_id) {
-
-        var found = undefined;
-        var scenes = this.getScenes();
-        _.each(scenes, function (domPlayerData, scene_id) {
-            var injectedID = $(domPlayerData).find('Player').eq(0).attr('id');
-            if (i_scene_id == scene_id)
-                found = injectedID;
-        });
-        return found;
-    }
-
-    /**
      Remove all player ids from player_data inside a scene
      @method stripScenePlayersIDs
      **/
@@ -1881,33 +2037,6 @@ export class RedPepperService {
             });
             this.databaseManager.setScenePlayerData(scene_id, (new XMLSerializer()).serializeToString(domPlayerData));
         });
-    }
-
-    /**
-     Remove all player ids from i_domPlayerData
-     @method stripPlayersID
-     **/
-    stripPlayersID(i_domPlayerData) {
-
-        $(i_domPlayerData).removeAttr('id');
-        return i_domPlayerData;
-    }
-
-    /**
-     Remove specific player id (i.e.: block) from scene player_data
-     @method removeScenePlayer
-     @param {Number} i_scene_id
-     @param {Number} i_player_id
-     **/
-    removeScenePlayer(i_scene_id, i_player_data_id) {
-
-        i_scene_id = this.sterilizePseudoId(i_scene_id);
-        this.databaseManager.table_player_data().openForEdit(i_scene_id);
-        var recPlayerData = this.databaseManager.table_player_data().getRec(i_scene_id);
-        var player_data = recPlayerData['player_data_value'];
-        var domPlayerData = $.parseXML(player_data)
-        $(domPlayerData).find('[id="' + i_player_data_id + '"]').remove();
-        this.setScenePlayerData(i_scene_id, (new XMLSerializer()).serializeToString(domPlayerData));
     }
 
     /**
@@ -1934,16 +2063,6 @@ export class RedPepperService {
     }
 
     /**
-     Remove a scene
-     @method removeScene
-     **/
-    removeScene(i_scene_player_data_id) {
-
-        var i_scene_id = this.sterilizePseudoId(i_scene_player_data_id);
-        this.databaseManager.table_player_data().openForDelete(i_scene_id);
-    }
-
-    /**
      When we remove scene player ids we actually store them aside so we can restore them back after a save as the
      remote server expects a scene's player_data to have no player ids on its scene player_data
      @method restoreScenesWithPlayersIDs
@@ -1953,28 +2072,6 @@ export class RedPepperService {
         _.each(this.m_tempScenePlayerIDs, function (scene_player_data, scene_id) {
             this.databaseManager.setScenePlayerData(scene_id, scene_player_data);
         });
-    }
-
-
-    /**
-     set a block id inside a scene with new player_data
-     @method setScenePlayerdataBlock
-     @param {Number} i_scene_id
-     @param {Number} i_player_data_id
-     @param {XML} player_data
-     **/
-    setScenePlayerdataBlock(i_scene_id, i_player_data_id, i_player_data) {
-
-        i_scene_id = this.sterilizePseudoId(i_scene_id);
-        this.databaseManager.table_player_data().openForEdit(i_scene_id);
-        var recPlayerData = this.databaseManager.table_player_data().getRec(i_scene_id);
-        var player_data = recPlayerData['player_data_value'];
-        var domPlayerData = $.parseXML(player_data);
-        var playerData: any = $.parseXML(i_player_data);
-        // use first child to overcome the removal by jXML of the HTML tag
-        $(domPlayerData).find('[id="' + i_player_data_id + '"]').replaceWith(playerData.firstChild);
-        player_data = this.xmlToStringIEfix(domPlayerData);
-        this.setScenePlayerData(i_scene_id, player_data);
     }
 
     /**
@@ -2001,31 +2098,6 @@ export class RedPepperService {
     getScenePlayerRecord(i_scene_id) {
 
         return this.databaseManager.table_player_data().getRec(i_scene_id);
-    }
-
-    /**
-     Get Scene player data
-     @method getScenePlayerdata
-     @param {Number} i_scene_id
-     @return {Object} XML scene player data
-     **/
-    getScenePlayerdata(i_scene_id) {
-
-        i_scene_id = this.sterilizePseudoId(i_scene_id);
-        return this.getScenePlayerRecord(i_scene_id)['player_data_value'];
-    }
-
-    /**
-     Get Scene player data as dom
-     @method getScenePlayerdataDom
-     @param {Number} i_sceneID
-     @return {Object} dom
-     **/
-    getScenePlayerdataDom(i_scene_id) {
-
-        i_scene_id = this.sterilizePseudoId(i_scene_id);
-        var scene_player_data = this.getScenePlayerRecord(i_scene_id)['player_data_value'];
-        return $.parseXML(scene_player_data)
     }
 
     // /**
@@ -2313,24 +2385,6 @@ export class RedPepperService {
     }
 
     /**
-     Remove blocks (a.k.a players) from all campaign timeline  channels that use the specified scene_id
-     @method removeBlocksWithSceneID
-     @param {Number} i_scene_id
-     @return none
-     **/
-    removeBlocksWithSceneID(i_scene_id) {
-
-        $(this.databaseManager.table_campaign_timeline_chanel_players().getAllPrimaryKeys()).each(function (k, campaign_timeline_chanel_player_id) {
-            var recCampaignTimelineChannelPlayer = this.databaseManager.table_campaign_timeline_chanel_players().getRec(campaign_timeline_chanel_player_id);
-            var playerData = recCampaignTimelineChannelPlayer['player_data'];
-            var domPlayerData = $.parseXML(playerData);
-            var scene_id = $(domPlayerData).find('Player').attr('hDataSrc');
-            if (scene_id == i_scene_id)
-                this.databaseManager.removeBlockFromTimelineChannel(campaign_timeline_chanel_player_id);
-        });
-    }
-
-    /**
      Remove all refernce to a resource id from within Scenes > BlockCollections that refer to that particulat resource id
      In other words, check all scenes for existing block collections, and if they refer to resource id, remove that entry
      @method removeResourceFromBlockCollectionInScenes
@@ -2356,66 +2410,6 @@ export class RedPepperService {
                     });
                 });
             });
-        });
-    }
-
-    /**
-     Remove all refernce to a scene id from within Scenes > BlockCollections that refer to that particulat scene id
-     In other words, check all scenes for existing block collections, and if they refer to scene_id, remove that entry
-     @method removeSceneFromBlockCollectionWithSceneId
-     @param {Number} i_scene_id scene id to search for and remove in all scenes > BlockCollections
-     **/
-    removeSceneFromBlockCollectionInScenes(i_scene_id) {
-
-        $(this.databaseManager.table_player_data().getAllPrimaryKeys()).each(function (k, player_data_id) {
-            var recPlayerData = this.databaseManager.table_player_data().getRec(player_data_id);
-            var domSceneData = $.parseXML(recPlayerData['player_data_value']);
-            var currentSceneID = $(domSceneData).find('Player').eq(0).attr('id');
-            $(domSceneData).find('Player').each(function (i, playerData) {
-                $(playerData).find('[player="' + 'CONSTS.BLOCKCODE_COLLECTION' + '"]').each(function (i, playerDataBlockCollection) {
-                    $(playerDataBlockCollection).find('Collection').children().each(function (k, page) {
-                        var scene_id = $(page).find('Player').attr('hDataSrc');
-                        if (scene_id == i_scene_id) {
-                            $(page).remove();
-                            currentSceneID = this.sterilizePseudoId(currentSceneID);
-                            this.databaseManager.table_player_data().openForEdit(currentSceneID);
-                            var player_data = this.xmlToStringIEfix(domSceneData);
-                            recPlayerData['player_data_value'] = player_data;
-                        }
-                    });
-                });
-            });
-        });
-    }
-
-    /**
-     Remove the scene from any block collection which resides in campaign timeline channels that uses that scene in its collection list
-     @method removeSceneFromBlockCollectionsInChannels
-     @param {Number} i_scene_id
-     @return none
-     **/
-    removeSceneFromBlockCollectionsInChannels(i_scene_id) {
-
-        $(this.databaseManager.table_campaign_timeline_chanel_players().getAllPrimaryKeys()).each(function (k, campaign_timeline_chanel_player_id) {
-            var recCampaignTimelineChannelPlayer = this.databaseManager.table_campaign_timeline_chanel_players().getRec(campaign_timeline_chanel_player_id);
-            var playerData = recCampaignTimelineChannelPlayer['player_data'];
-            var domPlayerData = $.parseXML(playerData);
-            var blockType = $(domPlayerData).find('Player').attr('player');
-            if (blockType == 'CONSTS.BLOCKCODE_COLLECTION') {
-                $(domPlayerData).find('Collection').children().each(function (k, page) {
-                    var scene_hDataSrc;
-                    var type = $(page).attr('type');
-                    if (type == 'scene') {
-                        scene_hDataSrc = $(page).find('Player').attr('hDataSrc');
-                        if (scene_hDataSrc == i_scene_id) {
-                            $(page).remove();
-                            var player_data = this.xmlToStringIEfix(domPlayerData)
-                            this.databaseManager.table_campaign_timeline_chanel_players().openForEdit(campaign_timeline_chanel_player_id);
-                            this.databaseManager.setCampaignTimelineChannelPlayerRecord(campaign_timeline_chanel_player_id, 'player_data', player_data);
-                        }
-                    }
-                });
-            }
         });
     }
 
