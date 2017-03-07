@@ -47,19 +47,13 @@ export const CAMPAIGN_LIST_LOADING = 'CAMPAIGN_LIST_LOADED';
     template: `
         <small class="debug">{{me}}</small>
         <scene-toolbar (onToolbarAction)="_onToolbarAction($event)"></scene-toolbar>
-        <div [ngClass]="{hidden: !m_isLoading}" >
-            <h1>Loading</h1>
-        </div>
-        <div [ngClass]="{hidden: m_isLoading}" >
-            <div id="sceneCanvasContainer" data-toggle="context" data-target="#sceneContextMenu" class="yScroll context sceneElements" style=" overflow-x: visible" align="center"></div>    
+        <loading *ngIf="m_isLoading" [size]="'50px'" [style]="{'margin-top': '150px'}"></loading>
+        <div [ngClass]="{hidden: m_isLoading}">
+            <div id="sceneCanvasContainer" data-toggle="context" data-target="#sceneContextMenu" class="yScroll context sceneElements" style=" overflow-x: visible" align="center"></div>
         </div>
     `
 })
 export class SceneEditor extends Compbaser implements AfterViewInit {
-
-    // public fabricCanvas1: fabric.IStaticCanvas;
-    // public fabricCanvas2: fabric.IStaticCanvas;
-
 
     // BB.comBroker.setService(BB.SERVICES['SCENE_EDIT_VIEW'], self);
     m_isLoading = true;
@@ -135,10 +129,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
 
         self._listenSceneSelection();
         self._listenAddBlockWizard();
-        self._listenZoom();
         self._listenToCanvasScroll();
-        self._listenPushToTop();
-        self._listenPushToBottom();
         self._listenSceneChanged();
         self._listenContextMenu();
         self._listenSelectNextBlock();
@@ -146,7 +137,6 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         self._listenSceneBlockRemove();
         self._listenSceneNew();
         self._listenMemento();
-        self._listenGridMagnet();
         self._listenCanvasSelectionsFromToolbar();
         self._listenAppResized();
         self._delegateSceneBlockModified();
@@ -165,6 +155,87 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                 this.onGoBack.emit();
                 break;
             }
+            case 'add': {
+                break;
+            }
+            case 'removeItem': {
+                break;
+            }
+            case 'playPreview': {
+                break;
+            }
+            case 'pushItemToTopButtonToolTip': {
+                if (_.isUndefined(this.m_selectedSceneID))
+                    return;
+                var block = this.m_canvas.getActiveObject();
+                if (_.isNull(block)) {
+                    this._discardSelections();
+                    return;
+                }
+                this.m_canvas.bringToFront(block);
+                this._updateZorder(this.PUSH_TOP, block);
+                this._mementoAddState();
+                break;
+            }
+            case 'pushItemToBottomButtonToolTip': {
+                if (_.isUndefined(this.m_selectedSceneID))
+                    return;
+                var block = this.m_canvas.getActiveObject();
+                if (_.isNull(block)) {
+                    this._discardSelections();
+                    return;
+                }
+                this.m_canvas.sendToBack(block);
+                this._updateZorder(this.PUSH_BOTTOM, block);
+                this._mementoAddState();
+                break;
+            }
+            case 'sceneZoomIn': {
+                this._zoomIn();
+                this._discardSelections();
+                this._resetAllObjectScale();
+                this.m_canvas.renderAll();
+                break;
+            }
+            case 'sceneZoomOut': {
+                this._zoomOut();
+                this._discardSelections();
+                this._resetAllObjectScale();
+                this.m_canvas.renderAll();
+                break;
+            }
+            case 'sceneZoomReset': {
+                this._zoomReset();
+                this._resetAllObjectScale();
+                this.m_canvas.renderAll();
+                break;
+            }
+            case 'undo': {
+                break;
+            }
+            case 'redo': {
+                break;
+            }
+            case 'magneticGrid': {
+                if (this.m_rendering || _.isUndefined(this.m_canvas))
+                    return;
+                switch (this.m_gridMagneticMode) {
+                    case 0: {
+                        this.m_gridMagneticMode = 1;
+                        break;
+                    }
+                    case 1: {
+                        this.m_gridMagneticMode = 2;
+                        break;
+                    }
+                    case 2: {
+                        this.m_gridMagneticMode = 0;
+                        break;
+                    }
+                }
+                this.m_sceneBlock.setCanvas(this.m_canvas, this.m_gridMagneticMode);
+                break;
+            }
         }
     }
 
@@ -173,40 +244,43 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
      @method _listenSceneSelection
      **/
     _listenSceneSelection() {
-       this.cancelOnDestroy(
-           this.yp.listenSceneSelected().subscribe((sceneData: ISceneData) => {
-               this.m_selectedSceneID = sceneData.pseudo_id;
-               this._loadScene();
-               this._sceneCanvasSelected();
-               // BB.comBroker.getService(BB.SERVICES['PROPERTIES_VIEW']).resetPropertiesView();
-               if (this._mementoInit())
-                   this._mementoAddState();
-           })
-       )
+
+        this.cancelOnDestroy(
+            //
+            this.yp.listenSceneSelected()
+                .delay(1000)
+                .subscribe((sceneData: ISceneData) => {
+                    this.m_selectedSceneID = sceneData.pseudo_id;
+                    this._loadScene();
+                    this._sceneCanvasSelected();
+                    if (this._mementoInit())
+                        this._mementoAddState();
+                })
+        )
     }
 
     // _initDimensionProps() {
-        // var self = this;
-        // require(['DimensionProps'],  (DimensionProps) => {
-        //     self.m_dimensionProps = new DimensionProps({
-        //         appendTo: Elements.SCENE_BLOCK_PROPS,
-        //         showAngle: true,
-        //         showLock: true,
-        //         hideSpinners: true
-        //     });
-        //     // self.m_dimensionProps.hideSpinners();
-        //     BB.comBroker.setService(BB.SERVICES['DIMENSION_PROPS_LAYOUT'], self.m_dimensionProps);
-        //     $(self.m_dimensionProps).on('changed',  (e) => {
-        //         var block = self.m_canvas.getActiveObject();
-        //         if (_.isNull(block))
-        //             return;
-        //         var props = e.target.getValues();
-        //         var block_id = block.getBlockData().blockID;
-        //         self._updateBlockCords(block, false, props.x, props.y, props.w, props.h, props.a);
-        //         BB.comBroker.fire(BB.EVENTS['SCENE_BLOCK_CHANGE'], self, null, [block_id]);
-        //     });
-        //     self._sceneActive();
-        // })
+    // var self = this;
+    // require(['DimensionProps'],  (DimensionProps) => {
+    //     self.m_dimensionProps = new DimensionProps({
+    //         appendTo: Elements.SCENE_BLOCK_PROPS,
+    //         showAngle: true,
+    //         showLock: true,
+    //         hideSpinners: true
+    //     });
+    //     // self.m_dimensionProps.hideSpinners();
+    //     BB.comBroker.setService(BB.SERVICES['DIMENSION_PROPS_LAYOUT'], self.m_dimensionProps);
+    //     $(self.m_dimensionProps).on('changed',  (e) => {
+    //         var block = self.m_canvas.getActiveObject();
+    //         if (_.isNull(block))
+    //             return;
+    //         var props = e.target.getValues();
+    //         var block_id = block.getBlockData().blockID;
+    //         self._updateBlockCords(block, false, props.x, props.y, props.w, props.h, props.a);
+    //         BB.comBroker.fire(BB.EVENTS['SCENE_BLOCK_CHANGE'], self, null, [block_id]);
+    //     });
+    //     self._sceneActive();
+    // })
     // }
 
     /**
@@ -642,69 +716,69 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
 
     }
 
-    /**
-     Listen to re-order of screen division, putting selected on top
-     @method _listenPushToTop
-     **/
-    _listenPushToTop() {
-        this.commBroker.onEvent(SCENE_PUSH_TOP).subscribe((msg: IMessage) => {
-            if (_.isUndefined(this.m_selectedSceneID))
-                return;
-            var block = this.m_canvas.getActiveObject();
-            if (_.isNull(block)) {
-                this._discardSelections();
-                return;
-            }
-            this.m_canvas.bringToFront(block);
-            this._updateZorder(this.PUSH_TOP, block);
-            this._mementoAddState();
-        });
-    }
+    // /**
+    //  Listen to re-order of screen division, putting selected on top
+    //  @method _listenPushToTop
+    //  **/
+    // _listenPushToTop() {
+    //     this.commBroker.onEvent(SCENE_PUSH_TOP).subscribe((msg: IMessage) => {
+    //         if (_.isUndefined(this.m_selectedSceneID))
+    //             return;
+    //         var block = this.m_canvas.getActiveObject();
+    //         if (_.isNull(block)) {
+    //             this._discardSelections();
+    //             return;
+    //         }
+    //         this.m_canvas.bringToFront(block);
+    //         this._updateZorder(this.PUSH_TOP, block);
+    //         this._mementoAddState();
+    //     });
+    // }
 
-    /**
-     Listen to re-order of screen division, putting selected at bottom
-     @method _listenPushToBottom
-     **/
-    _listenPushToBottom() {
-        this.commBroker.onEvent(SCENE_PUSH_BOTTOM).subscribe((msg: IMessage) => {
-            if (_.isUndefined(this.m_selectedSceneID))
-                return;
-            var block = this.m_canvas.getActiveObject();
-            if (_.isNull(block)) {
-                this._discardSelections();
-                return;
-            }
-            this.m_canvas.sendToBack(block);
-            this._updateZorder(this.PUSH_BOTTOM, block);
-            this._mementoAddState();
-        });
-    }
+    // /**
+    //  Listen to re-order of screen division, putting selected at bottom
+    //  @method _listenPushToBottom
+    //  **/
+    // _listenPushToBottom() {
+    //     this.commBroker.onEvent(SCENE_PUSH_BOTTOM).subscribe((msg: IMessage) => {
+    //         if (_.isUndefined(this.m_selectedSceneID))
+    //             return;
+    //         var block = this.m_canvas.getActiveObject();
+    //         if (_.isNull(block)) {
+    //             this._discardSelections();
+    //             return;
+    //         }
+    //         this.m_canvas.sendToBack(block);
+    //         this._updateZorder(this.PUSH_BOTTOM, block);
+    //         this._mementoAddState();
+    //     });
+    // }
 
-    /**
-     Listen grid magnet when dragging objects
-     @method _listenGridMagnet
-     **/
-    _listenGridMagnet() {
-        $('#sceneGridMagnet', this.el.nativeElement).on('click', () => {
-            if (this.m_rendering || _.isUndefined(this.m_canvas))
-                return;
-            switch (this.m_gridMagneticMode) {
-                case 0: {
-                    this.m_gridMagneticMode = 1;
-                    break;
-                }
-                case 1: {
-                    this.m_gridMagneticMode = 2;
-                    break;
-                }
-                case 2: {
-                    this.m_gridMagneticMode = 0;
-                    break;
-                }
-            }
-            this.m_sceneBlock.setCanvas(this.m_canvas, this.m_gridMagneticMode);
-        });
-    }
+    // /**
+    //  Listen grid magnet when dragging objects
+    //  @method _listenGridMagnet
+    //  **/
+    // _listenGridMagnet() {
+    //     $('#sceneGridMagnet', this.el.nativeElement).on('click', () => {
+    //         if (this.m_rendering || _.isUndefined(this.m_canvas))
+    //             return;
+    //         switch (this.m_gridMagneticMode) {
+    //             case 0: {
+    //                 this.m_gridMagneticMode = 1;
+    //                 break;
+    //             }
+    //             case 1: {
+    //                 this.m_gridMagneticMode = 2;
+    //                 break;
+    //             }
+    //             case 2: {
+    //                 this.m_gridMagneticMode = 0;
+    //                 break;
+    //             }
+    //         }
+    //         this.m_sceneBlock.setCanvas(this.m_canvas, this.m_gridMagneticMode);
+    //     });
+    // }
 
     /**
      @method _sceneProcessing
@@ -890,7 +964,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         }
         this._createBlock(i_blockIDs);
     }
-            
+
     /**
      Render the pre created blocks (via _preRender) and add all blocks to fabric canvas
      @method _render
@@ -989,7 +1063,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         var newBlock = this.blockFactory.createBlock(blockData.blockID, blockData.player_data, this.m_selectedSceneID);
         newBlock.setZindex(blockData.zIndex);
         var blockID = newBlock.getBlockData().blockID;
-        newBlock.fabricateBlock(this.m_canvasScale,  () => {
+        newBlock.fabricateBlock(this.m_canvasScale, () => {
             this.m_blocks.blocksPost[blockID] = newBlock;
             this._createBlock(i_blockIDs);
         });
@@ -1090,7 +1164,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         self.m_canvas.on({
             //'object:moving': self.m_objectScaleHandler,
             //'object:selected': self.m_objectScaleHandler,
-            'object:modified': ()=>{
+            'object:modified': () => {
                 self._sceneBlockModified();
             },
             'object:scaling': $.proxy(self._sceneBlockScaled, self)
@@ -1363,34 +1437,34 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         }
     }
 
-    /**
-     Listen to all zoom events via wiring the UI
-     @method _listenZoom
-     **/
-    _listenZoom() {
-        this.commBroker.onEvent(SCENE_ZOOM_IN).subscribe((msg: IMessage) => {
-            // this.m_property = BB.comBroker.getService(BB.SERVICES['PROPERTIES_VIEW']).resetPropertiesView();
-            this._zoomIn();
-            this._discardSelections();
-            this._resetAllObjectScale();
-            this.m_canvas.renderAll();
-        });
-
-        this.commBroker.onEvent(SCENE_ZOOM_OUT).subscribe((msg: IMessage) => {
-            // this.m_property = BB.comBroker.getService(BB.SERVICES['PROPERTIES_VIEW']).resetPropertiesView();
-            this._zoomOut();
-            this._discardSelections();
-            this._resetAllObjectScale();
-            this.m_canvas.renderAll();
-        });
-
-        this.commBroker.onEvent(SCENE_ZOOM_RESET).subscribe((msg: IMessage) => {
-            // this.m_property = BB.comBroker.getService(BB.SERVICES['PROPERTIES_VIEW']).resetPropertiesView();
-            this._zoomReset();
-            this._resetAllObjectScale();
-            this.m_canvas.renderAll();
-        });
-    }
+    // /**
+    //  Listen to all zoom events via wiring the UI
+    //  @method _listenZoom
+    //  **/
+    // _listenZoom() {
+    //     this.commBroker.onEvent(SCENE_ZOOM_IN).subscribe((msg: IMessage) => {
+    //         // this.m_property = BB.comBroker.getService(BB.SERVICES['PROPERTIES_VIEW']).resetPropertiesView();
+    //         this._zoomIn();
+    //         this._discardSelections();
+    //         this._resetAllObjectScale();
+    //         this.m_canvas.renderAll();
+    //     });
+    //
+    //     this.commBroker.onEvent(SCENE_ZOOM_OUT).subscribe((msg: IMessage) => {
+    //         // this.m_property = BB.comBroker.getService(BB.SERVICES['PROPERTIES_VIEW']).resetPropertiesView();
+    //         this._zoomOut();
+    //         this._discardSelections();
+    //         this._resetAllObjectScale();
+    //         this.m_canvas.renderAll();
+    //     });
+    //
+    //     this.commBroker.onEvent(SCENE_ZOOM_RESET).subscribe((msg: IMessage) => {
+    //         // this.m_property = BB.comBroker.getService(BB.SERVICES['PROPERTIES_VIEW']).resetPropertiesView();
+    //         this._zoomReset();
+    //         this._resetAllObjectScale();
+    //         this.m_canvas.renderAll();
+    //     });
+    // }
 
     /**
      Zoom to scale size
