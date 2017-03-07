@@ -13,8 +13,8 @@ export const JSON_EVENT_ROW_CHANGED = 'JSON_EVENT_ROW_CHANGED';
 export const STATIONS_POLL_TIME_CHANGED = 'STATIONS_POLL_TIME_CHANGED';
 export const THEME_CHANGED = 'THEME_CHANGED';
 export const SELECTED_STACK_VIEW = 'SELECTED_STACK_VIEW';
-export const SCENE_BLOCK_LIST_UPDATED = 'SCENE_BLOCK_LIST_UPDATED';
-export const SCENE_ITEM_SELECTED = 'SCENE_ITEM_SELECTED';
+// export const SCENE_BLOCK_LIST_UPDATED = 'SCENE_BLOCK_LIST_UPDATED';
+// export const SCENE_ITEM_SELECTED = 'SCENE_ITEM_SELECTED';
 export const ADD_NEW_BLOCK_SCENE = 'ADD_NEW_BLOCK_SCENE';
 export const BLOCK_SELECTED = 'BLOCK_SELECTED';
 export const SCENE_ZOOM_IN = 'SCENE_ZOOM_IN';
@@ -46,7 +46,7 @@ export const CAMPAIGN_LIST_LOADING = 'CAMPAIGN_LIST_LOADED';
     // changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <small class="debug">{{me}}</small>
-        <scene-toolbar (onToolbarAction)="_onToolbarAction($event)"></scene-toolbar>
+        <scene-toolbar (onItemSelected)="_onItemSelectedFromToolbar($event)" [blocks]="this.m_blocks.blocksPost" (onToolbarAction)="_onToolbarAction($event)"></scene-toolbar>
         <loading *ngIf="m_isLoading" [size]="'50px'" [style]="{'margin-top': '150px'}"></loading>
         <div [ngClass]="{hidden: m_isLoading}">
             <div id="sceneCanvasContainer" data-toggle="context" data-target="#sceneContextMenu" class="yScroll context sceneElements" style=" overflow-x: visible" align="center"></div>
@@ -55,7 +55,6 @@ export const CAMPAIGN_LIST_LOADING = 'CAMPAIGN_LIST_LOADED';
 })
 export class SceneEditor extends Compbaser implements AfterViewInit {
 
-    // BB.comBroker.setService(BB.SERVICES['SCENE_EDIT_VIEW'], self);
     m_isLoading = true;
     m_selectedSceneID = undefined;
     m_sceneScrollTop = 0;
@@ -93,10 +92,8 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         // var a = new BlockFabric(bs);
     }
 
-
     ngAfterViewInit() {
         var self = this;
-        // BB.comBroker.setService(BB.SERVICES['SCENE_EDIT_VIEW'], self);
         self.m_selectedSceneID = undefined;
         self.m_sceneScrollTop = 0;
         self.m_sceneScrollLeft = 0;
@@ -115,15 +112,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
             blocksPost: {},
             blockSelected: undefined
         };
-        // self.m_dimensionProps = undefined;
         self.m_canvas = undefined;
-        // self.m_property = BB.comBroker.getService(BB.SERVICES['PROPERTIES_VIEW']).resetPropertiesView();
-
-        // new ScenesToolbarView({
-        //     stackView: self.options.stackView,
-        //     el: Elements.SCENE_TOOLBAR
-        // });
-
         self.m_canvasScale = 1;
         self.SCALE_FACTOR = 1.2;
 
@@ -136,8 +125,6 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         self._listenSceneRemove();
         self._listenSceneBlockRemove();
         self._listenSceneNew();
-        self._listenMemento();
-        self._listenCanvasSelectionsFromToolbar();
         self._listenAppResized();
         self._delegateSceneBlockModified();
     }
@@ -211,9 +198,19 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                 break;
             }
             case 'undo': {
+                if (this.m_rendering)
+                    return;
+                this.m_blocks.blockSelected = undefined;
+                this._discardSelections();
+                this._mementoLoadState('undo');
                 break;
             }
             case 'redo': {
+                if (this.m_rendering)
+                    return;
+                this.m_blocks.blockSelected = undefined;
+                this._discardSelections();
+                this._mementoLoadState('redo');
                 break;
             }
             case 'magneticGrid': {
@@ -321,32 +318,6 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
     }
 
     /**
-     Announce that block count changed with block array of ids
-     @method self._updateBlockCount();
-     **/
-    _updateBlockCount() {
-        var blocks = [];
-        if (_.isUndefined(this.m_selectedSceneID)) {
-            this.commBroker.fire({event: SCENE_BLOCK_LIST_UPDATED, fromInstance: this});
-            return;
-        }
-        // cpu breather
-        setTimeout(() => {
-            if (_.isUndefined(this.m_canvas))
-                return;
-            var objects = this.m_canvas.getObjects().length;
-            for (var i = 0; i < objects; i++) {
-                blocks.push({
-                    id: this.m_canvas.item(i).m_block_id,
-                    name: this.m_canvas.item(i).m_blockName
-                });
-            }
-            this.commBroker.fire({event: SCENE_BLOCK_LIST_UPDATED, fromInstance: this, message: blocks});
-        }, 500);
-
-    }
-
-    /**
      Load a new scene and dispose of any previous ones
      @return {Number} Unique clientId.
      **/
@@ -440,7 +411,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
             // this.m_property.resetPropertiesView();
             this.m_selectedSceneID = undefined;
             $('#sceneCanvas', this.el.nativeElement).removeClass('basicBorder');
-            this._updateBlockCount();
+            // this._updateBlockCount();
             // this.commBroker.fire({event: REMOVED_SCENE, fromInstance: this, message: this.m_selected_resource_id});
         });
 
@@ -601,7 +572,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                         this.m_copiesObjects.push(blockPlayerData);
                     });
                     this.m_canvas.renderAll();
-                    this._updateBlockCount();
+                    // this._updateBlockCount();
                     break;
                 }
 
@@ -613,7 +584,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                         this._disposeBlocks(blockData.blockID);
                     });
                     this.m_canvas.renderAll();
-                    this._updateBlockCount();
+                    // this._updateBlockCount();
                     break;
                 }
 
@@ -646,7 +617,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                     } else {
                         this.commBroker.fire({event: SCENE_BLOCK_CHANGE, fromInstance: this, message: blockID});
                     }
-                    this._updateBlockCount();
+                    // this._updateBlockCount();
                     break;
                 }
             }
@@ -797,26 +768,26 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         }
     }
 
-    /**
-     Listen to undo and redo
-     @method _listenMemento
-     **/
-    _listenMemento() {
-        this.commBroker.onEvent(SCENE_UNDO).subscribe((msg: IMessage) => {
-            if (this.m_rendering)
-                return;
-            this.m_blocks.blockSelected = undefined;
-            this._discardSelections();
-            this._mementoLoadState('undo');
-        });
-        this.commBroker.onEvent(SCENE_REDO).subscribe((msg: IMessage) => {
-            if (this.m_rendering)
-                return;
-            this.m_blocks.blockSelected = undefined;
-            this._discardSelections();
-            this._mementoLoadState('redo');
-        });
-    }
+    // /**
+    //  Listen to undo and redo
+    //  @method _listenMemento
+    //  **/
+    // _listenMemento() {
+    //     this.commBroker.onEvent(SCENE_UNDO).subscribe((msg: IMessage) => {
+    //         if (this.m_rendering)
+    //             return;
+    //         this.m_blocks.blockSelected = undefined;
+    //         this._discardSelections();
+    //         this._mementoLoadState('undo');
+    //     });
+    //     this.commBroker.onEvent(SCENE_REDO).subscribe((msg: IMessage) => {
+    //         if (this.m_rendering)
+    //             return;
+    //         this.m_blocks.blockSelected = undefined;
+    //         this._discardSelections();
+    //         this._mementoLoadState('redo');
+    //     });
+    // }
 
     /**
      Init a undo / redo via memento pattern
@@ -1006,8 +977,8 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         this._sceneProcessing(false, () => {
         });
         this._renderContinue();
-        if (createAll)
-            this._updateBlockCount();
+        // if (createAll)
+        //     this._updateBlockCount();
 
         // select previous selection
         if (_.isUndefined(selectedBlockID))
@@ -1291,27 +1262,16 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         this.commBroker.fire({event: BLOCK_SELECTED, fromInstance: this, message: self.m_selectedSceneID});
     }
 
-    /**
-     Listen to scene block / item selection initiated by user selection of toolbar dropdown
-     @method _listenCanvasSelectionsFromToolbar
-     **/
-    _listenCanvasSelectionsFromToolbar() {
-        this.commBroker.onEvent(SCENE_ITEM_SELECTED).subscribe((msg: IMessage) => {
-            var blockID = msg.message;
+    _onItemSelectedFromToolbar(blockID) {
+        if (blockID == 'SCENE')
+            return this._sceneCanvasSelected();
 
-            // Scene selected
-            if (blockID == SCENE_CANVAS_SELECTED) {
-                this._sceneCanvasSelected();
-                return;
+        for (var i = 0; i < this.m_canvas.getObjects().length; i++) {
+            if (this.m_canvas.item(i).getBlockData().blockID == blockID) {
+                this._blockSelected(this.m_canvas.item(i));
+                break;
             }
-            // block selected
-            for (var i = 0; i < this.m_canvas.getObjects().length; i++) {
-                if (this.m_canvas.item(i).getBlockData().blockID == blockID) {
-                    this._blockSelected(this.m_canvas.item(i));
-                    break;
-                }
-            }
-        });
+        }
     }
 
     /**
@@ -1730,3 +1690,30 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
 }
 
 
+
+
+// /**
+//  Announce that block count changed with block array of ids
+//  @method self._updateBlockCount();
+//  **/
+// _updateBlockCount() {
+// var blocks = [];
+// if (_.isUndefined(this.m_selectedSceneID)) {
+//     // this.commBroker.fire({event: SCENE_BLOCK_LIST_UPDATED, fromInstance: this});
+//     return;
+// }
+// // cpu breather
+// setTimeout(() => {
+//     if (_.isUndefined(this.m_canvas))
+//         return;
+//     var objects = this.m_canvas.getObjects().length;
+//     for (var i = 0; i < objects; i++) {
+//         blocks.push({
+//             id: this.m_canvas.item(i).m_block_id,
+//             name: this.m_canvas.item(i).m_blockName
+//         });
+//     }
+//     // this.commBroker.fire({event: SCENE_BLOCK_LIST_UPDATED, fromInstance: this, message: blocks});
+// }, 500);
+
+// }
