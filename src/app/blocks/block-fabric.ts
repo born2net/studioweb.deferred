@@ -37,7 +37,6 @@ export class BlockFabric extends fabric.Group {
         this.m_selected = false;
         this.m_zIndex = -1;
         this.m_minSize = {w: 50, h: 50};
-        console.log(this.m_blockType);
         this.m_blockName = i_blockService.getBlockBoilerplate(this.m_blockType).name;
         this.m_blockAcronym = i_blockService.getBlockBoilerplate(this.m_blockType).acronym;
         this.m_blockDescription = i_blockService.getBlockBoilerplate(this.m_blockType).description;

@@ -943,7 +943,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         }
         this._createBlock(i_blockIDs);
     }
-
+            
     /**
      Render the pre created blocks (via _preRender) and add all blocks to fabric canvas
      @method _render

@@ -6,6 +6,8 @@ import X2JS from "x2js";
 import {RedPepperService} from "./redpepper.service";
 import {BlockFabric} from "../app/blocks/block-fabric";
 import {BlockFabricImage} from "../app/blocks/block-fabric-image";
+import {BlockFabricLabel} from "../app/blocks/block-fabric-label";
+import {BlockFabricSvg} from "../app/blocks/block-fabric-svg";
 
 @Injectable()
 export class BlockFactoryService {
@@ -53,7 +55,7 @@ export class BlockFactoryService {
 
         var blockCode = parseInt(playerData['Player']['_player']);
 
-        con('creating block ' + blockCode);
+        // con('creating block ' + blockCode);
         
         switch (blockCode) {
             case BlockLabels.BLOCKCODE_SCENE: {
@@ -73,12 +75,21 @@ export class BlockFactoryService {
                 break;
             }
 
-            case BlockLabels.LABEL: {
-                block = new BlockFabric({
+            case BlockLabels.BLOCKCODE_SVG: {
+                block = new BlockFabricSvg({
                     i_placement: i_placement,
                     i_block_id: block_id,
                     i_scene_player_data_id: i_scene_id
-                }, bs, rp, 3241);
+                }, bs, rp);
+                break;
+            }
+
+            case BlockLabels.LABEL: {
+                block = new BlockFabricLabel({
+                    i_placement: i_placement,
+                    i_block_id: block_id,
+                    i_scene_player_data_id: i_scene_id
+                }, bs, rp);
                 break;
             }
 
