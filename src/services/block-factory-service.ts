@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {forwardRef, Inject, Injectable} from '@angular/core';
 import {BlockLabels, PLACEMENT_SCENE} from "../interfaces/Consts";
 import {BlockFabricScene} from "../app/blocks/block-fabric-scene";
 import * as _ from 'lodash';
@@ -8,12 +8,13 @@ import {BlockFabric} from "../app/blocks/block-fabric";
 import {BlockFabricImage} from "../app/blocks/block-fabric-image";
 import {BlockFabricLabel} from "../app/blocks/block-fabric-label";
 import {BlockFabricSvg} from "../app/blocks/block-fabric-svg";
+import {BlockService} from "../app/blocks/block-service";
 
 @Injectable()
 export class BlockFactoryService {
     parser;
 
-    constructor(private rp:RedPepperService) {
+    constructor(private rp:RedPepperService, private bs: BlockService) {
         this.parser = new X2JS({
             escapeMode: true,
             attributePrefix: "_",
@@ -28,14 +29,8 @@ export class BlockFactoryService {
     /**
      This is factory method produces block instances which will reside on the timeline and referenced within this
      channel instance. The factory will parse the blockCode and create the appropriate block type.
-     @method createBlock
-     @param {Number} block_id
-     @param {String} i_playerData
-     @param {String} i_placement where does the block reside, scene or channel
-     @param {Number} i_scene_id
-     @return {Object} reference to the block instance
      **/
-    createBlock(bs, rp, block_id, i_player_data, i_placement, i_scene_id?) {
+    createBlock(block_id, i_player_data, i_placement, i_scene_id?) {
         var block = undefined;
         // uncomment to see XML when adding new components
         // console.log(i_player_data);
@@ -62,7 +57,7 @@ export class BlockFactoryService {
                 block = new BlockFabricScene({
                     i_placement: i_placement,
                     i_block_id: block_id
-                }, bs, rp);
+                }, this.bs, this.rp);
                 break;
             }
 
@@ -71,7 +66,7 @@ export class BlockFactoryService {
                     i_placement: i_placement,
                     i_block_id: block_id,
                     i_scene_player_data_id: i_scene_id
-                }, bs, rp);
+                }, this.bs, this.rp);
                 break;
             }
 
@@ -80,7 +75,7 @@ export class BlockFactoryService {
                     i_placement: i_placement,
                     i_block_id: block_id,
                     i_scene_player_data_id: i_scene_id
-                }, bs, rp);
+                }, this.bs, this.rp);
                 break;
             }
 
@@ -89,7 +84,7 @@ export class BlockFactoryService {
                     i_placement: i_placement,
                     i_block_id: block_id,
                     i_scene_player_data_id: i_scene_id
-                }, bs, rp);
+                }, this.bs, this.rp);
                 break;
             }
 
@@ -98,7 +93,7 @@ export class BlockFactoryService {
                     i_placement: i_placement,
                     i_block_id: block_id,
                     i_scene_player_data_id: i_scene_id
-                }, bs, rp, 3241);
+                }, this.bs, this.rp, blockCode);
                 break;
             }
         }

@@ -294,7 +294,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
      **/
     _initializeScene(i_selectedSceneID) {
         var scene_player_data = this.rp.getScenePlayerdata(i_selectedSceneID);
-        this.m_sceneBlock = this.blockFactory.createBlock(this.bs, this.rp, i_selectedSceneID, scene_player_data, PLACEMENT_IS_SCENE);
+        this.m_sceneBlock = this.blockFactory.createBlock(i_selectedSceneID, scene_player_data, PLACEMENT_IS_SCENE);
         this.m_sceneBlock.setCanvas(this.m_canvas, this.m_gridMagneticMode);
         //_.extend(this.m_canvas, this.m_sceneBlock);
     }
@@ -1039,7 +1039,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
             this._render([i_blockIDs]);
             return;
         }
-        var newBlock = this.blockFactory.createBlock(this.bs, this.rp, blockData.blockID, blockData.player_data, PLACEMENT_SCENE, this.m_selectedSceneID);
+        var newBlock = this.blockFactory.createBlock(blockData.blockID, blockData.player_data, PLACEMENT_SCENE, this.m_selectedSceneID);
         newBlock.setZindex(blockData.zIndex);
         var blockID = newBlock.getBlockData().blockID;
         newBlock.fabricateBlock(this.m_canvasScale,  () => {

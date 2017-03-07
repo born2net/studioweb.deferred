@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import {Lib} from "../../Lib";
 import {BlockService} from "./block-service";
-import {PLACEMENT_CHANNEL, PLACEMENT_IS_SCENE, PLACEMENT_SCENE} from "../../interfaces/Consts";
+import {PLACEMENT_IS_SCENE, PLACEMENT_SCENE} from "../../interfaces/Consts";
 import {RedPepperService} from "../../services/redpepper.service";
 
 
@@ -64,10 +64,6 @@ export class BlockFabric extends fabric.Group {
         }
 
         switch (self.m_placement) {
-            case PLACEMENT_CHANNEL: {
-                this.m_pepper.setCampaignTimelineChannelPlayerRecord(self.m_block_id, 'player_data', player_data);
-                break;
-            }
             case PLACEMENT_SCENE: {
                 this.m_pepper.setScenePlayerdataBlock(self.m_sceneID, self.m_block_id, player_data);
                 if (!i_noNotify)
@@ -83,30 +79,15 @@ export class BlockFabric extends fabric.Group {
         }
     }
 
-
     /**
      Get the XML player data of a block, depending where its placed
      If you like to view XML raw data, be sure to debug domPlayerData.children[0].outerHTML
      @method _getBlockPlayerData
      @return {Object} player data of block (aka player) parsed as DOM
      **/
-    _getBlockPlayerData() {
-        var self = this;
-        var recBlock = undefined;
-
-        switch (self.m_placement) {
-
-            case PLACEMENT_CHANNEL: {
-                recBlock = this.m_pepper.getCampaignTimelineChannelPlayerRecord(self.m_block_id);
-                return $.parseXML(recBlock['player_data']);
-                // to view data debug domPlayerData.children[0].outerHTML
-            }
-
-            case PLACEMENT_SCENE: {
-                return this.m_pepper.getScenePlayerdataBlock(self.m_sceneID, self.m_block_id);
-                // to view data debug domPlayerData.children[0].outerHTML
-            }
-        }
+    _getBlockPlayerData():any {
+        return this.m_pepper.getScenePlayerdataBlock(this.m_sceneID, this.m_block_id);
+        // to view data debug domPlayerData.children[0].outerHTML
     }
 
     /**

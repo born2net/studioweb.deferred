@@ -20,8 +20,7 @@ export const LAZY_ROUTES = [
 
 @NgModule({
     imports: [DropdownModulePrime, SharedModule, CommonModule, RouterModule.forChild(LAZY_ROUTES)],
-    declarations: [Scenes, SceneEditor, SceneToolbar, ScenesNavigation, ScenePropsManager, SceneManager, SceneList ],
-    providers: [BlockFactoryService]
+    declarations: [Scenes, SceneEditor, SceneToolbar, ScenesNavigation, ScenePropsManager, SceneManager, SceneList ]
 })
 export class ScenesLazyModule {
 }

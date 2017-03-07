@@ -183,7 +183,7 @@ export class BlockFabricScene extends BlockFabric {
      @method _getBlockPlayerData
      @return {Object} player data of block (aka player) parsed as DOM
      **/
-    _getBlockPlayerData() {
+    _getBlockPlayerData():any {
         var blockID = this.m_pepper.getSceneIdFromPseudoId(this.m_block_id);
         var recPlayerData = this.m_pepper.getScenePlayerRecord(blockID);
         var xPlayerdata = recPlayerData['player_data_value'];
