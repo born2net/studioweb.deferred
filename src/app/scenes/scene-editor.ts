@@ -153,28 +153,10 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
     }
 
     ngOnInit() {
-        // this.fabricCanvas1 = new fabric.Canvas(this.canvas1.nativeElement);
-        // var rect = new fabric.Rect({
-        //     top: 100,
-        //     left: 100,
-        //     width: 60,
-        //     height: 70,
-        //     fill: 'blue'
-        // });
-        // this.fabricCanvas1.add(rect);
-        //
-        // this.fabricCanvas2 = new fabric.Canvas(this.canvas2.nativeElement);
-        // var circle = new fabric.Circle({
-        //     radius: 30,
-        //     stroke: 'green',
-        //     fill: 'green'
-        // });
-        // this.fabricCanvas2.add(circle);
     }
 
     @Output()
     onGoBack: EventEmitter<any> = new EventEmitter<any>();
-
 
     _onToolbarAction(event) {
         con('toolbar ' + event);
@@ -1018,10 +1000,11 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
      @method _delegateSceneBlockModified
      **/
     _delegateSceneBlockModified() {
-        this._sceneBlockModified = _.debounce((e) => {
-            this.commBroker.fire({event: SCENE_BLOCKS_RENDERED, fromInstance: this.m_canvas, message: ''});
-            this._mementoAddState();
-            // this._drawGrid();
+        var self = this;
+        self._sceneBlockModified = _.debounce(function (e) {
+            self.commBroker.fire({event: SCENE_BLOCKS_RENDERED, fromInstance: self.m_canvas, message: ''});
+            self._mementoAddState();
+            // self._drawGrid();
         }, 200);
     }
 
@@ -1103,13 +1086,16 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
      @method _listenBlockModified
      **/
     _listenBlockModified() {
-        this.m_canvas.on({
-            //'object:moving': this.m_objectScaleHandler,
-            //'object:selected': this.m_objectScaleHandler,
-            'object:modified': this._sceneBlockModified,
-            'object:scaling': $.proxy(this._sceneBlockScaled, this)
+        var self = this;
+        self.m_canvas.on({
+            //'object:moving': self.m_objectScaleHandler,
+            //'object:selected': self.m_objectScaleHandler,
+            'object:modified': ()=>{
+                self._sceneBlockModified();
+            },
+            'object:scaling': $.proxy(self._sceneBlockScaled, self)
         });
-        this.m_canvas.on('object:moving', $.proxy(this._sceneBlockMoving, this));
+        self.m_canvas.on('object:moving', $.proxy(self._sceneBlockMoving, self));
     }
 
     _drawGrid() {
