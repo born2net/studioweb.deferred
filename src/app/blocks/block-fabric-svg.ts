@@ -1,8 +1,9 @@
 import {BlockFabric} from "./block-fabric";
 import * as _ from "lodash";
+import {BlockLabels} from "../../interfaces/Consts";
 
 
-const blockType = 3140;
+const blockType = BlockLabels.BLOCKCODE_SVG;
 
 export class BlockFabricSvg extends BlockFabric {
 

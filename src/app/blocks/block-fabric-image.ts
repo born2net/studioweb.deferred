@@ -1,7 +1,8 @@
 import {BlockFabric} from "./block-fabric";
 import * as _ from "lodash";
+import {BlockLabels} from "../../interfaces/Consts";
 
-const blockType = 3130;
+const blockType = BlockLabels.BLOCKCODE_IMAGE;
 
 export class BlockFabricImage extends BlockFabric {
 
@@ -37,58 +38,6 @@ export class BlockFabricImage extends BlockFabric {
         this.m_blockDescription = this.m_pepper.getResourceName(this.m_resourceID);
         this.m_fileFormat = this.m_pepper.getResourceType(this.m_resourceID);
         this.m_blockFontAwesome = this.m_blockService.getFontAwesome(this.m_fileFormat);
-    }
-
-    /**
-     Populate the common block properties panel, called from base class if exists
-     @method _loadBlockSpecificProps
-     @return none
-     **/
-    _loadBlockSpecificProps() {
-        // var this = this;
-        // this._populate();
-        // this._viewSubPanel(Elements.BLOCK_IMAGE_COMMON_PROPERTIES);
-    }
-
-    /**
-     Update common property title element
-     @method _updateTitle override
-     @return none
-     **/
-    _updateTitle() {
-        // var this = this;
-        // $(Elements.SELECTED_CHANNEL_RESOURCE_NAME).text(this.m_blockDescription);
-    }
-
-    /**
-     When user changes a URL link for the feed, update the msdb
-     @method _listenInputChange
-     @return none
-     **/
-    _listenInputChange() {
-        // var this = this;
-        // this.m_inputChangeHandler =  () => {
-        //     if (!this.m_selected)
-        //         return;
-        //     var aspectRatio = $(Elements.IMAGE_ASPECT_RATIO + ' option:selected').val() == "on" ? 1 : 0;
-        //     var domPlayerData = this._getBlockPlayerData();
-        //     var xSnippet = $(domPlayerData).find('AspectRatio');
-        //     $(xSnippet).attr('maintain', aspectRatio);
-        //     this._setBlockPlayerData(domPlayerData, BB.CONSTS.NO_NOTIFICATION);
-        // };
-        // $(Elements.IMAGE_ASPECT_RATIO).on('change', this.m_inputChangeHandler);
-    }
-
-    /**
-     Load up property values in the common panel
-     @method _populate
-     @return none
-     **/
-    _populate() {
-        // var domPlayerData = this._getBlockPlayerData();
-        // var xSnippet = $(domPlayerData).find('AspectRatio');
-        // var aspectRatio = xSnippet.attr('maintain') == '1' ? 'on' : 'off';
-        // $(Elements.IMAGE_ASPECT_RATIO + ' option[value="' + aspectRatio + '"]').prop("selected", "selected");
     }
 
     /**
@@ -147,8 +96,6 @@ export class BlockFabricImage extends BlockFabric {
 
     /**
      Get the resource id of the embedded resource
-     @method getResourceID
-     @return {Number} resource_id;
      **/
     getResourceID() {
         return this.m_resourceID;

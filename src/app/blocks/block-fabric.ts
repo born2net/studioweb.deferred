@@ -80,8 +80,6 @@ export class BlockFabric extends fabric.Group {
 
     /**
      Fabricate alpha to canvas
-     @method _fabricAlpha
-     @param {Object} i_domPlayerData
      **/
     _fabricAlpha(i_domPlayerData) {
         var appearance = $(i_domPlayerData).find('Appearance');

@@ -1,9 +1,10 @@
 import {BlockFabric} from "./block-fabric";
 import * as _ from "lodash";
 import {Lib} from "../../Lib";
+import {BlockLabels} from "../../interfaces/Consts";
 
 
-const blockType = 3241;
+const blockType = BlockLabels.LABEL;
 
 export class BlockFabricLabel extends BlockFabric {
 
@@ -122,15 +123,6 @@ export class BlockFabricLabel extends BlockFabric {
         //    offsetX:3,
         //    offsetY: 1
         //});
-    }
-
-    /**
-     Get the resource id of the embedded resource
-     @method getResourceID
-     @return {Number} resource_id;
-     **/
-    getResourceID() {
-        return this.m_resourceID;
     }
 
     /**
