@@ -13,8 +13,6 @@ export const JSON_EVENT_ROW_CHANGED = 'JSON_EVENT_ROW_CHANGED';
 export const STATIONS_POLL_TIME_CHANGED = 'STATIONS_POLL_TIME_CHANGED';
 export const THEME_CHANGED = 'THEME_CHANGED';
 export const SELECTED_STACK_VIEW = 'SELECTED_STACK_VIEW';
-// export const SCENE_BLOCK_LIST_UPDATED = 'SCENE_BLOCK_LIST_UPDATED';
-// export const SCENE_ITEM_SELECTED = 'SCENE_ITEM_SELECTED';
 export const ADD_NEW_BLOCK_SCENE = 'ADD_NEW_BLOCK_SCENE';
 export const BLOCK_SELECTED = 'BLOCK_SELECTED';
 export const SCENE_ZOOM_IN = 'SCENE_ZOOM_IN';
@@ -79,12 +77,6 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         blocksPost: {},
         blockSelected: undefined
     };
-
-    @ViewChild('canvas1')
-    canvas1;
-
-    @ViewChild('canvas2')
-    canvas2;
 
     constructor(private blockFactory: BlockFactoryService, private rp: RedPepperService, private el: ElementRef, private yp: YellowPepperService, private cd: ChangeDetectorRef, private bs: BlockService, private commBroker: CommBroker) {
         super();
@@ -241,7 +233,6 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
      @method _listenSceneSelection
      **/
     _listenSceneSelection() {
-
         this.cancelOnDestroy(
             //
             this.yp.listenSceneSelected()
@@ -255,30 +246,6 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                 })
         )
     }
-
-    // _initDimensionProps() {
-    // var self = this;
-    // require(['DimensionProps'],  (DimensionProps) => {
-    //     self.m_dimensionProps = new DimensionProps({
-    //         appendTo: Elements.SCENE_BLOCK_PROPS,
-    //         showAngle: true,
-    //         showLock: true,
-    //         hideSpinners: true
-    //     });
-    //     // self.m_dimensionProps.hideSpinners();
-    //     BB.comBroker.setService(BB.SERVICES['DIMENSION_PROPS_LAYOUT'], self.m_dimensionProps);
-    //     $(self.m_dimensionProps).on('changed',  (e) => {
-    //         var block = self.m_canvas.getActiveObject();
-    //         if (_.isNull(block))
-    //             return;
-    //         var props = e.target.getValues();
-    //         var block_id = block.getBlockData().blockID;
-    //         self._updateBlockCords(block, false, props.x, props.y, props.w, props.h, props.a);
-    //         BB.comBroker.fire(BB.EVENTS['SCENE_BLOCK_CHANGE'], self, null, [block_id]);
-    //     });
-    //     self._sceneActive();
-    // })
-    // }
 
     /**
      Bring the scene into view
@@ -337,21 +304,6 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         self._initializeCanvas(w, h);
         self._initializeScene(self.m_selectedSceneID);
         self._preRender(domPlayerData);
-
-        // this._sceneProcessing(true, jQueryAny.proxy(function () {
-        //     self._disposeBlocks();
-        //     self.disposeScene();
-        //     self._zoomReset();
-        //     // self.m_property.resetPropertiesView();
-        //     var domPlayerData = self.rp.getScenePlayerdataDom(self.m_selectedSceneID);
-        //     var l = $(domPlayerData).find('Layout').eq(0);
-        //     var w = $(l).attr('width');
-        //     var h = $(l).attr('height');
-        //     self._initializeCanvas(w, h);
-        //     // self._initializeScene(self.m_selectedSceneID);
-        //     self._initializeScene();
-        //     self._preRender(domPlayerData);
-        // }), this);
     }
 
     /**
@@ -359,23 +311,26 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
      @method _listenSelectNextDivision
      **/
     _listenSelectNextBlock() {
-        this.commBroker.onEvent('SCENE_SELECT_NEXT').subscribe((e: IMessage) => {
-            if (_.isUndefined(this.m_selectedSceneID))
-                return;
-            var viewer = this.m_canvas.getActiveObject();
-            var viewIndex = this.m_canvas.getObjects().indexOf(viewer);
-            var totalViews = this.m_canvas.getObjects().length;
-            var blockID = undefined;
-            if (viewIndex == totalViews - 1) {
-                this.m_canvas.setActiveObject(this.m_canvas.item(0));
-                blockID = this.m_canvas.getActiveObject().getBlockData().blockID;
-                this.commBroker.fire({event: BLOCK_SELECTED, fromInstance: this, message: blockID});
-            } else {
-                this.m_canvas.setActiveObject(this.m_canvas.item(viewIndex + 1));
-                blockID = this.m_canvas.getActiveObject().getBlockData().blockID;
-                this.commBroker.fire({event: BLOCK_SELECTED, fromInstance: this, message: blockID});
-            }
-        });
+        this.cancelOnDestroy(
+            //
+            this.commBroker.onEvent('SCENE_SELECT_NEXT').subscribe((e: IMessage) => {
+                if (_.isUndefined(this.m_selectedSceneID))
+                    return;
+                var viewer = this.m_canvas.getActiveObject();
+                var viewIndex = this.m_canvas.getObjects().indexOf(viewer);
+                var totalViews = this.m_canvas.getObjects().length;
+                var blockID = undefined;
+                if (viewIndex == totalViews - 1) {
+                    this.m_canvas.setActiveObject(this.m_canvas.item(0));
+                    blockID = this.m_canvas.getActiveObject().getBlockData().blockID;
+                    this.commBroker.fire({event: BLOCK_SELECTED, fromInstance: this, message: blockID});
+                } else {
+                    this.m_canvas.setActiveObject(this.m_canvas.item(viewIndex + 1));
+                    blockID = this.m_canvas.getActiveObject().getBlockData().blockID;
+                    this.commBroker.fire({event: BLOCK_SELECTED, fromInstance: this, message: blockID});
+                }
+            })
+        )
     }
 
     /**
@@ -383,9 +338,12 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
      @method _listenSceneBlockRemove
      **/
     _listenSceneBlockRemove() {
-        this.commBroker.onEvent(SCENE_ITEM_REMOVE).subscribe((msg: IMessage) => {
-            this._onContentMenuSelection('remove');
-        });
+        this.cancelOnDestroy(
+            //
+            this.commBroker.onEvent(SCENE_ITEM_REMOVE).subscribe((msg: IMessage) => {
+                this._onContentMenuSelection('remove');
+            })
+        )
     }
 
     /**
@@ -393,28 +351,30 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
      @method _listenSceneRemove
      **/
     _listenSceneRemove() {
-        this.commBroker.onEvent(SCENE_EDITOR_REMOVE).subscribe((e: IMessage) => {
-            if (this.m_canvas)
-                this.m_canvas.setBackgroundColor('#ffffff', () => {
-                }).renderAll();
-            // remove a scene and notify before so channel instances
-            // can remove corresponding blocks and after so channelList can refresh UI
-            var sceneID = this.rp.getSceneIdFromPseudoId(e.message);
-            this.commBroker.fire({event: REMOVING_SCENE, fromInstance: this, message: sceneID});
-            this.rp.removeBlocksWithSceneID(sceneID);
-            this.rp.removeSceneFromBlockCollectionInScenes(sceneID);
-            this.rp.removeSceneFromBlockCollectionsInChannels(sceneID);
-            this.rp.removeScene(sceneID);
-            this.commBroker.fire({event: SCENE_LIST_UPDATED, fromInstance: this});
-            this.disposeScene();
-            this._zoomReset();
-            // this.m_property.resetPropertiesView();
-            this.m_selectedSceneID = undefined;
-            $('#sceneCanvas', this.el.nativeElement).removeClass('basicBorder');
-            // this._updateBlockCount();
-            // this.commBroker.fire({event: REMOVED_SCENE, fromInstance: this, message: this.m_selected_resource_id});
-        });
-
+        this.cancelOnDestroy(
+            //
+            this.commBroker.onEvent(SCENE_EDITOR_REMOVE).subscribe((e: IMessage) => {
+                if (this.m_canvas)
+                    this.m_canvas.setBackgroundColor('#ffffff', () => {
+                    }).renderAll();
+                // remove a scene and notify before so channel instances
+                // can remove corresponding blocks and after so channelList can refresh UI
+                var sceneID = this.rp.getSceneIdFromPseudoId(e.message);
+                this.commBroker.fire({event: REMOVING_SCENE, fromInstance: this, message: sceneID});
+                this.rp.removeBlocksWithSceneID(sceneID);
+                this.rp.removeSceneFromBlockCollectionInScenes(sceneID);
+                this.rp.removeSceneFromBlockCollectionsInChannels(sceneID);
+                this.rp.removeScene(sceneID);
+                this.commBroker.fire({event: SCENE_LIST_UPDATED, fromInstance: this});
+                this.disposeScene();
+                this._zoomReset();
+                // this.m_property.resetPropertiesView();
+                this.m_selectedSceneID = undefined;
+                $('#sceneCanvas', this.el.nativeElement).removeClass('basicBorder');
+                // this._updateBlockCount();
+                // this.commBroker.fire({event: REMOVED_SCENE, fromInstance: this, message: this.m_selected_resource_id});
+            })
+        )
     }
 
     /**
@@ -465,10 +425,13 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
      @method _listenSceneNew
      **/
     _listenSceneNew() {
-        this.commBroker.onEvent(NEW_SCENE_ADD).subscribe((msg: IMessage) => {
-            var player_data = this.bs.getBlockBoilerplate('3510').getDefaultPlayerData(PLACEMENT_IS_SCENE);
-            this.createScene(player_data, false, true, msg.message.mimeType, msg.message.name);
-        });
+        this.cancelOnDestroy(
+            //
+            this.commBroker.onEvent(NEW_SCENE_ADD).subscribe((msg: IMessage) => {
+                var player_data = this.bs.getBlockBoilerplate('3510').getDefaultPlayerData(PLACEMENT_IS_SCENE);
+                this.createScene(player_data, false, true, msg.message.mimeType, msg.message.name);
+            })
+        )
     }
 
     /**
@@ -487,16 +450,19 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
      @method _listenSceneChanged
      **/
     _listenSceneChanged() {
-        this.commBroker.onEvent(SCENE_BLOCK_CHANGE).subscribe((msg: IMessage) => {
-            if (this.m_rendering)
-                return;
-            var blockIDs = msg.message;
-            con('block(s) edited ' + blockIDs);
-            var domPlayerData = this.rp.getScenePlayerdataDom(this.m_selectedSceneID);
-            this.m_blocks.blockSelected = blockIDs[0];
-            this._preRender(domPlayerData, blockIDs);
-            this._mementoAddState();
-        });
+        this.cancelOnDestroy(
+            //
+            this.commBroker.onEvent(SCENE_BLOCK_CHANGE).subscribe((msg: IMessage) => {
+                if (this.m_rendering)
+                    return;
+                var blockIDs = msg.message;
+                con('block(s) edited ' + blockIDs);
+                var domPlayerData = this.rp.getScenePlayerdataDom(this.m_selectedSceneID);
+                this.m_blocks.blockSelected = blockIDs[0];
+                this._preRender(domPlayerData, blockIDs);
+                this._mementoAddState();
+            })
+        )
     }
 
     /**
@@ -675,81 +641,19 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
      @param {event} e
      **/
     _listenAddBlockWizard() {
-        this.commBroker.onEvent(ADD_NEW_BLOCK_SCENE).subscribe((msg: IMessage) => {
-            var blockID = this.rp.generateSceneId();
-            var player_data = this.bs.getBlockBoilerplate(msg.message.blockCode).getDefaultPlayerData(PLACEMENT_SCENE, msg.message.resourceID);
-            var domPlayerData = $.parseXML(player_data);
-            $(domPlayerData).find('Player').attr('id', blockID);
-            player_data = (new XMLSerializer()).serializeToString(domPlayerData);
-            this.rp.appendScenePlayerBlock(this.m_selectedSceneID, player_data);
-            this.commBroker.fire({event: SCENE_BLOCK_CHANGE, fromInstance: this, message: [blockID]});
-        });
-
+        this.cancelOnDestroy(
+            //
+            this.commBroker.onEvent(ADD_NEW_BLOCK_SCENE).subscribe((msg: IMessage) => {
+                var blockID = this.rp.generateSceneId();
+                var player_data = this.bs.getBlockBoilerplate(msg.message.blockCode).getDefaultPlayerData(PLACEMENT_SCENE, msg.message.resourceID);
+                var domPlayerData = $.parseXML(player_data);
+                $(domPlayerData).find('Player').attr('id', blockID);
+                player_data = (new XMLSerializer()).serializeToString(domPlayerData);
+                this.rp.appendScenePlayerBlock(this.m_selectedSceneID, player_data);
+                this.commBroker.fire({event: SCENE_BLOCK_CHANGE, fromInstance: this, message: [blockID]});
+            })
+        )
     }
-
-    // /**
-    //  Listen to re-order of screen division, putting selected on top
-    //  @method _listenPushToTop
-    //  **/
-    // _listenPushToTop() {
-    //     this.commBroker.onEvent(SCENE_PUSH_TOP).subscribe((msg: IMessage) => {
-    //         if (_.isUndefined(this.m_selectedSceneID))
-    //             return;
-    //         var block = this.m_canvas.getActiveObject();
-    //         if (_.isNull(block)) {
-    //             this._discardSelections();
-    //             return;
-    //         }
-    //         this.m_canvas.bringToFront(block);
-    //         this._updateZorder(this.PUSH_TOP, block);
-    //         this._mementoAddState();
-    //     });
-    // }
-
-    // /**
-    //  Listen to re-order of screen division, putting selected at bottom
-    //  @method _listenPushToBottom
-    //  **/
-    // _listenPushToBottom() {
-    //     this.commBroker.onEvent(SCENE_PUSH_BOTTOM).subscribe((msg: IMessage) => {
-    //         if (_.isUndefined(this.m_selectedSceneID))
-    //             return;
-    //         var block = this.m_canvas.getActiveObject();
-    //         if (_.isNull(block)) {
-    //             this._discardSelections();
-    //             return;
-    //         }
-    //         this.m_canvas.sendToBack(block);
-    //         this._updateZorder(this.PUSH_BOTTOM, block);
-    //         this._mementoAddState();
-    //     });
-    // }
-
-    // /**
-    //  Listen grid magnet when dragging objects
-    //  @method _listenGridMagnet
-    //  **/
-    // _listenGridMagnet() {
-    //     $('#sceneGridMagnet', this.el.nativeElement).on('click', () => {
-    //         if (this.m_rendering || _.isUndefined(this.m_canvas))
-    //             return;
-    //         switch (this.m_gridMagneticMode) {
-    //             case 0: {
-    //                 this.m_gridMagneticMode = 1;
-    //                 break;
-    //             }
-    //             case 1: {
-    //                 this.m_gridMagneticMode = 2;
-    //                 break;
-    //             }
-    //             case 2: {
-    //                 this.m_gridMagneticMode = 0;
-    //                 break;
-    //             }
-    //         }
-    //         this.m_sceneBlock.setCanvas(this.m_canvas, this.m_gridMagneticMode);
-    //     });
-    // }
 
     /**
      @method _sceneProcessing
@@ -767,27 +671,6 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
             $('#sceneProcessing', this.el.nativeElement).fadeOut('slow', i_callBack);
         }
     }
-
-    // /**
-    //  Listen to undo and redo
-    //  @method _listenMemento
-    //  **/
-    // _listenMemento() {
-    //     this.commBroker.onEvent(SCENE_UNDO).subscribe((msg: IMessage) => {
-    //         if (this.m_rendering)
-    //             return;
-    //         this.m_blocks.blockSelected = undefined;
-    //         this._discardSelections();
-    //         this._mementoLoadState('undo');
-    //     });
-    //     this.commBroker.onEvent(SCENE_REDO).subscribe((msg: IMessage) => {
-    //         if (this.m_rendering)
-    //             return;
-    //         this.m_blocks.blockSelected = undefined;
-    //         this._discardSelections();
-    //         this._mementoLoadState('redo');
-    //     });
-    // }
 
     /**
      Init a undo / redo via memento pattern
@@ -810,7 +693,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
      @method _mementoAddState
      **/
     _mementoAddState() {
-        var MAX = 100;
+        const MAX = 100;
         if (_.isUndefined(this.m_selectedSceneID))
             return;
         this._mementoInit();
@@ -1053,34 +936,21 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         }, 200);
     }
 
-    /**
-     Anytime the containing StackView is selected, re-render
-     removed while we were gone
-     @method _listenStackViewSelected
-     **/
-    _listenStackViewSelected() {
-        // var appContentFaderView = BB.comBroker.getService(BB.SERVICES['APP_CONTENT_FADER_VIEW']);
-        // appContentFaderView.on(BB.EVENTS.SELECTED_STACK_VIEW,  (e) => {
-        //     if (e == BB.comBroker.getService(BB.SERVICES['SCENES_LOADER_VIEW'])) {
-        //         setTimeout( () => {
-        //             if (_.isUndefined(this.m_canvas))
-        //                 return;
-        //             this.m_canvas.calcOffset();
-        //         }, 500);
-        //     }
-        // });
-    }
+
 
     /**
      Listen to when the app is resized so we can re-render
      @method _listenAppResized
      **/
     _listenAppResized() {
-        this.commBroker.onEvent(Consts.Events().WIN_SIZED).subscribe((msg: IMessage) => {
-            if (_.isUndefined(this.m_canvas))
-                return;
-            this.m_canvas.calcOffset();
-        });
+        this.cancelOnDestroy(
+            //
+            this.commBroker.onEvent(Consts.Events().WIN_SIZED).subscribe((msg: IMessage) => {
+                if (_.isUndefined(this.m_canvas))
+                    return;
+                this.m_canvas.calcOffset();
+            })
+        )
     }
 
     /**
@@ -1276,13 +1146,6 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
 
     /**
      Update the coordinates of a block in pepper db, don't allow below w/h MIN_SIZE
-     @method _updateBlockCords
-     @param {String} blockID
-     @param {Boolean} i_calcScale
-     @param {Number} x
-     @param {Number} y
-     @param {Number} w
-     @param {Number} h
      **/
     _updateBlockCords(i_block, i_calcScale, x, y, w, h, a) {
 
@@ -1397,39 +1260,8 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         }
     }
 
-    // /**
-    //  Listen to all zoom events via wiring the UI
-    //  @method _listenZoom
-    //  **/
-    // _listenZoom() {
-    //     this.commBroker.onEvent(SCENE_ZOOM_IN).subscribe((msg: IMessage) => {
-    //         // this.m_property = BB.comBroker.getService(BB.SERVICES['PROPERTIES_VIEW']).resetPropertiesView();
-    //         this._zoomIn();
-    //         this._discardSelections();
-    //         this._resetAllObjectScale();
-    //         this.m_canvas.renderAll();
-    //     });
-    //
-    //     this.commBroker.onEvent(SCENE_ZOOM_OUT).subscribe((msg: IMessage) => {
-    //         // this.m_property = BB.comBroker.getService(BB.SERVICES['PROPERTIES_VIEW']).resetPropertiesView();
-    //         this._zoomOut();
-    //         this._discardSelections();
-    //         this._resetAllObjectScale();
-    //         this.m_canvas.renderAll();
-    //     });
-    //
-    //     this.commBroker.onEvent(SCENE_ZOOM_RESET).subscribe((msg: IMessage) => {
-    //         // this.m_property = BB.comBroker.getService(BB.SERVICES['PROPERTIES_VIEW']).resetPropertiesView();
-    //         this._zoomReset();
-    //         this._resetAllObjectScale();
-    //         this.m_canvas.renderAll();
-    //     });
-    // }
-
     /**
      Zoom to scale size
-     @method _zoomTo
-     @param {Number} nZooms
      **/
     _zoomTo(nZooms) {
         var i;
@@ -1444,8 +1276,6 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
 
     /**
      Zoom to scale size
-     @method _zoomTo
-     @param {Number} nZooms
      **/
     _zoomToBlock(nZooms, block) {
         var i;
@@ -1460,9 +1290,6 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
 
     /**
      Scroll canvas to set position
-     @method _scrollTo
-     @param {Number} i_top
-     @param {Number} i_left
      **/
     _scrollTo(i_top, i_left) {
         var self = this;
@@ -1690,8 +1517,6 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
 }
 
 
-
-
 // /**
 //  Announce that block count changed with block array of ids
 //  @method self._updateBlockCount();
@@ -1716,4 +1541,174 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
 //     // this.commBroker.fire({event: SCENE_BLOCK_LIST_UPDATED, fromInstance: this, message: blocks});
 // }, 500);
 
+// }
+
+// /**
+//  Listen to undo and redo
+//  @method _listenMemento
+//  **/
+// _listenMemento() {
+//     this.commBroker.onEvent(SCENE_UNDO).subscribe((msg: IMessage) => {
+//         if (this.m_rendering)
+//             return;
+//         this.m_blocks.blockSelected = undefined;
+//         this._discardSelections();
+//         this._mementoLoadState('undo');
+//     });
+//     this.commBroker.onEvent(SCENE_REDO).subscribe((msg: IMessage) => {
+//         if (this.m_rendering)
+//             return;
+//         this.m_blocks.blockSelected = undefined;
+//         this._discardSelections();
+//         this._mementoLoadState('redo');
+//     });
+// }
+
+// _initDimensionProps() {
+// var self = this;
+// require(['DimensionProps'],  (DimensionProps) => {
+//     self.m_dimensionProps = new DimensionProps({
+//         appendTo: Elements.SCENE_BLOCK_PROPS,
+//         showAngle: true,
+//         showLock: true,
+//         hideSpinners: true
+//     });
+//     // self.m_dimensionProps.hideSpinners();
+//     BB.comBroker.setService(BB.SERVICES['DIMENSION_PROPS_LAYOUT'], self.m_dimensionProps);
+//     $(self.m_dimensionProps).on('changed',  (e) => {
+//         var block = self.m_canvas.getActiveObject();
+//         if (_.isNull(block))
+//             return;
+//         var props = e.target.getValues();
+//         var block_id = block.getBlockData().blockID;
+//         self._updateBlockCords(block, false, props.x, props.y, props.w, props.h, props.a);
+//         BB.comBroker.fire(BB.EVENTS['SCENE_BLOCK_CHANGE'], self, null, [block_id]);
+//     });
+//     self._sceneActive();
+// })
+// }
+
+
+// this._sceneProcessing(true, jQueryAny.proxy(function () {
+//     self._disposeBlocks();
+//     self.disposeScene();
+//     self._zoomReset();
+//     // self.m_property.resetPropertiesView();
+//     var domPlayerData = self.rp.getScenePlayerdataDom(self.m_selectedSceneID);
+//     var l = $(domPlayerData).find('Layout').eq(0);
+//     var w = $(l).attr('width');
+//     var h = $(l).attr('height');
+//     self._initializeCanvas(w, h);
+//     // self._initializeScene(self.m_selectedSceneID);
+//     self._initializeScene();
+//     self._preRender(domPlayerData);
+// }), this);
+
+
+
+// /**
+//  Listen to re-order of screen division, putting selected on top
+//  @method _listenPushToTop
+//  **/
+// _listenPushToTop() {
+//     this.commBroker.onEvent(SCENE_PUSH_TOP).subscribe((msg: IMessage) => {
+//         if (_.isUndefined(this.m_selectedSceneID))
+//             return;
+//         var block = this.m_canvas.getActiveObject();
+//         if (_.isNull(block)) {
+//             this._discardSelections();
+//             return;
+//         }
+//         this.m_canvas.bringToFront(block);
+//         this._updateZorder(this.PUSH_TOP, block);
+//         this._mementoAddState();
+//     });
+// }
+
+// /**
+//  Listen to re-order of screen division, putting selected at bottom
+//  @method _listenPushToBottom
+//  **/
+// _listenPushToBottom() {
+//     this.commBroker.onEvent(SCENE_PUSH_BOTTOM).subscribe((msg: IMessage) => {
+//         if (_.isUndefined(this.m_selectedSceneID))
+//             return;
+//         var block = this.m_canvas.getActiveObject();
+//         if (_.isNull(block)) {
+//             this._discardSelections();
+//             return;
+//         }
+//         this.m_canvas.sendToBack(block);
+//         this._updateZorder(this.PUSH_BOTTOM, block);
+//         this._mementoAddState();
+//     });
+// }
+
+// /**
+//  Listen grid magnet when dragging objects
+//  @method _listenGridMagnet
+//  **/
+// _listenGridMagnet() {
+//     $('#sceneGridMagnet', this.el.nativeElement).on('click', () => {
+//         if (this.m_rendering || _.isUndefined(this.m_canvas))
+//             return;
+//         switch (this.m_gridMagneticMode) {
+//             case 0: {
+//                 this.m_gridMagneticMode = 1;
+//                 break;
+//             }
+//             case 1: {
+//                 this.m_gridMagneticMode = 2;
+//                 break;
+//             }
+//             case 2: {
+//                 this.m_gridMagneticMode = 0;
+//                 break;
+//             }
+//         }
+//         this.m_sceneBlock.setCanvas(this.m_canvas, this.m_gridMagneticMode);
+//     });
+// }
+
+// _listenStackViewSelected() {
+    // var appContentFaderView = BB.comBroker.getService(BB.SERVICES['APP_CONTENT_FADER_VIEW']);
+    // appContentFaderView.on(BB.EVENTS.SELECTED_STACK_VIEW,  (e) => {
+    //     if (e == BB.comBroker.getService(BB.SERVICES['SCENES_LOADER_VIEW'])) {
+    //         setTimeout( () => {
+    //             if (_.isUndefined(this.m_canvas))
+    //                 return;
+    //             this.m_canvas.calcOffset();
+    //         }, 500);
+    //     }
+    // });
+// }
+
+
+// /**
+//  Listen to all zoom events via wiring the UI
+//  @method _listenZoom
+//  **/
+// _listenZoom() {
+//     this.commBroker.onEvent(SCENE_ZOOM_IN).subscribe((msg: IMessage) => {
+//         // this.m_property = BB.comBroker.getService(BB.SERVICES['PROPERTIES_VIEW']).resetPropertiesView();
+//         this._zoomIn();
+//         this._discardSelections();
+//         this._resetAllObjectScale();
+//         this.m_canvas.renderAll();
+//     });
+//
+//     this.commBroker.onEvent(SCENE_ZOOM_OUT).subscribe((msg: IMessage) => {
+//         // this.m_property = BB.comBroker.getService(BB.SERVICES['PROPERTIES_VIEW']).resetPropertiesView();
+//         this._zoomOut();
+//         this._discardSelections();
+//         this._resetAllObjectScale();
+//         this.m_canvas.renderAll();
+//     });
+//
+//     this.commBroker.onEvent(SCENE_ZOOM_RESET).subscribe((msg: IMessage) => {
+//         // this.m_property = BB.comBroker.getService(BB.SERVICES['PROPERTIES_VIEW']).resetPropertiesView();
+//         this._zoomReset();
+//         this._resetAllObjectScale();
+//         this.m_canvas.renderAll();
+//     });
 // }
