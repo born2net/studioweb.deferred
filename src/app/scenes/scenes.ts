@@ -20,7 +20,7 @@ import {ISliderItemData} from "../../comps/sliderpanel/Slideritem";
             </Slideritem>
             <Slideritem [templateRef]="b" #sliderItemCampaignEditor (onChange)="_onSlideChange($event)" [showFromButton]="false" class="page left sceneEditor" [fromDirection]="'left'" [from]="'sceneList'">
                 <template #b>
-                    <scene-editor #sceneEditor (onToAddContent)="sliderAddContent.slideTo('addContent','right')" 
+                    <scene-editor #sceneEditor (onToAddContent)="sliderAddContent.slideTo('addContent','right')"
                                   (onGoBack)="sliderItemCampaignEditor.slideTo('sceneList','left')">
                     </scene-editor>
                 </template>

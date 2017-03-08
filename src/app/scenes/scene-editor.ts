@@ -1,14 +1,17 @@
-import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Output, ViewChild} from "@angular/core";
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Output, ViewChild} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {ISceneData, YellowPepperService} from "../../services/yellowpepper.service";
 import {BlockService} from "../blocks/block-service";
 import {CommBroker, IMessage} from "../../services/CommBroker";
 import {RedPepperService} from "../../services/redpepper.service";
-import * as _ from "lodash";
 import {PLACEMENT_IS_SCENE, PLACEMENT_SCENE} from "../../interfaces/Consts";
 import {Consts} from "../../Conts";
 import {BlockFactoryService} from "../../services/block-factory-service";
 import {BlockFabric} from "../blocks/block-fabric";
+import * as _ from 'lodash';
+import {SceneToolbar} from "./scene-toolbar";
+import {PlayerDataModelExt} from "../../store/model/msdb-models-extended";
+import {timeout} from "../../decorators/timeout-decorator";
 
 export const JSON_EVENT_ROW_CHANGED = 'JSON_EVENT_ROW_CHANGED';
 export const STATIONS_POLL_TIME_CHANGED = 'STATIONS_POLL_TIME_CHANGED';
@@ -42,10 +45,15 @@ export const CAMPAIGN_LIST_LOADING = 'CAMPAIGN_LIST_LOADED';
 
 @Component({
     selector: 'scene-editor',
+    styles: [`
+        a {
+            outline: none;
+        }
+    `],
     // changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <small class="debug">{{me}}</small>
-        <scene-toolbar (onItemSelected)="_onItemSelectedFromToolbar($event)" [blocks]="this.m_blocks.blocksPost" (onToolbarAction)="_onToolbarAction($event)"></scene-toolbar>
+        <scene-toolbar [blocks]="m_canvasBlocks" (onItemSelected)="_onItemSelectedFromToolbar($event)" (onToolbarAction)="_onToolbarAction($event)"></scene-toolbar>
         <loading *ngIf="m_isLoading" [size]="'50px'" [style]="{'margin-top': '150px'}"></loading>
         <div [ngClass]="{hidden: m_isLoading}">
             <div id="sceneCanvasContainer" data-toggle="context" data-target="#sceneContextMenu" class="yScroll context sceneElements" style=" overflow-x: visible" align="center"></div>
@@ -81,8 +89,10 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
     m_rendering = false;
     m_memento = {};
     m_canvas: any;
+    m_canvasBlocks = [];
     _sceneBlockModified;
     m_sceneBlock;
+    // m_sceneBlockIds = List([]);
     m_canvasMouseState = 0;
     m_copiesObjects = [];
     m_canvasScale = 1;
@@ -100,6 +110,9 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         // this.cd.detach();
         // var a = new BlockFabric(bs);
     }
+
+    @ViewChild(SceneToolbar)
+    sceneToolbar: SceneToolbar;
 
     ngAfterViewInit() {
         var self = this;
@@ -126,6 +139,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         self.SCALE_FACTOR = 1.2;
 
         self._listenSceneSelection();
+        self._listenTotalBlocksModified();
         self._listenAddBlockWizard();
         self._listenToCanvasScroll();
         self._listenSceneChanged();
@@ -264,6 +278,19 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         )
     }
 
+    @timeout(500)
+    _updateBlocksCount() {
+        if (!this.m_canvas) return;
+        this.m_canvasBlocks = [{id: 'SCENE', name: '[Scene canvas]'}];
+        this.m_canvas.getObjects().forEach((block: BlockFabric) => {
+            this.m_canvasBlocks.push({
+                id: block.getBlockData().blockID,
+                name: block.getBlockData().blockName,
+            })
+        })
+        this.cd.markForCheck();
+    }
+
     /**
      Bring the scene into view
      @method _sceneActive
@@ -387,8 +414,8 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                 // this.m_property.resetPropertiesView();
                 this.m_selectedSceneID = undefined;
                 $('#sceneCanvas', this.el.nativeElement).removeClass('basicBorder');
-                this.rp.reduxCommit();
                 // this._updateBlockCount();
+                this.rp.reduxCommit();
                 // this.commBroker.fire({event: REMOVED_SCENE, fromInstance: this, message: this.m_selected_resource_id});
             })
         )
@@ -459,6 +486,29 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         $('#sceneCanvasContainer', this.el.nativeElement).on("mouseover", (e) => {
             this.commBroker.fire({event: MOUSE_ENTERS_CANVAS, fromInstance: this});
         });
+    }
+
+    _listenTotalBlocksModified() {
+        this.cancelOnDestroy(
+            this.yp.listenSceneChanged()
+                .pairwise()
+                .map((i_playerDataModelsExt: Array<PlayerDataModelExt>) => {
+                    var a0 = i_playerDataModelsExt[0].getPlayerDataValue();
+                    var a1 = $.parseXML(a0);
+                    var a2 = $(a1).find('Players').children('Player')
+                        .map((i, player) => $(player).attr('id'))
+                    var previousBlockIds = $.makeArray(a2);
+                    var b0 = i_playerDataModelsExt[1].getPlayerDataValue();
+                    var b1 = $.parseXML(b0);
+                    var b2 = $(b1).find('Players').children('Player')
+                        .map((i, player) => $(player).attr('id'))
+                    var currentBlockIds = $.makeArray(b2);
+                    return !_.isEqual(currentBlockIds, previousBlockIds);
+                }).filter(v => v)
+                .subscribe(() => {
+                    this._updateBlocksCount();
+                })
+        )
     }
 
     /**
@@ -578,6 +628,8 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                 }
 
                 case 'paste': {
+                    if (this.m_copiesObjects.length == 0)
+                        return;
                     var x: any, y: any, blockID, origX: any, origY: any, blockIDs = [];
                     _.each(this.m_copiesObjects, (domPlayerData, i: any) => {
                         blockID = this.rp.generateSceneId();
@@ -604,7 +656,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                     if (this.m_copiesObjects.length == 1) {
                         this.commBroker.fire({event: SCENE_BLOCK_CHANGE, fromInstance: this, message: [blockID]});
                     } else {
-                        this.commBroker.fire({event: SCENE_BLOCK_CHANGE, fromInstance: this, message: blockID});
+                        this.commBroker.fire({event: SCENE_BLOCK_CHANGE, fromInstance: this, message: blockIDs});
                     }
                     // this._updateBlockCount();
                     this.rp.reduxCommit();
@@ -683,7 +735,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
     /**
      @method _sceneProcessing
      **/
-    _sceneProcessing(i_status, i_callBack, from?) {
+    _sceneProcessing(i_status, i_callBack, from ?) {
         if (i_status) {
             $('#sceneProcessing', this.el.nativeElement).css({
                 width: $('#scenePanelWrap').width(),
@@ -809,7 +861,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
      @param {Object} i_domPlayerData
      @param {Object} [i_blockIDs] optionally render only a single block
      **/
-    _preRender(i_domPlayerData, i_blockIDs?) {
+    _preRender(i_domPlayerData, i_blockIDs ?) {
         var zIndex = -1;
         this._renderPause();
         this.m_blocks.blocksPre = [];
@@ -871,6 +923,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         if (createAll) {
             this._resetAllObjectScale();
             this._zoomTo(nZooms);
+            this._updateBlocksCount();
         } else {
             // if to re-render only changed blocks
             _.forEach(this.m_blocks.blocksPost, (i_block: any) => {
@@ -1241,7 +1294,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
      @method _disposeBlocks
      @params {Number} [i_blockID] optional to remove only a single block
      **/
-    _disposeBlocks(i_blockID?) {
+    _disposeBlocks(i_blockID ?) {
         var i;
         if (_.isUndefined(this.m_canvas))
             return;
@@ -1548,30 +1601,6 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
 }
 
 
-// /**
-//  Announce that block count changed with block array of ids
-//  @method self._updateBlockCount();
-//  **/
-// _updateBlockCount() {
-// var blocks = [];
-// if (_.isUndefined(this.m_selectedSceneID)) {
-//     // this.commBroker.fire({event: SCENE_BLOCK_LIST_UPDATED, fromInstance: this});
-//     return;
-// }
-// // cpu breather
-// setTimeout(() => {
-//     if (_.isUndefined(this.m_canvas))
-//         return;
-//     var objects = this.m_canvas.getObjects().length;
-//     for (var i = 0; i < objects; i++) {
-//         blocks.push({
-//             id: this.m_canvas.item(i).m_block_id,
-//             name: this.m_canvas.item(i).m_blockName
-//         });
-//     }
-//     // this.commBroker.fire({event: SCENE_BLOCK_LIST_UPDATED, fromInstance: this, message: blocks});
-// }, 500);
-
 // }
 
 // /**
@@ -1741,4 +1770,24 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
 //         this._resetAllObjectScale();
 //         this.m_canvas.renderAll();
 //     });
+// }
+
+// /**
+//  Announce that block count changed with block array of ids
+//  @method self._updateBlockCount();
+//  **/
+// _updateBlockCount() {
+//     setTimeout(() => {
+//         this.m_sceneBlockIds = List([{id: 'SCENE', name: '[Scene canvas]'}]);
+//         var objects = this.m_canvas.getObjects().length;
+//         for (var i = 0; i < objects; i++) {
+//             this.m_sceneBlockIds = this.m_sceneBlockIds.push({
+//                 id: this.m_canvas.item(i).m_block_id,
+//                 name: this.m_canvas.item(i).m_blockName
+//             });
+//         }
+//         // console.log('NEW LIST CREATED');
+//         // this.sceneToolbar.updateBlocks(this.m_sceneBlockIds);
+//     }, 1000)
+//
 // }

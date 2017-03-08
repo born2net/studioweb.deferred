@@ -1,8 +1,10 @@
-import {Component, ChangeDetectionStrategy, AfterViewInit, Output, EventEmitter, Input} from "@angular/core";
+import {Component, ChangeDetectionStrategy, AfterViewInit, Output, EventEmitter, Input, ChangeDetectorRef} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {FormBuilder, FormGroup} from "@angular/forms";
 import * as _ from 'lodash';
+import {PlayerDataModelExt} from "../../store/model/msdb-models-extended";
+import {RedPepperService} from "../../services/redpepper.service";
 
 @Component({
     selector: 'scene-toolbar',
@@ -49,7 +51,7 @@ import * as _ from 'lodash';
                         <i style="font-size: 1.3em" class="fa fa-th-large"> </i>
                     </button>
                     <div class="input-group" style="margin-left: 0px; position: relative; top: -10px">
-                        <select #sceneSelection style="height: 30px" (change)="_onBlockSelected($event)" formControlName="blocks">
+                        <select #sceneSelection style="height: 30px; max-width: 150px; width: 150px" (change)="_onBlockSelected($event)" formControlName="blocks">
                             <option [value]="block.id" *ngFor="let block of m_blocks">{{block.name}}</option>
                         </select>
                     </div>
@@ -63,9 +65,9 @@ export class SceneToolbar extends Compbaser {
 
     m_formInputs = {};
     m_contGroup: FormGroup;
-    m_blocks;
+    m_blocks = [];
 
-    constructor(private fb: FormBuilder) {
+    constructor(private fb: FormBuilder, private cd: ChangeDetectorRef) {
         super();
         this.m_contGroup = fb.group({
             'blocks': []
@@ -74,14 +76,7 @@ export class SceneToolbar extends Compbaser {
 
     @Input()
     set blocks(i_blocks) {
-        var scene = {id: 'SCENE', name: '[Scene canvas]'};
-        this.m_blocks = _.map(i_blocks, (value: any, key) => {
-            return {
-                id: key,
-                name: value.getBlockData().blockName
-            }
-        });
-        this.m_blocks.unshift(scene);
+        this.m_blocks = i_blocks;
     }
 
     @Output()

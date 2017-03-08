@@ -103,6 +103,23 @@ export class YellowPepperService {
                 }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
     }
 
+
+    /**
+     Listen to changes in specific scene
+     **/
+    listenSceneChanged(emitOnEmpty: boolean = false): Observable<PlayerDataModelExt> {
+        var sceneSelected = this.store.select(store => store.appDb.uiState.scene.sceneSelected);
+        var playerDataList$ = this.store.select(store => store.msDatabase.sdk.table_player_data);
+        return sceneSelected.combineLatest(
+            playerDataList$,
+            (sceneId, player_data) => {
+                return player_data.find((i_player: PlayerDataModelExt) => {
+                    return i_player.getPlayerDataId() == sceneId
+                });
+            }).distinct()
+            .mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
+    }
+
     /**
      listen UI campaign > timeline > board_viewer selected and return back the associated channel with that board id
      **/
