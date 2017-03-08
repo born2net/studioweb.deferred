@@ -752,6 +752,24 @@ export class RedPepperService {
     }
 
     /**
+     Returns all scenes
+     @method getSceneMime
+     @param {Number} i_sceneID
+     @return {Object} scene names
+     **/
+    getSceneMime(i_sceneID) {
+        var mimeType = '';
+        $(this.databaseManager.table_player_data().getAllPrimaryKeys()).each((k, player_data_id) => {
+            var recPlayerData = this.databaseManager.table_player_data().getRec(player_data_id);
+            var domPlayerData = $.parseXML(recPlayerData['player_data_value'])
+            var id = $(domPlayerData).find('Player').attr('id');
+            if (id == i_sceneID)
+                mimeType = $(domPlayerData).find('Player').attr('mimeType');
+        });
+        return mimeType;
+    }
+    
+    /**
      Set a campaign table record for the specified i_campaign_id.
      The method uses generic key / value fields so it can set any part of the record.
      @method setCampaignRecord
@@ -1869,24 +1887,6 @@ export class RedPepperService {
         return sceneNames;
     }
 
-    /**
-     Returns all scenes
-     @method getSceneMime
-     @param {Number} i_sceneID
-     @return {Object} scene names
-     **/
-    getSceneMime(i_sceneID) {
-
-        var mimeType = '';
-        $(this.databaseManager.table_player_data().getAllPrimaryKeys()).each(function (k, player_data_id) {
-            var recPlayerData = this.databaseManager.table_player_data().getRec(player_data_id);
-            var domPlayerData = $.parseXML(recPlayerData['player_data_value'])
-            var id = $(domPlayerData).find('Player').attr('id');
-            if (id == i_sceneID)
-                mimeType = $(domPlayerData).find('Player').attr('mimeType');
-        });
-        return mimeType;
-    }
 
     /**
      Returns this model's attributes as...
