@@ -92,7 +92,6 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
     m_canvasBlocks = [];
     _sceneBlockModified;
     m_sceneBlock;
-    // m_sceneBlockIds = List([]);
     m_canvasMouseState = 0;
     m_copiesObjects = [];
     m_canvasScale = 1;
@@ -108,7 +107,6 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
     constructor(private blockFactory: BlockFactoryService, private rp: RedPepperService, private el: ElementRef, private yp: YellowPepperService, private cd: ChangeDetectorRef, private bs: BlockService, private commBroker: CommBroker) {
         super();
         // this.cd.detach();
-        // var a = new BlockFabric(bs);
     }
 
     @ViewChild(SceneToolbar)
@@ -490,7 +488,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
 
     _listenTotalBlocksModified() {
         this.cancelOnDestroy(
-            this.yp.listenSceneChanged()
+            this.yp.listenSelectedSceneChanged()
                 .pairwise()
                 .map((i_playerDataModelsExt: Array<PlayerDataModelExt>) => {
                     var a0 = i_playerDataModelsExt[0].getPlayerDataValue();

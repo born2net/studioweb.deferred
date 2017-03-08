@@ -105,9 +105,9 @@ export class YellowPepperService {
 
 
     /**
-     Listen to changes in specific scene
+     Listen to changes in selected scene
      **/
-    listenSceneChanged(emitOnEmpty: boolean = false): Observable<PlayerDataModelExt> {
+    listenSelectedSceneChanged(emitOnEmpty: boolean = false): Observable<PlayerDataModelExt> {
         var sceneSelected = this.store.select(store => store.appDb.uiState.scene.sceneSelected);
         var playerDataList$ = this.store.select(store => store.msDatabase.sdk.table_player_data);
         return sceneSelected.combineLatest(

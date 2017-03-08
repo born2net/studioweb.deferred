@@ -19,11 +19,8 @@ export class BlockFabricScene extends BlockFabric {
     }
 
     /**
-     set player data for a scene
+     get player data for a scene
      @Override
-     @method getPlayerData
-     @param {Number} i_playerData
-     @return {Number} Unique clientId.
      **/
     getBlockData() {
         var data = BlockFabric.prototype.getBlockData.call(this);
