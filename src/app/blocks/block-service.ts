@@ -892,7 +892,6 @@ export class BlockService {
                         this.rp.setCampaignTimelineChannelPlayerRecord(blockData.blockID, 'player_data', player_data);
                     }
                 }
-                this.rp.reduxCommit();
                 break;
             }
 
