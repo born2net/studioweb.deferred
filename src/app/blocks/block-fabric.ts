@@ -39,28 +39,26 @@ export class BlockFabric extends fabric.Group {
         this.m_resourceID = undefined;
     }
 
-    /**
-     Update the msdb for the block with new values inside its player_data
-     **/
-    _setBlockPlayerData(i_xmlDoc, i_noNotify, i_xmlIsString) {
-        var player_data;
-        if (i_xmlIsString == true) {
-            player_data = i_xmlDoc;
-        } else {
-            player_data = (new XMLSerializer()).serializeToString(i_xmlDoc);
-        }
-        this.m_pepper.setScenePlayerdataBlock(this.m_sceneID, this.m_block_id, player_data);
-        // switch (this.m_placement) {
-        //     case PLACEMENT_SCENE: {
-        //         this.m_pepper.setScenePlayerdataBlock(this.m_sceneID, this.m_block_id, player_data);
-        //         break;
-        //     }
-        //     case PLACEMENT_IS_SCENE: {
-        //         this.m_pepper.setScenePlayerData(this.m_block_id, player_data);
-        //         break;
-        //     }
-        // }
-    }
+    // _setBlockPlayerData(i_xmlDoc, i_noNotify, i_xmlIsString) {
+    //     var player_data;
+    //     if (i_xmlIsString == true) {
+    //         player_data = i_xmlDoc;
+    //     } else {
+    //         player_data = (new XMLSerializer()).serializeToString(i_xmlDoc);
+    //     }
+    //     this.m_pepper.setScenePlayerdataBlock(this.m_sceneID, this.m_block_id, player_data);
+    //     this.m_pepper.reduxCommit();
+    //     // switch (this.m_placement) {
+    //     //     case PLACEMENT_SCENE: {
+    //     //         this.m_pepper.setScenePlayerdataBlock(this.m_sceneID, this.m_block_id, player_data);
+    //     //         break;
+    //     //     }
+    //     //     case PLACEMENT_IS_SCENE: {
+    //     //         this.m_pepper.setScenePlayerData(this.m_block_id, player_data);
+    //     //         break;
+    //     //     }
+    //     // }
+    // }
 
     /**
      Get the XML player data of a block, depending where its placed

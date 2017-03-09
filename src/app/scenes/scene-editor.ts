@@ -1257,6 +1257,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         var player_data = (new XMLSerializer()).serializeToString(domPlayerData);
         this.rp.setScenePlayerdataBlock(this.m_selectedSceneID, blockID, player_data);
         this.rp.reduxCommit();
+
     }
 
     /**
