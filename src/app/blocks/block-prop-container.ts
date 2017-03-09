@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectorRef, Component, ViewChild} from "@angular/core";
+import {AfterViewInit, ChangeDetectorRef, Component, Inject, ViewChild} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {BlockService, IBlockData} from "./block-service";
@@ -123,11 +123,25 @@ export class BlockPropContainer extends Compbaser implements AfterViewInit {
     m_blockLabels = BlockLabels;
     m_blockData: IBlockData;
     m_tabTitle: string = 'none';
+    m_showSettingsTab = true;
 
-    constructor(private yp: YellowPepperService, private bs: BlockService, private cpService: ColorPickerService, private cd:ChangeDetectorRef) {
+    constructor(@Inject('BLOCK_PLACEMENT') private blockPlacement: string, private yp: YellowPepperService, private bs: BlockService, private cpService: ColorPickerService, private cd:ChangeDetectorRef) {
         super();
-        // console.log(this.bs.getServiceType());
+        // console.log(blockPlacement);
+        if (this.blockPlacement == 'CHANNEL')
+            this._listenOnChannels();
+        if (this.blockPlacement == 'SCENE')
+            this._listenOnScenes();
+    }
 
+    @ViewChild('settings')
+    settings: Tab;
+
+    ngAfterViewInit() {
+        this.toggleSettingsTab();
+    }
+
+    private _listenOnChannels(){
         this.cancelOnDestroy(
             //
             this.yp.listenBlockChannelSelectedOrChanged()
@@ -138,23 +152,24 @@ export class BlockPropContainer extends Compbaser implements AfterViewInit {
                     this.m_blockTypeSelected = blockData.blockCode;
                     this.m_tabTitle = blockData.blockAcronym;
                     this.m_blockData = blockData;
-                    if (!this.settings) return;
-                    // for json based scenes show the settings, unless its the actuall Json Player which we don't
+                    // for json based scenes show the settings, unless its the actual Json Player which we don't
                     if (blockData.playerDataJsonHandle && this.m_blockTypeSelected != '4300') {
-                        this.settings.show = true;
+                        this.m_showSettingsTab = true;
+                        this.toggleSettingsTab();
                     } else {
-                        this.settings.show = false;
+                        this.m_showSettingsTab = false;
+                        this.toggleSettingsTab();
                     }
-                    this.cd.markForCheck();
                 }, (e) => console.error(e))
         )
     }
 
-    @ViewChild('settings')
-    settings: Tab;
-
-
-    ngAfterViewInit() {
+    private toggleSettingsTab(){
+        if (!this.settings) return;
+        this.settings.show = this.m_showSettingsTab;
+    }
+    private _listenOnScenes(){
+        console.log('to do listen sceen');
     }
 
     ngOnInit() {

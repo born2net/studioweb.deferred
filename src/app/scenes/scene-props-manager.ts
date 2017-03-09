@@ -17,15 +17,14 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
         <ul [ngSwitch]="m_uiUserFocusItem$ | async">
             <div *ngSwitchCase="m_uiUserFocusItemEnum.sceneEditor">
                 <h5>scene editor</h5>
-                <!--<block-prop-container></block-prop-container>-->
+                <block-prop-container></block-prop-container>
             </div>
             <div *ngSwitchCase="m_uiUserFocusItemEnum.sceneProps">
-                <h5>scene props</h5>
-                <!--<block-prop-container></block-prop-container>-->
+                <h5>scene props</h5>                
             </div>
             <div *ngSwitchCase="m_uiUserFocusItemEnum.sceneBlock">
                 <h5>block block</h5>
-                <!--<block-prop-container></block-prop-container>-->
+                <block-prop-container></block-prop-container>
             </div>
             <div *ngSwitchCase="m_uiUserFocusItemEnum.miniDashboard">
                 <h5>scene dashboard</h5>
