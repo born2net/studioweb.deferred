@@ -14,18 +14,17 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
     `],
     template: `
         <small class="debug">{{me}}</small>
-        <ul [ngSwitch]="m_uiUserFocusItem$ | async">
-            <div *ngSwitchCase="m_uiUserFocusItemEnum.sceneEditor">
+        <ul [ngSwitch]="m_sideProps$ | async">
+            <div *ngSwitchCase="m_sidePropsEnum.sceneEditor">
                 <h5>scene editor</h5>
             </div>
-            <div *ngSwitchCase="m_uiUserFocusItemEnum.sceneProps">
+            <div *ngSwitchCase="m_sidePropsEnum.sceneProps">
                 <h5>scene props</h5>                
             </div>
-            <div *ngSwitchCase="m_uiUserFocusItemEnum.sceneBlock">
-                <h5>block block</h5>
+            <div *ngSwitchCase="m_sidePropsEnum.sceneBlock">
                 <block-prop-container></block-prop-container>
             </div>
-            <div *ngSwitchCase="m_uiUserFocusItemEnum.miniDashboard">
+            <div *ngSwitchCase="m_sidePropsEnum.miniDashboard">
                 <h5>scene dashboard</h5>
             </div>
         </ul>
@@ -35,11 +34,11 @@ export class ScenePropsManager extends Compbaser {
 
     constructor(private yp: YellowPepperService) {
         super();
-        this.m_uiUserFocusItem$ = this.yp.ngrxStore.select(store => store.appDb.uiState.uiSideProps);
+        this.m_sideProps$ = this.yp.ngrxStore.select(store => store.appDb.uiState.uiSideProps);
     }
 
-    m_uiUserFocusItemEnum = SideProps;
-    m_uiUserFocusItem$: Observable<SideProps>;
+    m_sidePropsEnum = SideProps;
+    m_sideProps$: Observable<SideProps>;
 
     ngOnInit() {
     }

@@ -8,11 +8,14 @@ import {
     BoardTemplatesModel,
     BoardTemplateViewersModel,
     CampaignTimelineBoardTemplatesModel,
-    CampaignTimelineBoardViewerChanelsModel, CampaignTimelineChanelPlayersModel,
+    CampaignTimelineBoardViewerChanelsModel,
+    CampaignTimelineChanelPlayersModel,
     CampaignTimelineChanelsModel,
     CampaignTimelineSchedulesModel,
     CampaignTimelineSequencesModel,
-    CampaignTimelinesModel, PlayerDataModel, ResourcesModel
+    CampaignTimelinesModel,
+    PlayerDataModel,
+    ResourcesModel
 } from "../store/imsdb.interfaces_auto";
 import {IScreenTemplateData} from "../comps/screen-template/screen-template";
 import {OrientationEnum} from "../app/campaigns/campaign-orientation";
@@ -23,9 +26,11 @@ import {UserModel} from "../models/UserModel";
 
 export interface ISceneData {
     scene_id: number;
-    pseudo_id: string,
-    playerDataModel: PlayerDataModelExt,
+    scene_id_pseudo_id: string;
+    block_pseudo_id?: any;
+    playerDataModel: PlayerDataModelExt;
     domPlayerData: XMLDocument;
+    mimeType?;
 }
 
 @Injectable()
@@ -117,6 +122,37 @@ export class YellowPepperService {
                     return i_player.getPlayerDataId() == sceneId
                 });
             }).distinct()
+            .mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
+    }
+
+    /**
+     Listen to changes in selected scene
+     **/
+    listenSelectedSceneBlockChanged(emitOnEmpty: boolean = false): Observable<ISceneData> {
+        var sceneSelected$ = this.store.select(store => store.appDb.uiState.scene.sceneSelected);
+        var blockSelected$ = this.store.select(store => store.appDb.uiState.scene.blockSelected);
+        return blockSelected$.combineLatest(sceneSelected$, (blockId, sceneId) => {
+            return {blockId, sceneId}
+        }).filter((ids)=>{
+            if (!emitOnEmpty) return true; // no filter requested
+            return ids && ids.blockId != -1
+        }).mergeMap(ids => {
+            return this.getScene(ids.sceneId)
+                .map((playerDataModel: PlayerDataModelExt) => {
+                    var domPlayerData = $.parseXML(playerDataModel.getPlayerDataValue())
+                    var selectedSnippet: any = $(domPlayerData).find(`[id="${ids.blockId}"]`);
+                    var mimeType = $(domPlayerData).find('Player').attr('mimeType');
+                    var sceneData: ISceneData = {
+                        scene_id: ids.sceneId,
+                        scene_id_pseudo_id: null,
+                        block_pseudo_id: ids.blockId,
+                        playerDataModel: playerDataModel,
+                        domPlayerData: selectedSnippet,
+                        mimeType: mimeType
+                    }
+                    return sceneData;
+                });
+        }).distinct()
             .mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
     }
 
@@ -425,10 +461,10 @@ export class YellowPepperService {
                     var playerDataId = playerDataModel.getPlayerDataId();
                     var recPlayerData = playerDataModel.getPlayerDataValue();
                     var domPlayerData = $.parseXML(recPlayerData)
-                    var pseudo_id = $(domPlayerData).find('Player').eq(0).attr('id')
+                    var scene_id_pseudo_id = $(domPlayerData).find('Player').eq(0).attr('id')
                     result.push({
                         scene_id: playerDataId,
-                        pseudo_id,
+                        scene_id_pseudo_id,
                         domPlayerData,
                         playerDataModel
                     });

@@ -9,7 +9,6 @@ import {Consts} from "../../Conts";
 import {BlockFactoryService} from "../../services/block-factory-service";
 import {BlockFabric} from "../blocks/block-fabric";
 import * as _ from "lodash";
-import {SceneToolbar} from "./scene-toolbar";
 import {PlayerDataModelExt} from "../../store/model/msdb-models-extended";
 import {timeout} from "../../decorators/timeout-decorator";
 import {IUiState} from "../../store/store.data";
@@ -271,7 +270,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
             this.yp.listenSceneSelected()
                 .delay(1000)
                 .subscribe((sceneData: ISceneData) => {
-                    this.m_selectedSceneID = sceneData.pseudo_id;
+                    this.m_selectedSceneID = sceneData.scene_id_pseudo_id;
                     this._loadScene();
                     this._sceneCanvasSelected();
                     if (this._mementoInit())
@@ -287,7 +286,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
     _listenBlockSelected() {
         this.cancelOnDestroy(
             this.commBroker.onEvent(BLOCK_SELECTED).subscribe((e: IMessage) => {
-                let uiState: IUiState = {uiSideProps: SideProps.sceneProps, scene: {blockSelected: e.message}};
+                let uiState: IUiState = {uiSideProps: SideProps.sceneBlock, scene: {blockSelected: e.message}};
                 this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
             })
         )

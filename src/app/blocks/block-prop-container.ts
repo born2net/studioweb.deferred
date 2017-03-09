@@ -1,6 +1,6 @@
 import {AfterViewInit, ChangeDetectorRef, Component, Inject, ViewChild} from "@angular/core";
 import {Compbaser} from "ng-mslib";
-import {YellowPepperService} from "../../services/yellowpepper.service";
+import {ISceneData, YellowPepperService} from "../../services/yellowpepper.service";
 import {BlockService, IBlockData} from "./block-service";
 import {CampaignTimelineChanelPlayersModel} from "../../store/imsdb.interfaces_auto";
 import {ColorPickerService} from "ngx-color-picker";
@@ -68,6 +68,9 @@ import {PlayerDataModelExt} from "../../store/model/msdb-models-extended";
                     <div *ngSwitchCase="m_blockLabels.BLOCKCODE_JSON">
                         <block-prop-json-player [standAlone]="true" [setBlockData]="m_blockData"></block-prop-json-player>
                     </div>
+                    <div *ngSwitchCase="m_blockLabels.BLOCKCODE_JSON_ITEM">
+                        <block-prop-sheets [setBlockData]="m_blockData"></block-prop-sheets>
+                    </div>
                     <div *ngSwitchCase="m_blockLabels.BLOCKCODE_WORLD_WEATHER">
                         <block-prop-weather [setBlockData]="m_blockData"></block-prop-weather>
                     </div>
@@ -126,7 +129,7 @@ export class BlockPropContainer extends Compbaser implements AfterViewInit {
     m_tabTitle: string = 'none';
     m_showSettingsTab = true;
 
-    constructor(@Inject('BLOCK_PLACEMENT') private blockPlacement: string, private yp: YellowPepperService, private bs: BlockService, private cpService: ColorPickerService, private cd:ChangeDetectorRef) {
+    constructor(@Inject('BLOCK_PLACEMENT') private blockPlacement: string, private yp: YellowPepperService, private bs: BlockService, private cpService: ColorPickerService, private cd: ChangeDetectorRef) {
         super();
         // console.log(blockPlacement);
         if (this.blockPlacement == PLACEMENT_CHANNEL)
@@ -142,7 +145,7 @@ export class BlockPropContainer extends Compbaser implements AfterViewInit {
         this.toggleSettingsTab();
     }
 
-    private _listenOnChannels(){
+    private _listenOnChannels() {
         this.cancelOnDestroy(
             //
             this.yp.listenBlockChannelSelectedOrChanged()
@@ -165,30 +168,25 @@ export class BlockPropContainer extends Compbaser implements AfterViewInit {
         )
     }
 
-    private _listenOnScenes(){
+    private _listenOnScenes() {
         this.cancelOnDestroy(
             //
-            this.yp.listenSelectedSceneChanged()
-                .mergeMap((i_playerDataModelExt: PlayerDataModelExt) => {
-                    return this.bs.getBlockData(i_playerDataModelExt.getPlayerDataId())
+            this.yp.listenSelectedSceneBlockChanged(true)
+                .mergeMap((i_sceneData: ISceneData) => {
+                    return this.bs.getBlockDataInScene(i_sceneData)
                 })
                 .subscribe((blockData: IBlockData) => {
                     this.m_blockTypeSelected = blockData.blockCode;
-                    this.m_tabTitle = blockData.blockAcronym;
+                    this.m_tabTitle = blockData.blockAcronym.indexOf('JSON') > -1 ? blockData.playerMimeScene : blockData.blockAcronym
                     this.m_blockData = blockData;
-                    // for json based scenes show the settings, unless its the actual Json Player which we don't
-                    if (blockData.playerDataJsonHandle && this.m_blockTypeSelected != '4300') {
-                        this.m_showSettingsTab = true;
-                        this.toggleSettingsTab();
-                    } else {
-                        this.m_showSettingsTab = false;
-                        this.toggleSettingsTab();
-                    }
+                    this.m_showSettingsTab = false;
+                    this.toggleSettingsTab();
+                    this.cd.markForCheck();
                 }, (e) => console.error(e))
         )
     }
 
-    private toggleSettingsTab(){
+    private toggleSettingsTab() {
         if (!this.settings) return;
         this.settings.show = this.m_showSettingsTab;
     }

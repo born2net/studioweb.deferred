@@ -3,7 +3,7 @@
  */
 
 import {Inject, Injectable} from "@angular/core";
-import {YellowPepperService} from "../../services/yellowpepper.service";
+import {ISceneData, YellowPepperService} from "../../services/yellowpepper.service";
 import X2JS from "x2js";
 import * as _ from "lodash";
 import {Observable} from "rxjs";
@@ -11,6 +11,7 @@ import {CampaignTimelineChanelPlayersModelExt} from "../../store/model/msdb-mode
 import {RedPepperService} from "../../services/redpepper.service";
 import {ResourcesModel} from "../../store/imsdb.interfaces_auto";
 import {BlockLabels, PLACEMENT_CHANNEL, PLACEMENT_SCENE} from "../../interfaces/Consts";
+
 
 export interface IBlockData {
     blockID: number;
@@ -36,7 +37,7 @@ export interface IBlockData {
         handle: string,
         playerDataJson: {};
         playerDataDom: XMLDocument,
-        playerDataString: XMLDocument,
+        playerDataString: XMLDocument
     },
     resource?: {
         name: string,
@@ -687,13 +688,68 @@ export class BlockService {
         return this.blockPlacement;
     }
 
-    // public getSceneBlockData(i_sceneId, i_blockId): Observable<IBlockData> {
-    //
-    //     this.yp.getScenBlockRecord(i_sceneId, i_blockId)
-    //
-    //     // >>>> return pepper.getScenePlayerdataBlock(self.m_sceneID, self.m_block_id);
-    //     // to view data debug domPlayerData.children[0].outerHTML
-    // }
+    public getBlockDataInScene(i_sceneData: ISceneData): Observable<IBlockData> {
+
+        var xml = this.rp.xmlToStringIEfix(i_sceneData.domPlayerData[0]);
+        var domPlayerData = i_sceneData.domPlayerData
+        var code: any;
+        var playerMimeScene = i_sceneData.mimeType;
+        var playerDataJsonHandle;
+        var playerDataString = xml;
+        let playerDataJson = this.parser.xml2js(xml);
+        code = playerDataJson['Player']['_player'];
+        var blockType:any = this.getBlockNameByCode(code)
+
+        // playerMimeScene = playerDataJson.Player.Data.XmlItem ? `Json.${playerDataJson.Player.Data.XmlItem}` : null;
+        // playerDataJsonHandle = (playerDataJson.Player.Data.Json && playerDataJson.Player.Data.Json.Player) ? playerDataJson.Player.Data.Json.Player : null;
+        //
+        // if (_.isUndefined(blockType)) {
+        //     var e = `Panic using a component / block which is not supported yet ${code} ${blockType}`;
+        //     throw new Error(e)
+        // }
+        // console.log(`Serialization of block ${code} took ${(performance.now() - t0)} milliseconds`)
+
+        /************************************
+         * Block is a scene
+         ************************************/
+
+        if (code == BlockLabels.BLOCKCODE_SCENE) {
+            var sceneData = {
+                name: '',
+                handle: null,
+                playerDataJson: playerDataJson,
+                playerDataString: null,
+                playerDataDom: null
+            }
+        }
+
+
+
+        var data: IBlockData = {
+            blockID: i_sceneData.block_pseudo_id,
+            blockType: blockType,
+            blockCode: code,
+            blockName: this.getBlockBoilerplate(code).name,
+            blockDescription: this.getBlockBoilerplate(code).description,
+            blockIcon: this.getBlockBoilerplate(code).icon,
+            blockFontAwesome: this.getBlockBoilerplate(code).fontAwesome,
+            blockAcronym: this.getBlockBoilerplate(code).acronym,
+            blockMinWidth: this.m_minSize.w,
+            blockMinHeight: this.m_minSize.h,
+            playerDataDom: domPlayerData,
+            playerDataString: playerDataString,
+            playerDataJson: playerDataJson,
+            playerMimeScene: playerMimeScene,
+            playerDataJsonHandle: playerDataJsonHandle,
+            duration: -1,
+            offset: -1,
+            campaignTimelineChanelPlayersModelExt: null,
+            scene: sceneData
+        };
+
+        return Observable.of(data);
+
+    }
 
     public getBlockData(blockId): Observable<IBlockData> {
 
@@ -819,7 +875,7 @@ export class BlockService {
     /**
      Help method to get the proper playerDataDom depending of we are dealing with a regular block or a scene block
      **/
-    getBlockPlayerData(i_blockData:IBlockData): XMLDocument {
+    getBlockPlayerData(i_blockData: IBlockData): XMLDocument {
         switch (Number(i_blockData.blockCode)) {
             case BlockLabels.BLOCKCODE_SCENE: {
                 return i_blockData.scene.playerDataDom;
