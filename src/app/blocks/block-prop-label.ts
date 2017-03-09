@@ -20,7 +20,6 @@ import {IFontSelector} from "../../comps/font-selector/font-selector";
             <div class="row">
                 <ul class="list-group">
                     <li class="list-group-item">
-                        <span i18n>url</span><br/>
                         <textarea class="default-prop-width" spellcheck="true" rows="10" cols="50" type="textarea" [formControl]="m_contGroup.controls['text']">
                         </textarea>
                     </li>

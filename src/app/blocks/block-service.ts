@@ -26,7 +26,6 @@ export interface IBlockData {
     blockMinHeight: number;
     playerDataJson: {};
     playerDataDom: XMLDocument,
-    playerDataString: string,
     playerMimeScene: string;
     playerDataJsonHandle: number;
     campaignTimelineChanelPlayersModelExt: CampaignTimelineChanelPlayersModelExt,
@@ -34,10 +33,9 @@ export interface IBlockData {
     offset: number;
     scene?: {
         name: string,
-        handle: string,
+        handle: any,
         playerDataJson: {};
-        playerDataDom: XMLDocument,
-        playerDataString: XMLDocument
+        playerDataDom: XMLDocument
     },
     resource?: {
         name: string,
@@ -689,41 +687,18 @@ export class BlockService {
     }
 
     public getBlockDataInScene(i_sceneData: ISceneData): Observable<IBlockData> {
-
-        var xml = this.rp.xmlToStringIEfix(i_sceneData.domPlayerData[0]);
-        var domPlayerData = i_sceneData.domPlayerData
-        var code: any;
-        var playerMimeScene = i_sceneData.mimeType;
-        var playerDataJsonHandle;
-        var playerDataString = xml;
-        let playerDataJson = this.parser.xml2js(xml);
-        code = playerDataJson['Player']['_player'];
-        var blockType:any = this.getBlockNameByCode(code)
-
-        // playerMimeScene = playerDataJson.Player.Data.XmlItem ? `Json.${playerDataJson.Player.Data.XmlItem}` : null;
-        // playerDataJsonHandle = (playerDataJson.Player.Data.Json && playerDataJson.Player.Data.Json.Player) ? playerDataJson.Player.Data.Json.Player : null;
-        //
-        // if (_.isUndefined(blockType)) {
-        //     var e = `Panic using a component / block which is not supported yet ${code} ${blockType}`;
-        //     throw new Error(e)
-        // }
-        // console.log(`Serialization of block ${code} took ${(performance.now() - t0)} milliseconds`)
-
-        /************************************
-         * Block is a scene
-         ************************************/
-
-        if (code == BlockLabels.BLOCKCODE_SCENE) {
-            var sceneData = {
-                name: '',
-                handle: null,
-                playerDataJson: playerDataJson,
-                playerDataString: null,
-                playerDataDom: null
-            }
+        let domPlayerData = i_sceneData.domPlayerData
+        let playerMimeScene = i_sceneData.mimeType;
+        let playerDataJsonHandle;
+        let playerDataJson = this.parser.xml2js(i_sceneData.domPlayerDataXml);
+        let code = playerDataJson['Player']['_player'];
+        let blockType: any = this.getBlockNameByCode(code)
+        var sceneData = {
+            name: '',
+            handle: i_sceneData.scene_id,
+            playerDataJson: null,
+            playerDataDom: null
         }
-
-
 
         var data: IBlockData = {
             blockID: i_sceneData.block_pseudo_id,
@@ -737,8 +712,7 @@ export class BlockService {
             blockMinWidth: this.m_minSize.w,
             blockMinHeight: this.m_minSize.h,
             playerDataDom: domPlayerData,
-            playerDataString: playerDataString,
-            playerDataJson: playerDataJson,
+            playerDataJson: null,
             playerMimeScene: playerMimeScene,
             playerDataJsonHandle: playerDataJsonHandle,
             duration: -1,
@@ -771,7 +745,6 @@ export class BlockService {
                 var playerMimeScene;
                 var playerDataJsonHandle;
                 var playerDataDom = $.parseXML(xml);
-                var playerDataString = xml;
                 let playerDataJson = this.parser.xml2js(xml);
                 if (playerDataJson['Player']['_player']) {
 
@@ -802,7 +775,6 @@ export class BlockService {
                         name: '',
                         handle: jXML(playerDataDom).find('Player').attr('hDataSrc'),
                         playerDataJson: null,
-                        playerDataString: null,
                         playerDataDom: null
                     }
                 }
@@ -819,7 +791,6 @@ export class BlockService {
                     blockMinWidth: this.m_minSize.w,
                     blockMinHeight: this.m_minSize.h,
                     playerDataDom: playerDataDom,
-                    playerDataString: playerDataString,
                     playerDataJson: playerDataJson,
                     playerMimeScene: playerMimeScene,
                     playerDataJsonHandle: playerDataJsonHandle,
@@ -839,7 +810,6 @@ export class BlockService {
                             var domPlayerData = $.parseXML(xml)
                             blockData.scene.name = jXML(domPlayerData).find('Player').eq(0).attr('label');
                             blockData.scene.playerDataDom = domPlayerData;
-                            blockData.scene.playerDataString = xml;
                             blockData.scene.playerDataJson = this.parser.xml2js(xml);
                             return blockData;
                         })
@@ -913,7 +883,6 @@ export class BlockService {
                                 var domPlayerData = $.parseXML(i_campaignTimelineChanelPlayersModel.getPlayerData());
                                 var scene_id = jXML(domPlayerData).find('Player').attr('hDataSrc');
                                 this.rp.setScenePlayerData(scene_id, player_data);
-                                this.rp.reduxCommit();
                             })
                         break;
                     }
@@ -923,7 +892,7 @@ export class BlockService {
                         this.rp.setCampaignTimelineChannelPlayerRecord(blockData.blockID, 'player_data', player_data);
                     }
                 }
-
+                this.rp.reduxCommit();
                 break;
             }
 
@@ -931,15 +900,8 @@ export class BlockService {
             case PLACEMENT_SCENE: {
 
                 //     pepper.setScenePlayerdataBlock(self.m_sceneID, self.m_block_id, player_data);
-                //     if (!i_noNotify)
-                //         self._announceBlockChanged();
-                //     break;
-                // }
                 // case BB.CONSTS.PLACEMENT_IS_SCENE: {
                 //     pepper.setScenePlayerData(self.m_block_id, player_data);
-                //     if (!i_noNotify)
-                //         self._announceBlockChanged();
-                //     break;
             }
         }
         this.rp.reduxCommit();

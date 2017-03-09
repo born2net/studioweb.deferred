@@ -22,14 +22,16 @@ import {OrientationEnum} from "../app/campaigns/campaign-orientation";
 import {List} from "immutable";
 import * as _ from "lodash";
 import {UserModel} from "../models/UserModel";
+import {RedPepperService} from "./redpepper.service";
 
 
 export interface ISceneData {
     scene_id: number;
     scene_id_pseudo_id: string;
-    block_pseudo_id?: any;
     playerDataModel: PlayerDataModelExt;
     domPlayerData: XMLDocument;
+    block_pseudo_id?: any;
+    domPlayerDataXml?: string;
     mimeType?;
 }
 
@@ -133,21 +135,24 @@ export class YellowPepperService {
         var blockSelected$ = this.store.select(store => store.appDb.uiState.scene.blockSelected);
         return blockSelected$.combineLatest(sceneSelected$, (blockId, sceneId) => {
             return {blockId, sceneId}
-        }).filter((ids)=>{
+        }).filter((ids) => {
             if (!emitOnEmpty) return true; // no filter requested
             return ids && ids.blockId != -1
         }).mergeMap(ids => {
             return this.getScene(ids.sceneId)
                 .map((playerDataModel: PlayerDataModelExt) => {
                     var domPlayerData = $.parseXML(playerDataModel.getPlayerDataValue())
-                    var selectedSnippet: any = $(domPlayerData).find(`[id="${ids.blockId}"]`);
+                    var selectedSnippet: any = $(domPlayerData).find(`[id="${ids.blockId}"]`)[0];
                     var mimeType = $(domPlayerData).find('Player').attr('mimeType');
+                    var xml = (new XMLSerializer()).serializeToString(selectedSnippet);
+                    selectedSnippet = $.parseXML(xml)
                     var sceneData: ISceneData = {
                         scene_id: ids.sceneId,
                         scene_id_pseudo_id: null,
                         block_pseudo_id: ids.blockId,
                         playerDataModel: playerDataModel,
                         domPlayerData: selectedSnippet,
+                        domPlayerDataXml: xml,
                         mimeType: mimeType
                     }
                     return sceneData;
