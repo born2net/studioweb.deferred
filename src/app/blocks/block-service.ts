@@ -10,7 +10,7 @@ import {Observable} from "rxjs";
 import {CampaignTimelineChanelPlayersModelExt} from "../../store/model/msdb-models-extended";
 import {RedPepperService} from "../../services/redpepper.service";
 import {ResourcesModel} from "../../store/imsdb.interfaces_auto";
-import {BlockLabels, PLACEMENT_CHANNEL} from "../../interfaces/Consts";
+import {BlockLabels, PLACEMENT_CHANNEL, PLACEMENT_SCENE} from "../../interfaces/Consts";
 
 
 export interface IBlockData {
@@ -698,7 +698,7 @@ export class BlockService {
 
     public getBlockData(blockId): Observable<IBlockData> {
 
-        // todo: add support for getBlockRecord when placement is SCENE
+        // todo: add support for getBlockRecord when placement is SCENE, depending on this.blockPlacement;
         // case BB.CONSTS.PLACEMENT_IS_SCENE:
         //     {
         //         var blockID = pepper.getSceneIdFromPseudoId(self.m_block_id);
@@ -847,7 +847,7 @@ export class BlockService {
         var playerCode = Number(player_data_json.Player._player);
         switch (this.blockPlacement) {
 
-            case 'CHANNEL': {
+            case PLACEMENT_CHANNEL: {
 
                 switch (playerCode) {
 
@@ -873,7 +873,7 @@ export class BlockService {
             }
 
             //todo: fix scene
-            case 'SCENE': {
+            case PLACEMENT_SCENE: {
 
                 //     pepper.setScenePlayerdataBlock(self.m_sceneID, self.m_block_id, player_data);
                 //     if (!i_noNotify)

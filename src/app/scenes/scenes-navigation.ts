@@ -2,6 +2,7 @@ import {animate, ChangeDetectionStrategy, Component, state, style, transition, t
 import {Compbaser} from "ng-mslib";
 import {BlockService} from "../blocks/block-service";
 import {BlockFactoryService} from "../../services/block-factory-service";
+import {PLACEMENT_SCENE} from "../../interfaces/Consts";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -11,7 +12,7 @@ import {BlockFactoryService} from "../../services/block-factory-service";
     },
     providers: [BlockService, BlockFactoryService, {
         provide: "BLOCK_PLACEMENT",
-        useValue: 'SCENE'
+        useValue: PLACEMENT_SCENE
     }
     ],
     animations: [

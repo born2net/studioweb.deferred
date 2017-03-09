@@ -2,6 +2,7 @@ import {animate, ChangeDetectionStrategy, Component, state, style, transition, t
 import {Compbaser} from "ng-mslib";
 import {BlockService} from "../blocks/block-service";
 import {AppdbAction} from "../../store/actions/appdb.actions";
+import {PLACEMENT_CHANNEL} from "../../interfaces/Consts";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -13,7 +14,7 @@ import {AppdbAction} from "../../store/actions/appdb.actions";
     // animations: [routerTransition()],
     providers: [BlockService, {
         provide: "BLOCK_PLACEMENT",
-        useValue: 'CHANNEL'
+        useValue: PLACEMENT_CHANNEL
     }
     ],
     host: {

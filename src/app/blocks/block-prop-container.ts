@@ -6,7 +6,8 @@ import {CampaignTimelineChanelPlayersModel} from "../../store/imsdb.interfaces_a
 import {ColorPickerService} from "ngx-color-picker";
 import {Tabs} from "../../comps/tabs/tabs";
 import {Tab} from "../../comps/tabs/tab";
-import {BlockLabels} from "../../interfaces/Consts";
+import {BlockLabels, PLACEMENT_CHANNEL, PLACEMENT_SCENE} from "../../interfaces/Consts";
+import {PlayerDataModelExt} from "../../store/model/msdb-models-extended";
 
 
 @Component({
@@ -128,9 +129,9 @@ export class BlockPropContainer extends Compbaser implements AfterViewInit {
     constructor(@Inject('BLOCK_PLACEMENT') private blockPlacement: string, private yp: YellowPepperService, private bs: BlockService, private cpService: ColorPickerService, private cd:ChangeDetectorRef) {
         super();
         // console.log(blockPlacement);
-        if (this.blockPlacement == 'CHANNEL')
+        if (this.blockPlacement == PLACEMENT_CHANNEL)
             this._listenOnChannels();
-        if (this.blockPlacement == 'SCENE')
+        if (this.blockPlacement == PLACEMENT_SCENE)
             this._listenOnScenes();
     }
 
@@ -164,12 +165,32 @@ export class BlockPropContainer extends Compbaser implements AfterViewInit {
         )
     }
 
+    private _listenOnScenes(){
+        this.cancelOnDestroy(
+            //
+            this.yp.listenSelectedSceneChanged()
+                .mergeMap((i_playerDataModelExt: PlayerDataModelExt) => {
+                    return this.bs.getBlockData(i_playerDataModelExt.getPlayerDataId())
+                })
+                .subscribe((blockData: IBlockData) => {
+                    this.m_blockTypeSelected = blockData.blockCode;
+                    this.m_tabTitle = blockData.blockAcronym;
+                    this.m_blockData = blockData;
+                    // for json based scenes show the settings, unless its the actual Json Player which we don't
+                    if (blockData.playerDataJsonHandle && this.m_blockTypeSelected != '4300') {
+                        this.m_showSettingsTab = true;
+                        this.toggleSettingsTab();
+                    } else {
+                        this.m_showSettingsTab = false;
+                        this.toggleSettingsTab();
+                    }
+                }, (e) => console.error(e))
+        )
+    }
+
     private toggleSettingsTab(){
         if (!this.settings) return;
         this.settings.show = this.m_showSettingsTab;
-    }
-    private _listenOnScenes(){
-        console.log('to do listen sceen');
     }
 
     ngOnInit() {
