@@ -8,40 +8,43 @@ import {PLACEMENT_IS_SCENE, PLACEMENT_SCENE} from "../../interfaces/Consts";
 import {Consts} from "../../Conts";
 import {BlockFactoryService} from "../../services/block-factory-service";
 import {BlockFabric} from "../blocks/block-fabric";
-import * as _ from 'lodash';
+import * as _ from "lodash";
 import {SceneToolbar} from "./scene-toolbar";
 import {PlayerDataModelExt} from "../../store/model/msdb-models-extended";
 import {timeout} from "../../decorators/timeout-decorator";
+import {IUiState} from "../../store/store.data";
+import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
 
-export const JSON_EVENT_ROW_CHANGED = 'JSON_EVENT_ROW_CHANGED';
-export const STATIONS_POLL_TIME_CHANGED = 'STATIONS_POLL_TIME_CHANGED';
-export const THEME_CHANGED = 'THEME_CHANGED';
-export const SELECTED_STACK_VIEW = 'SELECTED_STACK_VIEW';
-export const ADD_NEW_BLOCK_SCENE = 'ADD_NEW_BLOCK_SCENE';
-export const BLOCK_SELECTED = 'BLOCK_SELECTED';
-export const SCENE_ZOOM_IN = 'SCENE_ZOOM_IN';
-export const SCENE_ZOOM_OUT = 'SCENE_ZOOM_OUT';
-export const SCENE_ZOOM_RESET = 'SCENE_ZOOM_RESET';
-export const SCENE_PUSH_TOP = 'SCENE_PUSH_TOP';
-export const SCENE_PUSH_BOTTOM = 'SCENE_PUSH_BOTTOM';
-export const SCENE_BLOCKS_RENDERED = 'SCENE_BLOCKS_RENDERED';
-export const SCENE_BLOCK_CHANGE = 'SCENE_BLOCK_CHANGE';
-export const SCENE_EDITOR_REMOVE = 'SCENE_EDITOR_REMOVE';
-export const SCENE_ITEM_REMOVE = 'SCENE_ITEM_REMOVE';
-export const SCENE_CANVAS_SELECTED = 'SCENE_CANVAS_SELECTED';
-export const WIZARD_EXIT = 'WIZARD_EXIT';
-export const NEW_SCENE_ADD = 'NEW_SCENE_ADD';
-export const SCENE_LIST_UPDATED = 'SCENE_LIST_UPDATED';
-export const SCENE_UNDO = 'SCENE_UNDO';
-export const SCENE_REDO = 'SCENE_REDO';
-export const REMOVING_SCENE = 'REMOVING_SCENE';
-export const REMOVED_SCENE = 'REMOVED_SCENE';
-export const REMOVING_RESOURCE = 'REMOVING_RESOURCE';
-export const REMOVED_RESOURCE = 'REMOVED_RESOURCE';
-export const ADDED_RESOURCE = 'ADDED_RESOURCE';
-export const MOUSE_ENTERS_CANVAS = 'MOUSE_ENTERS_CANVAS';
-export const FONT_SELECTION_CHANGED = 'FONT_SELECTION_CHANGED';
-export const CAMPAIGN_LIST_LOADING = 'CAMPAIGN_LIST_LOADED';
+const JSON_EVENT_ROW_CHANGED = 'JSON_EVENT_ROW_CHANGED';
+const STATIONS_POLL_TIME_CHANGED = 'STATIONS_POLL_TIME_CHANGED';
+const THEME_CHANGED = 'THEME_CHANGED';
+const SELECTED_STACK_VIEW = 'SELECTED_STACK_VIEW';
+const ADD_NEW_BLOCK_SCENE = 'ADD_NEW_BLOCK_SCENE';
+const BLOCK_SELECTED = 'BLOCK_SELECTED';
+const SCENE_ZOOM_IN = 'SCENE_ZOOM_IN';
+const SCENE_ZOOM_OUT = 'SCENE_ZOOM_OUT';
+const SCENE_ZOOM_RESET = 'SCENE_ZOOM_RESET';
+const SCENE_PUSH_TOP = 'SCENE_PUSH_TOP';
+const SCENE_PUSH_BOTTOM = 'SCENE_PUSH_BOTTOM';
+const SCENE_BLOCKS_RENDERED = 'SCENE_BLOCKS_RENDERED';
+const SCENE_BLOCK_CHANGE = 'SCENE_BLOCK_CHANGE';
+const SCENE_EDITOR_REMOVE = 'SCENE_EDITOR_REMOVE';
+const SCENE_ITEM_REMOVE = 'SCENE_ITEM_REMOVE';
+const SCENE_CANVAS_SELECTED = 'SCENE_CANVAS_SELECTED';
+const SCENE_SELECT_NEXT = 'SCENE_SELECT_NEXT';
+const WIZARD_EXIT = 'WIZARD_EXIT';
+const NEW_SCENE_ADD = 'NEW_SCENE_ADD';
+const SCENE_LIST_UPDATED = 'SCENE_LIST_UPDATED';
+const SCENE_UNDO = 'SCENE_UNDO';
+const SCENE_REDO = 'SCENE_REDO';
+const REMOVING_SCENE = 'REMOVING_SCENE';
+const REMOVED_SCENE = 'REMOVED_SCENE';
+const REMOVING_RESOURCE = 'REMOVING_RESOURCE';
+const REMOVED_RESOURCE = 'REMOVED_RESOURCE';
+const ADDED_RESOURCE = 'ADDED_RESOURCE';
+const MOUSE_ENTERS_CANVAS = 'MOUSE_ENTERS_CANVAS';
+const FONT_SELECTION_CHANGED = 'FONT_SELECTION_CHANGED';
+const CAMPAIGN_LIST_LOADING = 'CAMPAIGN_LIST_LOADED';
 
 @Component({
     selector: 'scene-editor',
@@ -109,45 +112,44 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         // this.cd.detach();
     }
 
-    @ViewChild(SceneToolbar)
-    sceneToolbar: SceneToolbar;
+    // @ViewChild(SceneToolbar)
+    // sceneToolbar: SceneToolbar;
 
     ngAfterViewInit() {
-        var self = this;
-        self.m_selectedSceneID = undefined;
-        self.m_sceneScrollTop = 0;
-        self.m_sceneScrollLeft = 0;
-        self.m_objectScaling = 0;
-        self.m_mouseX = 0;
-        self.m_mouseY = 0;
-        self.m_gridMagneticMode = 0;
-        self.m_rendering = false;
-        self.m_memento = {};
-        self.m_canvasMouseState = 0;
-        self.m_copiesObjects = [];
-        self.PUSH_TOP = 1;
-        self.PUSH_BOTTOM = 0;
-        self.m_blocks = {
+        this.m_selectedSceneID = undefined;
+        this.m_sceneScrollTop = 0;
+        this.m_sceneScrollLeft = 0;
+        this.m_objectScaling = 0;
+        this.m_mouseX = 0;
+        this.m_mouseY = 0;
+        this.m_gridMagneticMode = 0;
+        this.m_rendering = false;
+        this.m_memento = {};
+        this.m_canvasMouseState = 0;
+        this.m_copiesObjects = [];
+        this.PUSH_TOP = 1;
+        this.PUSH_BOTTOM = 0;
+        this.m_blocks = {
             blocksPre: [],
             blocksPost: {},
             blockSelected: undefined
         };
-        self.m_canvas = undefined;
-        self.m_canvasScale = 1;
-        self.SCALE_FACTOR = 1.2;
-
-        self._listenSceneSelection();
-        self._listenTotalBlocksModified();
-        self._listenAddBlockWizard();
-        self._listenToCanvasScroll();
-        self._listenSceneChanged();
-        self._listenContextMenu();
-        self._listenSelectNextBlock();
-        self._listenSceneRemove();
-        self._listenSceneBlockRemove();
-        self._listenSceneNew();
-        self._listenAppResized();
-        self._delegateSceneBlockModified();
+        this.m_canvas = undefined;
+        this.m_canvasScale = 1;
+        this.SCALE_FACTOR = 1.2;
+        this._listenSceneSelection();
+        this._listenTotalBlocksModified();
+        this._listenAddBlockWizard();
+        this._listenToCanvasScroll();
+        this._listenSceneChanged();
+        this._listenContextMenu();
+        this._listenSelectNextBlock();
+        this._listenSceneRemove();
+        this._listenSceneBlockRemove();
+        this._listenSceneNew();
+        this._listenAppResized();
+        this._listenBlockSelected();
+        this._delegateSceneBlockModified();
     }
 
     ngOnInit() {
@@ -160,6 +162,8 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         con('toolbar ' + event);
         switch (event) {
             case 'back': {
+                let uiState: IUiState = {uiSideProps: SideProps.miniDashboard, scene: {blockSelected: -1}}
+                this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
                 this.onGoBack.emit();
                 break;
             }
@@ -276,6 +280,19 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         )
     }
 
+    /**
+     Listen to changes in a new scene selection
+     @method _listenSceneSelection
+     **/
+    _listenBlockSelected() {
+        this.cancelOnDestroy(
+            this.commBroker.onEvent(BLOCK_SELECTED).subscribe((e: IMessage) => {
+                let uiState: IUiState = {uiSideProps: SideProps.sceneProps, scene: {blockSelected: e.message}};
+                this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+            })
+        )
+    }
+
     @timeout(500)
     _updateBlocksCount() {
         if (!this.m_canvas) return;
@@ -354,7 +371,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
     _listenSelectNextBlock() {
         this.cancelOnDestroy(
             //
-            this.commBroker.onEvent('SCENE_SELECT_NEXT').subscribe((e: IMessage) => {
+            this.commBroker.onEvent(SCENE_SELECT_NEXT).subscribe((e: IMessage) => {
                 if (_.isUndefined(this.m_selectedSceneID))
                     return;
                 var viewer = this.m_canvas.getActiveObject();
@@ -1241,7 +1258,6 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
             x = x * sx;
             y = y * sy;
         }
-
         if (h < blockMinHeight)
             h = blockMinHeight;
         if (w < blockMinWidth)

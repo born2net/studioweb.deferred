@@ -17,7 +17,6 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
         <ul [ngSwitch]="m_uiUserFocusItem$ | async">
             <div *ngSwitchCase="m_uiUserFocusItemEnum.sceneEditor">
                 <h5>scene editor</h5>
-                <block-prop-container></block-prop-container>
             </div>
             <div *ngSwitchCase="m_uiUserFocusItemEnum.sceneProps">
                 <h5>scene props</h5>                

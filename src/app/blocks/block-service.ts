@@ -12,7 +12,6 @@ import {RedPepperService} from "../../services/redpepper.service";
 import {ResourcesModel} from "../../store/imsdb.interfaces_auto";
 import {BlockLabels, PLACEMENT_CHANNEL, PLACEMENT_SCENE} from "../../interfaces/Consts";
 
-
 export interface IBlockData {
     blockID: number;
     blockType: string;
