@@ -1,31 +1,8 @@
-/**
- All blocks and related property modules loaded by require.js
- **/
 export const BLOCKS_LOADED = 'BLOCKS_LOADED';
-
-/**
- block.PLACEMENT_SCENE indicates the insertion is inside a Scene
- */
 export const PLACEMENT_SCENE = 'PLACEMENT_SCENE';
-
-/**
- block.PLACEMENT_CHANNEL indicates the insertion is on the timeline_channel
- */
 export const PLACEMENT_CHANNEL = 'PLACEMENT_CHANNEL';
-
-/**
- block.PLACEMENT_IS_SCENE indicates the insertion is itself a Scene
- */
 export const PLACEMENT_IS_SCENE = 'PLACEMENT_IS_SCENE';
-
-/**
- block.PLACEMENT_LISTS indicates the insertion is inside a collection list such
- as the Collection Block or the Location based block. This event is used for example
- when building the list of available blocks in AddBlockView
- */
 export const PLACEMENT_LISTS = 'PLACEMENT_LISTS';
-
-
 
 export const BlockLabels = {
     'BLOCKCODE_SCENE': 3510,
