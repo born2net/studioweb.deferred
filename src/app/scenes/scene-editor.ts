@@ -285,7 +285,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
      **/
     _listenBlockSelected() {
         this.cancelOnDestroy(
-            this.commBroker.onEvent(BLOCK_SELECTED).subscribe((e: IMessage) => {
+            this.commBroker.onEvent(BLOCK_SELECTED).skip(1).subscribe((e: IMessage) => {
                 let uiState: IUiState = {uiSideProps: SideProps.sceneBlock, scene: {blockSelected: e.message}};
                 this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
             })

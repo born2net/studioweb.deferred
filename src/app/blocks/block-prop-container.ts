@@ -4,10 +4,8 @@ import {ISceneData, YellowPepperService} from "../../services/yellowpepper.servi
 import {BlockService, IBlockData} from "./block-service";
 import {CampaignTimelineChanelPlayersModel} from "../../store/imsdb.interfaces_auto";
 import {ColorPickerService} from "ngx-color-picker";
-import {Tabs} from "../../comps/tabs/tabs";
 import {Tab} from "../../comps/tabs/tab";
 import {BlockLabels, PLACEMENT_CHANNEL, PLACEMENT_SCENE} from "../../interfaces/Consts";
-import {PlayerDataModelExt} from "../../store/model/msdb-models-extended";
 
 
 @Component({
@@ -21,6 +19,9 @@ import {PlayerDataModelExt} from "../../store/model/msdb-models-extended";
             <tab [tabtitle]="m_tabTitle">
                 <div [ngSwitch]="m_blockTypeSelected">
                     <div *ngSwitchCase="m_blockLabels.BLOCKCODE_IMAGE">
+                        <block-prop-image [external]="false" [setBlockData]="m_blockData"></block-prop-image>
+                    </div>
+                    <div *ngSwitchCase="m_blockLabels.BLOCKCODE_SVG">
                         <block-prop-image [external]="false" [setBlockData]="m_blockData"></block-prop-image>
                     </div>
                     <div *ngSwitchCase="m_blockLabels.IMAGE">

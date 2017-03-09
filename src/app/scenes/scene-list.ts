@@ -59,7 +59,7 @@ export class SceneList extends Compbaser {
             this.onSceneSelected.emit(uiState)
         } else {
             uiState = {
-                uiSideProps: SideProps.sceneEditor,
+                uiSideProps: SideProps.miniDashboard,
                 scene: {sceneSelected: scene.scene_id}
             }
             this.slideToSceneEditor.emit();
