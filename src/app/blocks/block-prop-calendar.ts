@@ -21,8 +21,8 @@ import * as moment from 'moment'
                             <span i18n>token</span><br/>
                             <input class="default-prop-width" (blur)="_getGoogleCalendars()" type="text" [formControl]="m_contGroup.controls['token']"/>
                         </li>
-                        <li class="list-group-item">
-                            <button i18n class="btn btn-default default-prop-width" (click)="_onCreateToken()">create instagram token</button>
+                        <li class="list-group-item">                                                              
+                            <button i18n class="btn btn-default default-prop-width" (click)="_onCreateToken()">create token</button>
                         </li>
                         <li class="list-group-item">
                             <span i18n>Load with calendar</span>
@@ -212,7 +212,7 @@ export class BlockPropCalendar extends Compbaser implements AfterViewInit {
                     self.cd.markForCheck()
                 },
                 error: function (jqXHR, exception) {
-                    console.error(jqXHR, exception);
+                    console.log('ajax req:' + jqXHR, exception);
                 }
             });
         } catch (e) {

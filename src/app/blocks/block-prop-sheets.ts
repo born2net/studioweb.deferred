@@ -22,7 +22,7 @@ import * as moment from 'moment'
                             <input class="default-prop-width" (blur)="_getGoogleSheets()" type="text" [formControl]="m_contGroup.controls['token']"/>
                         </li>
                         <li class="list-group-item">
-                            <button i18n class="btn btn-default default-prop-width" (click)="_onCreateToken()">create instagram token</button>
+                            <button i18n class="btn btn-default default-prop-width" (click)="_onCreateToken()">create token</button>
                         </li>
                         <li class="list-group-item">
                             <span i18n>Load with sheet</span>
@@ -117,7 +117,7 @@ export class BlockPropSheets extends Compbaser implements AfterViewInit {
                     self.cd.markForCheck()
                 },
                 error: function (jqXHR, exception) {
-                    console.error(jqXHR, exception);
+                    console.log('ajax req:' + jqXHR, exception);
                 }
             });
         } catch (e) {

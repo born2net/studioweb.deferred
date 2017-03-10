@@ -70,7 +70,7 @@ import {BlockLabels, PLACEMENT_CHANNEL, PLACEMENT_SCENE} from "../../interfaces/
                         <block-prop-json-player [standAlone]="true" [setBlockData]="m_blockData"></block-prop-json-player>
                     </div>
                     <div *ngSwitchCase="m_blockLabels.BLOCKCODE_JSON_ITEM">
-                        <block-prop-sheets [setBlockData]="m_blockData"></block-prop-sheets>
+                        <block-prop-json-item [setBlockData]="m_blockData"></block-prop-json-item>
                     </div>
                     <div *ngSwitchCase="m_blockLabels.BLOCKCODE_WORLD_WEATHER">
                         <block-prop-weather [setBlockData]="m_blockData"></block-prop-weather>

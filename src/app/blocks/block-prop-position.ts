@@ -79,7 +79,6 @@ import {BlockService, ISceneData} from "./block-service";
                                             <label for="locked" class="label-primary"></label>
                                         </div>
                                     </li>
-                                    <br/>
                                 </ul>
                             </div>
                         </div>

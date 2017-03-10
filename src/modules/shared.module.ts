@@ -47,9 +47,10 @@ import {BlockPropLocation} from "../app/blocks/block-prop-location";
 import {AddContent} from "../app/campaigns/add-content";
 import {BlockPropScene} from "../app/blocks/block-prop.scene";
 import {Loading} from "../comps/loading/loading";
+import {BlockPropJsonItem} from "../app/blocks/block-prop-json-item";
 
 var sharedComponents = [Tabs, Tab, Infobox, Sliderpanel, Slideritem, PanelSplitMain, PanelSplitSide, PanelSplitContainer, ListToArrayPipe, FormatSecondsPipe, MatchBodyHeight, ScreenTemplate, BlurForwarder, DraggableList, AddContent, Loading,
-    FontSelector, BlockPropContainer, BlockPropCommon, BlockPropHtml, BlockPropClock, BlockPropWeather, BlockPropInstagram, BlockPropJsonPlayer,
+    FontSelector, BlockPropContainer, BlockPropCommon, BlockPropHtml, BlockPropClock, BlockPropWeather, BlockPropInstagram, BlockPropJsonPlayer, BlockPropJsonItem,
     BlockPropScene, BlockPropCalendar, BlockPropSheets, BlockPropTwitter, BlockPropVideo, BlockPropImage, BlockPropLabel, BlockPropMrss, BlockPropLocation, BlockPropRss, BlockPropDigg, BlockPropFasterQ, BlockPropCollection, BlockPropQR, BlockPropYouTube, JsonEventGrid];
 
 @NgModule({
