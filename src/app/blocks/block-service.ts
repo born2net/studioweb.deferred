@@ -24,7 +24,7 @@ export interface IBlockData {
     blockAcronym: string;
     blockMinWidth: number;
     blockMinHeight: number;
-    playerDataJson: {};
+    playerDataJson: any;
     playerDataDom: XMLDocument,
     playerMimeScene: string;
     playerDataJsonHandle: number;
@@ -689,7 +689,6 @@ export class BlockService {
     public getBlockDataInScene(i_sceneData: ISceneData): Observable<IBlockData> {
         let domPlayerData = i_sceneData.domPlayerData
         let playerMimeScene = i_sceneData.mimeType;
-        let playerDataJsonHandle;
         let playerDataJson = this.parser.xml2js(i_sceneData.domPlayerDataXml);
         let code = playerDataJson['Player']['_player'];
         let blockType: any = this.getBlockNameByCode(code)
@@ -699,7 +698,6 @@ export class BlockService {
             playerDataJson: null,
             playerDataDom: null
         }
-
         var data: IBlockData = {
             blockID: i_sceneData.block_pseudo_id,
             blockType: blockType,
@@ -712,17 +710,15 @@ export class BlockService {
             blockMinWidth: this.m_minSize.w,
             blockMinHeight: this.m_minSize.h,
             playerDataDom: domPlayerData,
-            playerDataJson: null,
+            playerDataJson: playerDataJson,
             playerMimeScene: playerMimeScene,
-            playerDataJsonHandle: playerDataJsonHandle,
+            playerDataJsonHandle: null,
             duration: -1,
             offset: -1,
             campaignTimelineChanelPlayersModelExt: null,
             scene: sceneData
         };
-
         return Observable.of(data);
-
     }
 
     public getBlockData(blockId): Observable<IBlockData> {

@@ -350,7 +350,6 @@ export class BlockFabricJsonItem extends BlockFabricLabel {
         return i_jsonPath;
     }
 
-
     /**
      Some json item field names need to be muated into something else.
      For example, the default fieldName of text needs to be changed into '$cells.1.1.value' when

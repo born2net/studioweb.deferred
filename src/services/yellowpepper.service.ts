@@ -127,39 +127,6 @@ export class YellowPepperService {
             .mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
     }
 
-    /**
-     Listen to changes in selected scene
-     **/
-    listenSelectedSceneBlockChanged(emitOnEmpty: boolean = false): Observable<ISceneData> {
-        var sceneSelected$ = this.store.select(store => store.appDb.uiState.scene.sceneSelected);
-        var blockSelected$ = this.store.select(store => store.appDb.uiState.scene.blockSelected);
-        return blockSelected$.combineLatest(sceneSelected$, (blockId, sceneId) => {
-            return {blockId, sceneId}
-        }).filter((ids) => {
-            if (!emitOnEmpty) return true; // no filter requested
-            return ids && ids.blockId != -1
-        }).mergeMap(ids => {
-            return this.getScene(ids.sceneId)
-                .map((playerDataModel: PlayerDataModelExt) => {
-                    var domPlayerData = $.parseXML(playerDataModel.getPlayerDataValue())
-                    var selectedSnippet: any = $(domPlayerData).find(`[id="${ids.blockId}"]`)[0];
-                    var mimeType = $(domPlayerData).find('Player').attr('mimeType');
-                    var xml = (new XMLSerializer()).serializeToString(selectedSnippet);
-                    selectedSnippet = $.parseXML(xml)
-                    var sceneData: ISceneData = {
-                        scene_id: ids.sceneId,
-                        scene_id_pseudo_id: null,
-                        block_pseudo_id: ids.blockId,
-                        playerDataModel: playerDataModel,
-                        domPlayerData: selectedSnippet,
-                        domPlayerDataXml: xml,
-                        mimeType: mimeType
-                    }
-                    return sceneData;
-                });
-        }).distinct()
-            .mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
-    }
 
     /**
      listen UI campaign > timeline > board_viewer selected and return back the associated channel with that board id
@@ -205,6 +172,75 @@ export class YellowPepperService {
                     return i_board.getBoardTemplateViewerId() == globalBoardTemplateViewerId;
                 });
             }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
+    }
+
+    /**
+     Listen to changes in selected scene
+     **/
+    listenSceneOrBlockSelected(emitOnEmpty: boolean = false): Observable<ISceneData> {
+        var sceneSelected$ = this.store.select(store => store.appDb.uiState.scene.sceneSelected);
+        var blockSelected$ = this.store.select(store => store.appDb.uiState.scene.blockSelected);
+        return blockSelected$.combineLatest(sceneSelected$, (blockId, sceneId) => {
+            return {blockId, sceneId}
+        }).filter((ids) => {
+            if (!emitOnEmpty) return true; // no filter requested
+            return ids && ids.blockId != -1
+        }).mergeMap(ids => {
+            return this.getScene(ids.sceneId)
+                .map((playerDataModel: PlayerDataModelExt) => {
+                    var domPlayerData = $.parseXML(playerDataModel.getPlayerDataValue())
+                    var selectedSnippet: any = $(domPlayerData).find(`[id="${ids.blockId}"]`)[0];
+                    var mimeType = $(domPlayerData).find('Player').attr('mimeType');
+                    var xml = (new XMLSerializer()).serializeToString(selectedSnippet);
+                    selectedSnippet = $.parseXML(xml)
+                    var sceneData: ISceneData = {
+                        scene_id: ids.sceneId,
+                        scene_id_pseudo_id: null,
+                        block_pseudo_id: ids.blockId,
+                        playerDataModel: playerDataModel,
+                        domPlayerData: selectedSnippet,
+                        domPlayerDataXml: xml,
+                        mimeType: mimeType
+                    }
+                    return sceneData;
+                });
+        }).distinct()
+            .mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
+    }
+
+    /**
+     Listen to changes in selected scene
+     **/
+    listenSceneOrBlockSelectedChanged(emitOnEmpty: boolean = false): Observable<ISceneData> {
+        var sceneSelected$ = this.store.select(store => store.appDb.uiState.scene.sceneSelected);
+        var blockSelected$ = this.store.select(store => store.appDb.uiState.scene.blockSelected);
+        var player_data$ = this.store.select(store => store.msDatabase.sdk.table_player_data);
+        return blockSelected$.combineLatest(sceneSelected$, player_data$, (blockId, sceneId) => {
+            return {blockId, sceneId}
+        }).filter((ids) => {
+            if (!emitOnEmpty) return true; // no filter requested
+            return ids && ids.blockId != -1
+        }).mergeMap(ids => {
+            return this.getScene(ids.sceneId)
+                .map((playerDataModel: PlayerDataModelExt) => {
+                    var domPlayerData = $.parseXML(playerDataModel.getPlayerDataValue())
+                    var selectedSnippet: any = $(domPlayerData).find(`[id="${ids.blockId}"]`)[0];
+                    var mimeType = $(domPlayerData).find('Player').attr('mimeType');
+                    var xml = (new XMLSerializer()).serializeToString(selectedSnippet);
+                    selectedSnippet = $.parseXML(xml)
+                    var sceneData: ISceneData = {
+                        scene_id: ids.sceneId,
+                        scene_id_pseudo_id: null,
+                        block_pseudo_id: ids.blockId,
+                        playerDataModel: playerDataModel,
+                        domPlayerData: selectedSnippet,
+                        domPlayerDataXml: xml,
+                        mimeType: mimeType
+                    }
+                    return sceneData;
+                });
+        }).distinct()
+            .mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
     }
 
     listenSceneSelected(emitOnEmpty: boolean = false): Observable<ISceneData> {

@@ -172,7 +172,7 @@ export class BlockPropContainer extends Compbaser implements AfterViewInit {
     private _listenOnScenes() {
         this.cancelOnDestroy(
             //
-            this.yp.listenSelectedSceneBlockChanged(true)
+            this.yp.listenSceneOrBlockSelected(true)
                 .mergeMap((i_sceneData: ISceneData) => {
                     return this.bs.getBlockDataInScene(i_sceneData)
                 })

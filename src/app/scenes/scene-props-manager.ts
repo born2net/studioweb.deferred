@@ -22,6 +22,7 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
                 <h5>scene props</h5>                
             </div>
             <div *ngSwitchCase="m_sidePropsEnum.sceneBlock">
+                <block-prop-position></block-prop-position>
                 <block-prop-container></block-prop-container>
             </div>
             <div *ngSwitchCase="m_sidePropsEnum.miniDashboard">
