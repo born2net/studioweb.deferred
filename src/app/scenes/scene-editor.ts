@@ -1,7 +1,7 @@
 import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Output, ViewChild} from "@angular/core";
 import {Compbaser} from "ng-mslib";
-import {ISceneData, YellowPepperService} from "../../services/yellowpepper.service";
-import {BlockService} from "../blocks/block-service";
+import {YellowPepperService} from "../../services/yellowpepper.service";
+import {BlockService, ISceneData} from "../blocks/block-service";
 import {CommBroker, IMessage} from "../../services/CommBroker";
 import {RedPepperService} from "../../services/redpepper.service";
 import {PLACEMENT_IS_SCENE, PLACEMENT_SCENE} from "../../interfaces/Consts";

@@ -22,23 +22,24 @@ import {OrientationEnum} from "../app/campaigns/campaign-orientation";
 import {List} from "immutable";
 import * as _ from "lodash";
 import {UserModel} from "../models/UserModel";
-import {RedPepperService} from "./redpepper.service";
-
-
-export interface ISceneData {
-    scene_id: number;
-    scene_id_pseudo_id: string;
-    playerDataModel: PlayerDataModelExt;
-    domPlayerData: XMLDocument;
-    block_pseudo_id?: any;
-    domPlayerDataXml?: string;
-    mimeType?;
-}
+import X2JS from "x2js";
+import {ISceneData} from "../app/blocks/block-service";
 
 @Injectable()
 export class YellowPepperService {
 
+    parser;
+
     constructor(private store: Store<ApplicationState>) {
+        this.parser = new X2JS({
+            escapeMode: true,
+            attributePrefix: "_",
+            arrayAccessForm: "none",
+            emptyNodeForm: "text",
+            enableToStringFunc: true,
+            arrayAccessFormPaths: [],
+            skipEmptyTextNodesForObj: true
+        });
     }
 
     public dispatch(action: Action) {
@@ -200,6 +201,7 @@ export class YellowPepperService {
                         playerDataModel: playerDataModel,
                         domPlayerData: selectedSnippet,
                         domPlayerDataXml: xml,
+                        domPlayerDataJson: this.parser.xml2js(xml),
                         mimeType: mimeType
                     }
                     return sceneData;
@@ -235,6 +237,7 @@ export class YellowPepperService {
                         playerDataModel: playerDataModel,
                         domPlayerData: selectedSnippet,
                         domPlayerDataXml: xml,
+                        domPlayerDataJson: this.parser.xml2js(xml),
                         mimeType: mimeType
                     }
                     return sceneData;
@@ -500,14 +503,16 @@ export class YellowPepperService {
             .map((playerDataModels: List<PlayerDataModel>) => {
                 return playerDataModels.reduce((result: Array<ISceneData>, playerDataModel: PlayerDataModelExt) => {
                     var playerDataId = playerDataModel.getPlayerDataId();
-                    var recPlayerData = playerDataModel.getPlayerDataValue();
-                    var domPlayerData = $.parseXML(recPlayerData)
+                    var xml = playerDataModel.getPlayerDataValue();
+                    var domPlayerData = $.parseXML(xml)
                     var scene_id_pseudo_id = $(domPlayerData).find('Player').eq(0).attr('id')
                     result.push({
                         scene_id: playerDataId,
                         scene_id_pseudo_id,
                         domPlayerData,
-                        playerDataModel
+                        playerDataModel,
+                        domPlayerDataXml: xml,
+                        domPlayerDataJson: this.parser.xml2js(xml),
                     });
                     return result;
                 }, [])

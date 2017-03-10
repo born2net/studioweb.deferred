@@ -3,15 +3,75 @@
  */
 
 import {Inject, Injectable} from "@angular/core";
-import {ISceneData, YellowPepperService} from "../../services/yellowpepper.service";
+import {YellowPepperService} from "../../services/yellowpepper.service";
 import X2JS from "x2js";
 import * as _ from "lodash";
 import {Observable} from "rxjs";
-import {CampaignTimelineChanelPlayersModelExt} from "../../store/model/msdb-models-extended";
+import {CampaignTimelineChanelPlayersModelExt, PlayerDataModelExt} from "../../store/model/msdb-models-extended";
 import {RedPepperService} from "../../services/redpepper.service";
 import {ResourcesModel} from "../../store/imsdb.interfaces_auto";
 import {BlockLabels, PLACEMENT_CHANNEL, PLACEMENT_SCENE} from "../../interfaces/Consts";
 
+interface IDomPlayerDataJson {
+    Player: {
+        Data: {
+            Appearance: {
+                _alpha: string;
+                _blendMode: string;
+            }
+            Background: {
+                GradientPoints: {
+                    Point: {
+                        _color: string;
+                        _opacity: string;
+                        _midpoint: string;
+                    }
+                }
+                _style: string;
+                _gradientType: string;
+                _angle: string;
+                _offsetX: string;
+                _offsetY: string;
+            };
+            Border: {
+                _borderThickness: string;
+                _borderColor: string;
+                _cornerRadius: string;
+            };
+            Layout: {
+                _rotation: string;
+                _x: string;
+                _y: string;
+                _width: string;
+                _height: string;
+            };
+            Resource: {
+                AspectRatio: {
+                    _maintain: string;
+                };
+                Image: string;
+                _resource: string;
+                _hResource: string;
+            }
+        };
+        _player: string;
+        _label: string;
+        _interactive: string;
+        _locked: string;
+        _id: string;
+    }
+}
+
+export interface ISceneData {
+    scene_id: number;
+    scene_id_pseudo_id: string;
+    playerDataModel: PlayerDataModelExt;
+    domPlayerData: XMLDocument;
+    domPlayerDataJson: IDomPlayerDataJson;
+    domPlayerDataXml: string;
+    block_pseudo_id?: any;
+    mimeType?;
+}
 
 export interface IBlockData {
     blockID: number;

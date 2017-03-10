@@ -1,9 +1,9 @@
 import {AfterViewInit, Component, EventEmitter, Inject, Input, Output} from "@angular/core";
 import {Compbaser} from "ng-mslib";
-import {ISceneData, YellowPepperService} from "../../services/yellowpepper.service";
+import {YellowPepperService} from "../../services/yellowpepper.service";
 import {IUiState} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
-import {BlockService} from "../blocks/block-service";
+import {BlockService, ISceneData} from "../blocks/block-service";
 import {Lib} from "../../Lib";
 import * as _ from "lodash";
 import {UserModel} from "../../models/UserModel";

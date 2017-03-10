@@ -1,11 +1,10 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component} from "@angular/core";
 import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
 import {Compbaser} from "ng-mslib";
-import {ISceneData, YellowPepperService} from "../../services/yellowpepper.service";
-import {RedPepperService} from "../../services/redpepper.service";
+import {YellowPepperService} from "../../services/yellowpepper.service";
 import {timeout} from "../../decorators/timeout-decorator";
 import * as _ from "lodash";
-import {BlockService, IBlockData} from "./block-service";
+import {BlockService, ISceneData} from "./block-service";
 
 @Component({
     selector: 'block-prop-position',
@@ -71,7 +70,7 @@ import {BlockService, IBlockData} from "./block-service";
                                     </li>
                                     <li class="list-group-item">
                                         <br/>
-                                        <span i18n>locked</span>
+                                        <span i18n>unlocked</span>
                                         <div class="material-switch pull-right">
                                             <input (change)="saveToStore(locked.checked)"
                                                    [formControl]="contGroup.controls['locked']"
@@ -95,7 +94,7 @@ export class BlockPropPosition extends Compbaser {
     private formInputs = {};
     private contGroup: FormGroup;
 
-    constructor(private fb: FormBuilder, private yp: YellowPepperService, private bs: BlockService, private cd:ChangeDetectorRef) {
+    constructor(private fb: FormBuilder, private yp: YellowPepperService, private bs: BlockService, private cd: ChangeDetectorRef) {
         super();
 
         this.contGroup = fb.group({
@@ -112,17 +111,32 @@ export class BlockPropPosition extends Compbaser {
         this.cancelOnDestroy(
             //
             this.yp.listenSceneOrBlockSelectedChanged(true)
-                .mergeMap((i_sceneData: ISceneData) => {
-                    return this.bs.getBlockDataInScene(i_sceneData)
-                })
-                .subscribe((blockData: IBlockData) => {
-                    this.formInputs['pixel_height'].setValue(blockData.playerDataJson.Player.Data.Layout._height)
-                    this.formInputs['pixel_width'].setValue(blockData.playerDataJson.Player.Data.Layout._width)
-                    this.formInputs['pixel_x'].setValue(blockData.playerDataJson.Player.Data.Layout._x)
-                    this.formInputs['pixel_y'].setValue(blockData.playerDataJson.Player.Data.Layout._y)
+                .subscribe((i_sceneData: ISceneData) => {
+                    this.formInputs['pixel_height'].setValue(i_sceneData.domPlayerDataJson.Player.Data.Layout._height)
+                    this.formInputs['pixel_width'].setValue(i_sceneData.domPlayerDataJson.Player.Data.Layout._width)
+                    this.formInputs['pixel_x'].setValue(i_sceneData.domPlayerDataJson.Player.Data.Layout._x)
+                    this.formInputs['pixel_y'].setValue(i_sceneData.domPlayerDataJson.Player.Data.Layout._y)
+                    this.formInputs['locked'].setValue(i_sceneData.domPlayerDataJson.Player._label)
                     this.cd.markForCheck();
                 }, (e) => console.error(e))
         )
+
+        // this.cancelOnDestroy(
+        //     //
+        //     this.yp.listenSceneOrBlockSelectedChanged(true)
+        //         .mergeMap((i_sceneData: ISceneData) => {
+        //             return this.bs.getBlockDataInScene(i_sceneData)
+        //         })
+        //         .subscribe((blockData: IBlockData) => {
+        //
+        //             var a = $(blockData.playerDataDom).attr('locked');
+        //             this.formInputs['pixel_height'].setValue(blockData.playerDataJson.Player.Data.Layout._height)
+        //             this.formInputs['pixel_width'].setValue(blockData.playerDataJson.Player.Data.Layout._width)
+        //             this.formInputs['pixel_x'].setValue(blockData.playerDataJson.Player.Data.Layout._x)
+        //             this.formInputs['pixel_y'].setValue(blockData.playerDataJson.Player.Data.Layout._y)
+        //             this.cd.markForCheck();
+        //         }, (e) => console.error(e))
+        // )
 
     }
 

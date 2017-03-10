@@ -2,8 +2,7 @@ import {Component, ChangeDetectionStrategy, Input, Output, EventEmitter} from "@
 import {Compbaser} from "ng-mslib";
 import {IUiState} from "../../store/store.data";
 import {SideProps} from "../../store/actions/appdb.actions";
-import {ISceneData} from "../../services/yellowpepper.service";
-import {BlockService} from "../blocks/block-service";
+import {BlockService, ISceneData} from "../blocks/block-service";
 
 @Component({
     selector: 'scene-list',

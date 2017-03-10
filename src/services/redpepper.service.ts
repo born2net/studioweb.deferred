@@ -877,7 +877,7 @@ export class RedPepperService {
      **/
     getScenePlayerdataBlock(i_scene_id, i_player_data_id) {
         i_scene_id = this.sterilizePseudoId(i_scene_id);
-        this.databaseManager.table_player_data().openForEdit(i_scene_id);
+        // this.databaseManager.table_player_data().openForEdit(i_scene_id);
         var recPlayerData = this.databaseManager.table_player_data().getRec(i_scene_id);
         var player_data = recPlayerData['player_data_value'];
         var domPlayerData = $.parseXML(player_data)

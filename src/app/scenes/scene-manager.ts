@@ -5,7 +5,8 @@ import {Router} from "@angular/router";
 import {RedPepperService} from "../../services/redpepper.service";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
 import {IUiState} from "../../store/store.data";
-import {ISceneData, YellowPepperService} from "../../services/yellowpepper.service";
+import {YellowPepperService} from "../../services/yellowpepper.service";
+import {ISceneData} from "../blocks/block-service";
 
 @Component({
     // changeDetection: ChangeDetectionStrategy.OnPush,
