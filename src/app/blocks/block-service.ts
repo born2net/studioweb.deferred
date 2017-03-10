@@ -873,10 +873,8 @@ export class BlockService {
         switch (this.blockPlacement) {
 
             case PLACEMENT_CHANNEL: {
-
                 switch (playerCode) {
-
-                    /***** SCENE *****/
+                    /***** scene *****/
                     case BlockLabels.BLOCKCODE_SCENE: {
                         this.yp.getChannelBlockRecord(blockData.blockID)
                             .subscribe((i_campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModelExt) => {
@@ -886,8 +884,7 @@ export class BlockService {
                             })
                         break;
                     }
-
-                    /***** BLOCK *****/
+                    /***** all block *****/
                     default: {
                         this.rp.setCampaignTimelineChannelPlayerRecord(blockData.blockID, 'player_data', player_data);
                     }
@@ -895,12 +892,19 @@ export class BlockService {
                 break;
             }
 
-            //todo: fix scene
             case PLACEMENT_SCENE: {
-
-                //     pepper.setScenePlayerdataBlock(self.m_sceneID, self.m_block_id, player_data);
-                // case BB.CONSTS.PLACEMENT_IS_SCENE: {
-                //     pepper.setScenePlayerData(self.m_block_id, player_data);
+                switch (playerCode) {
+                    /***** scene *****/
+                    case BlockLabels.BLOCKCODE_SCENE: {
+                        this.rp.setScenePlayerData(blockData.blockID, player_data);
+                        break;
+                    }
+                    /***** all blocks *****/
+                    default: {
+                        this.rp.setScenePlayerdataBlock(blockData.scene.handle, blockData.blockID, player_data);
+                    }
+                }
+                break;
             }
         }
         this.rp.reduxCommit();
