@@ -33,7 +33,8 @@ import {Lib} from "../../Lib";
                     </div>
                     <br/>
                     <div *ngIf="jsonItemDualNumericSettings">
-                        <label> Row | Column</label>
+                        <label style="display: inline-block; padding-right: 8px"> row </label>
+                        <label style="display: inline-block"> column </label>
                         <div class="spinnerDimHeight">
                             <div style="float: left">
                                 <span data-numeric="column">
@@ -50,7 +51,9 @@ import {Lib} from "../../Lib";
                         </div>
                     </div>
                     <div class="clearfix"></div>
-                    <div id="jsonItemFontSettings"></div>
+                    <div id="jsonItemFontSettings">
+                        <font-selector (onChange)="_onFontChanged($event)" [setConfig]="m_fontConfig"></font-selector>
+                    </div>
                     <div *ngIf="jsonItemDateSettings">
                         <div class="clearfix"></div>
                         <label class="pull-left" data-localize="dateFormat">date format</label>
@@ -59,8 +62,7 @@ import {Lib} from "../../Lib";
                         </select>
                     </div>
                     <div *ngIf="jsonItemIconSettings">
-                        <label class="pull-left" data-localize="maintainAspectRatio">Maintain
-                            Aspect ratio</label>
+                        <label class="pull-left" data-localize="maintainAspectRatio">Maintain aspect ratio</label>
                         <div class="clearfix" style="padding-bottom: 13px"></div>
                         <div style="position: relative; top: -12px" class="material-switch pull-left">
                             <input formControlName="jsonItemMaintainAspectRatio" name="someSwitchOption006" type="checkbox"/>
@@ -81,6 +83,7 @@ export class BlockPropJsonItem extends Compbaser implements AfterViewInit {
     m_sheetSeleced: any = {};
     m_fields = [];
     m_dateFields = [];
+    m_fontConfig: IFontSelector;
 
     jsonItemFieldContainer;
     jsonItemTextFieldsContainer;
@@ -135,9 +138,21 @@ export class BlockPropJsonItem extends Compbaser implements AfterViewInit {
             // Json mime
             this._populateMimeType();
         }
-        // this.cd.markForCheck();
     }
 
+    _onFontChanged(config: IFontSelector) {
+        // var domPlayerData = this.m_blockData.playerDataDom;
+        // var xSnippet = jXML(domPlayerData).find('Clock');
+        // var xSnippetFont = jXML(xSnippet).find('Font');
+        // config.bold == true ? xSnippetFont.attr('fontWeight', 'bold') : xSnippetFont.attr('fontWeight', 'normal');
+        // config.italic == true ? xSnippetFont.attr('fontStyle', 'italic') : xSnippetFont.attr('fontStyle', 'normal');
+        // config.underline == true ? xSnippetFont.attr('textDecoration', 'underline') : xSnippetFont.attr('textDecoration', 'none');
+        // xSnippetFont.attr('fontColor', Lib.ColorToDecimal(config.color));
+        // xSnippetFont.attr('fontSize', config.size);
+        // xSnippetFont.attr('fontFamily', config.font);
+        // xSnippetFont.attr('textAlign', config.alignment);
+        // this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+    }
 
     /**
      The component is a subclass of JSON item (i.e.: it has a mimetype) so we need to populate it according
@@ -177,12 +192,15 @@ export class BlockPropJsonItem extends Compbaser implements AfterViewInit {
                     this.jsonItemDateSettings = true;
                 }, 10);
             }
+            case 'dual_numeric': {}
             case 'text': {
                 this.jsonItemIconSettings = false;
                 this.jsonItemDateSettings = false;
                 this.jsonItemFontSettings = true;
 
-                var label: IFontSelector = {
+                console.log(Lib.ColorToHex(Lib.DecimalToHex(xSnippetFont.attr('fontColor'))));
+                
+                this.m_fontConfig = {
                     bold: xSnippetFont.attr('fontWeight') === 'bold' ? true : false,
                     italic: xSnippetFont.attr('fontStyle') === 'italic' ? true : false,
                     underline: xSnippetFont.attr('textDecoration') === 'underline' ? true : false,
@@ -191,6 +209,7 @@ export class BlockPropJsonItem extends Compbaser implements AfterViewInit {
                     color: Lib.ColorToHex(Lib.DecimalToHex(xSnippetFont.attr('fontColor'))),
                     size: Number(xSnippetFont.attr('fontSize'))
                 };
+                this.cd.markForCheck();
                 break;
             }
         }
@@ -239,25 +258,14 @@ export class BlockPropJsonItem extends Compbaser implements AfterViewInit {
             this.m_dateFields.push({value: formats[i]});
         }
         this.m_formInputs['jsonItemDateFormat'].setValue(i_selectedFormat)
-        // snippet += `<option value="${formats[i]}">${formats[i]}</option>`;
-        // $(Elements.JSON_ITEM_DATE_FORMAT).empty().append(snippet);
-        // var elem = $(Elements.JSON_ITEM_DATE_FORMAT).find('option[value="' + i_selectedFormat + '"]');
-        // elem.prop('selected', 'selected');
     }
 
     /**
      Populate aspect ratio switch button
-     @method _populateAspectRatio
-     @params {Boolean} i_aspectRatio
      **/
-    //todo: ???
     private _populateAspectRatio(i_aspectRatio) {
-        var self = this;
-        // if (i_aspectRatio == '1') {
-        // $(Elements.JSON_ITEM_MAINTAIN_ASPECT_RATIO).prop('checked', true);
-        // } else {
-        //     $(Elements.JSON_ITEM_MAINTAIN_ASPECT_RATIO).prop('checked', false);
-        // }
+        var value = StringJS(i_aspectRatio).booleanToNumber();
+        this.m_formInputs['jsonItemMaintainAspectRatio'].setValue(value)
     }
 
     /**
@@ -276,7 +284,8 @@ export class BlockPropJsonItem extends Compbaser implements AfterViewInit {
             row = String(match[1]);
             column = String(match[2]);
         }
-        // todo: ???
+        this.m_formInputs['jsonItemDualNumeric1'].setValue(row)
+        this.m_formInputs['jsonItemDualNumeric2'].setValue(column)
         // var spinners = $('.spinner', Elements.JSON_ITEM_DUAL_NUMERIC_SETTINGS);
         // $(spinners[0]).spinner('value', row);
         // $(spinners[2]).spinner('value', column);
