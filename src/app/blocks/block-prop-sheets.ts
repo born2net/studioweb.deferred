@@ -43,6 +43,7 @@ import * as moment from 'moment'
         </form>
     `
 })
+
 export class BlockPropSheets extends Compbaser implements AfterViewInit {
     m_formInputs = {};
     m_contGroup: FormGroup;

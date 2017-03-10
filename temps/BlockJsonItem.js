@@ -1,8 +1,3 @@
-///<reference path="../../typings/lite/app_references.d.ts" />
-
-
-//GULP_ABSTRACT_EXTEND extends Block
-//GULP_ABSTRACT_START
 declare module TSLiteModules {
     export class BlockJsonItem extends Block {
         protected m_options;
@@ -13,19 +8,13 @@ declare module TSLiteModules {
         protected m_minSize:any;
         protected m_config:{};
         protected m_sceneMime:string;
-
         protected _listenInputFieldPathChange() ;
-
         protected _populate() ;
-
         protected _populateAspectRatio(i_aspectRatio) ;
-
         protected _loadBlockSpecificProps() ;
-
         public deleteBlock(i_memoryOnly):void ;
     }
 }
-//GULP_ABSTRACT_END
 
 define(['jquery', 'Block'], function ($, Block) {
     TSLiteModules.Block = Block;

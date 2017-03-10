@@ -94,7 +94,7 @@ export interface IBlockData {
     scene?: {
         name: string,
         handle: any,
-        playerDataJson: {};
+        playerDataJson: IDomPlayerDataJson;
         playerDataDom: XMLDocument
     },
     resource?: {
