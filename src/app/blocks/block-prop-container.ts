@@ -178,7 +178,7 @@ export class BlockPropContainer extends Compbaser implements AfterViewInit {
                 })
                 .subscribe((blockData: IBlockData) => {
                     this.m_blockTypeSelected = blockData.blockCode;
-                    this.m_tabTitle = blockData.blockAcronym.indexOf('JSON') > -1 ? blockData.playerMimeScene : blockData.blockAcronym
+                    this.m_tabTitle = blockData.blockAcronym;
                     this.m_blockData = blockData;
                     this.m_showSettingsTab = false;
                     this.toggleSettingsTab();
@@ -186,6 +186,10 @@ export class BlockPropContainer extends Compbaser implements AfterViewInit {
                 }, (e) => console.error(e))
         )
     }
+
+    // private getTabTitle(i_blockData: IBlockData): string {
+    //     // this.bs.getCommonBorderXML()if (i_blockData.blockAcronym.indexOf('JSON')) > -1 ? blockData.playerMimeScene : blockData.blockAcronym
+    // }
 
     private toggleSettingsTab() {
         if (!this.settings) return;
