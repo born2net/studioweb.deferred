@@ -62,11 +62,14 @@ import {Lib} from "../../Lib";
                         </select>
                     </div>
                     <div *ngIf="jsonItemIconSettings">
-                        <label class="pull-left" data-localize="maintainAspectRatio">Maintain aspect ratio</label>
-                        <div class="clearfix" style="padding-bottom: 13px"></div>
-                        <div style="position: relative; top: -12px" class="material-switch pull-left">
-                            <input formControlName="jsonItemMaintainAspectRatio" name="someSwitchOption006" type="checkbox"/>
-                            <label for="jsonItemMaintainAspectRatio" class="label-primary"></label>
+                        <span i18n>maintain aspect ratio</span>
+                        <div class="material-switch pull-right">
+                            <input #imageRatio (change)="_toggleAspectRatio(imageRatio.checked)"
+                                   formControlName="jsonItemMaintainAspectRatio"
+                                   class="default-prop-width"
+                                   id="imageRatio"
+                                   name="imageRatio" type="checkbox"/>
+                            <label for="imageRatio" class="label-primary"></label>
                         </div>
                         <div class="clearfix" style="padding-bottom: 13px"></div>
                     </div>
@@ -142,13 +145,21 @@ export class BlockPropJsonItem extends Compbaser implements AfterViewInit {
         }
     }
 
-    _onJsonItemTextFieldsChanged(event){
+    _toggleAspectRatio(i_value) {
+        i_value = StringJS(i_value).booleanToNumber()
+        var domPlayerData = this.m_blockData.playerDataDom;
+        var xSnippet = $(domPlayerData).find('XmlItem');
+        $(xSnippet).attr('maintainAspectRatio', i_value);
+        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
+    }
+
+    _onJsonItemTextFieldsChanged(event) {
         var name = event.target.value;
         var mime = this.m_blockData.playerMimeScene;
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
         var xSnippet = $(domPlayerData).find('XmlItem');
-        _.forEach(this.m_config[mime].fields,(k)=>{
-            if (k.name == name){
+        _.forEach(this.m_config[mime].fields, (k) => {
+            if (k.name == name) {
                 $(xSnippet).attr('fieldType', k.type);
                 $(xSnippet).attr('fieldName', k.name);
                 this._populateMimeType();
@@ -208,7 +219,8 @@ export class BlockPropJsonItem extends Compbaser implements AfterViewInit {
                     this.jsonItemDateSettings = true;
                 }, 10);
             }
-            case 'dual_numeric': {}
+            case 'dual_numeric': {
+            }
             case 'text': {
                 this.jsonItemIconSettings = false;
                 this.jsonItemDateSettings = false;
@@ -231,7 +243,7 @@ export class BlockPropJsonItem extends Compbaser implements AfterViewInit {
         }
     }
 
-    private _populateFonts(xSnippetFont){
+    private _populateFonts(xSnippetFont) {
         this.m_fontConfig = {
             bold: xSnippetFont.attr('fontWeight') === 'bold' ? true : false,
             italic: xSnippetFont.attr('fontStyle') === 'italic' ? true : false,
@@ -243,6 +255,7 @@ export class BlockPropJsonItem extends Compbaser implements AfterViewInit {
         };
         // this.cd.markForCheck();
     }
+
     /**
      Populate date format for common types of date styles on dropdown selection
      @method _populateDateFormat
@@ -317,19 +330,10 @@ export class BlockPropJsonItem extends Compbaser implements AfterViewInit {
             return;
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
         var xSnippet = jXML(domPlayerData).find('XmlItem');
-
-
-
-        // jXML(xSnippet).attr('fieldName', this.m_contGroup.value.jsonItemField);
-        // jXML(xSnippet).attr('jsonItemTextFields', this.m_contGroup.value.jsonItemTextFields);
-        jXML(xSnippet).attr('maintainAspectRatio', StringJS(this.m_contGroup.value.jsonItemMaintainAspectRatio).booleanToNumber());
-
-
-
-        // var item = jXML(domPlayerData).find('Json').find('Data');
-        // jXML(item).attr('token', this.m_contGroup.value.token);
-
-
+        var row = this.m_contGroup.value.jsonItemDualNumeric1;
+        var column = this.m_contGroup.value.jsonItemDualNumeric2;
+        var fieldName = `$cells.${row}.${column}.value`;
+        $(xSnippet).attr('fieldName', fieldName);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 

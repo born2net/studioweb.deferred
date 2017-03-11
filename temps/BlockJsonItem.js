@@ -393,6 +393,7 @@ define(['jquery', 'Block'], function ($, Block) {
         $(spinners[2]).spinner('value', column);
     }
 
+    
     /**
      Listen when the dual numeric stepper changed
      @method _listenDualNumericChanged
