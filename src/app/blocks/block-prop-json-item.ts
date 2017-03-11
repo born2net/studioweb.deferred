@@ -8,9 +8,6 @@ import {Lib} from "../../Lib";
 
 @Component({
     selector: 'block-prop-json-item',
-    host: {
-        '(input-blur)': 'saveToStore($event)'
-    },
     // changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <small class="debug">{{me}}</small>
@@ -38,14 +35,14 @@ import {Lib} from "../../Lib";
                         <div class="spinnerDimHeight">
                             <div style="float: left">
                                 <span data-numeric="column">
-                                     <input formControlName="jsonItemDualNumeric1" type="number" style="width: 60px">
+                                     <input (change)="_onDualNumericChanged()" formControlName="jsonItemDualNumeric1" type="number" style="width: 60px">
                                 </span>
                             </div>
                         </div>
                         <div class="spinnerDimHeight">
                             <div style="float: left">
                                 <span data-numeric="row">
-                                 <input formControlName="jsonItemDualNumeric2" type="number" style="width: 60px">
+                                 <input (change)="_onDualNumericChanged()" formControlName="jsonItemDualNumeric2" type="number" style="width: 60px">
                               </span>
                             </div>
                         </div>
@@ -57,7 +54,7 @@ import {Lib} from "../../Lib";
                     <div *ngIf="jsonItemDateSettings">
                         <div class="clearfix"></div>
                         <label class="pull-left" data-localize="dateFormat">date format</label>
-                        <select formControlName="jsonItemDateFormat" class="propControlWidth form-control">
+                        <select formControlName="jsonItemDateFormat" (change)="_onJsonItemDateFieldsChanged($event)" class="propControlWidth form-control">
                             <option [value]="dateField.value" *ngFor="let dateField of m_dateFields">{{dateField.value}}</option>
                         </select>
                     </div>
@@ -162,12 +159,32 @@ export class BlockPropJsonItem extends Compbaser implements AfterViewInit {
             if (k.name == name) {
                 $(xSnippet).attr('fieldType', k.type);
                 $(xSnippet).attr('fieldName', k.name);
-                this._populateMimeType();
                 this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+                this._populateMimeType();
+
             }
         })
     }
 
+    _onJsonItemDateFieldsChanged(event) {
+        var value = event.target.value;
+        var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
+        var xSnippet = $(domPlayerData).find('XmlItem');
+        $(xSnippet).attr('dateFormat', value);
+        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+        this._populateMimeType();
+    }
+
+    _onDualNumericChanged(){
+        var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
+        var xSnippet = jXML(domPlayerData).find('XmlItem');
+        var row = this.m_contGroup.value.jsonItemDualNumeric1;
+        var column = this.m_contGroup.value.jsonItemDualNumeric2;
+        var fieldName = `$cells.${row}.${column}.value`;
+        $(xSnippet).attr('fieldName', fieldName);
+        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+    }
+    
     _onFontChanged(config: IFontSelector) {
         var domPlayerData = this.m_blockData.playerDataDom;
         var xSnippet = jXML(domPlayerData).find('XmlItem');
@@ -215,9 +232,9 @@ export class BlockPropJsonItem extends Compbaser implements AfterViewInit {
             }
             case 'date': {
                 self._populateDateFormat(dateFormat);
-                setTimeout(() => {
-                    this.jsonItemDateSettings = true;
-                }, 10);
+                this._populateFonts(xSnippetFont);
+                this.jsonItemDateSettings = true;
+                break;
             }
             case 'dual_numeric': {
             }
@@ -241,6 +258,8 @@ export class BlockPropJsonItem extends Compbaser implements AfterViewInit {
                 this.jsonItemDualNumericSettings = false;
             }
         }
+        this.cd.markForCheck();
+        this.cd.detectChanges();
     }
 
     private _populateFonts(xSnippetFont) {
@@ -322,19 +341,6 @@ export class BlockPropJsonItem extends Compbaser implements AfterViewInit {
 
     ngAfterViewInit() {
         this._render();
-    }
-
-    private saveToStore() {
-        // Lib.Con(this.m_contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.m_contGroup.value)));
-        if (this.m_contGroup.status != 'VALID')
-            return;
-        var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
-        var xSnippet = jXML(domPlayerData).find('XmlItem');
-        var row = this.m_contGroup.value.jsonItemDualNumeric1;
-        var column = this.m_contGroup.value.jsonItemDualNumeric2;
-        var fieldName = `$cells.${row}.${column}.value`;
-        $(xSnippet).attr('fieldName', fieldName);
-        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
     m_config = {
