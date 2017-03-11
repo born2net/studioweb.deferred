@@ -4,7 +4,7 @@ import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {timeout} from "../../decorators/timeout-decorator";
 import * as _ from "lodash";
-import {BlockService, ISceneData} from "./block-service";
+import {BlockService, IBlockData, ISceneData} from "./block-service";
 
 @Component({
     selector: 'block-prop-position',
@@ -46,7 +46,7 @@ import {BlockService, ISceneData} from "./block-service";
     `],
     template: `
         <div>
-            <form novalidate autocomplete="off" [formGroup]="contGroup">
+            <form novalidate autocomplete="off" [formGroup]="m_contGroup">
                 <div class="row">
                     <div class="inner userGeneral">
                         <div class="row">
@@ -54,26 +54,26 @@ import {BlockService, ISceneData} from "./block-service";
                                 <ul class="list-group">
                                     <li class="list-group-item">
                                         <span i18n class="inliner">top</span>
-                                        <input (change)="_saveToStore()" type="number" class="numStepper inliner" [formControl]="contGroup.controls['pixel_y']">
+                                        <input (change)="saveToStore()" type="number" class="numStepper inliner" [formControl]="m_contGroup.controls['pixel_y']">
                                     </li>
                                     <li class="list-group-item">
                                         <span i18n class="inliner">left</span>
-                                        <input (change)="_saveToStore()" type="number" class="numStepper inliner" [formControl]="contGroup.controls['pixel_x']">
+                                        <input (change)="saveToStore()" type="number" class="numStepper inliner" [formControl]="m_contGroup.controls['pixel_x']">
                                     </li>
                                     <li class="list-group-item">
                                         <span i18n class="inliner">width</span>
-                                        <input (change)="_saveToStore()" type="number" type="number" class="numStepper inliner" [formControl]="contGroup.controls['pixel_width']">
+                                        <input (change)="saveToStore()" type="number" type="number" class="numStepper inliner" [formControl]="m_contGroup.controls['pixel_width']">
                                     </li>
                                     <li class="list-group-item">
                                         <span i18n class="inliner">height</span>
-                                        <input (change)="_saveToStore()" type="number" class="numStepper inliner" [formControl]="contGroup.controls['pixel_height']">
+                                        <input (change)="saveToStore()" type="number" class="numStepper inliner" [formControl]="m_contGroup.controls['pixel_height']">
                                     </li>
                                     <li class="list-group-item">
                                         <br/>
-                                        <span i18n>unlocked</span>
+                                        <span i18n>locked</span>
                                         <div class="material-switch pull-right">
                                             <input (change)="saveToStore(locked.checked)"
-                                                   [formControl]="contGroup.controls['locked']"
+                                                   [formControl]="m_contGroup.controls['locked']"
                                                    id="locked" #locked
                                                    name="locked" type="checkbox"/>
                                             <label for="locked" class="label-primary"></label>
@@ -90,65 +90,54 @@ import {BlockService, ISceneData} from "./block-service";
 })
 export class BlockPropPosition extends Compbaser {
 
-    private formInputs = {};
-    private contGroup: FormGroup;
+    private m_formInputs = {};
+    private m_contGroup: FormGroup;
+    private m_blockData: IBlockData;
 
     constructor(private fb: FormBuilder, private yp: YellowPepperService, private bs: BlockService, private cd: ChangeDetectorRef) {
         super();
 
-        this.contGroup = fb.group({
+        this.m_contGroup = fb.group({
             'pixel_y': [0],
             'pixel_x': [0],
             'pixel_width': [0],
             'pixel_height': [0],
             'locked': []
         });
-        _.forEach(this.contGroup.controls, (value, key: string) => {
-            this.formInputs[key] = this.contGroup.controls[key] as FormControl;
+        _.forEach(this.m_contGroup.controls, (value, key: string) => {
+            this.m_formInputs[key] = this.m_contGroup.controls[key] as FormControl;
         })
 
         this.cancelOnDestroy(
             //
             this.yp.listenSceneOrBlockSelectedChanged(true)
-                .subscribe((i_sceneData: ISceneData) => {
-                    this.formInputs['pixel_height'].setValue(i_sceneData.domPlayerDataJson.Player.Data.Layout._height)
-                    this.formInputs['pixel_width'].setValue(i_sceneData.domPlayerDataJson.Player.Data.Layout._width)
-                    this.formInputs['pixel_x'].setValue(i_sceneData.domPlayerDataJson.Player.Data.Layout._x)
-                    this.formInputs['pixel_y'].setValue(i_sceneData.domPlayerDataJson.Player.Data.Layout._y)
-                    this.formInputs['locked'].setValue(i_sceneData.domPlayerDataJson.Player._label)
+                .mergeMap((i_sceneData: ISceneData) => {
+                    return this.bs.getBlockDataInScene(i_sceneData)
+                })
+                .subscribe((blockData: IBlockData) => {
+                    this.m_blockData = blockData;
+                    var a = blockData.playerDataJson.Player._locked;
+                    var b = StringJS(blockData.playerDataJson.Player._locked).booleanToNumber()
+
+                    this.m_formInputs['locked'].setValue(StringJS(blockData.playerDataJson.Player._locked).booleanToNumber());
+                    this.m_formInputs['pixel_height'].setValue(blockData.playerDataJson.Player.Data.Layout._height);
+                    this.m_formInputs['pixel_width'].setValue(blockData.playerDataJson.Player.Data.Layout._width);
+                    this.m_formInputs['pixel_x'].setValue(blockData.playerDataJson.Player.Data.Layout._x);
+                    this.m_formInputs['pixel_y'].setValue(blockData.playerDataJson.Player.Data.Layout._y);
                     this.cd.markForCheck();
                 }, (e) => console.error(e))
         )
-
-        // this.cancelOnDestroy(
-        //     //
-        //     this.yp.listenSceneOrBlockSelectedChanged(true)
-        //         .mergeMap((i_sceneData: ISceneData) => {
-        //             return this.bs.getBlockDataInScene(i_sceneData)
-        //         })
-        //         .subscribe((blockData: IBlockData) => {
-        //
-        //             var a = $(blockData.playerDataDom).attr('locked');
-        //             this.formInputs['pixel_height'].setValue(blockData.playerDataJson.Player.Data.Layout._height)
-        //             this.formInputs['pixel_width'].setValue(blockData.playerDataJson.Player.Data.Layout._width)
-        //             this.formInputs['pixel_x'].setValue(blockData.playerDataJson.Player.Data.Layout._x)
-        //             this.formInputs['pixel_y'].setValue(blockData.playerDataJson.Player.Data.Layout._y)
-        //             this.cd.markForCheck();
-        //         }, (e) => console.error(e))
-        // )
-
     }
 
     @timeout()
     private saveToStore() {
         // console.log(this.contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.contGroup.value)));
-        // if (this.contGroup.status != 'VALID')
-        //     return;
-        // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_name', this.contGroup.value.campaign_name);
-        // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_playlist_mode', this.contGroup.value.campaign_playlist_mode);
-        // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_timeline_id', 0); //todo: you need to fix this as zero is arbitrary number right now
-        // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_mode', this.contGroup.value.kiosk_mode);
-        // this.rp.reduxCommit()
+        if (this.m_contGroup.status != 'VALID')
+            return;
+        var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
+        var v = this.m_contGroup.value.locked == true ? 1 : 0;
+         jXML(domPlayerData).find('Player').attr('locked',v);
+        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
     private renderFormInputs() {
@@ -162,3 +151,37 @@ export class BlockPropPosition extends Compbaser {
     }
 }
 
+
+
+//
+// this.cancelOnDestroy(
+//     //
+//     this.yp.listenSceneOrBlockSelectedChanged(true)
+//         .mergeMap((i_sceneData:ISceneData)=>{
+//             return this.bs.getBlockData(i_sceneData.block_pseudo_id)
+//         })
+//         .subscribe((i_blockData: IBlockData) => {
+//             this.formInputs['pixel_height'].setValue(i_blockData.playerDataJson.Player.Data.Layout._height)
+//             this.formInputs['pixel_width'].setValue(i_blockData.playerDataJson.Player.Data.Layout._width)
+//             this.formInputs['pixel_x'].setValue(i_blockData.playerDataJson.Player.Data.Layout._x)
+//             this.formInputs['pixel_y'].setValue(i_blockData.playerDataJson.Player.Data.Layout._y)
+//             this.formInputs['locked'].setValue(i_blockData.playerDataJson.Player._label)
+//             this.cd.markForCheck();
+//         }, (e) => console.error(e))
+// )
+// this.cancelOnDestroy(
+//     //
+//     this.yp.listenSceneOrBlockSelectedChanged(true)
+//         .mergeMap((i_sceneData: ISceneData) => {
+//             return this.bs.getBlockDataInScene(i_sceneData)
+//         })
+//         .subscribe((blockData: IBlockData) => {
+//
+//             var a = $(blockData.playerDataDom).attr('locked');
+//             this.formInputs['pixel_height'].setValue(blockData.playerDataJson.Player.Data.Layout._height)
+//             this.formInputs['pixel_width'].setValue(blockData.playerDataJson.Player.Data.Layout._width)
+//             this.formInputs['pixel_x'].setValue(blockData.playerDataJson.Player.Data.Layout._x)
+//             this.formInputs['pixel_y'].setValue(blockData.playerDataJson.Player.Data.Layout._y)
+//             this.cd.markForCheck();
+//         }, (e) => console.error(e))
+// )

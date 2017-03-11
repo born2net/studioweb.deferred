@@ -125,9 +125,9 @@ export class BlockPropJsonItem extends Compbaser implements AfterViewInit {
         // JSON item (no mime)
         if (_.isUndefined(this.m_blockData.playerMimeScene)) {
             var domPlayerData = this.m_blockData.playerDataDom;
-            var xSnippet = $(domPlayerData).find('XmlItem');
-            var xSnippetFont = $(xSnippet).find('Font');
-            var fieldName = $(xSnippet).attr('fieldName');
+            var xSnippet = jXML(domPlayerData).find('XmlItem');
+            var xSnippetFont = jXML(xSnippet).find('Font');
+            var fieldName = jXML(xSnippet).attr('fieldName');
 
             this.jsonItemFieldContainer = true;
             this.jsonItemTextFieldsContainer = false;
@@ -145,8 +145,8 @@ export class BlockPropJsonItem extends Compbaser implements AfterViewInit {
     _toggleAspectRatio(i_value) {
         i_value = StringJS(i_value).booleanToNumber()
         var domPlayerData = this.m_blockData.playerDataDom;
-        var xSnippet = $(domPlayerData).find('XmlItem');
-        $(xSnippet).attr('maintainAspectRatio', i_value);
+        var xSnippet = jXML(domPlayerData).find('XmlItem');
+        jXML(xSnippet).attr('maintainAspectRatio', i_value);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
     }
 
@@ -154,11 +154,11 @@ export class BlockPropJsonItem extends Compbaser implements AfterViewInit {
         var name = event.target.value;
         var mime = this.m_blockData.playerMimeScene;
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
-        var xSnippet = $(domPlayerData).find('XmlItem');
+        var xSnippet = jXML(domPlayerData).find('XmlItem');
         _.forEach(this.m_config[mime].fields, (k) => {
             if (k.name == name) {
-                $(xSnippet).attr('fieldType', k.type);
-                $(xSnippet).attr('fieldName', k.name);
+                jXML(xSnippet).attr('fieldType', k.type);
+                jXML(xSnippet).attr('fieldName', k.name);
                 this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
                 this._populateMimeType();
 
@@ -169,8 +169,8 @@ export class BlockPropJsonItem extends Compbaser implements AfterViewInit {
     _onJsonItemDateFieldsChanged(event) {
         var value = event.target.value;
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
-        var xSnippet = $(domPlayerData).find('XmlItem');
-        $(xSnippet).attr('dateFormat', value);
+        var xSnippet = jXML(domPlayerData).find('XmlItem');
+        jXML(xSnippet).attr('dateFormat', value);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
         this._populateMimeType();
     }
@@ -181,7 +181,7 @@ export class BlockPropJsonItem extends Compbaser implements AfterViewInit {
         var row = this.m_contGroup.value.jsonItemDualNumeric1;
         var column = this.m_contGroup.value.jsonItemDualNumeric2;
         var fieldName = `$cells.${row}.${column}.value`;
-        $(xSnippet).attr('fieldName', fieldName);
+        jXML(xSnippet).attr('fieldName', fieldName);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
     
@@ -206,12 +206,12 @@ export class BlockPropJsonItem extends Compbaser implements AfterViewInit {
     private _populateMimeType() {
         var self = this;
         var domPlayerData = this.m_blockData.playerDataDom;
-        var xSnippet = $(domPlayerData).find('XmlItem');
-        var xSnippetFont = $(xSnippet).find('Font');
-        var fieldType = $(xSnippet).attr('fieldType');
-        var fieldName = $(xSnippet).attr('fieldName');
-        var maintainAspectRatio = $(xSnippet).attr('maintainAspectRatio');
-        var dateFormat = $(xSnippet).attr('dateFormat');
+        var xSnippet = jXML(domPlayerData).find('XmlItem');
+        var xSnippetFont = jXML(xSnippet).find('Font');
+        var fieldType = jXML(xSnippet).attr('fieldType');
+        var fieldName = jXML(xSnippet).attr('fieldName');
+        var maintainAspectRatio = jXML(xSnippet).attr('maintainAspectRatio');
+        var dateFormat = jXML(xSnippet).attr('dateFormat');
 
         this.jsonItemFieldContainer = false;
         this.jsonItemTextFieldsContainer = true;
@@ -324,8 +324,8 @@ export class BlockPropJsonItem extends Compbaser implements AfterViewInit {
         var row: string = '1';
         var column: string = '1';
         var domPlayerData = this.m_blockData.playerDataDom;
-        var xSnippet = $(domPlayerData).find('XmlItem');
-        var fieldName = $(xSnippet).attr('fieldName');
+        var xSnippet = jXML(domPlayerData).find('XmlItem');
+        var fieldName = jXML(xSnippet).attr('fieldName');
         var re = /cells.([0-9]+).([0-9]+).value/i;
         var match = fieldName.match(re);
         if (!_.isNull(match)) {
@@ -334,9 +334,9 @@ export class BlockPropJsonItem extends Compbaser implements AfterViewInit {
         }
         this.m_formInputs['jsonItemDualNumeric1'].setValue(row)
         this.m_formInputs['jsonItemDualNumeric2'].setValue(column)
-        // var spinners = $('.spinner', Elements.JSON_ITEM_DUAL_NUMERIC_SETTINGS);
-        // $(spinners[0]).spinner('value', row);
-        // $(spinners[2]).spinner('value', column);
+        // var spinners = jXML('.spinner', Elements.JSON_ITEM_DUAL_NUMERIC_SETTINGS);
+        // jXML(spinners[0]).spinner('value', row);
+        // jXML(spinners[2]).spinner('value', column);
     }
 
     ngAfterViewInit() {
