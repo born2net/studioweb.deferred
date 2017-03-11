@@ -59,6 +59,8 @@ define(['jquery', 'Block'], function ($, Block) {
     super();
 }
 
+
+
     initialize() {
         var self = this;
         super.initialize(self.m_options);

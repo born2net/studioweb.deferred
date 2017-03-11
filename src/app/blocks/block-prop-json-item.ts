@@ -26,7 +26,7 @@ import {Lib} from "../../Lib";
                         <div *ngIf="jsonItemTextFieldsContainer">
                             <label style="padding-right: 78px; width: 200px" for="jsonItemTextFields" data-localize="field">
                                 field </label>
-                            <select formControlName="jsonItemTextFields" class="propControlWidth form-control">
+                            <select formControlName="jsonItemTextFields" (change)="_onJsonItemTextFieldsChanged($event)" class="propControlWidth form-control">
                                 <option [value]="field.value" *ngFor="let field of m_fields">{{field.label}}</option>
                             </select>
                         </div>
@@ -51,7 +51,7 @@ import {Lib} from "../../Lib";
                         </div>
                     </div>
                     <div class="clearfix"></div>
-                    <div id="jsonItemFontSettings">
+                    <div *ngIf="jsonItemFontSettings">
                         <font-selector (onChange)="_onFontChanged($event)" [setConfig]="m_fontConfig"></font-selector>
                     </div>
                     <div *ngIf="jsonItemDateSettings">
@@ -142,6 +142,21 @@ export class BlockPropJsonItem extends Compbaser implements AfterViewInit {
         }
     }
 
+    _onJsonItemTextFieldsChanged(event){
+        var name = event.target.value;
+        var mime = this.m_blockData.playerMimeScene;
+        var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
+        var xSnippet = $(domPlayerData).find('XmlItem');
+        _.forEach(this.m_config[mime].fields,(k)=>{
+            if (k.name == name){
+                $(xSnippet).attr('fieldType', k.type);
+                $(xSnippet).attr('fieldName', k.name);
+                this._populateMimeType();
+                this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+            }
+        })
+    }
+
     _onFontChanged(config: IFontSelector) {
         var domPlayerData = this.m_blockData.playerDataDom;
         var xSnippet = jXML(domPlayerData).find('XmlItem');
@@ -172,7 +187,6 @@ export class BlockPropJsonItem extends Compbaser implements AfterViewInit {
 
         this.jsonItemFieldContainer = false;
         this.jsonItemTextFieldsContainer = true;
-
 
         this.m_fields = [{type: '', value: '', label: 'no field selected'}];
         var fields: any = self.m_config[this.m_blockData.playerMimeScene].fields;
@@ -302,10 +316,15 @@ export class BlockPropJsonItem extends Compbaser implements AfterViewInit {
         if (this.m_contGroup.status != 'VALID')
             return;
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
-        var newText = this.m_contGroup.value.jsonItemField;
-        newText = Lib.CleanProbCharacters(newText, 1);
         var xSnippet = jXML(domPlayerData).find('XmlItem');
-        jXML(xSnippet).attr('fieldName', newText);
+
+
+
+        // jXML(xSnippet).attr('fieldName', this.m_contGroup.value.jsonItemField);
+        // jXML(xSnippet).attr('jsonItemTextFields', this.m_contGroup.value.jsonItemTextFields);
+        jXML(xSnippet).attr('maintainAspectRatio', StringJS(this.m_contGroup.value.jsonItemMaintainAspectRatio).booleanToNumber());
+
+
 
         // var item = jXML(domPlayerData).find('Json').find('Data');
         // jXML(item).attr('token', this.m_contGroup.value.token);
