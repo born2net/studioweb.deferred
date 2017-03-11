@@ -126,6 +126,7 @@ export class BlockPropJsonItem extends Compbaser implements AfterViewInit {
         if (_.isUndefined(this.m_blockData.playerMimeScene)) {
             var domPlayerData = this.m_blockData.playerDataDom;
             var xSnippet = $(domPlayerData).find('XmlItem');
+            var xSnippetFont = $(xSnippet).find('Font');
             var fieldName = $(xSnippet).attr('fieldName');
 
             this.jsonItemFieldContainer = true;
@@ -134,6 +135,7 @@ export class BlockPropJsonItem extends Compbaser implements AfterViewInit {
             this.jsonItemIconSettings = false;
             this.jsonItemDateSettings = false;
             this.m_formInputs['jsonItemField'].setValue(fieldName);
+            this._populateFonts(xSnippetFont)
         } else {
             // Json mime
             this._populateMimeType();
@@ -141,17 +143,17 @@ export class BlockPropJsonItem extends Compbaser implements AfterViewInit {
     }
 
     _onFontChanged(config: IFontSelector) {
-        // var domPlayerData = this.m_blockData.playerDataDom;
-        // var xSnippet = jXML(domPlayerData).find('Clock');
-        // var xSnippetFont = jXML(xSnippet).find('Font');
-        // config.bold == true ? xSnippetFont.attr('fontWeight', 'bold') : xSnippetFont.attr('fontWeight', 'normal');
-        // config.italic == true ? xSnippetFont.attr('fontStyle', 'italic') : xSnippetFont.attr('fontStyle', 'normal');
-        // config.underline == true ? xSnippetFont.attr('textDecoration', 'underline') : xSnippetFont.attr('textDecoration', 'none');
-        // xSnippetFont.attr('fontColor', Lib.ColorToDecimal(config.color));
-        // xSnippetFont.attr('fontSize', config.size);
-        // xSnippetFont.attr('fontFamily', config.font);
-        // xSnippetFont.attr('textAlign', config.alignment);
-        // this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+        var domPlayerData = this.m_blockData.playerDataDom;
+        var xSnippet = jXML(domPlayerData).find('XmlItem');
+        var xSnippetFont = jXML(xSnippet).find('Font');
+        config.bold == true ? xSnippetFont.attr('fontWeight', 'bold') : xSnippetFont.attr('fontWeight', 'normal');
+        config.italic == true ? xSnippetFont.attr('fontStyle', 'italic') : xSnippetFont.attr('fontStyle', 'normal');
+        config.underline == true ? xSnippetFont.attr('textDecoration', 'underline') : xSnippetFont.attr('textDecoration', 'none');
+        xSnippetFont.attr('fontColor', Lib.ColorToDecimal(config.color));
+        xSnippetFont.attr('fontSize', config.size);
+        xSnippetFont.attr('fontFamily', config.font);
+        xSnippetFont.attr('textAlign', config.alignment);
+        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
     /**
@@ -197,19 +199,7 @@ export class BlockPropJsonItem extends Compbaser implements AfterViewInit {
                 this.jsonItemIconSettings = false;
                 this.jsonItemDateSettings = false;
                 this.jsonItemFontSettings = true;
-
-                console.log(Lib.ColorToHex(Lib.DecimalToHex(xSnippetFont.attr('fontColor'))));
-                
-                this.m_fontConfig = {
-                    bold: xSnippetFont.attr('fontWeight') === 'bold' ? true : false,
-                    italic: xSnippetFont.attr('fontStyle') === 'italic' ? true : false,
-                    underline: xSnippetFont.attr('textDecoration') === 'underline' ? true : false,
-                    alignment: <any>xSnippetFont.attr('textAlign'),
-                    font: xSnippetFont.attr('fontFamily'),
-                    color: Lib.ColorToHex(Lib.DecimalToHex(xSnippetFont.attr('fontColor'))),
-                    size: Number(xSnippetFont.attr('fontSize'))
-                };
-                this.cd.markForCheck();
+                this._populateFonts(xSnippetFont);
                 break;
             }
         }
@@ -227,6 +217,18 @@ export class BlockPropJsonItem extends Compbaser implements AfterViewInit {
         }
     }
 
+    private _populateFonts(xSnippetFont){
+        this.m_fontConfig = {
+            bold: xSnippetFont.attr('fontWeight') === 'bold' ? true : false,
+            italic: xSnippetFont.attr('fontStyle') === 'italic' ? true : false,
+            underline: xSnippetFont.attr('textDecoration') === 'underline' ? true : false,
+            alignment: <any>xSnippetFont.attr('textAlign'),
+            font: xSnippetFont.attr('fontFamily'),
+            color: Lib.ColorToHex(Lib.DecimalToHex(xSnippetFont.attr('fontColor'))),
+            size: Number(xSnippetFont.attr('fontSize'))
+        };
+        // this.cd.markForCheck();
+    }
     /**
      Populate date format for common types of date styles on dropdown selection
      @method _populateDateFormat
@@ -300,8 +302,15 @@ export class BlockPropJsonItem extends Compbaser implements AfterViewInit {
         if (this.m_contGroup.status != 'VALID')
             return;
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
-        var item = jXML(domPlayerData).find('Json').find('Data');
-        jXML(item).attr('token', this.m_contGroup.value.token);
+        var newText = this.m_contGroup.value.jsonItemField;
+        newText = Lib.CleanProbCharacters(newText, 1);
+        var xSnippet = jXML(domPlayerData).find('XmlItem');
+        jXML(xSnippet).attr('fieldName', newText);
+
+        // var item = jXML(domPlayerData).find('Json').find('Data');
+        // jXML(item).attr('token', this.m_contGroup.value.token);
+
+
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
