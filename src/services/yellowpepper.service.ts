@@ -211,6 +211,15 @@ export class YellowPepperService {
     }
 
     /**
+     Listen to changes in scene fabric scale changes
+     **/
+    listenFabricSceneScaled(): Observable<number> {
+        return this.store.select(store => store.appDb.uiState.scene.fabric.scale).map(v=>{
+            return v;
+        })
+    }
+
+    /**
      Listen to changes in selected scene
      **/
     listenSceneOrBlockSelectedChanged(emitOnEmpty: boolean = false): Observable<ISceneData> {
