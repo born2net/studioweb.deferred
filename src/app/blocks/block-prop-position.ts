@@ -26,7 +26,7 @@ import {Once} from "../../decorators/once-decorator";
 
         .inliner {
             display: inline-block;
-            width: 50px;
+            width: 60px;
         }
 
         input.ng-invalid {
@@ -56,30 +56,30 @@ import {Once} from "../../decorators/once-decorator";
                                 <ul class="list-group">
                                     <li class="list-group-item">
                                         <span i18n class="inliner">top</span>
-                                        <input type="number" class="numStepper inliner" [formControl]="m_contGroup.controls['pixel_y']">
+                                        <input type="number" class="numStepper inliner" formControlName="pixel_y">
                                     </li>
                                     <li class="list-group-item">
                                         <span i18n class="inliner">left</span>
-                                        <input type="number" class="numStepper inliner" [formControl]="m_contGroup.controls['pixel_x']">
+                                        <input type="number" class="numStepper inliner" formControlName="pixel_x">
                                     </li>
                                     <li class="list-group-item">
                                         <span i18n class="inliner">width</span>
-                                        <input type="number" type="number" class="numStepper inliner" [formControl]="m_contGroup.controls['pixel_width']">
+                                        <input type="number" type="number" min="50" class="numStepper inliner" formControlName="pixel_width">
                                     </li>
                                     <li class="list-group-item">
                                         <span i18n class="inliner">height</span>
-                                        <input type="number" class="numStepper inliner" [formControl]="m_contGroup.controls['pixel_height']">
+                                        <input type="number" min="50" class="numStepper inliner" formControlName="pixel_height">
                                     </li>
                                     <li class="list-group-item">
-                                        <span i18n class="inliner">angle</span>
-                                        <input type="number" class="numStepper inliner" [formControl]="m_contGroup.controls['angle']">
+                                        <span i18n class="inliner">rotation</span>
+                                        <input type="number" min="0" max="360" class="numStepper inliner" formControlName="rotation">
                                     </li>
                                     <li class="list-group-item">
                                         <br/>
                                         <span i18n>locked</span>
                                         <div class="material-switch pull-right">
                                             <input (change)="saveToStore(locked.checked)"
-                                                   [formControl]="m_contGroup.controls['locked']"
+                                                   formControlName="locked"
                                                    id="locked" #locked
                                                    name="locked" type="checkbox"/>
                                             <label for="locked" class="label-primary"></label>
@@ -109,7 +109,7 @@ export class BlockPropPosition extends Compbaser {
             'pixel_x': [0],
             'pixel_width': [0],
             'pixel_height': [0],
-            'angle': [0],
+            'rotation': [0],
             'locked': []
         });
         _.forEach(this.m_contGroup.controls, (value, key: string) => {
@@ -133,16 +133,33 @@ export class BlockPropPosition extends Compbaser {
                     this.m_formInputs['pixel_width'].setValue(blockData.playerDataJson.Player.Data.Layout._width);
                     this.m_formInputs['pixel_x'].setValue();
                     this.m_formInputs['pixel_y'].setValue(blockData.playerDataJson.Player.Data.Layout._y);
-                    this.populateValues(blockData.playerDataJson.Player.Data.Layout._x, blockData.playerDataJson.Player.Data.Layout._y, blockData.playerDataJson.Player.Data.Layout._width,  blockData.playerDataJson.Player.Data.Layout._height)
+                    this.populateValues(blockData.playerDataJson.Player.Data.Layout._x, blockData.playerDataJson.Player.Data.Layout._y, blockData.playerDataJson.Player.Data.Layout._width, blockData.playerDataJson.Player.Data.Layout._height, blockData.playerDataJson.Player.Data.Layout._rotation)
                     this.cd.markForCheck();
                 }, (e) => console.error(e))
         )
     }
 
-    /**
-     Update the coordinates of a block in pepper db, don't allow below w/h MIN_SIZE
-     **/
-    _saveBlockCords(domPlayerData, x, y, w, h, a) {
+    private populateValues(x, y, w, h, a) {
+        this.m_formInputs['pixel_height'].setValue(h);
+        this.m_formInputs['pixel_width'].setValue(w);
+        this.m_formInputs['pixel_x'].setValue(x);
+        this.m_formInputs['pixel_y'].setValue(y);
+        this.m_formInputs['rotation'].setValue(a);
+    }
+
+    private saveToStore() {
+        if (this.m_contGroup.status != 'VALID')
+            return;
+        var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
+        var v = this.m_contGroup.value.locked == true ? 1 : 0;
+        jXML(domPlayerData).find('Player').attr('locked', v);
+
+        var x = this.m_contGroup.value.pixel_x;
+        var y = this.m_contGroup.value.pixel_y;
+        var w = this.m_contGroup.value.pixel_width;
+        var h = this.m_contGroup.value.pixel_height;
+        var r = this.m_contGroup.value.rotation;
+
         var blockMinWidth = 50;
         var blockMinHeight = 50;
         if (h < blockMinHeight)
@@ -150,30 +167,12 @@ export class BlockPropPosition extends Compbaser {
         if (w < blockMinWidth)
             w = blockMinWidth;
         var layout = $(domPlayerData).find('Layout');
-        layout.attr('rotation', parseInt(a));
+        layout.attr('rotation', parseInt(r));
         layout.attr('x', parseInt(x));
         layout.attr('y', parseInt(y));
         layout.attr('width', parseInt(w));
         layout.attr('height', parseInt(h));
-        // var player_data = (new XMLSerializer()).serializeToString(domPlayerData);
-    }
 
-    private populateValues(x, y, w, h, a = 0){
-        this.m_formInputs['pixel_height'].setValue(h);
-        this.m_formInputs['pixel_width'].setValue(w);
-        this.m_formInputs['pixel_x'].setValue(x);
-        this.m_formInputs['pixel_y'].setValue(y);
-        this.m_formInputs['angle'].setValue(a);
-    }
-
-    private saveToStore() {
-        // console.log(this.contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.contGroup.value)));
-        if (this.m_contGroup.status != 'VALID')
-            return;
-        var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
-        var v = this.m_contGroup.value.locked == true ? 1 : 0;
-        jXML(domPlayerData).find('Player').attr('locked', v);
-        this._saveBlockCords(domPlayerData, this.m_contGroup.value.pixel_x, this.m_contGroup.value.pixel_y, this.m_contGroup.value.pixel_width, this.m_contGroup.value.pixel_height, 1)
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 

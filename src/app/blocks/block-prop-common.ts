@@ -108,7 +108,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
      * Render the component with latest data from BlockData
      */
     _render() {
-        this.m_isPropsForScene = this.m_blockData.scene ? true : false;
+        // this.m_isPropsForScene = this.m_blockData.scene ? true : false;
         this._alphaPopulate();
         this._gradientPopulate();
         this._borderPropsPopulate();
