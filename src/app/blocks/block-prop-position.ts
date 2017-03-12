@@ -116,9 +116,6 @@ export class BlockPropPosition extends Compbaser {
                 })
                 .subscribe((blockData: IBlockData) => {
                     this.m_blockData = blockData;
-                    var a = blockData.playerDataJson.Player._locked;
-                    var b = StringJS(blockData.playerDataJson.Player._locked).booleanToNumber()
-
                     this.m_formInputs['locked'].setValue(StringJS(blockData.playerDataJson.Player._locked).booleanToNumber());
                     this.m_formInputs['pixel_height'].setValue(blockData.playerDataJson.Player.Data.Layout._height);
                     this.m_formInputs['pixel_width'].setValue(blockData.playerDataJson.Player.Data.Layout._width);
@@ -129,6 +126,48 @@ export class BlockPropPosition extends Compbaser {
         )
     }
 
+    /**
+     Update the coordinates of a block in pepper db, don't allow below w/h MIN_SIZE
+     @method _updateBlockCords
+     @param {String} blockID
+     @param {Boolean} i_calcScale
+     @param {Number} x
+     @param {Number} y
+     @param {Number} w
+     @param {Number} h
+     **/
+    _updateBlockCords(i_block, i_calcScale, x, y, w, h, a) {
+        var self = this;
+
+        // var blockID = i_block.getBlockData().blockID;
+        // var blockMinWidth = i_block.getBlockData().blockMinWidth;
+        // var blockMinHeight = i_block.getBlockData().blockMinHeight;
+        //
+        // if (i_calcScale) {
+        //     var sy = 1 / self.m_canvasScale;
+        //     var sx = 1 / self.m_canvasScale;
+        //     h = h * sy;
+        //     w = w * sx;
+        //     x = x * sx;
+        //     y = y * sy;
+        // }
+        //
+        // if (h < blockMinHeight)
+        //     h = blockMinHeight;
+        // if (w < blockMinWidth)
+        //     w = blockMinWidth;
+        //
+        // var domPlayerData = pepper.getScenePlayerdataBlock(self.m_selectedSceneID, blockID);
+        // var layout = $(domPlayerData).find('Layout');
+        // layout.attr('rotation', parseInt(a));
+        // layout.attr('x', parseInt(x));
+        // layout.attr('y', parseInt(y));
+        // layout.attr('width', parseInt(w));
+        // layout.attr('height', parseInt(h));
+        // var player_data = (new XMLSerializer()).serializeToString(domPlayerData);
+        // pepper.setScenePlayerdataBlock(self.m_selectedSceneID, blockID, player_data);
+    }
+
     @timeout()
     private saveToStore() {
         // console.log(this.contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.contGroup.value)));
@@ -136,7 +175,7 @@ export class BlockPropPosition extends Compbaser {
             return;
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
         var v = this.m_contGroup.value.locked == true ? 1 : 0;
-         jXML(domPlayerData).find('Player').attr('locked',v);
+        jXML(domPlayerData).find('Player').attr('locked', v);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
@@ -150,7 +189,6 @@ export class BlockPropPosition extends Compbaser {
     destroy() {
     }
 }
-
 
 
 //

@@ -37,6 +37,9 @@ export interface IUiStateCampaign  {
 export interface IUiStateScene  {
     sceneSelected?: number;
     blockSelected?: number;
+    fabric?: {
+        scale?:number;
+    }
 }
 
 export interface IUiState {
@@ -79,7 +82,10 @@ export const INITIAL_APP_DB: IAppDb = {
         },
         scene: {
             sceneSelected: -1,
-            blockSelected: -1
+            blockSelected: -1,
+            fabric: {
+                scale: -1
+            }
         }
     },
     totalStations: '',

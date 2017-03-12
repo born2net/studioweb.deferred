@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Output, ViewChild} from "@angular/core";
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Output} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {BlockService, ISceneData} from "../blocks/block-service";
@@ -149,6 +149,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         this._listenAppResized();
         this._listenBlockSelected();
         this._delegateSceneBlockModified();
+        this._notifyScaleChange();
     }
 
     ngOnInit() {
@@ -156,6 +157,11 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
 
     @Output()
     onGoBack: EventEmitter<any> = new EventEmitter<any>();
+
+    _notifyScaleChange(){
+        let uiState: IUiState = {scene: {fabric: {scale: this.m_canvasScale}}}
+        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+    }
 
     _onToolbarAction(event) {
         con('toolbar ' + event);
@@ -1404,7 +1410,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         this.m_canvasScale = this.m_canvasScale * this.SCALE_FACTOR;
         this.m_canvas.setHeight(this.m_canvas.getHeight() * this.SCALE_FACTOR);
         this.m_canvas.setWidth(this.m_canvas.getWidth() * this.SCALE_FACTOR);
-
+        this._notifyScaleChange();
         var objects = this.m_canvas.getObjects();
         for (var i in objects) {
             if (_.isNull(objects[i]))
@@ -1504,6 +1510,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         this.m_canvasScale = this.m_canvasScale / this.SCALE_FACTOR;
         this.m_canvas.setHeight(this.m_canvas.getHeight() * (1 / this.SCALE_FACTOR));
         this.m_canvas.setWidth(this.m_canvas.getWidth() * (1 / this.SCALE_FACTOR));
+        this._notifyScaleChange();
         var objects = this.m_canvas.getObjects();
         for (var i in objects) {
             if (_.isNull(objects[i]))
@@ -1519,6 +1526,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
     _zoomReset() {
         if (_.isUndefined(this.m_selectedSceneID) || _.isUndefined(this.m_canvas)) {
             this.m_canvasScale = 1;
+            this._notifyScaleChange();
             return;
         }
         this._discardSelections();
@@ -1563,6 +1571,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
             }
         }
         this.m_canvasScale = 1;
+        this._notifyScaleChange();
     }
 
     /**
@@ -1611,6 +1620,8 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
     }
 
     destroy() {
+        this.m_canvasScale = -1;
+        this._notifyScaleChange();
     }
 }
 
