@@ -11,9 +11,6 @@ import {Once} from "../../decorators/once-decorator";
 @Component({
     selector: 'block-prop-position',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    host: {
-        '(input-blur)': 'saveToStore($event)'
-    },
     styles: [`
         li {
             padding-top: 3px;
@@ -112,6 +109,7 @@ export class BlockPropPosition extends Compbaser {
             'rotation': [0],
             'locked': []
         });
+
         _.forEach(this.m_contGroup.controls, (value, key: string) => {
             this.m_formInputs[key] = this.m_contGroup.controls[key] as FormControl;
         })
@@ -136,6 +134,33 @@ export class BlockPropPosition extends Compbaser {
                     this.populateValues(blockData.playerDataJson.Player.Data.Layout._x, blockData.playerDataJson.Player.Data.Layout._y, blockData.playerDataJson.Player.Data.Layout._width, blockData.playerDataJson.Player.Data.Layout._height, blockData.playerDataJson.Player.Data.Layout._rotation)
                     this.cd.markForCheck();
                 }, (e) => console.error(e))
+        )
+    }
+
+    ngAfterViewInit() {
+        this.cancelOnDestroy(
+            this.m_contGroup.valueChanges
+                .delay(100)
+                .map(v => {
+                    for (var z in v)
+                        v[z] = parseInt(v[z])
+                    return v;
+                })
+                .filter(v => {
+                    var r =  !_.some(v,(o)=>{ return _.isNaN(o) })
+                    return r;
+                })
+                .startWith({})
+                .pairwise()
+                .filter(v => {
+                    var r = !_.isEqual(v[0],v[1])
+                    return r;
+                })
+                .debounceTime(1000)
+                .subscribe((v) => {
+                    console.log('da ' + v);
+                    this.saveToStore();
+                }, (e) => console.error(e)) //cancelOnDestroy please
         )
     }
 
