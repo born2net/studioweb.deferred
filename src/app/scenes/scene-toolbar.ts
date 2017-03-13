@@ -5,6 +5,7 @@ import {FormBuilder, FormGroup} from "@angular/forms";
 import * as _ from 'lodash';
 import {PlayerDataModelExt} from "../../store/model/msdb-models-extended";
 import {RedPepperService} from "../../services/redpepper.service";
+import {timeout} from "../../decorators/timeout-decorator";
 
 @Component({
     selector: 'scene-toolbar',
@@ -14,7 +15,7 @@ import {RedPepperService} from "../../services/redpepper.service";
         <form novalidate autocomplete="off" class="inner5" [formGroup]="m_contGroup">
             <div id="sceneToolbar">
                 <div class="btn-group">
-                    <button (click)="onToolbarAction.emit('back')" type="button" title="back" class="openPropsButton btn btn-default btn-sm">
+                    <button (click)="_goBack()" type="button" title="back" class="openPropsButton btn btn-default btn-sm">
                         <span class="glyphicon glyphicon-chevron-left"></span>
                     </button>
                     <button (click)="onToolbarAction.emit('add')" type="button" title="add item" class="sceneAddNew btn btn-default btn-sm">
@@ -85,6 +86,11 @@ export class SceneToolbar extends Compbaser {
     @Output()
     onItemSelected: EventEmitter<string> = new EventEmitter<string>();
 
+    @timeout(100)
+    _goBack(){
+        this.onToolbarAction.emit('back')
+    }
+    
     _onBlockSelected(event) {
         this.onItemSelected.emit(event.target.value);
     }

@@ -214,7 +214,7 @@ export class YellowPepperService {
      Listen to changes in scene fabric scale changes
      **/
     listenFabricSceneScaled(): Observable<number> {
-        return this.store.select(store => store.appDb.uiState.scene.fabric.scale).map(v=>{
+        return this.store.select(store => store.appDb.uiState.scene.fabric.scale).map(v => {
             return v;
         })
     }
@@ -230,7 +230,7 @@ export class YellowPepperService {
             return {blockId, sceneId}
         }).filter((ids) => {
             if (!emitOnEmpty) return true; // no filter requested
-            return ids && ids.blockId != -1
+            return ids && ids.sceneId != -1 && ids.blockId != -1
         }).mergeMap(ids => {
             return this.getScene(ids.sceneId)
                 .map((playerDataModel: PlayerDataModelExt) => {
@@ -254,6 +254,47 @@ export class YellowPepperService {
         }).distinct()
             .mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
     }
+
+    // /**
+    //  Listen to changes in selected scene
+    //  **/
+    // listenSceneOrBlockChanged(emitOnEmpty: boolean = false): Observable<any> {
+    //     return this.store.select(store => store.msDatabase.sdk.table_player_data);
+    //
+    //     // var sceneSelected$ = this.store.select(store => store.appDb.uiState.scene.sceneSelected);
+    //     // var player_data$ = this.store.select(store => store.msDatabase.sdk.table_player_data);
+    //     // var blockSelected$ = this.store.select(store => store.appDb.uiState.scene.blockSelected);
+    //     // return sceneSelected$.combineLatest(player_data$, (sceneId, player_data) => {
+    //     //     return {sceneId, player_data}
+    //     // }).filter((ids) => {
+    //     //     if (!emitOnEmpty) return true; // no filter requested
+    //     //     return ids && ids.sceneId != -1
+    //     // }).withLatestFrom(blockSelected$, (a, b) => {
+    //     //     return {a, b};
+    //     // }).map(ids => {
+    //     //     return ids;
+    //     //     // return this.getScene(ids.sceneId)
+    //     //     // .map((playerDataModel: PlayerDataModelExt) => {
+    //     //     //     var domPlayerData = $.parseXML(playerDataModel.getPlayerDataValue())
+    //     //     //     var selectedSnippet: any = $(domPlayerData).find(`[id="${ids.blockId}"]`)[0];
+    //     //     //     var mimeType = $(domPlayerData).find('Player').attr('mimeType');
+    //     //     //     var xml = (new XMLSerializer()).serializeToString(selectedSnippet);
+    //     //     //     selectedSnippet = $.parseXML(xml)
+    //     //     //     var sceneData: ISceneData = {
+    //     //     //         scene_id: ids.sceneId,
+    //     //     //         scene_id_pseudo_id: null,
+    //     //     //         block_pseudo_id: ids.blockId,
+    //     //     //         playerDataModel: playerDataModel,
+    //     //     //         domPlayerData: selectedSnippet,
+    //     //     //         domPlayerDataXml: xml,
+    //     //     //         domPlayerDataJson: this.parser.xml2js(xml),
+    //     //     //         mimeType: mimeType
+    //     //     //     }
+    //     //     //     return sceneData;
+    //     //     // });
+    //     // }).distinct()
+    //     //     .mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
+    // }
 
     listenSceneSelected(emitOnEmpty: boolean = false): Observable<ISceneData> {
         var sceneSelected$ = this.store.select(store => store.appDb.uiState.scene.sceneSelected);

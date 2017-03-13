@@ -173,6 +173,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         var xSnippet = jXML(data).find('Appearance').eq(0);
         jXML(xSnippet).attr('alpha', event.target.value);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+        this.bs.notifySceneBlockChanged(this.m_blockData)
     }
 
     /**

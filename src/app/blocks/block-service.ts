@@ -11,6 +11,7 @@ import {CampaignTimelineChanelPlayersModelExt, PlayerDataModelExt} from "../../s
 import {RedPepperService} from "../../services/redpepper.service";
 import {ResourcesModel} from "../../store/imsdb.interfaces_auto";
 import {BlockLabels, PLACEMENT_CHANNEL, PLACEMENT_SCENE} from "../../interfaces/Consts";
+import {CommBroker} from "../../services/CommBroker";
 
 interface IDomPlayerDataJson {
     Player: {
@@ -113,8 +114,9 @@ export class BlockService {
     private m_components = {};
     private m_fontAwesome = {};
     private m_blockCodes = {};
+    private m_commBroker;
 
-    constructor(@Inject('BLOCK_PLACEMENT') private blockPlacement: string, private yp: YellowPepperService, private rp: RedPepperService) {
+    constructor(private commBroker: CommBroker, @Inject('BLOCK_PLACEMENT') private blockPlacement: string, private yp: YellowPepperService, private rp: RedPepperService) {
         this.parser = new X2JS({
             escapeMode: true,
             attributePrefix: "_",
@@ -910,6 +912,11 @@ export class BlockService {
                 return i_blockData.playerDataDom;
             }
         }
+    }
+
+    notifySceneBlockChanged(i_block: string | IBlockData) {
+        if (i_block['blockID']) i_block = i_block['blockID'];
+        this.commBroker.fire({event: 'SCENE_BLOCK_CHANGE', fromInstance: this, message: [i_block]});
     }
 
     /**

@@ -47,8 +47,7 @@ import {SimpleGridModule} from "../comps/simple-grid-module/SimpleGridModule";
 // import "fabric"; // need to remove if we import via cli
 // import {ScreenTemplate} from "../comps/screen-template/screen-template";
 
-export var providing = [CommBroker, AUTH_PROVIDERS, RedPepperService, YellowPepperService, LocalStorage, StoreService, FontLoaderService, AppdbAction, CommBroker,
-    {
+export var providing = [CommBroker, AUTH_PROVIDERS, RedPepperService, YellowPepperService, LocalStorage, StoreService, FontLoaderService, AppdbAction,    {
         provide: "OFFLINE_ENV",
         useValue: window['offlineDevMode']
     },
@@ -115,9 +114,10 @@ export function appReducer(state: any = INITIAL_APPLICATION_STATE, action: any) 
 })
 
 export class AppModule {
-    constructor(private compiler:Compiler, private ngmslibService: NgmslibService, private yp:YellowPepperService, private fontLoaderService:FontLoaderService) {
+    constructor(private commBroker:CommBroker, private compiler:Compiler, private ngmslibService: NgmslibService, private yp:YellowPepperService, private fontLoaderService:FontLoaderService) {
         Lib.Con(`running in dev mode: ${Lib.DevMode()}`);
         Lib.Con(`App in ${(compiler instanceof Compiler) ? 'AOT' : 'JIT'} mode`);
+        console.log(commBroker);
         window['jQueryAny'] = jQuery;
         window['jXML'] = jQuery;
         this.ngmslibService.globalizeStringJS();

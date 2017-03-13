@@ -64,11 +64,11 @@ import {Once} from "../../decorators/once-decorator";
                                     </li>
                                     <li class="list-group-item">
                                         <span i18n class="inliner">width</span>
-                                        <input type="number" type="number" min="50" class="numStepper inliner" formControlName="pixel_width">
+                                        <input type="number" type="number" min="50" max="4096" class="numStepper inliner" formControlName="pixel_width">
                                     </li>
                                     <li class="list-group-item">
                                         <span i18n class="inliner">height</span>
-                                        <input type="number" min="50" class="numStepper inliner" formControlName="pixel_height">
+                                        <input type="number" min="50" max="4096" class="numStepper inliner" formControlName="pixel_height">
                                     </li>
                                     <li class="list-group-item">
                                         <span i18n class="inliner">rotation</span>
@@ -174,6 +174,7 @@ export class BlockPropPosition extends Compbaser {
         layout.attr('height', parseInt(h));
 
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+        this.bs.notifySceneBlockChanged(this.m_blockData);
     }
 
     destroy() {
