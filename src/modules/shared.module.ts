@@ -45,7 +45,7 @@ import {BlockPropDigg} from "../app/blocks/block-prop.digg";
 import {BlockPropFasterQ} from "../app/blocks/block-prop-fasterq";
 import {BlockPropLocation} from "../app/blocks/block-prop-location";
 import {AddContent} from "../app/campaigns/add-content";
-import {BlockPropScene} from "../app/blocks/block-prop.scene";
+import {BlockPropScene} from "../app/blocks/block-prop-scene";
 import {Loading} from "../comps/loading/loading";
 import {BlockPropJsonItem} from "../app/blocks/block-prop-json-item";
 

@@ -58,7 +58,7 @@ export class BlockPropScene extends Compbaser implements AfterViewInit {
     }
 
     _render() {
-        var domPlayerData = this.m_blockData.scene.playerDataDom;
+        var domPlayerData = this.bs.getBlockPlayerData(this.m_blockData);
         var name = jXML(domPlayerData).find('Player').eq(0).attr('label');
         this.formInputs['name'].setValue(name);
     }
@@ -66,7 +66,7 @@ export class BlockPropScene extends Compbaser implements AfterViewInit {
     private saveToStore() {
         if (this.m_contGroup.status != 'VALID')
             return;
-        var domPlayerData = this.m_blockData.scene.playerDataDom;
+        var domPlayerData = this.bs.getBlockPlayerData(this.m_blockData);
         var name = Lib.CleanProbCharacters(this.m_contGroup.value.name, 1);
         jXML(domPlayerData).find('Player').eq(0).attr('label', name);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);

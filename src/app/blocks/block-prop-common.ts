@@ -161,7 +161,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
                 .subscribe((i_color: any) => {
                     var domPlayerData = this.bs.getBlockPlayerData(this.m_blockData)
                     var xPoints = this._findGradientPoints(domPlayerData);
-                    $(xPoints).find('Point').attr('color', Lib.HexToDecimal(i_color));
+                    jXML(xPoints).find('Point').attr('color', Lib.HexToDecimal(i_color));
                     this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
                     this.bs.notifySceneBgChanged();
                 }, (e) => console.error(e))
@@ -178,9 +178,9 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         var checked = i_checked == true ? 1 : 0;
         if (checked) {
             var xBgSnippet = this.bs.getCommonBackgroundXML();
-            var data = $(domPlayerData).find('Data').eq(0);
-            $(data).find('Background').remove();
-            $(data).append($(xBgSnippet));
+            var data = jXML(domPlayerData).find('Data').eq(0);
+            jXML(data).find('Background').remove();
+            jXML(data).append(jXML(xBgSnippet));
             this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
             this._sceneBackgroundPopulate();
         } else {
@@ -271,7 +271,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
         if (!this.m_isPropsForScene) return;
         var domPlayerData = this.bs.getBlockPlayerData(this.m_blockData)
         var xPoints = this._findGradientPointsScene(domPlayerData);
-        var color = $(xPoints).find('Point').attr('color');
+        var color = jXML(xPoints).find('Point').attr('color');
         if (_.isUndefined(color))
             return this.formInputs['sceneBackground'].setValue(false)
         this.formInputs['sceneBackground'].setValue(true);
@@ -392,8 +392,8 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
     }
 
     _findGradientPointsScene(i_domPlayerData) {
-        var xBackground = $(i_domPlayerData).find('Layout').eq(0).siblings().filter('Background');
-        var xSnippet = $(xBackground).find('GradientPoints').eq(0);
+        var xBackground = jXML(i_domPlayerData).find('Layout').eq(0).siblings().filter('Background');
+        var xSnippet = jXML(xBackground).find('GradientPoints').eq(0);
         return xSnippet;
     }
 
