@@ -274,9 +274,14 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
     _listenSceneSelection() {
         this.cancelOnDestroy(
             //
-            this.yp.listenSceneSelected()
+            this.yp.listenSceneSelected(true)
                 .delay(1000)
                 .subscribe((sceneData: ISceneData) => {
+                    if (!sceneData) {
+                        this.m_isLoading = true;
+                        this.cd.markForCheck();
+                        return;
+                    }
                     this.m_selectedSceneID = sceneData.scene_id_pseudo_id;
                     this._loadScene();
                     this._sceneCanvasSelected();

@@ -6,6 +6,7 @@ import * as _ from "lodash";
 import {BlockService, IBlockData, ISceneData} from "./block-service";
 import {RedPepperService} from "../../services/redpepper.service";
 import {timeout} from "../../decorators/timeout-decorator";
+import {BlockLabels} from "../../interfaces/Consts";
 
 @Component({
     selector: 'block-prop-position',
@@ -50,11 +51,11 @@ import {timeout} from "../../decorators/timeout-decorator";
                         <div class="row">
                             <div class="inner userGeneral">
                                 <ul class="list-group">
-                                    <li class="list-group-item">
+                                    <li *ngIf="!m_blockIsScene" class="list-group-item">
                                         <span i18n class="inliner">top</span>
                                         <input type="number" class="numStepper inliner" formControlName="pixel_y">
                                     </li>
-                                    <li class="list-group-item">
+                                    <li *ngIf="!m_blockIsScene" class="list-group-item">
                                         <span i18n class="inliner">left</span>
                                         <input type="number" class="numStepper inliner" formControlName="pixel_x">
                                     </li>
@@ -66,7 +67,7 @@ import {timeout} from "../../decorators/timeout-decorator";
                                         <span i18n class="inliner">height</span>
                                         <input type="number" min="50" max="4096" class="numStepper inliner" formControlName="pixel_height">
                                     </li>
-                                    <li class="list-group-item">
+                                    <li *ngIf="!m_blockIsScene" class="list-group-item">
                                         <span i18n class="inliner">rotation</span>
                                         <input type="number" min="0" max="360" class="numStepper inliner" formControlName="rotation">
                                     </li>
@@ -74,7 +75,7 @@ import {timeout} from "../../decorators/timeout-decorator";
                                         <button i18n type="button" style="width: 125px" class="btn btn-secondary btn-sm" (click)="saveToStoreLayout()">apply changes</button>
                                     </li>
                                     <hr/>
-                                    <li class="list-group-item">
+                                    <li *ngIf="!m_blockIsScene" class="list-group-item">
                                         <br/>
                                         <span i18n>locked</span>
                                         <div class="material-switch pull-right">
@@ -100,6 +101,7 @@ export class BlockPropPosition extends Compbaser {
     private m_contGroup: FormGroup;
     private m_blockData: IBlockData;
     private m_canvasScale = -1;
+    private m_blockIsScene = false;
 
     constructor(private fb: FormBuilder, private rp: RedPepperService, private yp: YellowPepperService, private bs: BlockService, private cd: ChangeDetectorRef) {
         super();
@@ -128,6 +130,7 @@ export class BlockPropPosition extends Compbaser {
                     return this.bs.getBlockDataInScene(i_sceneData)
                 })
                 .subscribe((blockData: IBlockData) => {
+                    this.m_blockIsScene = parseInt(blockData.blockCode) == BlockLabels.BLOCKCODE_SCENE ? true : false;
                     this.m_blockData = blockData;
                     this.m_formInputs['locked'].setValue(StringJS(blockData.playerDataJson.Player._locked).booleanToNumber());
                     this.m_formInputs['rotation'].setValue(blockData.playerDataJson.Player.Data.Layout._rotation);
@@ -174,14 +177,24 @@ export class BlockPropPosition extends Compbaser {
             h = blockMinHeight;
         if (w < blockMinWidth)
             w = blockMinWidth;
-        var layout = $(domPlayerData).find('Layout');
-        layout.attr('rotation', parseInt(r));
-        layout.attr('x', parseInt(x));
-        layout.attr('y', parseInt(y));
-        layout.attr('width', parseInt(w));
-        layout.attr('height', parseInt(h));
-        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
-        this.bs.notifySceneBlockChanged(this.m_blockData);
+
+        if (this.m_blockIsScene) {
+            $(domPlayerData).find('Layout').eq(0).attr('width', w);
+            $(domPlayerData).find('Layout').eq(0).attr('height', h);
+            this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+            this.bs.notifyReloadScene(this.m_blockData.scene.handle);
+            
+        } else {
+
+            var layout = $(domPlayerData).find('Layout');
+            layout.attr('rotation', parseInt(r));
+            layout.attr('x', parseInt(x));
+            layout.attr('y', parseInt(y));
+            layout.attr('width', parseInt(w));
+            layout.attr('height', parseInt(h));
+            this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+            this.bs.notifySceneBlockChanged(this.m_blockData);
+        }
     }
 
     @timeout(250)

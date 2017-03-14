@@ -12,6 +12,8 @@ import {RedPepperService} from "../../services/redpepper.service";
 import {ResourcesModel} from "../../store/imsdb.interfaces_auto";
 import {BlockLabels, PLACEMENT_CHANNEL, PLACEMENT_SCENE} from "../../interfaces/Consts";
 import {CommBroker} from "../../services/CommBroker";
+import {IUiState} from "../../store/store.data";
+import {ACTION_UISTATE_UPDATE} from "../../store/actions/appdb.actions";
 
 interface IDomPlayerDataJson {
     Player: {
@@ -923,13 +925,20 @@ export class BlockService {
             }
         }
 
-
-
     }
 
     notifySceneBlockChanged(i_block: string | IBlockData) {
         if (i_block['blockID']) i_block = i_block['blockID'];
         this.commBroker.fire({event: 'SCENE_BLOCK_CHANGE', fromInstance: this, message: [i_block]});
+    }
+
+    notifyReloadScene(i_sceneId) {
+        var uiState: IUiState = {scene: {sceneSelected: -1, blockSelected: -1}}
+        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+        var uiState: IUiState = {scene: {sceneSelected: i_sceneId, blockSelected: -1}}
+        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+        // if (i_block['blockID']) i_block = i_block['blockID'];
+        // this.commBroker.fire({event: 'LOAD_SCENE', fromInstance: this, message: [i_block]});
     }
 
     /**
@@ -996,7 +1005,7 @@ export class BlockService {
      @param {string} i_placement
      @return {String} common xml
      **/
-    getCommonSceneLayout(i_placement, w?, h?) {
+    getCommonSceneLayout(i_placement, w ?, h ?) {
         w = w == undefined ? 100 : w;
         h = h == undefined ? 100 : h;
         if (i_placement == PLACEMENT_CHANNEL)
