@@ -71,10 +71,15 @@ import {timeout} from "../../decorators/timeout-decorator";
                                         <input type="number" min="0" max="360" class="numStepper inliner" formControlName="rotation">
                                     </li>
                                     <li class="list-group-item">
+                                        <button i18n type="button" style="width: 125px" class="btn btn-secondary btn-sm" (click)="saveToStoreLayout()">apply changes</button>
+                                    </li>
+                                    <hr/>
+                                    <li class="list-group-item">
                                         <br/>
                                         <span i18n>locked</span>
                                         <div class="material-switch pull-right">
                                             <input (change)="saveToStoreLock(locked.checked)"
+                                                   formControlName="locked"
                                                    id="locked" #locked
                                                    name="locked" type="checkbox"/>
                                             <label for="locked" class="label-primary"></label>
@@ -104,7 +109,8 @@ export class BlockPropPosition extends Compbaser {
             'pixel_x': [0],
             'pixel_width': [0],
             'pixel_height': [0],
-            'rotation': [0]
+            'rotation': [0],
+            'locked': []
         });
 
         _.forEach(this.m_contGroup.controls, (value, key: string) => {
@@ -123,69 +129,62 @@ export class BlockPropPosition extends Compbaser {
                 })
                 .subscribe((blockData: IBlockData) => {
                     this.m_blockData = blockData;
+                    this.m_formInputs['locked'].setValue(StringJS(blockData.playerDataJson.Player._locked).booleanToNumber());
+                    this.m_formInputs['rotation'].setValue(blockData.playerDataJson.Player.Data.Layout._rotation);
                     this.m_formInputs['pixel_height'].setValue(blockData.playerDataJson.Player.Data.Layout._height);
                     this.m_formInputs['pixel_width'].setValue(blockData.playerDataJson.Player.Data.Layout._width);
-                    this.m_formInputs['pixel_x'].setValue();
+                    this.m_formInputs['pixel_x'].setValue(blockData.playerDataJson.Player.Data.Layout._x);
                     this.m_formInputs['pixel_y'].setValue(blockData.playerDataJson.Player.Data.Layout._y);
-                    this.populateValues(blockData.playerDataJson.Player.Data.Layout._x, blockData.playerDataJson.Player.Data.Layout._y, blockData.playerDataJson.Player.Data.Layout._width, blockData.playerDataJson.Player.Data.Layout._height, blockData.playerDataJson.Player.Data.Layout._rotation)
                     this.cd.markForCheck();
                 }, (e) => console.error(e))
         )
     }
 
     ngAfterViewInit() {
-        this.cancelOnDestroy(
-            this.m_contGroup.valueChanges
-                .map(v => {
-                    for (var z in v)
-                        v[z] = parseInt(v[z])
-                    return v;
-                })
-                .filter(v => !_.some(v, (o) => _.isNaN(o)))
-                .startWith({})
-                .pairwise()
-                .filter(v => !_.isEqual(v[0], v[1]))
-                .debounceTime(1000)
-                .subscribe((v) => {
-                    this.saveToStoreLayout();
-                }, (e) => console.error(e)) //cancelOnDestroy please
-        )
-    }
-
-    private populateValues(x, y, w, h, a) {
-        this.m_formInputs['pixel_height'].setValue(h);
-        this.m_formInputs['pixel_width'].setValue(w);
-        this.m_formInputs['pixel_x'].setValue(x);
-        this.m_formInputs['pixel_y'].setValue(y);
-        this.m_formInputs['rotation'].setValue(a);
+        // this.cancelOnDestroy(
+        //     this.m_contGroup.valueChanges
+        //         .map(v => {
+        //             for (var z in v)
+        //                 v[z] = parseInt(v[z])
+        //             return v;
+        //         })
+        //         .filter(v => !_.some(v, (o) => _.isNaN(o)))
+        //         .startWith({})
+        //         .pairwise()
+        //         .filter(v => !_.isEqual(v[0], v[1]))
+        //         .debounceTime(1000)
+        //         .subscribe((v) => {
+        //             this.saveToStoreLayout();
+        //         }, (e) => console.error(e)) //cancelOnDestroy please
+        // )
     }
 
     private saveToStoreLayout() {
-        // if (this.m_contGroup.status != 'VALID')
-        //     return;
-        // var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
-        // var x = this.m_contGroup.value.pixel_x;
-        // var y = this.m_contGroup.value.pixel_y;
-        // var w = this.m_contGroup.value.pixel_width;
-        // var h = this.m_contGroup.value.pixel_height;
-        // var r = this.m_contGroup.value.rotation;
-        // var blockMinWidth = 50;
-        // var blockMinHeight = 50;
-        // if (h < blockMinHeight)
-        //     h = blockMinHeight;
-        // if (w < blockMinWidth)
-        //     w = blockMinWidth;
-        // var layout = $(domPlayerData).find('Layout');
-        // layout.attr('rotation', parseInt(r));
-        // layout.attr('x', parseInt(x));
-        // layout.attr('y', parseInt(y));
-        // layout.attr('width', parseInt(w));
-        // layout.attr('height', parseInt(h));
-        // this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
-        // this.bs.notifySceneBlockChanged(this.m_blockData);
+        if (this.m_contGroup.status != 'VALID')
+            return;
+        var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
+        var x = this.m_contGroup.value.pixel_x;
+        var y = this.m_contGroup.value.pixel_y;
+        var w = this.m_contGroup.value.pixel_width;
+        var h = this.m_contGroup.value.pixel_height;
+        var r = this.m_contGroup.value.rotation;
+        var blockMinWidth = 50;
+        var blockMinHeight = 50;
+        if (h < blockMinHeight)
+            h = blockMinHeight;
+        if (w < blockMinWidth)
+            w = blockMinWidth;
+        var layout = $(domPlayerData).find('Layout');
+        layout.attr('rotation', parseInt(r));
+        layout.attr('x', parseInt(x));
+        layout.attr('y', parseInt(y));
+        layout.attr('width', parseInt(w));
+        layout.attr('height', parseInt(h));
+        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+        this.bs.notifySceneBlockChanged(this.m_blockData);
     }
 
-    @timeout(500)
+    @timeout(250)
     private saveToStoreLock(v) {
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
         var r = v == true ? 1 : 0;
@@ -193,7 +192,6 @@ export class BlockPropPosition extends Compbaser {
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
         this.bs.notifySceneBlockChanged(this.m_blockData);
     }
-
 
     destroy() {
     }
