@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Output} from "@angular/core";
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Output, ViewChild} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {BlockService, ISceneData} from "../blocks/block-service";
@@ -13,7 +13,7 @@ import {PlayerDataModelExt} from "../../store/model/msdb-models-extended";
 import {timeout} from "../../decorators/timeout-decorator";
 import {IUiState} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
-import {Lib} from "../../Lib";
+import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
 
 const SCENE_BLOCK_CHANGE = 'SCENE_BLOCK_CHANGE';
 const SCENE_CHANGE = 'SCENE_CHANGE';
@@ -78,6 +78,18 @@ const CAMPAIGN_LIST_LOADING = 'CAMPAIGN_LIST_LOADED';
                 </li>
             </ul>
         </div>
+
+        <modal #modal>
+            <modal-header [show-close]="true">
+                <h4 class="modal-title">I'm a modal!</h4>
+            </modal-header>
+            <modal-body>
+                add content
+                <!--<add-content></add-content>-->
+            </modal-body>
+            <modal-footer [show-default-buttons]="true"></modal-footer>
+        </modal>
+        
     `
 })
 export class SceneEditor extends Compbaser implements AfterViewInit {
@@ -113,8 +125,8 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         // this.cd.detach();
     }
 
-    // @ViewChild(SceneToolbar)
-    // sceneToolbar: SceneToolbar;
+    @ViewChild(ModalComponent)
+    modal: ModalComponent;
 
     ngAfterViewInit() {
         this.m_selectedSceneID = undefined;
@@ -175,6 +187,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                 break;
             }
             case 'add': {
+                this.modal.open();
                 break;
             }
             case 'removeItem': {

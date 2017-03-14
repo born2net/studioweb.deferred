@@ -11,6 +11,7 @@ import {Scenes} from "./scenes";
 import {SceneEditor} from "./scene-editor";
 import {SceneToolbar} from "./scene-toolbar";
 import {BlockPropPosition} from "../blocks/block-prop-position";
+import {Ng2Bs3ModalModule} from "ng2-bs3-modal/ng2-bs3-modal";
 
 export const LAZY_ROUTES = [
     {path: ':folder', component: ScenesNavigation},
@@ -19,7 +20,7 @@ export const LAZY_ROUTES = [
 ];
 
 @NgModule({
-    imports: [DropdownModulePrime, SharedModule, CommonModule, RouterModule.forChild(LAZY_ROUTES)],
+    imports: [DropdownModulePrime, SharedModule, CommonModule, RouterModule.forChild(LAZY_ROUTES), Ng2Bs3ModalModule],
     declarations: [Scenes, SceneEditor, SceneToolbar, ScenesNavigation, ScenePropsManager, SceneManager, SceneList, BlockPropPosition]
 })
 export class ScenesLazyModule {
