@@ -6,6 +6,7 @@ import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/share';
 import {Subject} from "rxjs/Subject";
 import * as _ from 'lodash'
+import {Lib} from "../Lib";
 /**
 
  CommBroker is a React type Mediator injectable service provider
@@ -113,8 +114,13 @@ export class CommBroker {
      @params IMessage
      **/
     public fire(iMessage: IMessage): void {
-        var self = this;
-        self.streamMessages.next(iMessage);
+        try {
+            this.streamMessages.next(iMessage);
+        } catch (e) {
+            if (Lib.DevMode())
+                console.error('CommBroker fire exception in function: ' + iMessage + ' ' + e);
+        }
+
     }
 
     public onEvent(event: string) {

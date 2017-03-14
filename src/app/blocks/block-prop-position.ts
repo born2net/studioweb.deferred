@@ -2,11 +2,10 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component} from "@angular/co
 import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
-import {timeout} from "../../decorators/timeout-decorator";
 import * as _ from "lodash";
 import {BlockService, IBlockData, ISceneData} from "./block-service";
 import {RedPepperService} from "../../services/redpepper.service";
-import {Once} from "../../decorators/once-decorator";
+import {timeout} from "../../decorators/timeout-decorator";
 
 @Component({
     selector: 'block-prop-position',
@@ -75,8 +74,7 @@ import {Once} from "../../decorators/once-decorator";
                                         <br/>
                                         <span i18n>locked</span>
                                         <div class="material-switch pull-right">
-                                            <input (change)="saveToStore(locked.checked)"
-                                                   formControlName="locked"
+                                            <input (change)="saveToStoreLock(locked.checked)"
                                                    id="locked" #locked
                                                    name="locked" type="checkbox"/>
                                             <label for="locked" class="label-primary"></label>
@@ -106,8 +104,7 @@ export class BlockPropPosition extends Compbaser {
             'pixel_x': [0],
             'pixel_width': [0],
             'pixel_height': [0],
-            'rotation': [0],
-            'locked': []
+            'rotation': [0]
         });
 
         _.forEach(this.m_contGroup.controls, (value, key: string) => {
@@ -126,7 +123,6 @@ export class BlockPropPosition extends Compbaser {
                 })
                 .subscribe((blockData: IBlockData) => {
                     this.m_blockData = blockData;
-                    this.m_formInputs['locked'].setValue(StringJS(blockData.playerDataJson.Player._locked).booleanToNumber());
                     this.m_formInputs['pixel_height'].setValue(blockData.playerDataJson.Player.Data.Layout._height);
                     this.m_formInputs['pixel_width'].setValue(blockData.playerDataJson.Player.Data.Layout._width);
                     this.m_formInputs['pixel_x'].setValue();
@@ -140,26 +136,18 @@ export class BlockPropPosition extends Compbaser {
     ngAfterViewInit() {
         this.cancelOnDestroy(
             this.m_contGroup.valueChanges
-                .delay(100)
                 .map(v => {
                     for (var z in v)
                         v[z] = parseInt(v[z])
                     return v;
                 })
-                .filter(v => {
-                    var r =  !_.some(v,(o)=>{ return _.isNaN(o) })
-                    return r;
-                })
+                .filter(v => !_.some(v, (o) => _.isNaN(o)))
                 .startWith({})
                 .pairwise()
-                .filter(v => {
-                    var r = !_.isEqual(v[0],v[1])
-                    return r;
-                })
+                .filter(v => !_.isEqual(v[0], v[1]))
                 .debounceTime(1000)
                 .subscribe((v) => {
-                    console.log('da ' + v);
-                    this.saveToStore();
+                    this.saveToStoreLayout();
                 }, (e) => console.error(e)) //cancelOnDestroy please
         )
     }
@@ -172,35 +160,40 @@ export class BlockPropPosition extends Compbaser {
         this.m_formInputs['rotation'].setValue(a);
     }
 
-    private saveToStore() {
-        if (this.m_contGroup.status != 'VALID')
-            return;
+    private saveToStoreLayout() {
+        // if (this.m_contGroup.status != 'VALID')
+        //     return;
+        // var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
+        // var x = this.m_contGroup.value.pixel_x;
+        // var y = this.m_contGroup.value.pixel_y;
+        // var w = this.m_contGroup.value.pixel_width;
+        // var h = this.m_contGroup.value.pixel_height;
+        // var r = this.m_contGroup.value.rotation;
+        // var blockMinWidth = 50;
+        // var blockMinHeight = 50;
+        // if (h < blockMinHeight)
+        //     h = blockMinHeight;
+        // if (w < blockMinWidth)
+        //     w = blockMinWidth;
+        // var layout = $(domPlayerData).find('Layout');
+        // layout.attr('rotation', parseInt(r));
+        // layout.attr('x', parseInt(x));
+        // layout.attr('y', parseInt(y));
+        // layout.attr('width', parseInt(w));
+        // layout.attr('height', parseInt(h));
+        // this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+        // this.bs.notifySceneBlockChanged(this.m_blockData);
+    }
+
+    @timeout(500)
+    private saveToStoreLock(v) {
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
-        var v = this.m_contGroup.value.locked == true ? 1 : 0;
-        jXML(domPlayerData).find('Player').attr('locked', v);
-
-        var x = this.m_contGroup.value.pixel_x;
-        var y = this.m_contGroup.value.pixel_y;
-        var w = this.m_contGroup.value.pixel_width;
-        var h = this.m_contGroup.value.pixel_height;
-        var r = this.m_contGroup.value.rotation;
-
-        var blockMinWidth = 50;
-        var blockMinHeight = 50;
-        if (h < blockMinHeight)
-            h = blockMinHeight;
-        if (w < blockMinWidth)
-            w = blockMinWidth;
-        var layout = $(domPlayerData).find('Layout');
-        layout.attr('rotation', parseInt(r));
-        layout.attr('x', parseInt(x));
-        layout.attr('y', parseInt(y));
-        layout.attr('width', parseInt(w));
-        layout.attr('height', parseInt(h));
-
+        var r = v == true ? 1 : 0;
+        jXML(domPlayerData).find('Player').attr('locked', r);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
         this.bs.notifySceneBlockChanged(this.m_blockData);
     }
+
 
     destroy() {
     }

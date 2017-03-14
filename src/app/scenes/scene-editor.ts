@@ -13,6 +13,7 @@ import {PlayerDataModelExt} from "../../store/model/msdb-models-extended";
 import {timeout} from "../../decorators/timeout-decorator";
 import {IUiState} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
+import {Lib} from "../../Lib";
 
 const SCENE_BLOCK_CHANGE = 'SCENE_BLOCK_CHANGE';
 const JSON_EVENT_ROW_CHANGED = 'JSON_EVENT_ROW_CHANGED';
@@ -281,7 +282,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                     this._sceneCanvasSelected();
                     if (this._mementoInit())
                         this._mementoAddState();
-                })
+                }, (e) => console.error(e))
         )
     }
 
@@ -298,6 +299,8 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
             domPlayerDataJson: null,
             domPlayerDataXml: null
         }
+
+
         this.cancelOnDestroy(
             this.yp.listenSceneOrBlockSelectedChanged(true)
                 .startWith(sceneData)
@@ -315,10 +318,9 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                         return false;
                     return true;
                 })
-                .subscribe(v => {
-                    con('>>>>>>>>>>>>>>>>>>doing re-draw');
-                    this.commBroker.fire({event: SCENE_BLOCK_CHANGE, fromInstance: this, message: [v[1].block_pseudo_id]});
-                })
+                .subscribe((v) => {
+                    this.commBroker.fire({event: SCENE_BLOCK_CHANGE, fromInstance: this, message: [v[1].block_pseudo_id]})
+                }, (e) => console.error(e))
         )
 
         this.cancelOnDestroy(
@@ -327,7 +329,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                 .subscribe((e: IMessage) => {
                     let uiState: IUiState = {uiSideProps: SideProps.sceneBlock, scene: {blockSelected: e.message}};
                     this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
-                })
+                }, (e) => console.error(e))
         )
     }
 
@@ -409,23 +411,24 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
     _listenSelectNextBlock() {
         this.cancelOnDestroy(
             //
-            this.commBroker.onEvent(SCENE_SELECT_NEXT).subscribe((e: IMessage) => {
-                if (_.isUndefined(this.m_selectedSceneID))
-                    return;
-                var viewer = this.m_canvas.getActiveObject();
-                var viewIndex = this.m_canvas.getObjects().indexOf(viewer);
-                var totalViews = this.m_canvas.getObjects().length;
-                var blockID = undefined;
-                if (viewIndex == totalViews - 1) {
-                    this.m_canvas.setActiveObject(this.m_canvas.item(0));
-                    blockID = this.m_canvas.getActiveObject().getBlockData().blockID;
-                    this.commBroker.fire({event: BLOCK_SELECTED, fromInstance: this, message: blockID});
-                } else {
-                    this.m_canvas.setActiveObject(this.m_canvas.item(viewIndex + 1));
-                    blockID = this.m_canvas.getActiveObject().getBlockData().blockID;
-                    this.commBroker.fire({event: BLOCK_SELECTED, fromInstance: this, message: blockID});
-                }
-            })
+            this.commBroker.onEvent(SCENE_SELECT_NEXT)
+                .subscribe((e: IMessage) => {
+                    if (_.isUndefined(this.m_selectedSceneID))
+                        return;
+                    var viewer = this.m_canvas.getActiveObject();
+                    var viewIndex = this.m_canvas.getObjects().indexOf(viewer);
+                    var totalViews = this.m_canvas.getObjects().length;
+                    var blockID = undefined;
+                    if (viewIndex == totalViews - 1) {
+                        this.m_canvas.setActiveObject(this.m_canvas.item(0));
+                        blockID = this.m_canvas.getActiveObject().getBlockData().blockID;
+                        this.commBroker.fire({event: BLOCK_SELECTED, fromInstance: this, message: blockID});
+                    } else {
+                        this.m_canvas.setActiveObject(this.m_canvas.item(viewIndex + 1));
+                        blockID = this.m_canvas.getActiveObject().getBlockData().blockID;
+                        this.commBroker.fire({event: BLOCK_SELECTED, fromInstance: this, message: blockID});
+                    }
+                }, (e) => console.error(e))
         )
     }
 
@@ -436,9 +439,10 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
     _listenSceneBlockRemove() {
         this.cancelOnDestroy(
             //
-            this.commBroker.onEvent(SCENE_ITEM_REMOVE).subscribe((msg: IMessage) => {
-                this._onContentMenuSelection('remove');
-            })
+            this.commBroker.onEvent(SCENE_ITEM_REMOVE)
+                .subscribe((msg: IMessage) => {
+                    this._onContentMenuSelection('remove');
+                }, (e) => console.error(e))
         )
     }
 
@@ -449,28 +453,28 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
     _listenSceneRemove() {
         this.cancelOnDestroy(
             //
-            this.commBroker.onEvent(SCENE_EDITOR_REMOVE).subscribe((e: IMessage) => {
-                if (this.m_canvas)
-                    this.m_canvas.setBackgroundColor('#ffffff', () => {
-                    }).renderAll();
-                // remove a scene and notify before so channel instances
-                // can remove corresponding blocks and after so channelList can refresh UI
-                var sceneID = this.rp.getSceneIdFromPseudoId(e.message);
-                this.commBroker.fire({event: REMOVING_SCENE, fromInstance: this, message: sceneID});
-                this.rp.removeBlocksWithSceneID(sceneID);
-                this.rp.removeSceneFromBlockCollectionInScenes(sceneID);
-                this.rp.removeSceneFromBlockCollectionsInChannels(sceneID);
-                this.rp.removeScene(sceneID);
-                this.commBroker.fire({event: SCENE_LIST_UPDATED, fromInstance: this});
-                this.disposeScene();
-                this._zoomReset();
-                // this.m_property.resetPropertiesView();
-                this.m_selectedSceneID = undefined;
-                $('#sceneCanvas', this.el.nativeElement).removeClass('basicBorder');
-                // this._updateBlockCount();
-                this.rp.reduxCommit();
-                // this.commBroker.fire({event: REMOVED_SCENE, fromInstance: this, message: this.m_selected_resource_id});
-            })
+            this.commBroker.onEvent(SCENE_EDITOR_REMOVE)
+                .subscribe((e: IMessage) => {
+                    if (this.m_canvas)
+                        this.m_canvas.setBackgroundColor('#ffffff', () => {
+                        }).renderAll();
+                    // remove a scene and notify before so channel instances
+                    // can remove corresponding blocks and after so channelList can refresh UI
+                    var sceneID = this.rp.getSceneIdFromPseudoId(e.message);
+                    this.commBroker.fire({event: REMOVING_SCENE, fromInstance: this, message: sceneID});
+                    this.rp.removeBlocksWithSceneID(sceneID);
+                    this.rp.removeSceneFromBlockCollectionInScenes(sceneID);
+                    this.rp.removeSceneFromBlockCollectionsInChannels(sceneID);
+                    this.rp.removeScene(sceneID);
+                    this.commBroker.fire({event: SCENE_LIST_UPDATED, fromInstance: this});
+                    this.disposeScene();
+                    this._zoomReset();
+                    this.m_selectedSceneID = undefined;
+                    $('#sceneCanvas', this.el.nativeElement).removeClass('basicBorder');
+                    // this._updateBlockCount();
+                    this.rp.reduxCommit();
+                    // this.commBroker.fire({event: REMOVED_SCENE, fromInstance: this, message: this.m_selected_resource_id});
+                }, (e) => console.error(e))
         )
     }
 
@@ -524,10 +528,11 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
     _listenSceneNew() {
         this.cancelOnDestroy(
             //
-            this.commBroker.onEvent(NEW_SCENE_ADD).subscribe((msg: IMessage) => {
-                var player_data = this.bs.getBlockBoilerplate('3510').getDefaultPlayerData(PLACEMENT_IS_SCENE);
-                this.createScene(player_data, false, true, msg.message.mimeType, msg.message.name);
-            })
+            this.commBroker.onEvent(NEW_SCENE_ADD)
+                .subscribe((msg: IMessage) => {
+                    var player_data = this.bs.getBlockBoilerplate('3510').getDefaultPlayerData(PLACEMENT_IS_SCENE);
+                    this.createScene(player_data, false, true, msg.message.mimeType, msg.message.name);
+                }, (e) => console.error(e))
         )
     }
 
@@ -560,7 +565,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                 }).filter(v => v)
                 .subscribe(() => {
                     this._updateBlocksCount();
-                })
+                }, (e) => console.error(e))
         )
     }
 
@@ -571,7 +576,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
      **/
     _listenSceneChanged() {
 
-        var message:IMessage = {
+        var message: IMessage = {
             event: '',
             fromInstance: null
         }
@@ -595,7 +600,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
             //     })
 
             this.commBroker.onEvent(SCENE_BLOCK_CHANGE)
-                .subscribe((msg:IMessage) => {
+                .subscribe((msg: IMessage) => {
                     if (this.m_rendering)
                         return;
                     var blockIDs = msg.message;
@@ -604,7 +609,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                     this.m_blocks.blockSelected = blockIDs[0];
                     this._preRender(domPlayerData, blockIDs);
                     this._mementoAddState();
-                })
+                }, (e) => console.error(e))
         )
     }
 
@@ -795,16 +800,17 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
     _listenAddBlockWizard() {
         this.cancelOnDestroy(
             //
-            this.commBroker.onEvent(ADD_NEW_BLOCK_SCENE).subscribe((msg: IMessage) => {
-                var blockID = this.rp.generateSceneId();
-                var player_data = this.bs.getBlockBoilerplate(msg.message.blockCode).getDefaultPlayerData(PLACEMENT_SCENE, msg.message.resourceID);
-                var domPlayerData = $.parseXML(player_data);
-                $(domPlayerData).find('Player').attr('id', blockID);
-                player_data = (new XMLSerializer()).serializeToString(domPlayerData);
-                this.rp.appendScenePlayerBlock(this.m_selectedSceneID, player_data);
-                this.rp.reduxCommit();
-                this.commBroker.fire({event: SCENE_BLOCK_CHANGE, fromInstance: this, message: [blockID]});
-            })
+            this.commBroker.onEvent(ADD_NEW_BLOCK_SCENE)
+                .subscribe((msg: IMessage) => {
+                    var blockID = this.rp.generateSceneId();
+                    var player_data = this.bs.getBlockBoilerplate(msg.message.blockCode).getDefaultPlayerData(PLACEMENT_SCENE, msg.message.resourceID);
+                    var domPlayerData = $.parseXML(player_data);
+                    $(domPlayerData).find('Player').attr('id', blockID);
+                    player_data = (new XMLSerializer()).serializeToString(domPlayerData);
+                    this.rp.appendScenePlayerBlock(this.m_selectedSceneID, player_data);
+                    this.rp.reduxCommit();
+                    this.commBroker.fire({event: SCENE_BLOCK_CHANGE, fromInstance: this, message: [blockID]});
+                }, (e) => console.error(e))
         )
     }
 
@@ -939,6 +945,10 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
      **/
     _preRender(i_domPlayerData, i_blockIDs ?) {
         var zIndex = -1;
+        if (i_blockIDs) {
+            if (i_blockIDs.indexOf(this.m_selectedSceneID) > -1)
+                return;
+        }
         this._renderPause();
         this.m_blocks.blocksPre = [];
         this.m_blocks.blocksPost = {};
@@ -1104,7 +1114,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                 if (_.isUndefined(this.m_canvas))
                     return;
                 this.m_canvas.calcOffset();
-            })
+            }, (e) => console.error(e))
         )
     }
 

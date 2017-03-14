@@ -106,7 +106,7 @@ export class Lib {
             i_fn();
         } catch (e) {
             if (Lib.DevMode())
-                console.error('Exception in function: ' + i_fn + ' ' + e);
+                console.error('Lib.Try exception in function: ' + i_fn + ' ' + e);
         }
     }
 

@@ -785,16 +785,6 @@ export class BlockService {
 
     public getBlockData(blockId): Observable<IBlockData> {
 
-        // todo: add support for getBlockRecord when placement is SCENE, depending on this.blockPlacement;
-        // case BB.CONSTS.PLACEMENT_IS_SCENE:
-        //     {
-        //         var blockID = pepper.getSceneIdFromPseudoId(self.m_block_id);
-        //         var recPlayerData = BB.Pepper.getScenePlayerRecord(blockID);
-        //         var xPlayerdata = recPlayerData['player_data_value'];
-        //         return $.parseXML(xPlayerdata);
-        //         break;
-        //     }
-
         return this.yp.getChannelBlockRecord(blockId)
             .mergeMap((i_campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModelExt) => {
                 // var t0 = performance.now();
@@ -904,14 +894,37 @@ export class BlockService {
      Help method to get the proper playerDataDom depending of we are dealing with a regular block or a scene block
      **/
     getBlockPlayerData(i_blockData: IBlockData): XMLDocument {
-        switch (Number(i_blockData.blockCode)) {
-            case BlockLabels.BLOCKCODE_SCENE: {
-                return i_blockData.scene.playerDataDom;
+
+
+        switch (this.blockPlacement) {
+
+            case PLACEMENT_CHANNEL: {
+                switch (Number(i_blockData.blockCode)) {
+                    case BlockLabels.BLOCKCODE_SCENE: {
+                        return i_blockData.scene.playerDataDom;
+                    }
+                    default: {
+                        return i_blockData.playerDataDom;
+                    }
+                }
             }
-            default: {
-                return i_blockData.playerDataDom;
+
+            case PLACEMENT_SCENE: {
+
+                switch (Number(i_blockData.blockCode)) {
+                    case BlockLabels.BLOCKCODE_SCENE: {
+                        return i_blockData.playerDataDom;
+                    }
+                    default: {
+                        return i_blockData.playerDataDom;
+                    }
+                }
+
             }
         }
+
+
+
     }
 
     notifySceneBlockChanged(i_block: string | IBlockData) {
