@@ -1,7 +1,7 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output, TemplateRef} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {List} from "immutable";
-import {timeout} from "../decorators/timeout-decorator";
+import {timeout} from "../../decorators/timeout-decorator";
 
 @Component({
     selector: 'draggable-list',
