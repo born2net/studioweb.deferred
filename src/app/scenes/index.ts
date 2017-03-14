@@ -20,7 +20,7 @@ export const LAZY_ROUTES = [
 ];
 
 @NgModule({
-    imports: [DropdownModulePrime, SharedModule, CommonModule, RouterModule.forChild(LAZY_ROUTES), Ng2Bs3ModalModule],
+    imports: [DropdownModulePrime, SharedModule, CommonModule, Ng2Bs3ModalModule, RouterModule.forChild(LAZY_ROUTES)],
     declarations: [Scenes, SceneEditor, SceneToolbar, ScenesNavigation, ScenePropsManager, SceneManager, SceneList, BlockPropPosition]
 })
 export class ScenesLazyModule {
