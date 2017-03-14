@@ -924,7 +924,10 @@ export class BlockService {
 
             }
         }
+    }
 
+    notifySceneBgChanged() {
+        this.commBroker.fire({event: 'SCENE_CHANGE', fromInstance: this, message: []});
     }
 
     notifySceneBlockChanged(i_block: string | IBlockData) {

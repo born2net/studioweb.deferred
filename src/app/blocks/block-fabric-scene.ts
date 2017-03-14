@@ -121,9 +121,9 @@ export class BlockFabricScene extends BlockFabric {
 
     /**
      Set a scene's background color or image
-     @method _fabricSceneBg
+     @method fabricSceneBg
      **/
-    _fabricSceneBg() {
+    fabricSceneBg() {
         var domPlayerData = this._getBlockPlayerData();
         var colorPoints = this._findGradientPoints(domPlayerData)
         var color = $(colorPoints).find('Point').attr('color');
@@ -159,7 +159,7 @@ export class BlockFabricScene extends BlockFabric {
     setCanvas(i_canvas, i_magneticGridMode) {
         this.m_canvas = i_canvas;
         this.m_gridMagneticMode = i_magneticGridMode;
-        this._fabricSceneBg();
+        this.fabricSceneBg();
     }
 
     /**

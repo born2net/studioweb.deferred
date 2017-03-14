@@ -16,6 +16,7 @@ import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.action
 import {Lib} from "../../Lib";
 
 const SCENE_BLOCK_CHANGE = 'SCENE_BLOCK_CHANGE';
+const SCENE_CHANGE = 'SCENE_CHANGE';
 const JSON_EVENT_ROW_CHANGED = 'JSON_EVENT_ROW_CHANGED';
 const STATIONS_POLL_TIME_CHANGED = 'STATIONS_POLL_TIME_CHANGED';
 const THEME_CHANGED = 'THEME_CHANGED';
@@ -588,22 +589,6 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
 
         this.cancelOnDestroy(
             //
-
-            // this.commBroker.onEvent(SCENE_BLOCK_CHANGE)
-            //     .startWith(message)
-            //     .pairwise()
-            //     .subscribe((msgs: Array<IMessage>) => {
-            //         if (this.m_rendering)
-            //             return;
-            //         if (msgs[0].fromInstance == null) msgs[0] = msgs[1];
-            //         var blockIDs = msgs[0].message;
-            //         con('block(s) edited ' + blockIDs);
-            //         var domPlayerData = this.rp.getScenePlayerdataDom(this.m_selectedSceneID);
-            //         this.m_blocks.blockSelected = blockIDs[0];
-            //         this._preRender(domPlayerData, blockIDs);
-            //         this._mementoAddState();
-            //     })
-
             this.commBroker.onEvent(SCENE_BLOCK_CHANGE)
                 .subscribe((msg: IMessage) => {
                     if (this.m_rendering)
@@ -613,6 +598,17 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                     var domPlayerData = this.rp.getScenePlayerdataDom(this.m_selectedSceneID);
                     this.m_blocks.blockSelected = blockIDs[0];
                     this._preRender(domPlayerData, blockIDs);
+                    this._mementoAddState();
+                }, (e) => console.error(e))
+        )
+
+        this.cancelOnDestroy(
+            //
+            this.commBroker.onEvent(SCENE_CHANGE)
+                .subscribe((msg: IMessage) => {
+                    if (this.m_rendering)
+                        return;
+                    this.m_sceneBlock.fabricSceneBg(msg);
                     this._mementoAddState();
                 }, (e) => console.error(e))
         )
