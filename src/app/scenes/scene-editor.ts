@@ -1710,6 +1710,11 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
     }
 
     destroy() {
+        let uiState: IUiState = {scene: {
+            sceneSelected: -1,
+            blockSelected: -1
+        }}
+        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
         this.m_canvasScale = -1;
         this._notifyScaleChange();
     }
