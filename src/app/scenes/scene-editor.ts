@@ -14,14 +14,16 @@ import {timeout} from "../../decorators/timeout-decorator";
 import {IUiState} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
 import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
+import {IAddContents} from "../../interfaces/IAddContent";
 
-const SCENE_BLOCK_CHANGE = 'SCENE_BLOCK_CHANGE';
-const SCENE_CHANGE = 'SCENE_CHANGE';
+export const ADD_NEW_BLOCK_SCENE = 'ADD_NEW_BLOCK_SCENE';
+export const SCENE_BLOCK_CHANGE = 'SCENE_BLOCK_CHANGE';
+export const SCENE_CHANGE = 'SCENE_CHANGE';
+
 const JSON_EVENT_ROW_CHANGED = 'JSON_EVENT_ROW_CHANGED';
 const STATIONS_POLL_TIME_CHANGED = 'STATIONS_POLL_TIME_CHANGED';
 const THEME_CHANGED = 'THEME_CHANGED';
 const SELECTED_STACK_VIEW = 'SELECTED_STACK_VIEW';
-const ADD_NEW_BLOCK_SCENE = 'ADD_NEW_BLOCK_SCENE';
 const BLOCK_SELECTED = 'BLOCK_SELECTED';
 const SCENE_ZOOM_IN = 'SCENE_ZOOM_IN';
 const SCENE_ZOOM_OUT = 'SCENE_ZOOM_OUT';
@@ -84,11 +86,11 @@ const CAMPAIGN_LIST_LOADING = 'CAMPAIGN_LIST_LOADED';
                 <h4 i18n class="modal-title">add content to scene</h4>
             </modal-header>
             <modal-body>
-                <add-content #addContent></add-content>
+                <add-content #addContent (onDone)="_onAddedNewBlock()"></add-content>
             </modal-body>
             <modal-footer [show-default-buttons]="true"></modal-footer>
         </modal>
-        
+
     `
 })
 export class SceneEditor extends Compbaser implements AfterViewInit {
@@ -815,8 +817,9 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
             //
             this.commBroker.onEvent(ADD_NEW_BLOCK_SCENE)
                 .subscribe((msg: IMessage) => {
+                    var addContents: IAddContents = msg.message;
                     var blockID = this.rp.generateSceneId();
-                    var player_data = this.bs.getBlockBoilerplate(msg.message.blockCode).getDefaultPlayerData(PLACEMENT_SCENE, msg.message.resourceID);
+                    var player_data = this.bs.getBlockBoilerplate(addContents.blockCode).getDefaultPlayerData(PLACEMENT_SCENE, addContents.resourceId);
                     var domPlayerData = $.parseXML(player_data);
                     $(domPlayerData).find('Player').attr('id', blockID);
                     player_data = (new XMLSerializer()).serializeToString(domPlayerData);
@@ -825,6 +828,10 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                     this.commBroker.fire({event: SCENE_BLOCK_CHANGE, fromInstance: this, message: [blockID]});
                 }, (e) => console.error(e))
         )
+    }
+
+    _onAddedNewBlock() {
+        this.modal.close()
     }
 
     /**

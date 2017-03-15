@@ -13,6 +13,8 @@ import {RedPepperService} from "../../services/redpepper.service";
 import {IAddContents} from "../../interfaces/IAddContent";
 import {BlockTypeEnum} from "../../interfaces/BlockTypeEnum";
 import {BlockLabels, PLACEMENT_CHANNEL, PLACEMENT_LISTS, PLACEMENT_SCENE} from "../../interfaces/Consts";
+import {CommBroker} from "../../services/CommBroker";
+import {ADD_NEW_BLOCK_SCENE} from "../scenes/scene-editor";
 
 @Component({
     selector: 'add-content',
@@ -33,7 +35,7 @@ import {BlockLabels, PLACEMENT_CHANNEL, PLACEMENT_LISTS, PLACEMENT_SCENE} from "
     `],
     template: `
         <small class="debug">{{me}}</small>
-        <button *ngIf="m_placement == m_PLACEMENT_CHANNEL" (click)="_goBack()" id="prev" type="button" class="openPropsButton btn btn-default btn-sm">
+        <button *ngIf="m_placement == m_PLACEMENT_CHANNEL" (click)="_close()" id="prev" type="button" class="openPropsButton btn btn-default btn-sm">
             <span class="glyphicon glyphicon-chevron-left"></span>
         </button>
         <div *ngIf="m_placement == m_PLACEMENT_SCENE || m_placement == m_PLACEMENT_CHANNEL" style="padding-top: 20px; padding-right: 30px" class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
@@ -118,7 +120,7 @@ export class AddContent extends Compbaser implements AfterViewInit {
     m_PLACEMENT_CHANNEL = PLACEMENT_CHANNEL;
     m_selected_campaign_timeline_chanel_id = -1;
 
-    constructor( @Inject('BLOCK_PLACEMENT') private blockPlacement, private yp: YellowPepperService, private rp: RedPepperService, private bs: BlockService, @Inject('HYBRID_PRIVATE') private hybrid_private: boolean) {
+    constructor(private commBroker:CommBroker, private yp: YellowPepperService, private rp: RedPepperService, private bs: BlockService, @Inject('HYBRID_PRIVATE') private hybrid_private: boolean, @Inject('BLOCK_PLACEMENT') private blockPlacement) {
         super();
 
         this.m_placement = blockPlacement;
@@ -155,6 +157,7 @@ export class AddContent extends Compbaser implements AfterViewInit {
                 )
                 break;
             }
+            
             case PLACEMENT_SCENE: {
                 break;
             }
@@ -165,7 +168,7 @@ export class AddContent extends Compbaser implements AfterViewInit {
     }
 
     @Output()
-    onGoBack: EventEmitter<any> = new EventEmitter<any>();
+    onDone: EventEmitter<any> = new EventEmitter<any>();
 
     /**
      Allow us to control the current placement of the module so the behaviour can be according
@@ -192,11 +195,26 @@ export class AddContent extends Compbaser implements AfterViewInit {
     }
 
     _addBlock(i_addContents: IAddContents) {
-        this.yp.getTotalDurationChannel(this.m_selected_campaign_timeline_chanel_id)
-            .subscribe((i_totalChannelLength) => {
-                var boilerPlate = this.bs.getBlockBoilerplate(i_addContents.blockCode);
-                this._createNewChannelBlock(i_addContents, boilerPlate, i_totalChannelLength);
-            }, (e) => console.error(e))
+
+        switch (this.m_placement){
+            case PLACEMENT_CHANNEL: {
+
+                this.yp.getTotalDurationChannel(this.m_selected_campaign_timeline_chanel_id)
+                    .subscribe((i_totalChannelLength) => {
+                        var boilerPlate = this.bs.getBlockBoilerplate(i_addContents.blockCode);
+                        this._createNewChannelBlock(i_addContents, boilerPlate, i_totalChannelLength);
+                    }, (e) => console.error(e))
+                break;
+            }
+
+            case PLACEMENT_SCENE: {
+                this.commBroker.fire({event: ADD_NEW_BLOCK_SCENE, fromInstance: this, message: i_addContents});
+                this.onDone.emit();
+                break;
+            }
+        }
+        
+        
     }
 
     /**
@@ -222,20 +240,20 @@ export class AddContent extends Compbaser implements AfterViewInit {
         if (!i_component.allow)
             return bootbox.alert('Please upgrade to the Enterprise edition')
         this._addBlock(i_component);
-        this._goBack();
+        this._close();
     }
 
     _onResourceSelected(i_resource) {
         this._addBlock(i_resource);
-        this._goBack();
+        this._close();
     }
 
     _onSceneSelected(i_scnene) {
         this._addBlock(i_scnene);
-        this._goBack();
+        this._close();
     }
 
-    _goBack() {
+    _close() {
         var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
         // var uiState: IUiState = {
         //     uiSideProps: SideProps.miniDashboard,
@@ -245,7 +263,7 @@ export class AddContent extends Compbaser implements AfterViewInit {
         //     }
         // }
         this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
-        this.onGoBack.emit();
+        this.onDone.emit();
     }
 
     /**

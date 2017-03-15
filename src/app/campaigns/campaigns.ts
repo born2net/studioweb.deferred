@@ -54,7 +54,7 @@ import {CampaignEditor} from "./campaign-editor";
             </Slideritem>
             <Slideritem [templateRef]="h" #sliderAddContent [showFromButton]="false" class="page left addContent" [fromDirection]="'left'" [from]="'campaignList'">
                 <template #h>
-                    <add-content #addContent (onGoBack)="sliderItemCampaignEditor.slideTo('campaignEditor','left')"></add-content>
+                    <add-content #addContent (onDone)="sliderItemCampaignEditor.slideTo('campaignEditor','left')"></add-content>
                 </template>
             </Slideritem>
         </Sliderpanel>
