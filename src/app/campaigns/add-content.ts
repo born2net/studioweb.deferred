@@ -102,7 +102,6 @@ import {ADD_NEW_BLOCK_SCENE} from "../scenes/scene-editor";
                 </div>
             </div>
         </div>
-
     `
 })
 export class AddContent extends Compbaser implements AfterViewInit {

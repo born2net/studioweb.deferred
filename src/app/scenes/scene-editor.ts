@@ -192,6 +192,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                 break;
             }
             case 'removeItem': {
+                this.commBroker.fire({event: SCENE_ITEM_REMOVE, fromInstance: this})
                 break;
             }
             case 'playPreview': {
@@ -694,6 +695,8 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                 }
 
                 case 'cut': {
+                    let uiState: IUiState = {scene: {blockSelected: -1}}
+                    this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
                     this.m_copiesObjects = [];
                     _.each(i_blocks, (selectedObject) => {
                         var blockData = selectedObject.getBlockData();
@@ -711,6 +714,8 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                 }
 
                 case 'remove': {
+                    let uiState: IUiState = {scene: {blockSelected: -1}}
+                    this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
                     _.each(i_blocks, (selectedObject) => {
                         var blockData = selectedObject.getBlockData();
                         this._discardSelections();
