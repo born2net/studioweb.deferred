@@ -33,7 +33,7 @@ import {BlockLabels, PLACEMENT_CHANNEL, PLACEMENT_LISTS, PLACEMENT_SCENE} from "
     `],
     template: `
         <small class="debug">{{me}}</small>
-        <button (click)="_goBack()" id="prev" type="button" class="openPropsButton btn btn-default btn-sm">
+        <button *ngIf="m_placement == m_PLACEMENT_CHANNEL" (click)="_goBack()" id="prev" type="button" class="openPropsButton btn btn-default btn-sm">
             <span class="glyphicon glyphicon-chevron-left"></span>
         </button>
         <div *ngIf="m_placement == m_PLACEMENT_SCENE || m_placement == m_PLACEMENT_CHANNEL" style="padding-top: 20px; padding-right: 30px" class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
@@ -110,19 +110,18 @@ export class AddContent extends Compbaser implements AfterViewInit {
     m_userModel: UserModel;
     m_resourceModels: List<ResourcesModel>;
     m_sceneDatas: Array<ISceneData>;
-
     m_componentList: Array<IAddContents> = [];
     m_resourceList: Array<IAddContents> = [];
     m_sceneList: Array<IAddContents> = [];
-
     m_PLACEMENT_SCENE = PLACEMENT_SCENE;
     m_PLACEMENT_LISTS = PLACEMENT_LISTS;
     m_PLACEMENT_CHANNEL = PLACEMENT_CHANNEL;
-
     m_selected_campaign_timeline_chanel_id = -1;
 
-    constructor(private yp: YellowPepperService, private rp: RedPepperService, private bs: BlockService, @Inject('HYBRID_PRIVATE') private hybrid_private: boolean) {
+    constructor( @Inject('BLOCK_PLACEMENT') private blockPlacement, private yp: YellowPepperService, private rp: RedPepperService, private bs: BlockService, @Inject('HYBRID_PRIVATE') private hybrid_private: boolean) {
         super();
+
+        this.m_placement = blockPlacement;
 
         this.cancelOnDestroy(
             this.yp.getUserModel()
@@ -145,12 +144,21 @@ export class AddContent extends Compbaser implements AfterViewInit {
                 }, (e) => console.error(e))
         )
 
-        this.cancelOnDestroy(
-            this.yp.listenCampaignTimelineBoardViewerSelected(true)
-                .subscribe((i_campaignTimelineBoardViewerChanelsModel:CampaignTimelineBoardViewerChanelsModel) => {
-                    this.m_selected_campaign_timeline_chanel_id = i_campaignTimelineBoardViewerChanelsModel.getCampaignTimelineChanelId();
-            }, (e) => console.error(e)) //cancelOnDestroy please
-        )
+        switch (this.m_placement){
+            case PLACEMENT_CHANNEL: {
+
+                this.cancelOnDestroy(
+                    this.yp.listenCampaignTimelineBoardViewerSelected(true)
+                        .subscribe((i_campaignTimelineBoardViewerChanelsModel:CampaignTimelineBoardViewerChanelsModel) => {
+                            this.m_selected_campaign_timeline_chanel_id = i_campaignTimelineBoardViewerChanelsModel.getCampaignTimelineChanelId();
+                        }, (e) => console.error(e))
+                )
+                break;
+            }
+            case PLACEMENT_SCENE: {
+                break;
+            }
+        }
 
         var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
         this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
@@ -166,10 +174,10 @@ export class AddContent extends Compbaser implements AfterViewInit {
      @method setPlacement
      @param {Number} i_playerData
      **/
-    @Input()
-    set setPlacement(value) {
-        this.m_placement = value;
-    }
+    // @Input()
+    // set setPlacement(value) {
+    //     this.m_placement = value;
+    // }
 
     /**
      Allow us to control the view depending upon the current mimetype of the scene that launched this

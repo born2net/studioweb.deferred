@@ -81,11 +81,10 @@ const CAMPAIGN_LIST_LOADING = 'CAMPAIGN_LIST_LOADED';
 
         <modal #modal>
             <modal-header [show-close]="true">
-                <h4 class="modal-title">I'm a modal!</h4>
+                <h4 i18n class="modal-title">add content to scene</h4>
             </modal-header>
             <modal-body>
-                add content
-                <!--<add-content></add-content>-->
+                <add-content #addContent></add-content>
             </modal-body>
             <modal-footer [show-default-buttons]="true"></modal-footer>
         </modal>
