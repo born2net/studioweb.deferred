@@ -70,7 +70,6 @@ export class SceneManager extends Compbaser {
     }
 
     _removeScene() {
-        var self = this;
         this.cancelOnDestroy(
             this.yp.ngrxStore.select(store => store.appDb.uiState.scene.sceneSelected)
                 .take(1)
@@ -96,8 +95,26 @@ export class SceneManager extends Compbaser {
                 .take(1)
                 .subscribe(scene_id => {
                     console.log(scene_id);
+                    var scenePlayerData = this.rp.getScenePlayerdata(scene_id);
+                    this.createScene(scenePlayerData, true, '');
                 })
         )
+    }
+
+    /**
+     Create a new scene based on player_data and strip injected IDs if arged
+     @method createScene
+     @param {String} i_scenePlayerData
+     @optional {Boolean} i_stripIDs
+     @optional {Boolean} i_loadScene
+     @optional {String} i_mimeType
+     @optional {String} i_name
+     **/
+    private createScene(i_scenePlayerData, i_stripIDs, i_mimeType, i_name?) {
+        if (i_stripIDs)
+            i_scenePlayerData = this.rp.stripPlayersID(i_scenePlayerData);
+        var sceneId = this.rp.createScene(i_scenePlayerData, i_mimeType, i_name);
+        this.rp.reduxCommit();
     }
 
     private save() {

@@ -25,6 +25,7 @@ import {UserModel} from "../models/UserModel";
 import X2JS from "x2js";
 import {ISceneData} from "../app/blocks/block-service";
 
+
 @Injectable()
 export class YellowPepperService {
 
@@ -48,6 +49,25 @@ export class YellowPepperService {
 
     public get ngrxStore(): Store<ApplicationState> {
         return this.store;
+    }
+
+    private reducePlayerDataModelsToSceneData(playerDataModels: List<PlayerDataModel>): Array<ISceneData> {
+        return playerDataModels.reduce((result: Array<ISceneData>, playerDataModel: PlayerDataModelExt) => {
+            var playerDataId = playerDataModel.getPlayerDataId();
+            var xml = playerDataModel.getPlayerDataValue();
+            var domPlayerData = $.parseXML(xml)
+            var scene_id_pseudo_id = $(domPlayerData).find('Player').eq(0).attr('id')
+            result.push({
+                scene_id: playerDataId,
+                scene_id_pseudo_id: scene_id_pseudo_id,
+                block_pseudo_id: scene_id_pseudo_id,
+                domPlayerData: domPlayerData,
+                playerDataModel: playerDataModel,
+                domPlayerDataXml: xml,
+                domPlayerDataJson: this.parser.xml2js(xml),
+            });
+            return result;
+        }, [])
     }
 
     /**
@@ -304,7 +324,7 @@ export class YellowPepperService {
                 return i_scene_id != -1;
             })
             .withLatestFrom(
-                this.getScenes(),
+                this.listenScenes(),
                 (sceneId, scenes: Array<ISceneData>) => {
                     return scenes.find((scene: ISceneData) => {
                         return scene.scene_id == sceneId;
@@ -342,30 +362,6 @@ export class YellowPepperService {
             }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
     }
 
-    /**
-     Get all Scenes and update on any scene chanage
-     **/
-    listenScenes(): Observable<Array<ISceneData>> {
-        return this.store.select(store => store.msDatabase.sdk.table_player_data)
-            .map((playerDataModels: List<PlayerDataModel>) => {
-                return playerDataModels.reduce((result: Array<ISceneData>, playerDataModel: PlayerDataModelExt) => {
-                    var playerDataId = playerDataModel.getPlayerDataId();
-                    var xml = playerDataModel.getPlayerDataValue();
-                    var domPlayerData = $.parseXML(xml)
-                    var scene_id_pseudo_id = $(domPlayerData).find('Player').eq(0).attr('id')
-                    result.push({
-                        scene_id: playerDataId,
-                        scene_id_pseudo_id: scene_id_pseudo_id,
-                        block_pseudo_id: scene_id_pseudo_id,
-                        domPlayerData: domPlayerData,
-                        playerDataModel: playerDataModel,
-                        domPlayerDataXml: xml,
-                        domPlayerDataJson: this.parser.xml2js(xml),
-                    });
-                    return result;
-                }, [])
-            });
-    }
 
     /**
      Listen to when a campaign that is selected changed value
@@ -424,6 +420,26 @@ export class YellowPepperService {
                 // console.log('winner ' + longestChannelDuration);
                 return longestChannelDuration;
             })
+    }
+
+    /**
+     Get all Scenes and update on any scene change
+     **/
+    listenScenes(): Observable<Array<ISceneData>> {
+        return this.store.select(store => store.msDatabase.sdk.table_player_data)
+            .map((playerDataModels: List<PlayerDataModel>) => {
+                return this.reducePlayerDataModelsToSceneData(playerDataModels)
+            });
+    }
+
+    /**
+     Get all Scenes in current state and return array of player_data_id domPlayerData : ISceneData
+     **/
+    getScenes(): Observable<Array<ISceneData>> {
+        return this.store.select(store => store.msDatabase.sdk.table_player_data)
+            .map((playerDataModels: List<PlayerDataModel>) => {
+                return this.reducePlayerDataModelsToSceneData(playerDataModels)
+            }).take(1);
     }
 
     /**
@@ -573,31 +589,6 @@ export class YellowPepperService {
             }).take(1);
     }
 
-
-    /**
-     Get all Scenes and return array of player_data_id domPlayerData : ISceneData
-     **/
-    getScenes(): Observable<Array<ISceneData>> {
-        return this.store.select(store => store.msDatabase.sdk.table_player_data)
-            .map((playerDataModels: List<PlayerDataModel>) => {
-                return playerDataModels.reduce((result: Array<ISceneData>, playerDataModel: PlayerDataModelExt) => {
-                    var playerDataId = playerDataModel.getPlayerDataId();
-                    var xml = playerDataModel.getPlayerDataValue();
-                    var domPlayerData = $.parseXML(xml)
-                    var scene_id_pseudo_id = $(domPlayerData).find('Player').eq(0).attr('id')
-                    result.push({
-                        scene_id: playerDataId,
-                        scene_id_pseudo_id: scene_id_pseudo_id,
-                        block_pseudo_id: scene_id_pseudo_id,
-                        domPlayerData: domPlayerData,
-                        playerDataModel: playerDataModel,
-                        domPlayerDataXml: xml,
-                        domPlayerDataJson: this.parser.xml2js(xml),
-                    });
-                    return result;
-                }, [])
-            }).take(1);
-    }
 
     /**
      Get all the model of a particular channel.
