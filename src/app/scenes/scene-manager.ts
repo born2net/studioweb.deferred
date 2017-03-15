@@ -37,15 +37,8 @@ import {ISceneData} from "../blocks/block-service";
         <!-- move scroller to proper offset -->
         <div class="responsive-pad-right">
             <div matchBodyHeight="350" style="overflow: scroll">
-
                 <scene-list [scenes]="scenes$ | async"  (slideToSceneEditor)="slideToSceneEditor.emit($event)" (onSceneSelected)="_onSceneSelected($event)">
                 </scene-list>
-
-                <!--<scene-list (onCampaignSelected)="_onSceneSelected($event)"-->
-                <!--(slideToCampaignName)="slideToCampaignName.emit($event)"-->
-                <!--(slideToCampaignEditor)="slideToCampaignEditor.emit($event)"-->
-                <!--[scenes]="scenes$ | async">-->
-                <!--</scene-list>-->
             </div>
         </div>
     `
@@ -54,25 +47,11 @@ export class SceneManager extends Compbaser {
 
 
     public scenes$: Observable<Array<ISceneData>>
-    // public userModel$: Observable<UserModel>;
-    // public timelineSelected$: Observable<number>;
 
-    constructor(private el: ElementRef, private yp: YellowPepperService, private redPepperService: RedPepperService, private router: Router) {
+    constructor(private yp: YellowPepperService, private redPepperService: RedPepperService) {
         super();
         this.preventRedirect(true);
-
-        this.scenes$ = this.yp.getScenes()
-        // this.timelineSelected$ = this.yp.ngrxStore.select(store => store.appDb.uiState.campaign.timelineSelected).map(v => v);
-        //
-        // this.userModel$ = this.yp.ngrxStore.select(store => store.appDb.userModel);
-        // this.scenes$ = this.yp.ngrxStore.select(store => store.msDatabase.sdk.table_campaigns).map((list: List<CampaignsModelExt>) => {
-        //     this.cars = list;//.toArray();
-        //     return list.filter((campaignModel: CampaignsModelExt) => {
-        //         if (campaignModel.getCampaignName().indexOf('bla_bla') > -1)
-        //             return false
-        //         return true;
-        //     })
-        // });
+        this.scenes$ = this.yp.listenScenes()
     }
 
     @Output()
@@ -80,7 +59,6 @@ export class SceneManager extends Compbaser {
 
     @Output()
     slideToCampaignName: EventEmitter<any> = new EventEmitter<any>();
-
 
     private save() {
         con('saving...');
@@ -90,7 +68,6 @@ export class SceneManager extends Compbaser {
             } else {
                 alert(JSON.stringify(result));
             }
-            // console.log(JSON.stringify(result));
         });
     }
 
@@ -105,7 +82,5 @@ export class SceneManager extends Compbaser {
     }
 
     destroy() {
-        // var uiState: IUiState = {uiSideProps: SideProps.none}
-        // this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 }

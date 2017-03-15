@@ -315,12 +315,12 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         var sceneData: ISceneData = {
             scene_id: null,
             scene_id_pseudo_id: null,
+            block_pseudo_id: null,
             playerDataModel: null,
             domPlayerData: null,
             domPlayerDataJson: null,
             domPlayerDataXml: null
         }
-
 
         this.cancelOnDestroy(
             this.yp.listenSceneOrBlockSelectedChanged(true)

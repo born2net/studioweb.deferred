@@ -72,7 +72,7 @@ export interface ISceneData {
     domPlayerData: XMLDocument;
     domPlayerDataJson: IDomPlayerDataJson;
     domPlayerDataXml: string;
-    block_pseudo_id?: any;
+    block_pseudo_id: any;
     mimeType?;
 }
 

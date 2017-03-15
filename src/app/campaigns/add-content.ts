@@ -119,7 +119,12 @@ export class AddContent extends Compbaser implements AfterViewInit {
     m_PLACEMENT_CHANNEL = PLACEMENT_CHANNEL;
     m_selected_campaign_timeline_chanel_id = -1;
 
-    constructor(private commBroker:CommBroker, private yp: YellowPepperService, private rp: RedPepperService, private bs: BlockService, @Inject('HYBRID_PRIVATE') private hybrid_private: boolean, @Inject('BLOCK_PLACEMENT') private blockPlacement) {
+    constructor(@Inject('HYBRID_PRIVATE') private hybrid_private: boolean,
+                @Inject('BLOCK_PLACEMENT') private blockPlacement,
+                private commBroker:CommBroker,
+                private yp: YellowPepperService,
+                private rp: RedPepperService,
+                private bs: BlockService ) {
         super();
 
         this.m_placement = blockPlacement;

@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, Input} from "@angular/core";
+import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Input} from "@angular/core";
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {BlockService, IBlockData} from "./block-service";
 import {RedPepperService} from "../../services/redpepper.service";
@@ -33,7 +33,7 @@ export class BlockPropScene extends Compbaser implements AfterViewInit {
     m_contGroup: FormGroup;
     m_blockData: IBlockData;
 
-    constructor(private fb: FormBuilder, private rp: RedPepperService, private bs: BlockService, private ngmslibService: NgmslibService) {
+    constructor(@Inject('BLOCK_PLACEMENT') private blockPlacement, private fb: FormBuilder, private cd: ChangeDetectorRef, private rp: RedPepperService, private bs: BlockService, private ngmslibService: NgmslibService) {
         super();
         this.m_contGroup = fb.group({
             'name': []
@@ -45,12 +45,8 @@ export class BlockPropScene extends Compbaser implements AfterViewInit {
 
     @Input()
     set setBlockData(i_blockData) {
-        if (this.m_blockData && this.m_blockData.blockID != i_blockData.blockID) {
-            this.m_blockData = i_blockData;
-            this._render();
-        } else {
-            this.m_blockData = i_blockData;
-        }
+        this.m_blockData = i_blockData;
+        this._render();
     }
 
     ngAfterViewInit() {

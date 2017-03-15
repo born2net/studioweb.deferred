@@ -299,6 +299,10 @@ export class YellowPepperService {
     listenSceneSelected(emitOnEmpty: boolean = false): Observable<ISceneData> {
         var sceneSelected$ = this.store.select(store => store.appDb.uiState.scene.sceneSelected);
         return sceneSelected$
+            .filter(i_scene_id => {
+                if (!emitOnEmpty) return true; // no filter requested
+                return i_scene_id != -1;
+            })
             .withLatestFrom(
                 this.getScenes(),
                 (sceneId, scenes: Array<ISceneData>) => {
@@ -338,6 +342,30 @@ export class YellowPepperService {
             }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
     }
 
+    /**
+     Get all Scenes and update on any scene chanage
+     **/
+    listenScenes(): Observable<Array<ISceneData>> {
+        return this.store.select(store => store.msDatabase.sdk.table_player_data)
+            .map((playerDataModels: List<PlayerDataModel>) => {
+                return playerDataModels.reduce((result: Array<ISceneData>, playerDataModel: PlayerDataModelExt) => {
+                    var playerDataId = playerDataModel.getPlayerDataId();
+                    var xml = playerDataModel.getPlayerDataValue();
+                    var domPlayerData = $.parseXML(xml)
+                    var scene_id_pseudo_id = $(domPlayerData).find('Player').eq(0).attr('id')
+                    result.push({
+                        scene_id: playerDataId,
+                        scene_id_pseudo_id: scene_id_pseudo_id,
+                        block_pseudo_id: scene_id_pseudo_id,
+                        domPlayerData: domPlayerData,
+                        playerDataModel: playerDataModel,
+                        domPlayerDataXml: xml,
+                        domPlayerDataJson: this.parser.xml2js(xml),
+                    });
+                    return result;
+                }, [])
+            });
+    }
 
     /**
      Listen to when a campaign that is selected changed value
@@ -545,6 +573,7 @@ export class YellowPepperService {
             }).take(1);
     }
 
+
     /**
      Get all Scenes and return array of player_data_id domPlayerData : ISceneData
      **/
@@ -558,9 +587,10 @@ export class YellowPepperService {
                     var scene_id_pseudo_id = $(domPlayerData).find('Player').eq(0).attr('id')
                     result.push({
                         scene_id: playerDataId,
-                        scene_id_pseudo_id,
-                        domPlayerData,
-                        playerDataModel,
+                        scene_id_pseudo_id: scene_id_pseudo_id,
+                        block_pseudo_id: scene_id_pseudo_id,
+                        domPlayerData: domPlayerData,
+                        playerDataModel: playerDataModel,
                         domPlayerDataXml: xml,
                         domPlayerDataJson: this.parser.xml2js(xml),
                     });
