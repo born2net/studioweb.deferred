@@ -148,7 +148,6 @@ export class YellowPepperService {
             .mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
     }
 
-
     /**
      listen UI campaign > timeline > board_viewer selected and return back the associated channel with that board id
      **/
@@ -275,46 +274,7 @@ export class YellowPepperService {
             .mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
     }
 
-    // /**
-    //  Listen to changes in selected scene
-    //  **/
-    // listenSceneOrBlockChanged(emitOnEmpty: boolean = false): Observable<any> {
-    //     return this.store.select(store => store.msDatabase.sdk.table_player_data);
-    //
-    //     // var sceneSelected$ = this.store.select(store => store.appDb.uiState.scene.sceneSelected);
-    //     // var player_data$ = this.store.select(store => store.msDatabase.sdk.table_player_data);
-    //     // var blockSelected$ = this.store.select(store => store.appDb.uiState.scene.blockSelected);
-    //     // return sceneSelected$.combineLatest(player_data$, (sceneId, player_data) => {
-    //     //     return {sceneId, player_data}
-    //     // }).filter((ids) => {
-    //     //     if (!emitOnEmpty) return true; // no filter requested
-    //     //     return ids && ids.sceneId != -1
-    //     // }).withLatestFrom(blockSelected$, (a, b) => {
-    //     //     return {a, b};
-    //     // }).map(ids => {
-    //     //     return ids;
-    //     //     // return this.getScene(ids.sceneId)
-    //     //     // .map((playerDataModel: PlayerDataModelExt) => {
-    //     //     //     var domPlayerData = $.parseXML(playerDataModel.getPlayerDataValue())
-    //     //     //     var selectedSnippet: any = $(domPlayerData).find(`[id="${ids.blockId}"]`)[0];
-    //     //     //     var mimeType = $(domPlayerData).find('Player').attr('mimeType');
-    //     //     //     var xml = (new XMLSerializer()).serializeToString(selectedSnippet);
-    //     //     //     selectedSnippet = $.parseXML(xml)
-    //     //     //     var sceneData: ISceneData = {
-    //     //     //         scene_id: ids.sceneId,
-    //     //     //         scene_id_pseudo_id: null,
-    //     //     //         block_pseudo_id: ids.blockId,
-    //     //     //         playerDataModel: playerDataModel,
-    //     //     //         domPlayerData: selectedSnippet,
-    //     //     //         domPlayerDataXml: xml,
-    //     //     //         domPlayerDataJson: this.parser.xml2js(xml),
-    //     //     //         mimeType: mimeType
-    //     //     //     }
-    //     //     //     return sceneData;
-    //     //     // });
-    //     // }).distinct()
-    //     //     .mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
-    // }
+
 
     listenSceneSelected(emitOnEmpty: boolean = false): Observable<ISceneData> {
         var sceneSelected$ = this.store.select(store => store.appDb.uiState.scene.sceneSelected);
@@ -393,6 +353,16 @@ export class YellowPepperService {
     }
 
     /**
+     Get all Scenes and update on any scene change
+     **/
+    listenScenes(): Observable<Array<ISceneData>> {
+        return this.store.select(store => store.msDatabase.sdk.table_player_data)
+            .map((playerDataModels: List<PlayerDataModel>) => {
+                return this.reducePlayerDataModelsToSceneData(playerDataModels)
+            });
+    }
+
+    /**
      get time line total duration by channel
      **/
     getTimelineTotalDurationByChannel(i_campaign_timeline_id): Observable<number> {
@@ -420,16 +390,6 @@ export class YellowPepperService {
                 // console.log('winner ' + longestChannelDuration);
                 return longestChannelDuration;
             })
-    }
-
-    /**
-     Get all Scenes and update on any scene change
-     **/
-    listenScenes(): Observable<Array<ISceneData>> {
-        return this.store.select(store => store.msDatabase.sdk.table_player_data)
-            .map((playerDataModels: List<PlayerDataModel>) => {
-                return this.reducePlayerDataModelsToSceneData(playerDataModels)
-            });
     }
 
     /**
@@ -954,17 +914,7 @@ export class YellowPepperService {
     // below are some brain dumps and examples only
     /*****************************************************/
 
-    private listenCampaignSelectedExampleWithSwitchMap() {
-        var campaignSelected$ = this.store.select(store => store.appDb.uiState.campaign.campaignSelected)
-        var campaignsList$ = this.store.select(store => store.msDatabase.sdk.table_campaigns);
-        return campaignSelected$.switchMap(i_campaignList => campaignsList$, (campaignId, campaigns) => {
-            return campaigns.find((i_campaign: CampaignsModelExt) => {
-                return i_campaign.getCampaignId() == campaignId;
-            });
-        })
-    }
-
-    private listenCampaignSelectedExampleFurtherLatestFromSelections() {
+    private campaignSelectedExampleMultipleLatestFromSelections() {
         var campaignSelected$ = this.store.select(
             store => store.appDb.uiState.campaign.campaignSelected
         );
@@ -1016,19 +966,46 @@ export class YellowPepperService {
         }).take(1)
     }
 
-    private listenCampaignSelectedTemp2(): any {
-        return this.store.select(store => store.appDb.uiState.campaign.campaignSelected);
-    }
-
-    private listenCampaignSelectedTemp3(): Observable<CampaignsModelExt> {
-
-        var campaignSelected$ = this.store.select(store => store.appDb.uiState.campaign.campaignSelected)
-        var campaigns$ = this.store.select(store => store.msDatabase.sdk.table_campaigns);
-
-        return campaignSelected$.combineLatest(campaigns$, (campaignId: number, campaigns: List<CampaignsModelExt>) => {
-            return campaigns.find((i_campaign: CampaignsModelExt) => {
-                return i_campaign.getCampaignId() == campaignId;
-            });
-        })
-    }
 }
+
+
+// /**
+//  Listen to changes in selected scene
+//  **/
+// listenSceneOrBlockChanged(emitOnEmpty: boolean = false): Observable<any> {
+//     return this.store.select(store => store.msDatabase.sdk.table_player_data);
+//
+//     // var sceneSelected$ = this.store.select(store => store.appDb.uiState.scene.sceneSelected);
+//     // var player_data$ = this.store.select(store => store.msDatabase.sdk.table_player_data);
+//     // var blockSelected$ = this.store.select(store => store.appDb.uiState.scene.blockSelected);
+//     // return sceneSelected$.combineLatest(player_data$, (sceneId, player_data) => {
+//     //     return {sceneId, player_data}
+//     // }).filter((ids) => {
+//     //     if (!emitOnEmpty) return true; // no filter requested
+//     //     return ids && ids.sceneId != -1
+//     // }).withLatestFrom(blockSelected$, (a, b) => {
+//     //     return {a, b};
+//     // }).map(ids => {
+//     //     return ids;
+//     //     // return this.getScene(ids.sceneId)
+//     //     // .map((playerDataModel: PlayerDataModelExt) => {
+//     //     //     var domPlayerData = $.parseXML(playerDataModel.getPlayerDataValue())
+//     //     //     var selectedSnippet: any = $(domPlayerData).find(`[id="${ids.blockId}"]`)[0];
+//     //     //     var mimeType = $(domPlayerData).find('Player').attr('mimeType');
+//     //     //     var xml = (new XMLSerializer()).serializeToString(selectedSnippet);
+//     //     //     selectedSnippet = $.parseXML(xml)
+//     //     //     var sceneData: ISceneData = {
+//     //     //         scene_id: ids.sceneId,
+//     //     //         scene_id_pseudo_id: null,
+//     //     //         block_pseudo_id: ids.blockId,
+//     //     //         playerDataModel: playerDataModel,
+//     //     //         domPlayerData: selectedSnippet,
+//     //     //         domPlayerDataXml: xml,
+//     //     //         domPlayerDataJson: this.parser.xml2js(xml),
+//     //     //         mimeType: mimeType
+//     //     //     }
+//     //     //     return sceneData;
+//     //     // });
+//     // }).distinct()
+//     //     .mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
+// }

@@ -130,6 +130,7 @@ export class AddContent extends Compbaser implements AfterViewInit {
         this.m_placement = blockPlacement;
 
         this.cancelOnDestroy(
+            //
             this.yp.getUserModel()
                 .subscribe((i_userModel: UserModel) => {
                     this.m_userModel = i_userModel;
@@ -137,6 +138,7 @@ export class AddContent extends Compbaser implements AfterViewInit {
         )
 
         this.cancelOnDestroy(
+            //
             this.yp.getResources()
                 .subscribe((i_resources: List<ResourcesModel>) => {
                     this.m_resourceModels = i_resources;
@@ -144,6 +146,7 @@ export class AddContent extends Compbaser implements AfterViewInit {
         )
 
         this.cancelOnDestroy(
+            //
             this.yp.getScenes()
                 .subscribe((i_playerDatas: Array<ISceneData>) => {
                     this.m_sceneDatas = i_playerDatas;
@@ -151,6 +154,7 @@ export class AddContent extends Compbaser implements AfterViewInit {
         )
 
         switch (this.m_placement){
+            
             case PLACEMENT_CHANNEL: {
 
                 this.cancelOnDestroy(

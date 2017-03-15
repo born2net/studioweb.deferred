@@ -94,7 +94,6 @@ export class SceneManager extends Compbaser {
             this.yp.ngrxStore.select(store => store.appDb.uiState.scene.sceneSelected)
                 .take(1)
                 .subscribe(scene_id => {
-                    console.log(scene_id);
                     var scenePlayerData = this.rp.getScenePlayerdata(scene_id);
                     this.createScene(scenePlayerData, true, '');
                 })
