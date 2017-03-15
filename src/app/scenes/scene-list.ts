@@ -67,6 +67,10 @@ export class SceneList extends Compbaser {
         this.m_selectedScene = scene;
     }
 
+    resetSelection(){
+        this.selectedIdx = -1;
+    }
+
     ngOnInit() {
     }
 

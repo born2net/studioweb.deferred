@@ -13,6 +13,17 @@ import * as _ from "lodash";
 import {NgmslibService} from "ng-mslib";
 import {IAddContents} from "../interfaces/IAddContent";
 import {PLACEMENT_CHANNEL} from "../interfaces/Consts";
+import X2JS from "x2js";
+
+var parser = new X2JS({
+    escapeMode: true,
+    attributePrefix: "_",
+    arrayAccessForm: "none",
+    emptyNodeForm: "text",
+    enableToStringFunc: true,
+    arrayAccessFormPaths: [],
+    skipEmptyTextNodesForObj: true
+});
 
 export type redpepperTables = {
     tables: ISDK
@@ -52,8 +63,8 @@ export class RedPepperService {
                     loadManager: this.m_loaderManager,
                 }
                 observer.next(pepperConnection);
-                
-                if (pepperAuthReply.status == true){
+
+                if (pepperAuthReply.status == true) {
                     this.m_authenticated = true;
                     this.m_domain = this.m_loaderManager['m_domain'];
                     var resellerInfo = this.m_loaderManager['m_resellerInfo'];
@@ -136,7 +147,7 @@ export class RedPepperService {
     reduxCommit(tableNameTargets?: Array<string>, forceAll?: boolean): redpepperTables {
         var tablesNames: Array<string> = [];
 
-        if (forceAll){
+        if (forceAll) {
             this.m_tablesPendingToProcess = [];
         }
 
@@ -362,7 +373,7 @@ export class RedPepperService {
      @return none
      **/
     removeSceneFromBlockCollectionsInChannels(i_scene_id) {
-        $(this.databaseManager.table_campaign_timeline_chanel_players().getAllPrimaryKeys()).each(function (k, campaign_timeline_chanel_player_id) {
+        $(this.databaseManager.table_campaign_timeline_chanel_players().getAllPrimaryKeys()).each((k, campaign_timeline_chanel_player_id) => {
             var recCampaignTimelineChannelPlayer = this.databaseManager.table_campaign_timeline_chanel_players().getRec(campaign_timeline_chanel_player_id);
             var playerData = recCampaignTimelineChannelPlayer['player_data'];
             var domPlayerData = $.parseXML(playerData);
@@ -393,7 +404,7 @@ export class RedPepperService {
      @param {Number} i_scene_id scene id to search for and remove in all scenes > BlockCollections
      **/
     removeSceneFromBlockCollectionInScenes(i_scene_id) {
-        $(this.databaseManager.table_player_data().getAllPrimaryKeys()).each(function (k, player_data_id) {
+        $(this.databaseManager.table_player_data().getAllPrimaryKeys()).each((k, player_data_id) => {
             var recPlayerData = this.databaseManager.table_player_data().getRec(player_data_id);
             var domSceneData = $.parseXML(recPlayerData['player_data_value']);
             var currentSceneID = $(domSceneData).find('Player').eq(0).attr('id');
@@ -422,13 +433,13 @@ export class RedPepperService {
      @return none
      **/
     removeBlocksWithSceneID(i_scene_id) {
-        $(this.databaseManager.table_campaign_timeline_chanel_players().getAllPrimaryKeys()).each(function (k, campaign_timeline_chanel_player_id) {
+        $(this.databaseManager.table_campaign_timeline_chanel_players().getAllPrimaryKeys()).each((k, campaign_timeline_chanel_player_id) => {
             var recCampaignTimelineChannelPlayer = this.databaseManager.table_campaign_timeline_chanel_players().getRec(campaign_timeline_chanel_player_id);
             var playerData = recCampaignTimelineChannelPlayer['player_data'];
             var domPlayerData = $.parseXML(playerData);
             var scene_id = $(domPlayerData).find('Player').attr('hDataSrc');
             if (scene_id == i_scene_id)
-                this.databaseManager.removeBlockFromTimelineChannel(campaign_timeline_chanel_player_id);
+                this.removeBlockFromTimelineChannel(campaign_timeline_chanel_player_id);
         });
         this.addPendingTables(['table_campaign_timeline_chanel_players']);
     }
@@ -768,7 +779,7 @@ export class RedPepperService {
         });
         return mimeType;
     }
-    
+
     /**
      Set a campaign table record for the specified i_campaign_id.
      The method uses generic key / value fields so it can set any part of the record.
@@ -1209,6 +1220,40 @@ export class RedPepperService {
     }
 
     /**
+     Remove blocks (a.k.a players) from all campaign that use the specified resource_id (native id)
+     @method removeBlocksWithResourceID
+     @param {Number} i_resource_id
+     @return none
+     **/
+    removeBlocksWithResourceID(i_resource_id) {
+        $(this.databaseManager.table_campaign_timeline_chanel_players().getAllPrimaryKeys()).each((k, campaign_timeline_chanel_player_id) => {
+            var recCampaignTimelineChannelPlayer = this.databaseManager.table_campaign_timeline_chanel_players().getRec(campaign_timeline_chanel_player_id);
+            var playerData = recCampaignTimelineChannelPlayer['player_data'];
+            var xPlayerData = parser.xml2js(playerData);
+            var resourceID = undefined;
+            try {
+                resourceID = xPlayerData['Player']['Data']['Resource']['_hResource'];
+            } catch (e) {
+            }
+            if (resourceID != undefined && resourceID == i_resource_id) {
+                this.removeBlockFromTimelineChannel(campaign_timeline_chanel_player_id);
+            }
+        });
+        this.addPendingTables(['table_campaign_timeline_chanel_players']);
+    }
+
+    /**
+     Remove a block (i.e.: player) from campaign > timeline > channel
+     @method removeBlockFromTimelineChannel
+     @param {Number} i_block_id
+     @return none
+     **/
+    removeBlockFromTimelineChannel(i_block_id): void {
+        var status = this.databaseManager.table_campaign_timeline_chanel_players().openForDelete(i_block_id);
+        this.addPendingTables(['table_campaign_timeline_chanel_players']);
+    }
+
+    /**
      Remove board template viewers
      @method removeTimelineBoardViewerChannels
      @param {Number} i_campaign_timeline_board_template_id
@@ -1367,17 +1412,6 @@ export class RedPepperService {
         });
         this.addPendingTables(['table_campaign_timeline_chanel_players']);
         return foundBlocks;
-    }
-
-    /**
-     Remove a block (i.e.: player) from campaign > timeline > channel
-     @method removeBlockFromTimelineChannel
-     @param {Number} i_block_id
-     @return none
-     **/
-    removeBlockFromTimelineChannel(i_block_id): void {
-        var status = this.databaseManager.table_campaign_timeline_chanel_players().openForDelete(i_block_id);
-        this.addPendingTables(['table_campaign_timeline_chanel_players']);
     }
 
     /**
@@ -1915,7 +1949,7 @@ export class RedPepperService {
         try {
             return escapedHTML.replace(/xmlns="http:\/\/www.w3.org\/1999\/xhtml"/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&').replace(/<rss/gi, '<Rss').replace(/rss>/g, 'Rss>').replace(/<background/gi, '<Background').replace(/background>/gi, 'Background>').replace(/<appearance/gi, '<Appearance').replace(/appearance>/gi, 'Appearance>').replace(/<gradientpoints/gi, '<GradientPoints').replace(/gradientpoints>/gi, 'GradientPoints>').replace(/<aspectratio/gi, '<AspectRatio').replace(/aspectratio>/gi, 'AspectRatio>').replace(/<layout/gi, '<Layout').replace(/layout>/gi, 'Layout>').replace(/<title/gi, '<Title').replace(/title>/gi, 'Title>').replace(/<description/gi, '<Description').replace(/description>/gi, 'Description>').replace(/<data/gi, '<Data').replace(/data>/gi, 'Data>').replace(/<player/gi, '<Player').replace(/player>/gi, 'Player>').replace(/<players/gi, '<Players').replace(/players>/gi, 'Players>').replace(/<text/gi, '<Text').replace(/text>/gi, 'Text>').replace(/<eventCommands/gi, '<EventCommands').replace(/eventCommands>/gi, 'EventCommands>').replace(/<eventCommand/gi, '<EventCommand').replace(/eventCommand>/gi, 'EventCommand>').replace(/<border/gi, '<Border').replace(/border>/gi, 'Border>').replace(/<scene/gi, '<Scene').replace(/scene>/gi, 'Scene>').replace(/<clock/gi, '<Clock').replace(/clock>/gi, 'Clock>').replace(/<point/gi, '<Point').replace(/point>/gi, 'Point>').replace(/<video/gi, '<Video').replace(/video>/gi, 'Video>').replace(/<image/gi, '<Image').replace(/image>/gi, 'Image>').replace(/<label/gi, '<Label').replace(/label>/gi, 'Label>').replace(/<font/gi, '<Font').replace(/font>/gi, 'Font>').replace(/fontsize/gi, 'fontSize').replace(/startdate/gi, 'startDate').replace(/enddate/gi, 'endDate').replace(/fontcolor/gi, 'fontColor').replace(/fontfamily/gi, 'fontFamily').replace(/fontweight/gi, 'fontWeight').replace(/fontstyle/gi, 'fontStyle').replace(/bordercolor/gi, 'borderColor').replace(/borderthickness/gi, 'borderThickness').replace(/cornerradius/gi, 'cornerRadius').replace(/textdecoration/gi, 'textDecoration').replace(/textalign/gi, 'textAlign').replace(/hdatasrc/gi, 'hDataSrc').replace(/minrefreshtime/gi, 'minRefreshTime').replace(/itemspath/gi, 'itemsPath').replace(/slideshow/gi, 'slideShow').replace(/iteminterval/gi, 'itemInterval').replace(/playvideoinfull/gi, 'playVideoInFull').replace(/randomorder/gi, 'randomOrder').replace(/providertype/gi, 'providerType').replace(/fieldname/gi, 'fieldName').replace(/fieldtype/gi, 'fieldType').replace(/gradienttype/gi, 'gradientType').replace(/autorewind/gi, 'autoRewind').replace(/clockformat/gi, 'clockFormat').replace(/clockmask/gi, 'clockMask').replace(/hresource/gi, 'hResource').replace(/videoidlist/gi, 'VideoIdList').replace(/<page/gi, '<Page').replace(/page>/gi, 'Page>').replace(/<gps/gi, '<GPS').replace(/gps>/gi, 'GPS>').replace(/<fixed/gi, '<Fixed').replace(/fixed>/gi, 'Fixed>').replace(/<xmlitem/gi, '<XmlItem').replace(/xmlitem>/gi, 'XmlItem>').replace(/<json/gi, '<Json').replace(/json>/gi, 'Json>').replace(/<locationbased/gi, '<LocationBased').replace(/locationbased>/gi, 'LocationBased>').replace(/<params/gi, '<Params').replace(/params>/gi, 'Params>').replace(/<url/gi, '<Url').replace(/url>/gi, 'Url>').replace(/maintainaspectratio/gi, 'maintainAspectRatio').replace(/<resource/gi, '<Resource').replace(/resource>/g, 'Resource>').// replace(/<htdata/gi, '<htData').replace(/htdata>/gi, 'htData>').
             replace(/<link/gi, '<LINK').replace(/link>/g, 'LINK>');
-        } catch (e){
+        } catch (e) {
             debugger;
             console.log(e);
         }
@@ -2364,30 +2398,6 @@ export class RedPepperService {
         this.databaseManager.table_resources().openForEdit(i_resource_id);
         var recResource = this.databaseManager.table_resources().getRec(i_resource_id);
         recResource[i_key] = i_value;
-    }
-
-    /**
-     Remove blocks (a.k.a players) from all campaign that use the specified resource_id (native id)
-     @method removeBlocksWithResourceID
-     @param {Number} i_resource_id
-     @return none
-     **/
-    removeBlocksWithResourceID(i_resource_id) {
-
-        //todo: fix
-        // $(this.databaseManager.table_campaign_timeline_chanel_players().getAllPrimaryKeys()).each(function (k, campaign_timeline_chanel_player_id) {
-        //     var recCampaignTimelineChannelPlayer = this.databaseManager.table_campaign_timeline_chanel_players().getRec(campaign_timeline_chanel_player_id);
-        //     var playerData = recCampaignTimelineChannelPlayer['player_data'];
-        //     var xPlayerData = x2js.xml_str2json(playerData);
-        //     var resourceID = undefined;
-        //     try {
-        //         resourceID = xPlayerData['Player']['Data']['Resource']['_hResource'];
-        //     } catch (e) {
-        //     }
-        //     if (resourceID != undefined && resourceID == i_resource_id) {
-        //         this.databaseManager.removeBlockFromTimelineChannel(campaign_timeline_chanel_player_id);
-        //     }
-        // });
     }
 
     /**

@@ -158,7 +158,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         this._listenSceneChanged();
         this._listenContextMenu();
         this._listenSelectNextBlock();
-        this._listenSceneRemove();
+        // this._listenSceneRemove();
         this._listenSceneBlockRemove();
         this._listenSceneNew();
         this._listenAppResized();
@@ -467,37 +467,37 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         )
     }
 
-    /**
-     Listen to when a user selects to delete a scene
-     @method _listenSceneRemove
-     **/
-    _listenSceneRemove() {
-        this.cancelOnDestroy(
-            //
-            this.commBroker.onEvent(SCENE_EDITOR_REMOVE)
-                .subscribe((e: IMessage) => {
-                    if (this.m_canvas)
-                        this.m_canvas.setBackgroundColor('#ffffff', () => {
-                        }).renderAll();
-                    // remove a scene and notify before so channel instances
-                    // can remove corresponding blocks and after so channelList can refresh UI
-                    var sceneID = this.rp.getSceneIdFromPseudoId(e.message);
-                    this.commBroker.fire({event: REMOVING_SCENE, fromInstance: this, message: sceneID});
-                    this.rp.removeBlocksWithSceneID(sceneID);
-                    this.rp.removeSceneFromBlockCollectionInScenes(sceneID);
-                    this.rp.removeSceneFromBlockCollectionsInChannels(sceneID);
-                    this.rp.removeScene(sceneID);
-                    this.commBroker.fire({event: SCENE_LIST_UPDATED, fromInstance: this});
-                    this.disposeScene();
-                    this._zoomReset();
-                    this.m_selectedSceneID = undefined;
-                    $('#sceneCanvas', this.el.nativeElement).removeClass('basicBorder');
-                    // this._updateBlockCount();
-                    this.rp.reduxCommit();
-                    // this.commBroker.fire({event: REMOVED_SCENE, fromInstance: this, message: this.m_selected_resource_id});
-                }, (e) => console.error(e))
-        )
-    }
+    // /**
+    //  Listen to when a user selects to delete a scene
+    //  @method _listenSceneRemove
+    //  **/
+    // _listenSceneRemove() {
+    //     this.cancelOnDestroy(
+    //         //
+    //         this.commBroker.onEvent(SCENE_EDITOR_REMOVE)
+    //             .subscribe((e: IMessage) => {
+    //                 if (this.m_canvas)
+    //                     this.m_canvas.setBackgroundColor('#ffffff', () => {
+    //                     }).renderAll();
+    //                 // remove a scene and notify before so channel instances
+    //                 // can remove corresponding blocks and after so channelList can refresh UI
+    //                 var sceneID = this.rp.getSceneIdFromPseudoId(e.message);
+    //                 this.commBroker.fire({event: REMOVING_SCENE, fromInstance: this, message: sceneID});
+    //                 this.rp.removeBlocksWithSceneID(sceneID);
+    //                 this.rp.removeSceneFromBlockCollectionInScenes(sceneID);
+    //                 this.rp.removeSceneFromBlockCollectionsInChannels(sceneID);
+    //                 this.rp.removeScene(sceneID);
+    //                 this.commBroker.fire({event: SCENE_LIST_UPDATED, fromInstance: this});
+    //                 this.disposeScene();
+    //                 this._zoomReset();
+    //                 this.m_selectedSceneID = undefined;
+    //                 $('#sceneCanvas', this.el.nativeElement).removeClass('basicBorder');
+    //                 // this._updateBlockCount();
+    //                 this.rp.reduxCommit();
+    //                 // this.commBroker.fire({event: REMOVED_SCENE, fromInstance: this, message: this.m_selected_resource_id});
+    //             }, (e) => console.error(e))
+    //     )
+    // }
 
     /**
      Listen to keyboard events

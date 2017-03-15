@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Output} from "@angular/core";
+import {Component, ElementRef, EventEmitter, Output, ViewChild} from "@angular/core";
 import {Observable} from "rxjs";
 import {Compbaser} from "ng-mslib";
 import {Router} from "@angular/router";
@@ -7,37 +7,36 @@ import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.action
 import {IUiState} from "../../store/store.data";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {ISceneData} from "../blocks/block-service";
+import {SceneList} from "./scene-list";
 
 @Component({
     // changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'scene-manager',
     template: `
         <small class="debug" style="padding-left: 30px">{{me}}</small>
-
         <div style="padding-bottom: 10px">
-            <span i18n style="font-size: 1.8em;" i18n>campaign selection</span>
+            <span i18n style="font-size: 1.8em;" i18n>scene selection</span>
         </div>
         <div>
             <div class="btn-group">
-                <button (click)="_createCampaign()" type="button" class="btn btn-default">
+                <button (click)="_newScene()" type="button" class="btn btn-default">
                     <i style="font-size: 1em" class="fa fa-rocket"></i>
-                    <span i18n>new campaign</span>
+                    <span i18n>new scene</span>
                 </button>
-                <button disabled="true" type="button" class="btn btn-default">
+                <button (click)="_removeScene()" [disabled]="(sceneSelected$ | async) == -1" type="button" class="btn btn-default">
                     <i style="font-size: 1em" class="fa fa-trash-o"></i>
                     <span i18n>remove</span>
                 </button>
-                <button disabled="true" type="button" class="btn btn-danger">
-                    <i class="fa fa-magic"></i>
-                    <span i18n>Get Wizard help</span>
+                <button (click)="_duplicateScene()" [disabled]="(sceneSelected$ | async) == -1" type="button" class="btn btn-default">
+                    <i style="font-size: 1em" class="fa fa-files-o"></i>
+                    <span i18n>duplicate</span>
                 </button>
             </div>
         </div>
-        <button i18n class="btn btn-primary" (click)="save()">save to server</button>
         <!-- move scroller to proper offset -->
         <div class="responsive-pad-right">
             <div matchBodyHeight="350" style="overflow: scroll">
-                <scene-list [scenes]="scenes$ | async"  (slideToSceneEditor)="slideToSceneEditor.emit($event)" (onSceneSelected)="_onSceneSelected($event)">
+                <scene-list [scenes]="scenes$ | async" (slideToSceneEditor)="slideToSceneEditor.emit($event)" (onSceneSelected)="_onSceneSelected($event)">
                 </scene-list>
             </div>
         </div>
@@ -45,14 +44,19 @@ import {ISceneData} from "../blocks/block-service";
 })
 export class SceneManager extends Compbaser {
 
-
+    sceneSelected$;
     public scenes$: Observable<Array<ISceneData>>
 
-    constructor(private yp: YellowPepperService, private redPepperService: RedPepperService) {
+    constructor(private yp: YellowPepperService, private rp: RedPepperService) {
         super();
         this.preventRedirect(true);
         this.scenes$ = this.yp.listenScenes()
+        this.sceneSelected$ = this.yp.ngrxStore.select(store => store.appDb.uiState.scene.sceneSelected)
+        this._notifyResetSceneSelection();
     }
+
+    @ViewChild(SceneList)
+    sceneList:SceneList;
 
     @Output()
     slideToSceneEditor: EventEmitter<any> = new EventEmitter<any>();
@@ -60,9 +64,45 @@ export class SceneManager extends Compbaser {
     @Output()
     slideToCampaignName: EventEmitter<any> = new EventEmitter<any>();
 
+    _notifyResetSceneSelection(){
+        var uiState: IUiState = {scene: {sceneSelected: -1}}
+        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+    }
+
+    _removeScene() {
+        var self = this;
+        this.cancelOnDestroy(
+            this.yp.ngrxStore.select(store => store.appDb.uiState.scene.sceneSelected)
+                .take(1)
+                .subscribe(scene_id => {
+                    bootbox.confirm('Are you sure you want to remove the selected scene', (result) => {
+                        if (result == true) {
+                            this._notifyResetSceneSelection();
+                            this.rp.removeBlocksWithSceneID(scene_id);
+                            this.rp.removeSceneFromBlockCollectionInScenes(scene_id);
+                            this.rp.removeSceneFromBlockCollectionsInChannels(scene_id);
+                            this.rp.removeScene(scene_id);
+                            this.rp.reduxCommit();
+                            this.sceneList.resetSelection();
+                        }
+                    });
+                })
+        )
+    }
+
+    _duplicateScene() {
+        this.cancelOnDestroy(
+            this.yp.ngrxStore.select(store => store.appDb.uiState.scene.sceneSelected)
+                .take(1)
+                .subscribe(scene_id => {
+                    console.log(scene_id);
+                })
+        )
+    }
+
     private save() {
         con('saving...');
-        this.redPepperService.save((result) => {
+        this.rp.save((result) => {
             if (result.status == true) {
                 bootbox.alert('saved');
             } else {
@@ -75,7 +115,7 @@ export class SceneManager extends Compbaser {
         this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: i_uiState}))
     }
 
-    _createCampaign() {
+    _newScene() {
         var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
         this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
         this.slideToCampaignName.emit();
