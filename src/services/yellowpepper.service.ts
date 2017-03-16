@@ -70,6 +70,10 @@ export class YellowPepperService {
         }, [])
     }
 
+    listenSave(){
+        return this.store.select(store => store.appDb.uiState.saving)
+    }
+
     /**
      Listen to when a campaign timeline channel is selected
      **/
@@ -172,7 +176,7 @@ export class YellowPepperService {
             .combineLatest($timelinesList$, (campaign, timelines) => {
                 return campaign
             }).mergeMap(campaign => {
-                return this.getCampaignTimelines(campaign.getCampaignId())
+                return this.listenCampaignTimelines(campaign.getCampaignId())
             }).mergeMap((i_timelines: List<CampaignTimelinesModel>) => {
                 var total = 0;
                 i_timelines.forEach((v) => {
@@ -180,6 +184,18 @@ export class YellowPepperService {
                     total = total + t;
                 })
                 return Observable.of(total);
+            })
+    }
+
+    /**
+     listen to all timeline for specified campaign id
+     **/
+    listenCampaignTimelines(i_campaign_id: number): Observable<List<CampaignTimelinesModel>> {
+        return this.store.select(store => store.msDatabase.sdk.table_campaign_timelines)
+            .map((campaignTimelinesModels: List<CampaignTimelinesModel>) => {
+                return campaignTimelinesModels.filter((campaignTimelinesModel: CampaignTimelinesModel) => {
+                    return campaignTimelinesModel.getCampaignId() == i_campaign_id;
+                });
             })
     }
 
@@ -239,6 +255,18 @@ export class YellowPepperService {
     }
 
     /**
+     Get player_data via its scene id
+     **/
+    listenScene(scene_id): Observable<PlayerDataModel> {
+        return this.store.select(store => store.msDatabase.sdk.table_player_data)
+            .map((playerDataModels: List<PlayerDataModel>) => {
+                return playerDataModels.find((playerDataModel: PlayerDataModel) => {
+                    return scene_id == playerDataModel.getPlayerDataId();
+                })
+            })
+    }
+
+    /**
      Listen to changes in selected scene
      **/
     listenSceneOrBlockSelectedChanged(emitOnEmpty: boolean = false): Observable<ISceneData> {
@@ -251,7 +279,7 @@ export class YellowPepperService {
             if (!emitOnEmpty) return true; // no filter requested
             return ids && ids.sceneId != -1 && ids.blockId != -1
         }).mergeMap(ids => {
-            return this.getScene(ids.sceneId)
+            return this.listenScene(ids.sceneId)
                 .map((playerDataModel: PlayerDataModelExt) => {
                     var domPlayerData = $.parseXML(playerDataModel.getPlayerDataValue())
                     var selectedSnippet: any = $(domPlayerData).find(`[id="${ids.blockId}"]`)[0];

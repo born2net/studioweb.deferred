@@ -1,4 +1,4 @@
-<div id="domRoot">
+<div id="domRoot" [ngClass]="{hidden: m_isSaving}">
     <div id="headerPad"></div>
     <nav id="fileMenu" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="navbar-header">
@@ -55,47 +55,7 @@
         <div id="appEverNodesContent" class="noScroll container" style="display: none"></div>
     </div>
 </div>
+<loading [style]="{'margin-top': '150px'}" *ngIf="m_isSaving"></loading>
 
 
-<!-- Modal -->
-<div class="modal modal-static fade" id="bsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button id="toggleProperties" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="myModalLabel" data-localize="ModalTitle">Modal title</h4>
-            </div>
-            <div class="modal-body">
-                <h3 data-localize="someContent">some content</h3>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal" data-localize="close">Close</button>
-                <button type="button" class="btn btn-primary" data-localize="saveChanges">Save changes</button>
-            </div>
-        </div>
-    </div>
-</div>
-<div id="popModal" style="display: none"></div>
-<div id="popupProperties" style="display: none">
-    <button style="float: right; margin: 20px" type="button" class="btn btn-default btn-sm modal_close" data-dismiss="modal">
-        <span class="glyphicon glyphicon-remove"></span>
-    </button>
-</div>
-<div id="aboutUS" style="display: none">
-    <h1 data-localize="aboutUs">StackView Rocks, this is a sample StackView Popup</h1>
-    <button type="button" class="btn btn-primary modal_close" data-dismiss="modal" data-localize="colse">Close</button>
-</div>
-<div id="languageSelector" class="dropdownlang" style="display: none">
-    <dt>
-        <a href="#"><span>Select language</span></a>
-    </dt>
-    <dd>
-        <ul>
-            <li>
-                <!--<a href="#"><img class="flag" src="assets/us.png" alt=""/>United States<span class="value">en</span></a>-->
-            </li>
-        </ul>
-    </dd>
-    <small>Let us know if you wish to help us add your native language</small>
-</div>
-<div id="stackWaitModalView" style="display: none"></div>
+

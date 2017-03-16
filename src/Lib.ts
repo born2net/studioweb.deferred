@@ -185,6 +185,31 @@ export class Lib {
     }
 
     /**
+     Simplify a string to basic character set
+     @method cleanChar
+     @param {String} value
+     @return {String} cleaned string
+     **/
+    static CleanChar(value) {
+        if (value == null)
+            value = '';
+        if ($.isNumeric(value))
+            return value;
+        value = value.replace(/,/g, ' ');
+        value = value.replace(/\\}/g, ' ');
+        value = value.replace(/{/g, ' ');
+        value = value.replace(/"/g, ' ');
+        value = value.replace(/'/g, ' ');
+        value = value.replace(/&/g, 'and');
+        value = value.replace(/>/g, ' ');
+        value = value.replace(/</g, ' ');
+        value = value.replace(/\[/g, ' ');
+        value = value.replace(/]/g, ' ');
+        return value;
+    }
+
+
+    /**
      Remove characters that a problemtaic to app / js
      **/
     static CleanProbCharacters(i_string: string, i_restriction: number) {

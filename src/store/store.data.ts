@@ -43,6 +43,7 @@ export interface IUiStateScene  {
 }
 
 export interface IUiState {
+    saving?:boolean;
     uiSideProps?:number;
     campaign?: IUiStateCampaign;
     scene?: IUiStateScene;
@@ -69,6 +70,7 @@ export const INITIAL_STORE_DATA: IMsDatabase = {
 
 export const INITIAL_APP_DB: IAppDb = {
     uiState: {
+        saving: false,
         uiSideProps: SideProps.none,
         campaign: {
             campaignTimelineBoardViewerSelected: -1,

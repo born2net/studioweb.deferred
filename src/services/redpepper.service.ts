@@ -79,6 +79,10 @@ export class RedPepperService {
         })
     }
 
+    public get loaderManager(){
+        return this.m_loaderManager;
+    }
+
     /**
      Save to server
      @method save

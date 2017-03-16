@@ -29,6 +29,7 @@ export interface ILoadManager {
     create: (user: string, pass: string, func: (result: any) => void) => void;
     save: (func: (result: any) => void) => void;
     requestData: (func: (result: any) => void) => void;
+    importScene: (businessID, nativeID, func: (result: any) => void) => void;
     requestAdsReport: (a: (d) => void, b: any, c: any) => any;
     getProofOfPlayStats: any;
     m_resellerInfo: XMLDocument;

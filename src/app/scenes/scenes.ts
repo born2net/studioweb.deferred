@@ -15,22 +15,20 @@ import {ISliderItemData} from "../../comps/sliderpanel/Slideritem";
         <Sliderpanel>
             <Slideritem [templateRef]="a" #sliderItemSceneManager class="page center sceneList selected" [showToButton]="false" [toDirection]="'right'" [to]="'sceneEditor'">
                 <template #a>
-                    <scene-manager (slideToSceneEditor)="sliderItemSceneManager.onNext()"></scene-manager>
+                    <scene-manager (sceneCreate)="sliderItemSceneManager.slideTo('sceneCreator','right')" (slideToSceneEditor)="sliderItemSceneManager.onNext()"></scene-manager>
                 </template>
             </Slideritem>
             <Slideritem [templateRef]="b" #sliderItemCampaignEditor (onChange)="_onSlideChange($event)" [showFromButton]="false" class="page left sceneEditor" [fromDirection]="'left'" [from]="'sceneList'">
                 <template #b>
-                    <scene-editor #sceneEditor (onToAddContent)="sliderAddContent.slideTo('addContent','right')"
-                                  (onGoBack)="sliderItemCampaignEditor.slideTo('sceneList','left')">
+                    <scene-editor #sceneEditor (onGoBack)="sliderItemCampaignEditor.slideTo('sceneList','left')">
                     </scene-editor>
                 </template>
             </Slideritem>
-
-            <!--<Slideritem [templateRef]="h" #sliderAddContent [showFromButton]="false" class="page left addContent" [fromDirection]="'left'" [from]="'sceneList'">-->
-            <!--<template #h>-->
-            <!--<add-content #addContent [setPlacement]="m_placement" (onGoBack)="sliderItemCampaignEditor.slideTo('campaignEditor','left')"></add-content>-->
-            <!--</template>-->
-            <!--</Slideritem>-->
+            <Slideritem [templateRef]="c" #sliderSceneCreator [showFromButton]="false" class="page left sceneCreator" [fromDirection]="'left'" [from]="'sceneList'">
+                <template #c>
+                    <scene-creator (onGoBack)="sliderSceneCreator.slideTo('sceneList','left')"></scene-creator>
+                </template>
+            </Slideritem>
         </Sliderpanel>
     `
 })

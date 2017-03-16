@@ -59,6 +59,9 @@ export class SceneManager extends Compbaser {
     sceneList:SceneList;
 
     @Output()
+    sceneCreate: EventEmitter<any> = new EventEmitter<any>();
+
+    @Output()
     slideToSceneEditor: EventEmitter<any> = new EventEmitter<any>();
 
     @Output()
@@ -132,6 +135,7 @@ export class SceneManager extends Compbaser {
     }
 
     _newScene() {
+        this.sceneCreate.emit();
         var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
         this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
         this.slideToCampaignName.emit();

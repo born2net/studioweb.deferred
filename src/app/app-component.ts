@@ -9,6 +9,10 @@ import {Observable} from "rxjs";
 import * as packageJson from "../../package.json";
 import {AuthService} from "../services/AuthService";
 import {LocalStorage} from "../services/LocalStorage";
+import {YellowPepperService} from "../services/yellowpepper.service";
+import {RedPepperService} from "../services/redpepper.service";
+import {IUiState} from "../store/store.data";
+import {ACTION_UISTATE_UPDATE} from "../store/actions/appdb.actions";
 
 @Component({
     selector: 'app-root',
@@ -18,11 +22,14 @@ export class AppComponent {
     version: string;
     ngVersion: string;
     offlineDevMode: string = window['offlineDevMode'];
+    m_isSaving:boolean = false;
 
     constructor(private router: Router,
                 private localStorage: LocalStorage,
                 private commBroker: CommBroker,
+                private rp:RedPepperService,
                 private authService: AuthService,
+                private yp:YellowPepperService,
                 private activatedRoute: ActivatedRoute,
                 private vRef: ViewContainerRef,
                 private titleService: Title,
@@ -35,6 +42,7 @@ export class AppComponent {
         // this.localStorage.removeItem('business_id')
 
         this.checkPlatform();
+        this.listenSave();
         this.toastr.setRootViewContainerRef(vRef);
         this.listenRouterUpdateTitle();
         Observable.fromEvent(window, 'resize').debounceTime(250)
@@ -53,6 +61,20 @@ export class AppComponent {
                     s.unsubscribe();
                 }
             }, (e) => console.error(e));
+    }
+
+    private listenSave(){
+        this.yp.listenSave().subscribe(i_saving=>{
+            if (i_saving){
+                this.m_isSaving = true;
+                this.rp.save(()=>{
+                    this.rp.reduxCommit(null,true)
+                    this.m_isSaving = false;
+                    let uiState: IUiState = {saving: false}
+                    this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+                })
+            }
+        })
     }
 
     private checkPlatform() {
