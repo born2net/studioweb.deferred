@@ -8,6 +8,7 @@ import {IUiState} from "../../store/store.data";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {ISceneData} from "../blocks/block-service";
 import {SceneList} from "./scene-list";
+import {ToastsManager} from "ng2-toastr";
 
 @Component({
     // changeDetection: ChangeDetectionStrategy.OnPush,
@@ -47,7 +48,7 @@ export class SceneManager extends Compbaser {
     sceneSelected$;
     public scenes$: Observable<Array<ISceneData>>
 
-    constructor(private yp: YellowPepperService, private rp: RedPepperService) {
+    constructor(private yp: YellowPepperService, private rp: RedPepperService, private toastr: ToastsManager) {
         super();
         this.preventRedirect(true);
         this.scenes$ = this.yp.listenScenes()
@@ -86,6 +87,7 @@ export class SceneManager extends Compbaser {
                             this.rp.removeScene(scene_id);
                             this.rp.reduxCommit();
                             this.sceneList.resetSelection();
+                            this.toastr.info('scene removed from scene list');
                         }
                     });
                 })
@@ -99,6 +101,7 @@ export class SceneManager extends Compbaser {
                 .subscribe(scene_id => {
                     var scenePlayerData = this.rp.getScenePlayerdata(scene_id);
                     this.createScene(scenePlayerData, true, '');
+                    this.toastr.info('scene duplicated and is available in scene list');
                 })
         )
     }
