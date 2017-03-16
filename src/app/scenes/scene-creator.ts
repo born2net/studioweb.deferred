@@ -9,6 +9,7 @@ import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
 import {IUiState} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE} from "../../store/actions/appdb.actions";
 import {ToastsManager} from "ng2-toastr";
+import {PLACEMENT_IS_SCENE} from "../../interfaces/Consts";
 
 @Component({
     selector: 'scene-creator',
@@ -121,12 +122,6 @@ export class SceneCreator extends Compbaser implements AfterViewInit {
             this.rp.injectPseudoScenePlayersIDs(i_SceneId);
             let uiState: IUiState = {saving: true}
             this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
-            // this._goBack();
-            // var navigationView = this.BB.comBroker.getService(BB.SERVICES.NAVIGATION_VIEW);
-            // navigationView.save(function () {
-            //     BB.comBroker.fire(BB.EVENTS.SCENE_LIST_UPDATED, this, this, 'pushToTop');
-            //     self._goBack();
-            // });
         });
     }
 
@@ -183,7 +178,6 @@ export class SceneCreator extends Compbaser implements AfterViewInit {
             })
         }
         this.m_sceneAccounts.pop();
-        // this.m_sceneAccounts.splice(-1,1);
     }
 
     _onAddScene(category) {
@@ -192,6 +186,10 @@ export class SceneCreator extends Compbaser implements AfterViewInit {
                 this._nameScene((i_name) => {
                     if (_.isUndefined(i_name) || i_name.length == 0)
                         return;
+                    var player_data = this.bs.getBlockBoilerplate('3510').getDefaultPlayerData(PLACEMENT_IS_SCENE);
+                    var sceneId = this.rp.createScene(player_data, '', i_name);
+                    this.rp.reduxCommit();
+                    this.toastr.info('scene imported and is available in scene list');
                     this._goBack();
                 });
                 return;
