@@ -14,6 +14,12 @@ import {RedPepperService} from "../services/redpepper.service";
 import {IUiState} from "../store/store.data";
 import {ACTION_UISTATE_UPDATE} from "../store/actions/appdb.actions";
 
+enum MainAppShowModeEnum {
+    MAIN,
+    SAVE,
+    PREVIEW
+}
+
 @Component({
     selector: 'app-root',
     templateUrl: './app-component.html'
@@ -22,14 +28,16 @@ export class AppComponent {
     version: string;
     ngVersion: string;
     offlineDevMode: string = window['offlineDevMode'];
-    m_isSaving:boolean = false;
+    m_ShowModeEnum = MainAppShowModeEnum;
+    m_showMode = MainAppShowModeEnum.MAIN;
+    m_hidden = false;
 
     constructor(private router: Router,
                 private localStorage: LocalStorage,
                 private commBroker: CommBroker,
-                private rp:RedPepperService,
+                private rp: RedPepperService,
                 private authService: AuthService,
-                private yp:YellowPepperService,
+                private yp: YellowPepperService,
                 private activatedRoute: ActivatedRoute,
                 private vRef: ViewContainerRef,
                 private titleService: Title,
@@ -43,6 +51,7 @@ export class AppComponent {
 
         this.checkPlatform();
         this.listenSave();
+        this.listenPreview();
         this.toastr.setRootViewContainerRef(vRef);
         this.listenRouterUpdateTitle();
         Observable.fromEvent(window, 'resize').debounceTime(250)
@@ -63,18 +72,52 @@ export class AppComponent {
             }, (e) => console.error(e));
     }
 
-    private listenSave(){
-        this.yp.listenSave().subscribe(i_saving=>{
-            if (i_saving){
-                this.m_isSaving = true;
-                this.rp.save(()=>{
-                    this.rp.reduxCommit(null,true)
-                    this.m_isSaving = false;
-                    let uiState: IUiState = {saving: false}
-                    this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
-                })
+    private listenPreview() {
+        this.yp.listenPreview()
+            .subscribe(i_previewing => {
+                if (i_previewing) {
+                    this.viewMode(MainAppShowModeEnum.PREVIEW);
+                } else {
+                    this.viewMode(MainAppShowModeEnum.MAIN);
+                }
+            }, (e) => console.error(e))
+    }
+
+    private listenSave() {
+        this.yp.listenSave()
+            .subscribe(i_saving => {
+                if (i_saving) {
+                    this.viewMode(MainAppShowModeEnum.SAVE);
+                    this.rp.save((result) => {
+                        if (result.status == true) {
+                            this.rp.reduxCommit(null, true)
+                            this.viewMode(MainAppShowModeEnum.MAIN);
+                            let uiState: IUiState = {saving: false}
+                            this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+                        } else {
+                            alert('error ' + JSON.stringify(result));
+                        }
+                    })
+                }
+            }, (e) => console.error(e))
+    }
+
+    private viewMode(i_mode: MainAppShowModeEnum) {
+        this.m_showMode = i_mode;
+        switch (i_mode) {
+            case MainAppShowModeEnum.MAIN: {
+                this.m_hidden = false;
+                break;
             }
-        })
+            case MainAppShowModeEnum.PREVIEW: {
+                this.m_hidden = true;
+                break;
+            }
+            case MainAppShowModeEnum.SAVE: {
+                this.m_hidden = true;
+                break;
+            }
+        }
     }
 
     private checkPlatform() {

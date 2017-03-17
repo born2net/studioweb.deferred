@@ -74,6 +74,10 @@ export class YellowPepperService {
         return this.store.select(store => store.appDb.uiState.saving)
     }
 
+    listenPreview(){
+        return this.store.select(store => store.appDb.uiState.previewing)
+    }
+
     /**
      Listen to when a campaign timeline channel is selected
      **/

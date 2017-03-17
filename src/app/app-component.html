@@ -1,4 +1,4 @@
-<div id="domRoot" [ngClass]="{hidden: m_isSaving}">
+<div id="domRoot" [ngClass]="{hidden: m_hidden}">
     <div id="headerPad"></div>
     <nav id="fileMenu" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="navbar-header">
@@ -55,7 +55,8 @@
         <div id="appEverNodesContent" class="noScroll container" style="display: none"></div>
     </div>
 </div>
-<loading [style]="{'margin-top': '150px'}" *ngIf="m_isSaving"></loading>
+<loading [style]="{'margin-top': '150px'}" *ngIf="m_showMode == m_ShowModeEnum.SAVE"></loading>
+<live-preview *ngIf="m_showMode == m_ShowModeEnum.PREVIEW"></live-preview>
 
 
 

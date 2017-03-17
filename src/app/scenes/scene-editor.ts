@@ -195,6 +195,8 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                 break;
             }
             case 'playPreview': {
+                let uiState: IUiState = {previewing: true}
+                this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
                 break;
             }
             case 'pushItemToTopButtonToolTip': {

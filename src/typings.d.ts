@@ -38,6 +38,11 @@ declare module 'redux-thunk' {
 
 }
 
+declare module FlashDetect {
+    export var installed;
+    export var versionAtLeast:(v:number)=>void;
+}
+
 interface Window {
     g_protocol: string;
     g_masterDomain: string;

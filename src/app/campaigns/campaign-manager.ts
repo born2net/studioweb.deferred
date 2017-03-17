@@ -117,15 +117,8 @@ export class CampaignManager extends Compbaser {
     }
 
     private save() {
-        con('saving...');
-        this.redPepperService.save((result) => {
-            if (result.status == true) {
-                bootbox.alert('saved');
-            } else {
-                alert(JSON.stringify(result));
-            }
-            // console.log(JSON.stringify(result));
-        });
+        let uiState: IUiState = {saving: true}
+        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 
     _onCampaignSelected(i_uiState: IUiState) {
