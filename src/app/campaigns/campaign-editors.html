@@ -25,7 +25,7 @@
                     <button (click)="_onEditScreenLayout()" id="editScreenLayout" type="button" title="edit screen layout" data-localize="empty" data-localize-tooltip="editScreenLayout" class="btn btn-default btn-sm">
                         <i class="fa fa-object-group"></i>
                     </button>
-                    <button id="campaignPreview" type="button" title="campaign preview" data-localize="empty" data-localize-tooltip="campaignPreviewTooltip" class="btn btn-default btn-sm">
+                    <button id="campaignPreview" (click)="_onCampaignPreview()" type="button" title="campaign preview" data-localize="empty" data-localize-tooltip="campaignPreviewTooltip" class="btn btn-default btn-sm">
                         <i class="fa fa-play-circle"></i>
                     </button>
 
@@ -70,7 +70,7 @@
                     <button id="removeBlockButton" type="button" title="remove content" data-localize="empty" data-localize-tooltip="removeContent" class="btn btn-default btn-sm">
                         <i class="fa fa-minus"></i>
                     </button>
-                    <button id="timelinePreview" type="button" title="campaign preview" data-localize="empty" data-localize-tooltip="campaignPreviewTooltip" class="btn btn-default btn-sm">
+                    <button (click)="_onTimelinePreview()" id="timelinePreview" type="button" title="campaign preview" data-localize="empty" data-localize-tooltip="campaignPreviewTooltip" class="btn btn-default btn-sm">
                         <i class="fa fa-play-circle"></i>
                     </button>
                 </h4>

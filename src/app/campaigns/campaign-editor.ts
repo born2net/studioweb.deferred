@@ -1,4 +1,4 @@
-import {animate, ChangeDetectionStrategy, Component, EventEmitter, Input, Output, state, style, transition, trigger, ViewChild} from "@angular/core";
+import {animate, ChangeDetectionStrategy, Component, EventEmitter, Output, state, style, transition, trigger} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
 import {YellowPepperService} from "../../services/yellowpepper.service";
@@ -8,8 +8,8 @@ import {Once} from "../../decorators/once-decorator";
 import {ACTION_UISTATE_UPDATE, AppdbAction, SideProps} from "../../store/actions/appdb.actions";
 import {IUiState} from "../../store/store.data";
 import {Lib} from "../../Lib";
-import {CampaignChannels} from "./campaign-channels";
-import {IAddContents} from "../../interfaces/IAddContent";
+import {PreviewModeEnum} from "../live-preview/live-preview";
+import * as _ from "lodash";
 
 @Component({
     selector: 'campaign-editor',
@@ -102,6 +102,18 @@ export class CampaignEditor extends Compbaser {
                     this.m_campaignTimelinesModels = m_campaignTimelinesModels;
                 }, (e) => console.error(e)
             )
+    }
+
+    _onCampaignPreview() {
+        let uiState: IUiState = {previewing: true, previewMode: PreviewModeEnum.CAMPAIGN}
+        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+    }
+
+    _onTimelinePreview() {
+        if (_.isUndefined(this.campaignTimelinesModel))
+            return bootbox.alert('No timeline selected');
+        let uiState: IUiState = {previewing: true, previewMode: PreviewModeEnum.TIMELINE}
+        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 
     _onGoBack() {

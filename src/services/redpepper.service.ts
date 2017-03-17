@@ -78,7 +78,7 @@ export class RedPepperService {
         })
     }
 
-    public get loaderManager(){
+    public get loaderManager() {
         return this.m_loaderManager;
     }
 
@@ -1464,6 +1464,22 @@ export class RedPepperService {
     }
 
     /**
+     Get i_campaign_id into campaign_board_id using local table_campaign_boards (not global boards)
+     @method getCampaignIdFromCampaignBoardId
+     @param {Number} i_campaign_board_id
+     @return {Number} campaign_id
+     **/
+    getCampaignBoardIdFromCampaignId(i_campaign_id) {
+        var found_campaign_board_id = -1;
+        $(this.databaseManager.table_campaign_boards().getAllPrimaryKeys()).each((k, campaign_board_id) => {
+            var recCampaignBoard = this.databaseManager.table_campaign_boards().getRec(campaign_board_id);
+            if (recCampaignBoard['campaign_id'] == i_campaign_id)
+                found_campaign_board_id = recCampaignBoard['campaign_board_id'];
+        });
+        return found_campaign_board_id;
+    }
+    
+    /**
      Remove all boards in sdk
      @method removeAllBoards
      @return none
@@ -1775,7 +1791,7 @@ export class RedPepperService {
     /**
      Build URL for player preview using supplied player parameters
      **/
-    _livePreviewGetLink(i_playerParams, i_bannerMode):string {
+    _livePreviewGetLink(i_playerParams, i_bannerMode): string {
         var rc4v2 = new RC4V2();
         var playerParams = rc4v2.encrypt(i_playerParams, '8547963624824263');
         var domain = this.getUserData().domain;
@@ -1793,7 +1809,6 @@ export class RedPepperService {
      @return {String} url
      **/
     livePreviewCampaign(i_campaignID, i_bannerMode) {
-
         var campaignBoardId = this.getCampaignBoardIdFromCampaignId(i_campaignID);
         var recCampaignBoard = this.databaseManager.table_campaign_boards().getRec(campaignBoardId);
         var campaignNativeID = recCampaignBoard['native_id'];
@@ -1823,7 +1838,7 @@ export class RedPepperService {
     /**
      Create a live preview URL for a scene
      **/
-    livePreviewScene(sceneID, i_bannerMode):string {
+    livePreviewScene(sceneID, i_bannerMode): string {
         // var sceneID = this.getSceneIdFromPseudoId(i_scene_id);
         var recPlayerData = this.getScenePlayerRecord(sceneID);
         var nativeID = recPlayerData['native_id'];
@@ -2201,22 +2216,6 @@ export class RedPepperService {
         return String(recCampaign['campaign_playlist_mode']);
     }
 
-    /**
-     Get i_campaign_id into campaign_board_id using local table_campaign_boards (not global boards)
-     @method getCampaignIdFromCampaignBoardId
-     @param {Number} i_campaign_board_id
-     @return {Number} campaign_id
-     **/
-    getCampaignBoardIdFromCampaignId(i_campaign_id) {
-
-        var found_campaign_board_id = -1;
-        $(this.databaseManager.table_campaign_boards().getAllPrimaryKeys()).each(function (k, campaign_board_id) {
-            var recCampaignBoard = this.databaseManager.table_campaign_boards().getRec(campaign_board_id);
-            if (recCampaignBoard['campaign_id'] == i_campaign_id)
-                found_campaign_board_id = recCampaignBoard['campaign_board_id'];
-        });
-        return found_campaign_board_id;
-    }
 
     /**
      Get a Board Template Viewer props

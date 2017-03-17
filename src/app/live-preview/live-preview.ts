@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef} from "@angular/core";
+import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {ACTION_UISTATE_UPDATE} from "../../store/actions/appdb.actions";
@@ -6,6 +6,7 @@ import {IUiState} from "../../store/store.data";
 import {RedPepperService} from "../../services/redpepper.service";
 import {CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 import {ISceneData} from "../blocks/block-service";
+import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
 
 export enum PreviewModeEnum {
     SCENE,
@@ -50,9 +51,9 @@ export enum PreviewModeEnum {
 })
 export class LivePreview extends Compbaser implements AfterViewInit {
 
-    constructor(private yp: YellowPepperService, private rp: RedPepperService, private el: ElementRef) {
+    constructor(private cd:ChangeDetectorRef, private yp: YellowPepperService, private rp: RedPepperService, private el: ElementRef) {
         super();
-
+        cd.detach();
     }
 
     ngAfterViewInit() {
@@ -68,14 +69,18 @@ export class LivePreview extends Compbaser implements AfterViewInit {
                             })
                     }
                     case PreviewModeEnum.TIMELINE: {
-                        return this.yp.listenTimelineSelected().take(1).map((i_campaignTimelinesModel: CampaignTimelinesModel) => {
-                            return this.launchTimeline(i_campaignTimelinesModel.getCampaignId(), i_campaignTimelinesModel.getCampaignTimelineId());
-                        })
+                        return this.yp.listenTimelineSelected()
+                            .take(1)
+                            .map((i_campaignTimelinesModel: CampaignTimelinesModel) => {
+                                return this.launchTimeline(i_campaignTimelinesModel.getCampaignId(), i_campaignTimelinesModel.getCampaignTimelineId());
+                            })
                     }
                     case PreviewModeEnum.CAMPAIGN: {
-                        return this.yp.listenTimelineSelected().take(1).map((i_campaignTimelinesModel: CampaignTimelinesModel) => {
-                            return this.launchCampaign(i_campaignTimelinesModel.getCampaignTimelineId());
-                        })
+                        return this.yp.listenCampaignSelected()
+                            .take(1)
+                            .map((i_campaignsModelExt: CampaignsModelExt) => {
+                                return this.launchCampaign(i_campaignsModelExt.getCampaignId());
+                            })
                     }
                 }
             }).subscribe((v) => {
@@ -115,7 +120,7 @@ export class LivePreview extends Compbaser implements AfterViewInit {
      **/
     launchTimeline(i_campaignID, i_campaignTimelineID) {
         var url = this.rp.livePreviewTimeline(i_campaignID, i_campaignTimelineID, 0);
-        $('#iFrameEmbedded', this.el).attr('src', url);
+        $('#iFrameEmbedded').attr('src', url);
     }
 
     /**
@@ -124,7 +129,7 @@ export class LivePreview extends Compbaser implements AfterViewInit {
      **/
     launchCampaign(i_campaignID) {
         var url = this.rp.livePreviewCampaign(i_campaignID, 0);
-        $('#iFrameEmbedded', this.el).attr('src', url);
+        $('#iFrameEmbedded').attr('src', url);
     }
 
     ngOnInit() {
