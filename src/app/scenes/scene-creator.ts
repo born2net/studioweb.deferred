@@ -37,7 +37,7 @@ import {PLACEMENT_IS_SCENE} from "../../interfaces/Consts";
                 </div>
             </div>
         </div>
-        <div matchBodyHeight="50" *ngIf="!m_selectTypeMode" style="padding: 20px">
+        <div *ngIf="!m_selectTypeMode" style="padding: 20px">
             <div (click)="_onTemplateSelected(account)" *ngFor="let account of m_sceneAccounts" class="col-xs-1" style="margin: 10px">
                 <img class="sceneImportThumb" src="https://secure.digitalsignage.com/studioweb/assets/scenes/{{account.sceneName}}.jpg"/>
                 <!--<img class="sceneImportThumb" src="../assets/scenes/{{account.sceneName}}.jpg"/>-->
