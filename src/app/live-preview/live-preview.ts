@@ -113,7 +113,6 @@ export class LivePreview extends Compbaser implements AfterViewInit {
         $('#iFrameEmbedded').attr('src', url);
     }
 
-
     /**
      Listen to live preview launch
      @method launch  i_campaignTimelineNativeID
