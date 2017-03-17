@@ -50,30 +50,29 @@ export class RedPepperService {
     private m_eri = '';
     private m_authTime;
 
-
     public dbConnect(i_user, i_pass): Observable<any> {
+        var self = this;
         return Observable.create(observer => {
-            this.m_loaderManager = new LoaderManager() as ILoadManager;
-            this.databaseManager = this.m_loaderManager.m_dataBaseManager;
+            self.m_loaderManager = new LoaderManager() as ILoadManager;
+            self.databaseManager = self.m_loaderManager.m_dataBaseManager;
 
-            this.m_loaderManager.create(i_user, i_pass, (pepperAuthReply: IPepperAuthReply) => {
+            self.m_loaderManager.create(i_user, i_pass, (pepperAuthReply: IPepperAuthReply) => {
                 var pepperConnection: IPepperConnection = {
                     pepperAuthReply: pepperAuthReply,
-                    dDataBaseManager: this.databaseManager,
-                    loadManager: this.m_loaderManager,
+                    dDataBaseManager: self.databaseManager,
+                    loadManager: self.m_loaderManager,
                 }
                 observer.next(pepperConnection);
-
                 if (pepperAuthReply.status == true) {
-                    this.m_authenticated = true;
-                    this.m_domain = this.m_loaderManager['m_domain'];
-                    var resellerInfo = this.m_loaderManager['m_resellerInfo'];
-                    this.m_whiteLabel = parseInt($(resellerInfo).find('WhiteLabel').attr('enabled'));
-                    this.m_resellerId = parseInt($(resellerInfo).find('BusinessInfo').attr('businessId'));
-                    this.m_resellerName = $(resellerInfo).find('BusinessInfo').attr('name');
-                    this.m_businessID = this.m_loaderManager['m_businessId'];
-                    this.m_eri = this.m_loaderManager['m_eri'];
-                    this.m_authTime = Date.now();
+                    self.m_authenticated = true;
+                    self.m_domain = self.m_loaderManager['m_domain'];
+                    var resellerInfo = self.m_loaderManager['m_resellerInfo'];
+                    self.m_whiteLabel = parseInt($(resellerInfo).find('WhiteLabel').attr('enabled'));
+                    self.m_resellerId = parseInt($(resellerInfo).find('BusinessInfo').attr('businessId'));
+                    self.m_resellerName = $(resellerInfo).find('BusinessInfo').attr('name');
+                    self.m_businessID = self.m_loaderManager['m_businessId'];
+                    self.m_eri = self.m_loaderManager['m_eri'];
+                    self.m_authTime = Date.now();
                 }
             });
         })
@@ -119,7 +118,7 @@ export class RedPepperService {
             userPass: this['m_pass'],
             domain: this['m_domain'],
             businessID: this['m_businessID'],
-            eri: this['m_eri]'],
+            eri: this['m_eri'],
             authTime: this['m_authTime'],
             whiteLabel: this['m_whiteLabel'],
             resellerName: this['m_resellerName'],
@@ -1775,20 +1774,15 @@ export class RedPepperService {
 
     /**
      Build URL for player preview using supplied player parameters
-     @method _livePreviewGetLink
-     @param {String} i_playerParams
-     @param {Number} i_bannerMode
-     @return {String} url
      **/
-    _livePreviewGetLink(i_playerParams, i_bannerMode) {
-
-        // var rc4v2 = new RC4V2();
-        // var playerParams = rc4v2.encrypt(i_playerParams, '8547963624824263');
-        // var domain = this.getUserData().domain;
-        // var eri = this.getUserData().eri;
-        // var url = window.g_protocol + domain + '/WebService/SignagePlayerApp.html?eri=' + eri + '&playerParams=' + playerParams + '&banner=' + i_bannerMode;
-        // console.log(playerParams);
-        // return url;
+    _livePreviewGetLink(i_playerParams, i_bannerMode):string {
+        var rc4v2 = new RC4V2();
+        var playerParams = rc4v2.encrypt(i_playerParams, '8547963624824263');
+        var domain = this.getUserData().domain;
+        var eri = this.getUserData().eri;
+        var url = window.g_protocol + domain + '/WebService/SignagePlayerApp.html?eri=' + eri + '&playerParams=' + playerParams + '&banner=' + i_bannerMode;
+        // console.log(url);
+        return url;
     }
 
     /**
@@ -1828,14 +1822,9 @@ export class RedPepperService {
 
     /**
      Create a live preview URL for a scene
-     @method livePreviewScene
-     @param {Number} i_scene_id
-     @param {Number} i_bannerMode
-     @return {String} url
      **/
-    livePreviewScene(i_scene_id, i_bannerMode) {
-
-        var sceneID = this.getSceneIdFromPseudoId(i_scene_id);
+    livePreviewScene(sceneID, i_bannerMode):string {
+        // var sceneID = this.getSceneIdFromPseudoId(i_scene_id);
         var recPlayerData = this.getScenePlayerRecord(sceneID);
         var nativeID = recPlayerData['native_id'];
         var playerParams = this.getUserData().businessID + ',3,' + nativeID;

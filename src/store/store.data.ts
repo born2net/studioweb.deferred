@@ -45,6 +45,7 @@ export interface IUiStateScene  {
 export interface IUiState {
     saving?:boolean;
     previewing?:boolean;
+    previewMode?:number;
     uiSideProps?:number;
     campaign?: IUiStateCampaign;
     scene?: IUiStateScene;
@@ -73,6 +74,7 @@ export const INITIAL_APP_DB: IAppDb = {
     uiState: {
         saving: false,
         previewing: false,
+        previewMode: -1,
         uiSideProps: SideProps.none,
         campaign: {
             campaignTimelineBoardViewerSelected: -1,

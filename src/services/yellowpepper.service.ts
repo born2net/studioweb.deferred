@@ -306,8 +306,6 @@ export class YellowPepperService {
             .mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
     }
 
-
-
     listenSceneSelected(emitOnEmpty: boolean = false): Observable<ISceneData> {
         var sceneSelected$ = this.store.select(store => store.appDb.uiState.scene.sceneSelected);
         return sceneSelected$
@@ -422,6 +420,10 @@ export class YellowPepperService {
                 // console.log('winner ' + longestChannelDuration);
                 return longestChannelDuration;
             })
+    }
+
+    getPreviewMode(){
+        return this.store.select(store => store.appDb.uiState.previewMode).take(1)
     }
 
     /**

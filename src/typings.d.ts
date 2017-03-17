@@ -43,6 +43,12 @@ declare module FlashDetect {
     export var versionAtLeast:(v:number)=>void;
 }
 
+declare class RC4V2 {
+    encrypt: any;
+    decrypt: any;
+    calculate: any;
+}
+
 interface Window {
     g_protocol: string;
     g_masterDomain: string;
