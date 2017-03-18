@@ -133,15 +133,11 @@ export class AddContent extends Compbaser implements AfterViewInit {
     m_selected_campaign_timeline_chanel_id = -1;
 
     constructor(@Inject('HYBRID_PRIVATE') private hybrid_private: boolean,
-                @Inject('BLOCK_PLACEMENT') private blockPlacement,
                 private commBroker: CommBroker,
                 private yp: YellowPepperService,
-                private cd: ChangeDetectorRef,
                 private rp: RedPepperService,
                 private bs: BlockService) {
         super();
-
-        this.m_placement = blockPlacement;
 
         this.cancelOnDestroy(
             //
@@ -166,27 +162,6 @@ export class AddContent extends Compbaser implements AfterViewInit {
                     this.m_sceneDatas = i_playerDatas;
                 }, (e) => console.error(e))
         )
-
-        switch (this.m_placement) {
-
-            case PLACEMENT_CHANNEL: {
-
-                this.cancelOnDestroy(
-                    this.yp.listenCampaignTimelineBoardViewerSelected(true)
-                        .subscribe((i_campaignTimelineBoardViewerChanelsModel: CampaignTimelineBoardViewerChanelsModel) => {
-                            this.m_selected_campaign_timeline_chanel_id = i_campaignTimelineBoardViewerChanelsModel.getCampaignTimelineChanelId();
-                        }, (e) => console.error(e))
-                )
-                break;
-            }
-
-            case PLACEMENT_SCENE: {
-                break;
-            }
-        }
-
-        // var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
-        // this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 
     @Output()
@@ -194,7 +169,28 @@ export class AddContent extends Compbaser implements AfterViewInit {
 
     @Input()
     set placementIsList(i_value) {
-        this.m_placement = PLACEMENT_LISTS;
+        this.m_placement = i_value;
+        switch (i_value) {
+            case PLACEMENT_LISTS: {
+                break;
+            }
+            case PLACEMENT_CHANNEL: {
+                this.cancelOnDestroy(
+                    this.yp.listenCampaignTimelineBoardViewerSelected(true)
+                        .subscribe((i_campaignTimelineBoardViewerChanelsModel: CampaignTimelineBoardViewerChanelsModel) => {
+                            this.m_selected_campaign_timeline_chanel_id = i_campaignTimelineBoardViewerChanelsModel.getCampaignTimelineChanelId();
+                        }, (e) => console.error(e))
+                )
+                var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
+                this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+                break;
+            }
+            case PLACEMENT_SCENE: {
+                var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
+                this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+                break;
+            }
+        }
         this._render();
     }
 

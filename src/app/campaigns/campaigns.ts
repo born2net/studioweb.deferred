@@ -8,6 +8,7 @@ import {RedPepperService} from "../../services/redpepper.service";
 import {Once} from "../../decorators/once-decorator";
 import {IScreenTemplateData} from "../../comps/screen-template/screen-template";
 import {CampaignEditor} from "./campaign-editor";
+import {PLACEMENT_CHANNEL} from "../../interfaces/Consts";
 // import {PLACEMENT_CHANNEL} from "../../interfaces/Consts";
 
 @Component({
@@ -54,7 +55,7 @@ import {CampaignEditor} from "./campaign-editor";
             </Slideritem>
             <Slideritem [templateRef]="h" #sliderAddContent [showFromButton]="false" class="page left addContent" [fromDirection]="'left'" [from]="'campaignList'">
                 <template #h>
-                    <add-content #addContent (onDone)="sliderItemCampaignEditor.slideTo('campaignEditor','left')"></add-content>
+                    <add-content #addContent [placementIsList]="m_PLACEMENT_CHANNEL" (onDone)="sliderItemCampaignEditor.slideTo('campaignEditor','left')"></add-content>
                 </template>
             </Slideritem>
         </Sliderpanel>
@@ -62,7 +63,7 @@ import {CampaignEditor} from "./campaign-editor";
 })
 export class Campaigns extends Compbaser {
 
-    // private m_placement;// = PLACEMENT_CHANNEL;
+    m_PLACEMENT_CHANNEL = PLACEMENT_CHANNEL;
 
     constructor(private yp: YellowPepperService, private rp: RedPepperService) {
         super();

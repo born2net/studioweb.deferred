@@ -13,6 +13,7 @@ import {JsonEventResourceModel} from "./json-event-grid";
 import {Lib} from "../../Lib";
 import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
 import {IAddContents} from "../../interfaces/IAddContent";
+import {PLACEMENT_LISTS} from "../../interfaces/Consts";
 
 @Component({
     selector: 'block-prop-collection',
@@ -77,7 +78,7 @@ import {IAddContents} from "../../interfaces/IAddContent";
                 <h4 i18n class="modal-title">add content to collection</h4>
             </modal-header>
             <modal-body>
-                <add-content [placementIsList]="true" #addContent (onDone)="_onAddedNewBlock()" (onAddContentSelected)="_addCollectionNewListItem($event)"></add-content>
+                <add-content [placementIsList]="m_PLACEMENT_LISTS" #addContent (onDone)="_onAddedNewBlock()" (onAddContentSelected)="_addCollectionNewListItem($event)"></add-content>
             </modal-body>
             <modal-footer [show-default-buttons]="true"></modal-footer>
         </modal>
@@ -88,6 +89,8 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
     private formInputs = {};
     private m_contGroup: FormGroup;
     private m_blockData: IBlockData;
+
+    m_PLACEMENT_LISTS = PLACEMENT_LISTS;
     m_collectionList: List<StoreModel>;
     m_jsonEventResources: Array<JsonEventResourceModel>;
 
