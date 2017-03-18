@@ -119,7 +119,7 @@ export class aaaa extends Compbaser implements AfterViewInit {
                 <h4 i18n class="modal-title">add content to scene</h4>
             </modal-header>
             <modal-body>
-                <add-content #addContent [placementIsList]="m_PLACEMENT_SCENE" (onDone)="_onAddedNewBlock()"></add-content>
+                <add-content #addContent [placement]="m_PLACEMENT_SCENE" (onDone)="_onAddedNewBlock()"></add-content>
             </modal-body>
             <modal-footer [show-default-buttons]="true"></modal-footer>
         </modal>

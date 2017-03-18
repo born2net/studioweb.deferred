@@ -9,6 +9,9 @@ import {Once} from "../../decorators/once-decorator";
 import {IScreenTemplateData} from "../../comps/screen-template/screen-template";
 import {CampaignEditor} from "./campaign-editor";
 import {PLACEMENT_CHANNEL} from "../../interfaces/Consts";
+import {IAddContents} from "../../interfaces/IAddContent";
+import {CampaignTimelineBoardViewerChanelsModel} from "../../store/imsdb.interfaces_auto";
+import {BlockService} from "../blocks/block-service";
 // import {PLACEMENT_CHANNEL} from "../../interfaces/Consts";
 
 @Component({
@@ -55,7 +58,7 @@ import {PLACEMENT_CHANNEL} from "../../interfaces/Consts";
             </Slideritem>
             <Slideritem [templateRef]="h" #sliderAddContent [showFromButton]="false" class="page left addContent" [fromDirection]="'left'" [from]="'campaignList'">
                 <template #h>
-                    <add-content #addContent [placementIsList]="m_PLACEMENT_CHANNEL" (onDone)="sliderItemCampaignEditor.slideTo('campaignEditor','left')"></add-content>
+                    <add-content #addContent [placement]="m_PLACEMENT_CHANNEL" (onAddContentSelected)="_onAddedContent($event) ; sliderItemCampaignEditor.slideTo('campaignEditor','left')"></add-content>
                 </template>
             </Slideritem>
         </Sliderpanel>
@@ -64,14 +67,39 @@ import {PLACEMENT_CHANNEL} from "../../interfaces/Consts";
 export class Campaigns extends Compbaser {
 
     m_PLACEMENT_CHANNEL = PLACEMENT_CHANNEL;
+    private m_selected_campaign_timeline_chanel_id = -1;
 
-    constructor(private yp: YellowPepperService, private rp: RedPepperService) {
+    constructor(private yp: YellowPepperService, private rp: RedPepperService, private bs:BlockService) {
         super();
+
+        this.cancelOnDestroy(
+            this.yp.listenCampaignTimelineBoardViewerSelected()
+                .subscribe((i_campaignTimelineBoardViewerChanelsModel: CampaignTimelineBoardViewerChanelsModel) => {
+                    this.m_selected_campaign_timeline_chanel_id = i_campaignTimelineBoardViewerChanelsModel.getCampaignTimelineChanelId();
+                }, (e) => console.error(e))
+        )
+
         var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
         this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 
     _onOpenScreenLayoutEditor(){
+    }
+
+    _onAddedContent(i_addContents:IAddContents) {
+        this.yp.getTotalDurationChannel(this.m_selected_campaign_timeline_chanel_id)
+            .subscribe((i_totalChannelLength) => {
+                var boilerPlate = this.bs.getBlockBoilerplate(i_addContents.blockCode);
+                this._createNewChannelBlock(i_addContents, boilerPlate, i_totalChannelLength);
+            }, (e) => console.error(e))
+    }
+
+    /**
+     Create a new block (player) on the current channel and refresh UI bindings such as properties open events.
+     **/
+    _createNewChannelBlock(i_addContents: IAddContents, i_boilerPlate, i_totalChannelLength) {
+        this.rp.createNewChannelPlayer(this.m_selected_campaign_timeline_chanel_id, i_addContents, i_boilerPlate, i_totalChannelLength);
+        this.rp.reduxCommit();
     }
 
     _onSlideChange(event: ISliderItemData) {

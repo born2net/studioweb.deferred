@@ -78,7 +78,7 @@ import {PLACEMENT_LISTS} from "../../interfaces/Consts";
                 <h4 i18n class="modal-title">add content to collection</h4>
             </modal-header>
             <modal-body>
-                <add-content [placementIsList]="m_PLACEMENT_LISTS" #addContent (onAddContentSelected)="_addCollectionNewListItem($event)"></add-content>
+                <add-content [placement]="m_PLACEMENT_LISTS" #addContent (onAddContentSelected)="_onAddedContent($event)"></add-content>
             </modal-body>
             <modal-footer [show-default-buttons]="true"></modal-footer>
         </modal>
@@ -124,10 +124,10 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
         this.modal.open()
     }
 
-    _onAddedNewBlock(i_addContents:IAddContents) {
-        console.log('added ' + i_addContents.name);
-        this.modal.close()
-    }
+    // _onAddedNewBlock(i_addContents:IAddContents) {
+    //     console.log('added ' + i_addContents.name);
+    //     this.modal.close()
+    // }
 
     _onDragComplete(dragData: ISimpleGridDraggedData) {
         // dragData.items.forEach((item: StoreModel, i) => con(i + ' ' + item.getKey('name')) );
@@ -266,11 +266,11 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
 
     /**
      Add a new collection item which can include a Scene or a resource (not a component)
-     @method _addCollectionNewListItem
+     @method _onAddedContent
      @param {Event} e
      **/
-    _addCollectionNewListItem(i_AddContents:IAddContents) {
-        console.log(i_AddContents);
+    _onAddedContent(i_addContents:IAddContents) {
+        // console.log(i_addContents);
         // var domPlayerData = self._getBlockPlayerData();
         // var xSnippetCollection = $(domPlayerData).find('Collection');
         // var buff = '';

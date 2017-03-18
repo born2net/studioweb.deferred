@@ -1,20 +1,19 @@
-import {AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Inject, Input, Output} from "@angular/core";
+import {AfterViewInit, Component, EventEmitter, Inject, Input, Output} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {IUiState} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
 import {BlockService, ISceneData} from "../blocks/block-service";
-import {Lib} from "../../Lib";
-import * as _ from "lodash";
 import {UserModel} from "../../models/UserModel";
-import {CampaignTimelineBoardViewerChanelsModel, ResourcesModel} from "../../store/imsdb.interfaces_auto";
-import {List} from "immutable";
-import {RedPepperService} from "../../services/redpepper.service";
+import {ResourcesModel} from "../../store/imsdb.interfaces_auto";
 import {IAddContents} from "../../interfaces/IAddContent";
 import {BlockTypeEnum} from "../../interfaces/BlockTypeEnum";
 import {BlockLabels, PLACEMENT_CHANNEL, PLACEMENT_LISTS, PLACEMENT_SCENE} from "../../interfaces/Consts";
 import {CommBroker} from "../../services/CommBroker";
 import {ADD_NEW_BLOCK_SCENE} from "../scenes/scene-editor";
+import {Lib} from "../../Lib";
+import {List} from "immutable";
+import * as _ from "lodash";
 
 @Component({
     selector: 'add-content',
@@ -103,7 +102,6 @@ import {ADD_NEW_BLOCK_SCENE} from "../scenes/scene-editor";
             </div>
         </div>
 
-
         <!--<ul class="list-group" id="addComponentBlockList" style="padding:20px">-->
         <!--<li (click)="_onComponentSelected(component)" *ngFor="let component of m_componentList" class="list-group-item ">-->
         <!--<i [ngClass]="{nowAllowed: !component.allow}" style="display: inline" class="fa fa-2x {{component.fa}}"></i>-->
@@ -118,7 +116,6 @@ import {ADD_NEW_BLOCK_SCENE} from "../scenes/scene-editor";
     `
 })
 export class AddContent extends Compbaser implements AfterViewInit {
-
     m_placement;
     m_sceneMime;
     m_userModel: UserModel;
@@ -130,12 +127,10 @@ export class AddContent extends Compbaser implements AfterViewInit {
     m_PLACEMENT_SCENE = PLACEMENT_SCENE;
     m_PLACEMENT_LISTS = PLACEMENT_LISTS;
     m_PLACEMENT_CHANNEL = PLACEMENT_CHANNEL;
-    m_selected_campaign_timeline_chanel_id = -1;
 
     constructor(@Inject('HYBRID_PRIVATE') private hybrid_private: boolean,
                 private commBroker: CommBroker,
                 private yp: YellowPepperService,
-                private rp: RedPepperService,
                 private bs: BlockService) {
         super();
 
@@ -164,23 +159,14 @@ export class AddContent extends Compbaser implements AfterViewInit {
         )
     }
 
-    @Output()
-    onDone: EventEmitter<IAddContents> = new EventEmitter<IAddContents>();
-
     @Input()
-    set placementIsList(i_value) {
+    set placement(i_value) {
         this.m_placement = i_value;
         switch (i_value) {
             case PLACEMENT_LISTS: {
                 break;
             }
             case PLACEMENT_CHANNEL: {
-                this.cancelOnDestroy(
-                    this.yp.listenCampaignTimelineBoardViewerSelected(true)
-                        .subscribe((i_campaignTimelineBoardViewerChanelsModel: CampaignTimelineBoardViewerChanelsModel) => {
-                            this.m_selected_campaign_timeline_chanel_id = i_campaignTimelineBoardViewerChanelsModel.getCampaignTimelineChanelId();
-                        }, (e) => console.error(e))
-                )
                 var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
                 this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
                 break;
@@ -197,44 +183,25 @@ export class AddContent extends Compbaser implements AfterViewInit {
     @Output()
     onAddContentSelected: EventEmitter<IAddContents> = new EventEmitter<IAddContents>();
 
-
     _addBlock(i_addContents: IAddContents) {
 
         switch (this.m_placement) {
             case PLACEMENT_CHANNEL: {
-
-                this.yp.getTotalDurationChannel(this.m_selected_campaign_timeline_chanel_id)
-                    .subscribe((i_totalChannelLength) => {
-                        var boilerPlate = this.bs.getBlockBoilerplate(i_addContents.blockCode);
-                        this._createNewChannelBlock(i_addContents, boilerPlate, i_totalChannelLength);
-                    }, (e) => console.error(e))
+                this.onAddContentSelected.emit(i_addContents)
                 break;
             }
 
             case PLACEMENT_LISTS: {
                 this.onAddContentSelected.emit(i_addContents)
-                this.onDone.emit();
                 break;
             }
 
             case PLACEMENT_SCENE: {
                 this.commBroker.fire({event: ADD_NEW_BLOCK_SCENE, fromInstance: this, message: i_addContents});
-                this.onDone.emit();
                 break;
             }
         }
-
-
     }
-
-    /**
-     Create a new block (player) on the current channel and refresh UI bindings such as properties open events.
-     **/
-    _createNewChannelBlock(i_addContents: IAddContents, i_boilerPlate, i_totalChannelLength) {
-        this.rp.createNewChannelPlayer(this.m_selected_campaign_timeline_chanel_id, i_addContents, i_boilerPlate, i_totalChannelLength);
-        this.rp.reduxCommit();
-    }
-
 
     ngAfterViewInit() {
         this._render();
@@ -273,7 +240,6 @@ export class AddContent extends Compbaser implements AfterViewInit {
         //     }
         // }
         this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
-        this.onDone.emit();
     }
 
     /**
@@ -283,13 +249,6 @@ export class AddContent extends Compbaser implements AfterViewInit {
      @return none
      **/
     _render() {
-
-        // BB.comBroker.getService(BB.SERVICES.PROPERTIES_VIEW).resetPropertiesView();
-        //
-        // $(Elements.ADD_COMPONENT_BLOCK_LIST, this.el).empty();
-        // $(Elements.ADD_RESOURCE_BLOCK_LIST, this.el).empty();
-        // $(Elements.ADD_SCENE_BLOCK_LIST, this.el).empty();
-
         this.m_componentList = [];
         this.m_sceneList = []
 
@@ -451,7 +410,6 @@ export class AddContent extends Compbaser implements AfterViewInit {
     }
 
     destroy() {
-        console.log('dest');
     }
 }
 

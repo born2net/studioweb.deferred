@@ -160,7 +160,6 @@ export class YellowPepperService {
      listen UI campaign > timeline > board_viewer selected and return back the associated channel with that board id
      **/
     listenCampaignTimelineBoardViewerSelected(emitOnEmpty: boolean = false): Observable<CampaignTimelineBoardViewerChanelsModel> {
-        // listenCampaignTimelineBoardViewerSelected(): Observable<CampaignTimelineBoardViewerChanelsModel> {
         var boardSelected$ = this.store.select(store => store.appDb.uiState.campaign.campaignTimelineBoardViewerSelected);
         var $viewerChannels$ = this.store.select(store => store.msDatabase.sdk.table_campaign_timeline_board_viewer_chanels);
         return boardSelected$
@@ -287,6 +286,14 @@ export class YellowPepperService {
                 .map((playerDataModel: PlayerDataModelExt) => {
                     var domPlayerData = $.parseXML(playerDataModel.getPlayerDataValue())
                     var selectedSnippet: any = $(domPlayerData).find(`[id="${ids.blockId}"]`)[0];
+
+
+                    //todo: fix is block deleted
+                    /** if block was not found in snippet it was removed so exit **/
+                    if (_.isUndefined(selectedSnippet)){
+                       return Observable.empty()
+                    }
+
                     var mimeType = $(domPlayerData).find('Player').attr('mimeType');
                     var xml = (new XMLSerializer()).serializeToString(selectedSnippet);
                     selectedSnippet = $.parseXML(xml)
