@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, EventEmitter, Inject, Input, Output} from "@angular/core";
+import {AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Inject, Input, Output} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {IUiState} from "../../store/store.data";
@@ -47,7 +47,7 @@ import {ADD_NEW_BLOCK_SCENE} from "../scenes/scene-editor";
                         </a>
                     </h4>
                 </div>
-                <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
                     <div class="panel-body">
                         <ul class="list-group" id="addComponentBlockList" style="padding:20px">
                             <li (click)="_onComponentSelected(component)" *ngFor="let component of m_componentList" class="list-group-item ">
@@ -70,7 +70,7 @@ import {ADD_NEW_BLOCK_SCENE} from "../scenes/scene-editor";
                         </a>
                     </h4>
                 </div>
-                <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                <div id="collapseTwo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingTwo">
                     <div class="panel-body">
                         <ul class="list-group" id="addComponentBlockList" style="padding:20px">
                             <li (click)="_onResourceSelected(resource)" *ngFor="let resource of m_resourceList" class="list-group-item ">
@@ -90,7 +90,7 @@ import {ADD_NEW_BLOCK_SCENE} from "../scenes/scene-editor";
                         </a>
                     </h4>
                 </div>
-                <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                <div id="collapseThree" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingThree">
                     <div class="panel-body">
                         <ul class="list-group" id="addComponentBlockList" style="padding:20px">
                             <li (click)="_onSceneSelected(scene)" *ngFor="let scene of m_sceneList" class="list-group-item ">
@@ -102,12 +102,26 @@ import {ADD_NEW_BLOCK_SCENE} from "../scenes/scene-editor";
                 </div>
             </div>
         </div>
+
+
+        <!--<ul class="list-group" id="addComponentBlockList" style="padding:20px">-->
+        <!--<li (click)="_onComponentSelected(component)" *ngFor="let component of m_componentList" class="list-group-item ">-->
+        <!--<i [ngClass]="{nowAllowed: !component.allow}" style="display: inline" class="fa fa-2x {{component.fa}}"></i>-->
+        <!--<h3 [ngClass]="{nowAllowed: !component.allow}" style=" display: inline"> {{component.name}} </h3>-->
+        <!--<h6 [ngClass]="{nowAllowed: !component.allow}"> {{component.description}}</h6>-->
+        <!--<button (click)="_onUpgEnterprise($event)" class="btn btn-primary pull-right" *ngIf="!component.allow">-->
+        <!--upgrade to enterprise-->
+        <!--</button>-->
+        <!--</li>-->
+        <!--</ul>-->
+
     `
 })
 export class AddContent extends Compbaser implements AfterViewInit {
 
     m_placement;
     m_sceneMime;
+    m_inList = false;
     m_userModel: UserModel;
     m_resourceModels: List<ResourcesModel>;
     m_sceneDatas: Array<ISceneData>;
@@ -121,10 +135,11 @@ export class AddContent extends Compbaser implements AfterViewInit {
 
     constructor(@Inject('HYBRID_PRIVATE') private hybrid_private: boolean,
                 @Inject('BLOCK_PLACEMENT') private blockPlacement,
-                private commBroker:CommBroker,
+                private commBroker: CommBroker,
                 private yp: YellowPepperService,
+                private cd: ChangeDetectorRef,
                 private rp: RedPepperService,
-                private bs: BlockService ) {
+                private bs: BlockService) {
         super();
 
         this.m_placement = blockPlacement;
@@ -153,26 +168,26 @@ export class AddContent extends Compbaser implements AfterViewInit {
                 }, (e) => console.error(e))
         )
 
-        switch (this.m_placement){
-            
+        switch (this.m_placement) {
+
             case PLACEMENT_CHANNEL: {
 
                 this.cancelOnDestroy(
                     this.yp.listenCampaignTimelineBoardViewerSelected(true)
-                        .subscribe((i_campaignTimelineBoardViewerChanelsModel:CampaignTimelineBoardViewerChanelsModel) => {
+                        .subscribe((i_campaignTimelineBoardViewerChanelsModel: CampaignTimelineBoardViewerChanelsModel) => {
                             this.m_selected_campaign_timeline_chanel_id = i_campaignTimelineBoardViewerChanelsModel.getCampaignTimelineChanelId();
                         }, (e) => console.error(e))
                 )
                 break;
             }
-            
+
             case PLACEMENT_SCENE: {
                 break;
             }
         }
 
-        var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
-        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+        // var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
+        // this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 
     @Output()
@@ -202,9 +217,19 @@ export class AddContent extends Compbaser implements AfterViewInit {
         this.m_sceneMime = m_sceneMime;
     }
 
+    @Input()
+    setList(i_value) {
+        debugger;
+        this.m_inList = i_value;
+    }
+
+    @Output()
+    onAddContentSelected:EventEmitter<IAddContents> = new EventEmitter<IAddContents>();
+
+
     _addBlock(i_addContents: IAddContents) {
 
-        switch (this.m_placement){
+        switch (this.m_placement) {
             case PLACEMENT_CHANNEL: {
 
                 this.yp.getTotalDurationChannel(this.m_selected_campaign_timeline_chanel_id)
@@ -216,13 +241,18 @@ export class AddContent extends Compbaser implements AfterViewInit {
             }
 
             case PLACEMENT_SCENE: {
-                this.commBroker.fire({event: ADD_NEW_BLOCK_SCENE, fromInstance: this, message: i_addContents});
-                this.onDone.emit();
+                if (this.m_inList){
+                    this.onAddContentSelected.emit(i_addContents)
+                } else {
+                    this.commBroker.fire({event: ADD_NEW_BLOCK_SCENE, fromInstance: this, message: i_addContents});
+                    this.onDone.emit();
+                }
+
                 break;
             }
         }
-        
-        
+
+
     }
 
     /**
@@ -411,6 +441,7 @@ export class AddContent extends Compbaser implements AfterViewInit {
 
         //reset mimetype
         this.m_sceneMime = undefined;
+
     }
 
 

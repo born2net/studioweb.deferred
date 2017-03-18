@@ -11,6 +11,8 @@ import {SimpleGridTable} from "../../comps/simple-grid-module/SimpleGridTable";
 import {ISimpleGridDraggedData} from "../../comps/simple-grid-module/SimpleGridDraggable";
 import {JsonEventResourceModel} from "./json-event-grid";
 import {Lib} from "../../Lib";
+import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
+import {IAddContents} from "../../interfaces/IAddContent";
 
 @Component({
     selector: 'block-prop-collection',
@@ -70,6 +72,16 @@ import {Lib} from "../../Lib";
                 </li>
             </div>
         </form><h5>block id {{m_blockData.blockID}}</h5>
+
+        <modal #modal>
+            <modal-header [show-close]="true">
+                <h4 i18n class="modal-title">add content to collection</h4>
+            </modal-header>
+            <modal-body>
+                <add-content *ngIf="m_active" #addContent (onDone)="_onAddedNewBlock()" (onAddContentSelected)="_addCollectionNewListItem($event)" [setList]="true"></add-content>
+            </modal-body>
+            <modal-footer [show-default-buttons]="true"></modal-footer>
+        </modal>
     `
 })
 export class BlockPropCollection extends Compbaser implements AfterViewInit {
@@ -77,6 +89,7 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
     private formInputs = {};
     private m_contGroup: FormGroup;
     private m_blockData: IBlockData;
+    m_active = false;
     m_collectionList: List<StoreModel>;
     m_jsonEventResources: Array<JsonEventResourceModel>;
 
@@ -93,6 +106,9 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
     @ViewChild('simpleGrid')
     simpleGrid: SimpleGridTable;
 
+    @ViewChild(ModalComponent)
+    modal: ModalComponent;
+
     @Input()
     set setBlockData(i_blockData) {
         this.m_blockData = i_blockData;
@@ -101,6 +117,15 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
 
     ngAfterViewInit() {
         this._render();
+    }
+
+    _onAddNewBlock() {
+        this.m_active = true;
+        this.modal.open()
+    }
+
+    _onAddedNewBlock() {
+        this.modal.close()
     }
 
     _onDragComplete(dragData: ISimpleGridDraggedData) {
@@ -127,6 +152,7 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
 
     //todo: to be added collection insertion
     _onAddNewCollectionItem() {
+        this._onAddNewBlock()
         // var domPlayerData = this.m_blockData.playerDataDom;
         // var buff = '<EventCommand from="event" condition="" command="firstPage" />';
         // jXML(domPlayerData).find('EventCommands').append(jXML(buff));
@@ -235,6 +261,54 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
         var domPlayerData = this.m_blockData.playerDataDom;
         jXML(domPlayerData).find('Collection').attr('mode', i_value ? 'kiosk' : 'slideshow');
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
+    }
+
+    /**
+     Add a new collection item which can include a Scene or a resource (not a component)
+     @method _addCollectionNewListItem
+     @param {Event} e
+     **/
+    _addCollectionNewListItem(i_AddContents:IAddContents) {
+        console.log(i_AddContents);
+        // var domPlayerData = self._getBlockPlayerData();
+        // var xSnippetCollection = $(domPlayerData).find('Collection');
+        // var buff = '';
+        // // log(e.edata.blockCode, e.edata.resourceID, e.edata.sceneID);
+        // if (e.edata.blockCode == BB.CONSTS.BLOCKCODE_SCENE) {
+        //     // add scene to collection
+        //     // if block resides in scene don't allow cyclic reference to collection scene inside current scene
+        //     if (self.m_placement == BB.CONSTS.PLACEMENT_SCENE) {
+        //         var sceneEditView = BB.comBroker.getService(BB.SERVICES['SCENE_EDIT_VIEW']);
+        //         if (!_.isUndefined(sceneEditView)) {
+        //             var selectedSceneID = sceneEditView.getSelectedSceneID();
+        //             selectedSceneID = pepper.getSceneIdFromPseudoId(selectedSceneID);
+        //             if (selectedSceneID == e.edata.sceneID) {
+        //                 bootbox.alert($(Elements.MSG_BOOTBOX_SCENE_REFER_ITSELF).text());
+        //                 return;
+        //             }
+        //         }
+        //     }
+        //     var sceneRecord = pepper.getScenePlayerRecord(e.edata.sceneID);
+        //     var sceneName = $(sceneRecord.player_data_value).attr('label');
+        //     var nativeID = sceneRecord['native_id'];
+        //     buff = '<Page page="' + sceneName + '" type="scene" duration="5">' +
+        //         '<Player src="' + nativeID + '" hDataSrc="' + e.edata.sceneID + '" />' +
+        //         '</page>';
+        // } else {
+        //     // Add resources to collection
+        //     var resourceName = pepper.getResourceRecord(e.edata.resourceID).resource_name;
+        //     log('updating hResource ' + e.edata.resourceID);
+        //     buff = '<Page page="' + resourceName + '" type="resource" duration="5">' +
+        //         '<Player player="' + e.edata.blockCode + '">' +
+        //         '<Data>' +
+        //         '<Resource hResource="' + e.edata.resourceID + '" />' +
+        //         '</Data>' +
+        //         '</Player>' +
+        //         '</page>';
+        // }
+        // $(xSnippetCollection).append($(buff));
+        // self._setBlockPlayerData(pepper.xmlToStringIEfix(domPlayerData), BB.CONSTS.NO_NOTIFICATION, true);
+        // self._populateTableEvents();
     }
 
     private saveToStore() {
