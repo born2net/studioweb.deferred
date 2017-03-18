@@ -72,13 +72,12 @@ import {IAddContents} from "../../interfaces/IAddContent";
                 </li>
             </div>
         </form><h5>block id {{m_blockData.blockID}}</h5>
-
         <modal #modal>
             <modal-header [show-close]="true">
                 <h4 i18n class="modal-title">add content to collection</h4>
             </modal-header>
             <modal-body>
-                <add-content *ngIf="m_active" #addContent (onDone)="_onAddedNewBlock()" (onAddContentSelected)="_addCollectionNewListItem($event)" [setList]="true"></add-content>
+                <add-content [placementIsList]="true" #addContent (onDone)="_onAddedNewBlock()" (onAddContentSelected)="_addCollectionNewListItem($event)"></add-content>
             </modal-body>
             <modal-footer [show-default-buttons]="true"></modal-footer>
         </modal>
@@ -89,7 +88,6 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
     private formInputs = {};
     private m_contGroup: FormGroup;
     private m_blockData: IBlockData;
-    m_active = false;
     m_collectionList: List<StoreModel>;
     m_jsonEventResources: Array<JsonEventResourceModel>;
 
@@ -120,7 +118,6 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
     }
 
     _onAddNewBlock() {
-        this.m_active = true;
         this.modal.open()
     }
 

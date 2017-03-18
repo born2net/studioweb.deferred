@@ -16,6 +16,7 @@ import 'rxjs/add/operator/distinctUntilChanged';
     changeDetection: ChangeDetectionStrategy.OnPush,
     styles: [`#logoContainer {
         padding-left: 10px;
+        padding-top: 10px;
     }`],
     template: `
         <div id="logoContainer" class="reshid flip">

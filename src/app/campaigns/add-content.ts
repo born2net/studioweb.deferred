@@ -38,8 +38,8 @@ import {ADD_NEW_BLOCK_SCENE} from "../scenes/scene-editor";
         <button *ngIf="m_placement == m_PLACEMENT_CHANNEL" (click)="_close()" id="prev" type="button" class="openPropsButton btn btn-default btn-sm">
             <span class="glyphicon glyphicon-chevron-left"></span>
         </button>
-        <div *ngIf="m_placement == m_PLACEMENT_SCENE || m_placement == m_PLACEMENT_CHANNEL" style="padding-top: 20px; padding-right: 30px" class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-            <div class="panel panel-default">
+        <div style="padding-top: 20px; padding-right: 30px" class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <div *ngIf="m_placement == m_PLACEMENT_SCENE || m_placement == m_PLACEMENT_CHANNEL" class="panel panel-default">
                 <div class="panel-heading" role="tab" id="headingOne">
                     <h4 class="panel-title">
                         <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
@@ -121,7 +121,6 @@ export class AddContent extends Compbaser implements AfterViewInit {
 
     m_placement;
     m_sceneMime;
-    m_inList = false;
     m_userModel: UserModel;
     m_resourceModels: List<ResourcesModel>;
     m_sceneDatas: Array<ISceneData>;
@@ -193,38 +192,14 @@ export class AddContent extends Compbaser implements AfterViewInit {
     @Output()
     onDone: EventEmitter<any> = new EventEmitter<any>();
 
-    /**
-     Allow us to control the current placement of the module so the behaviour can be according
-     to where the instance resides (i.e.: current launch is from Block collection list of from Channel list
-     for example)
-     @method setPlacement
-     @param {Number} i_playerData
-     **/
-    // @Input()
-    // set setPlacement(value) {
-    //     this.m_placement = value;
-    // }
-
-    /**
-     Allow us to control the view depending upon the current mimetype of the scene that launched this
-     instance. Keep in mind that m_sceneMime is only set for one duration of _render.
-     Once rendered the list, we reset the m_sceneMime back to undefined so
-     @method setSceneMime
-     @param {String} i_mimeType
-     **/
     @Input()
-    setSceneMime(m_sceneMime) {
-        this.m_sceneMime = m_sceneMime;
-    }
-
-    @Input()
-    setList(i_value) {
-        debugger;
-        this.m_inList = i_value;
+    set placementIsList(i_value) {
+        this.m_placement = PLACEMENT_LISTS;
+        this._render();
     }
 
     @Output()
-    onAddContentSelected:EventEmitter<IAddContents> = new EventEmitter<IAddContents>();
+    onAddContentSelected: EventEmitter<IAddContents> = new EventEmitter<IAddContents>();
 
 
     _addBlock(i_addContents: IAddContents) {
@@ -240,14 +215,15 @@ export class AddContent extends Compbaser implements AfterViewInit {
                 break;
             }
 
-            case PLACEMENT_SCENE: {
-                if (this.m_inList){
-                    this.onAddContentSelected.emit(i_addContents)
-                } else {
-                    this.commBroker.fire({event: ADD_NEW_BLOCK_SCENE, fromInstance: this, message: i_addContents});
-                    this.onDone.emit();
-                }
+            case PLACEMENT_LISTS: {
+                this.onAddContentSelected.emit(i_addContents)
+                this.onDone.emit();
+                break;
+            }
 
+            case PLACEMENT_SCENE: {
+                this.commBroker.fire({event: ADD_NEW_BLOCK_SCENE, fromInstance: this, message: i_addContents});
+                this.onDone.emit();
                 break;
             }
         }
@@ -441,7 +417,6 @@ export class AddContent extends Compbaser implements AfterViewInit {
 
         //reset mimetype
         this.m_sceneMime = undefined;
-
     }
 
 
@@ -480,6 +455,7 @@ export class AddContent extends Compbaser implements AfterViewInit {
     }
 
     destroy() {
+        console.log('dest');
     }
 }
 

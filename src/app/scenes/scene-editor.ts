@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Output, ViewChild} from "@angular/core";
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, Output, ViewChild} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {BlockService, ISceneData} from "../blocks/block-service";
@@ -16,6 +16,7 @@ import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.action
 import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
 import {IAddContents} from "../../interfaces/IAddContent";
 import {PreviewModeEnum} from "../live-preview/live-preview";
+import {AddContent} from "../campaigns/add-content";
 
 export const ADD_NEW_BLOCK_SCENE = 'ADD_NEW_BLOCK_SCENE';
 export const SCENE_BLOCK_CHANGE = 'SCENE_BLOCK_CHANGE';
@@ -49,6 +50,37 @@ const ADDED_RESOURCE = 'ADDED_RESOURCE';
 const MOUSE_ENTERS_CANVAS = 'MOUSE_ENTERS_CANVAS';
 const FONT_SELECTION_CHANGED = 'FONT_SELECTION_CHANGED';
 const CAMPAIGN_LIST_LOADING = 'CAMPAIGN_LIST_LOADED';
+
+
+@Component({
+    selector: 'aaaa',
+    template: `
+        <small class="debug">{{me}}</small>
+    `,
+})
+export class aaaa extends Compbaser implements AfterViewInit {
+
+    constructor(private yp: YellowPepperService) {
+        super();
+    }
+
+    @Input()
+    set setVal(a) {
+        alert(a)
+    }
+
+    ngAfterViewInit() {
+
+
+    }
+
+    ngOnInit() {
+    }
+
+    destroy() {
+    }
+}
+
 
 @Component({
     selector: 'scene-editor',
@@ -96,6 +128,7 @@ const CAMPAIGN_LIST_LOADING = 'CAMPAIGN_LIST_LOADED';
 })
 export class SceneEditor extends Compbaser implements AfterViewInit {
 
+    m_activeAddContent = false;
     m_isLoading = true;
     m_selectedSceneID = undefined;
     m_sceneScrollTop = 0;
@@ -129,6 +162,9 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
 
     @ViewChild(ModalComponent)
     modal: ModalComponent;
+
+    @ViewChild('addContent')
+    addContent: AddContent;
 
     ngAfterViewInit() {
         this.m_selectedSceneID = undefined;
@@ -165,6 +201,8 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         this._listenBlockSelected();
         this._delegateSceneBlockModified();
         this._notifyScaleChange();
+
+        // this.addContent.setPlacement(1);
     }
 
     ngOnInit() {
@@ -188,6 +226,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                 break;
             }
             case 'add': {
+                this.m_activeAddContent = true;
                 this.modal.open();
                 break;
             }
@@ -807,6 +846,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
 
     _onAddedNewBlock() {
         this.modal.close()
+        this.m_activeAddContent = false;
     }
 
     /**
@@ -1881,3 +1921,6 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
 //     }, 1000)
 //
 // }
+
+
+
