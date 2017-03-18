@@ -69,10 +69,11 @@ export class Campaigns extends Compbaser {
     m_PLACEMENT_CHANNEL = PLACEMENT_CHANNEL;
     private m_selected_campaign_timeline_chanel_id = -1;
 
-    constructor(private yp: YellowPepperService, private rp: RedPepperService, private bs:BlockService) {
+    constructor(private yp: YellowPepperService, private rp: RedPepperService, private bs: BlockService) {
         super();
 
         this.cancelOnDestroy(
+            //
             this.yp.listenCampaignTimelineBoardViewerSelected()
                 .subscribe((i_campaignTimelineBoardViewerChanelsModel: CampaignTimelineBoardViewerChanelsModel) => {
                     this.m_selected_campaign_timeline_chanel_id = i_campaignTimelineBoardViewerChanelsModel.getCampaignTimelineChanelId();
@@ -83,15 +84,18 @@ export class Campaigns extends Compbaser {
         this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 
-    _onOpenScreenLayoutEditor(){
+    _onOpenScreenLayoutEditor() {
     }
 
-    _onAddedContent(i_addContents:IAddContents) {
-        this.yp.getTotalDurationChannel(this.m_selected_campaign_timeline_chanel_id)
-            .subscribe((i_totalChannelLength) => {
-                var boilerPlate = this.bs.getBlockBoilerplate(i_addContents.blockCode);
-                this._createNewChannelBlock(i_addContents, boilerPlate, i_totalChannelLength);
-            }, (e) => console.error(e))
+    _onAddedContent(i_addContents: IAddContents) {
+        this.cancelOnDestroy(
+            //
+            this.yp.getTotalDurationChannel(this.m_selected_campaign_timeline_chanel_id)
+                .subscribe((i_totalChannelLength) => {
+                    var boilerPlate = this.bs.getBlockBoilerplate(i_addContents.blockCode);
+                    this._createNewChannelBlock(i_addContents, boilerPlate, i_totalChannelLength);
+                }, (e) => console.error(e))
+        )
     }
 
     /**
@@ -113,7 +117,7 @@ export class Campaigns extends Compbaser {
 
     @Once()
     private _createCampaign(i_createCampaign) {
-        var createCampaign:IScreenTemplateData = i_createCampaign;
+        var createCampaign: IScreenTemplateData = i_createCampaign;
         return this.yp.getNewCampaignParmas()
             .subscribe((value: IUiStateCampaign) => {
                 var campaignId = this.rp.createCampaignEntire(createCampaign.screenProps, createCampaign.name, value.campaignCreateResolution);
