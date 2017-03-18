@@ -78,7 +78,7 @@ import {PLACEMENT_LISTS} from "../../interfaces/Consts";
                 <h4 i18n class="modal-title">add content to collection</h4>
             </modal-header>
             <modal-body>
-                <add-content [placementIsList]="m_PLACEMENT_LISTS" #addContent (onDone)="_onAddedNewBlock()" (onAddContentSelected)="_addCollectionNewListItem($event)"></add-content>
+                <add-content [placementIsList]="m_PLACEMENT_LISTS" #addContent (onAddContentSelected)="_addCollectionNewListItem($event)"></add-content>
             </modal-body>
             <modal-footer [show-default-buttons]="true"></modal-footer>
         </modal>
@@ -124,7 +124,8 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
         this.modal.open()
     }
 
-    _onAddedNewBlock() {
+    _onAddedNewBlock(i_addContents:IAddContents) {
+        console.log('added ' + i_addContents.name);
         this.modal.close()
     }
 

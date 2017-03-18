@@ -165,7 +165,7 @@ export class AddContent extends Compbaser implements AfterViewInit {
     }
 
     @Output()
-    onDone: EventEmitter<any> = new EventEmitter<any>();
+    onDone: EventEmitter<IAddContents> = new EventEmitter<IAddContents>();
 
     @Input()
     set placementIsList(i_value) {
