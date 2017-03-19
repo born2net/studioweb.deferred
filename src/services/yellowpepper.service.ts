@@ -70,11 +70,11 @@ export class YellowPepperService {
         }, [])
     }
 
-    listenSave(){
+    listenSave() {
         return this.store.select(store => store.appDb.uiState.saving)
     }
 
-    listenPreview(){
+    listenPreview() {
         return this.store.select(store => store.appDb.uiState.previewing)
     }
 
@@ -272,32 +272,30 @@ export class YellowPepperService {
     /**
      Listen to changes in selected scene
      **/
-    listenSceneOrBlockSelectedChanged(emitOnEmpty: boolean = false): Observable<ISceneData> {
+    listenSceneOrBlockSelectedChanged(): Observable<ISceneData> {
         var sceneSelected$ = this.store.select(store => store.appDb.uiState.scene.sceneSelected);
         var blockSelected$ = this.store.select(store => store.appDb.uiState.scene.blockSelected);
         var player_data$ = this.store.select(store => store.msDatabase.sdk.table_player_data);
         return blockSelected$.combineLatest(sceneSelected$, player_data$, (blockId, sceneId) => {
             return {blockId, sceneId}
         }).filter((ids) => {
-            if (!emitOnEmpty) return true; // no filter requested
             return ids && ids.sceneId != -1 && ids.blockId != -1
         }).mergeMap(ids => {
+            
             return this.listenScene(ids.sceneId)
-                .map((playerDataModel: PlayerDataModelExt) => {
+                .mergeMap((playerDataModel: PlayerDataModelExt) => {
                     var domPlayerData = $.parseXML(playerDataModel.getPlayerDataValue())
                     var selectedSnippet: any = $(domPlayerData).find(`[id="${ids.blockId}"]`)[0];
+                    var sceneData: ISceneData;
 
-
-                    //todo: fix is block deleted
-                    /** if block was not found in snippet it was removed so exit **/
-                    if (_.isUndefined(selectedSnippet)){
-                       return Observable.empty()
-                    }
+                    /** if block was removed notify of empty **/
+                    if (_.isUndefined(selectedSnippet))
+                        return Observable.empty()
 
                     var mimeType = $(domPlayerData).find('Player').attr('mimeType');
                     var xml = (new XMLSerializer()).serializeToString(selectedSnippet);
                     selectedSnippet = $.parseXML(xml)
-                    var sceneData: ISceneData = {
+                    sceneData = {
                         scene_id: ids.sceneId,
                         scene_id_pseudo_id: null,
                         block_pseudo_id: ids.blockId,
@@ -307,10 +305,10 @@ export class YellowPepperService {
                         domPlayerDataJson: this.parser.xml2js(xml),
                         mimeType: mimeType
                     }
-                    return sceneData;
+                    return Observable.of(sceneData);
                 });
         }).distinct()
-            .mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
+           // .mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
     }
 
     listenSceneSelected(emitOnEmpty: boolean = false): Observable<ISceneData> {
@@ -429,7 +427,7 @@ export class YellowPepperService {
             })
     }
 
-    getPreviewMode(){
+    getPreviewMode() {
         return this.store.select(store => store.appDb.uiState.previewMode).take(1)
     }
 

@@ -121,7 +121,7 @@ export class BlockPropPosition extends Compbaser {
 
         this.cancelOnDestroy(
             //
-            this.yp.listenSceneOrBlockSelectedChanged(true)
+            this.yp.listenSceneOrBlockSelectedChanged()
                 .combineLatest(this.yp.listenFabricSceneScaled(), (i_sceneData: ISceneData, i_scale: number) => {
                     this.m_canvasScale = i_scale;
                     return i_sceneData

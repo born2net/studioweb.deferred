@@ -1,9 +1,12 @@
 import {ChangeDetectionStrategy, Component} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {Observable} from "rxjs";
-import {SideProps} from "../../store/actions/appdb.actions";
+import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {BlockService, IBlockData, ISceneData} from "../blocks/block-service";
+import {IUiState} from "../../store/store.data";
+import * as _ from 'lodash';
+import {CommBroker} from "../../services/CommBroker";
 
 @Component({
     selector: 'scene-props-manager',
@@ -36,11 +39,21 @@ export class ScenePropsManager extends Compbaser {
 
     m_blockData: IBlockData;
 
-    constructor(private yp: YellowPepperService, private bs: BlockService) {
+    constructor(private yp: YellowPepperService, private bs: BlockService, private commBroker: CommBroker) {
         super();
         this.m_sideProps$ = this.yp.ngrxStore.select(store => store.appDb.uiState.uiSideProps);
 
         this.cancelOnDestroy(
+            //
+            this.commBroker.onEvent('SCENE_ITEM_REMOVE')
+                .subscribe(() => {
+                    var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
+                    this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+                })
+        )
+
+        this.cancelOnDestroy(
+            //
             this.yp.listenSceneSelected(true)
                 .mergeMap((i_sceneData: ISceneData) => {
                     return this.bs.getBlockDataInScene(i_sceneData);

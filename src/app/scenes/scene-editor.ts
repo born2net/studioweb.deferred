@@ -196,7 +196,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         this._listenSceneChanged();
         this._listenContextMenu();
         this._listenSelectNextBlock();
-        this._listenSceneBlockRemove();
+        // this._listenSceneBlockRemove();
         this._listenSceneNew();
         this._listenAppResized();
         this._listenBlockSelected();
@@ -232,7 +232,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                 break;
             }
             case 'removeItem': {
-                this.commBroker.fire({event: SCENE_ITEM_REMOVE, fromInstance: this})
+                this._onContentMenuSelection('remove');
                 break;
             }
             case 'playPreview': {
@@ -365,7 +365,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         }
 
         this.cancelOnDestroy(
-            this.yp.listenSceneOrBlockSelectedChanged(true)
+            this.yp.listenSceneOrBlockSelectedChanged()
                 .startWith(sceneData)
                 .pairwise()
                 .filter((v: Array<ISceneData>) => {
@@ -499,15 +499,15 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
      Listen to when a user selects to delete a block
      @method _listenSceneBlockRemove
      **/
-    _listenSceneBlockRemove() {
-        this.cancelOnDestroy(
-            //
-            this.commBroker.onEvent(SCENE_ITEM_REMOVE)
-                .subscribe((msg: IMessage) => {
-                    this._onContentMenuSelection('remove');
-                }, (e) => console.error(e))
-        )
-    }
+    // _listenSceneBlockRemove() {
+    //     this.cancelOnDestroy(
+    //         //
+    //         this.commBroker.onEvent(SCENE_ITEM_REMOVE)
+    //             .subscribe((msg: IMessage) => {
+    //                 this._onContentMenuSelection('remove');
+    //             }, (e) => console.error(e))
+    //     )
+    // }
 
     /**
      Listen to keyboard events
@@ -718,6 +718,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                         this.m_copiesObjects.push(blockPlayerData);
                     });
                     this.m_canvas.renderAll();
+                    this.commBroker.fire({event: SCENE_ITEM_REMOVE, fromInstance: this})
                     // this._updateBlockCount();
                     this.rp.reduxCommit();
                     break;
@@ -733,6 +734,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                         this._disposeBlocks(blockData.blockID);
                     });
                     this.m_canvas.renderAll();
+                    this.commBroker.fire({event: SCENE_ITEM_REMOVE, fromInstance: this})
                     // this._updateBlockCount();
                     this.rp.reduxCommit();
                     break;
@@ -1721,10 +1723,12 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
     }
 
     destroy() {
-        let uiState: IUiState = {scene: {
-            sceneSelected: -1,
-            blockSelected: -1
-        }}
+        let uiState: IUiState = {
+            scene: {
+                sceneSelected: -1,
+                blockSelected: -1
+            }
+        }
         this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
         this.m_canvasScale = -1;
         this._notifyScaleChange();
