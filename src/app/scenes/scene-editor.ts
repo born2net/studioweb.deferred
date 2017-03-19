@@ -17,6 +17,7 @@ import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
 import {IAddContents} from "../../interfaces/IAddContent";
 import {PreviewModeEnum} from "../live-preview/live-preview";
 import {AddContent} from "../campaigns/add-content";
+import {Lib} from "../../Lib";
 
 export const ADD_NEW_BLOCK_SCENE = 'ADD_NEW_BLOCK_SCENE';
 export const SCENE_BLOCK_CHANGE = 'SCENE_BLOCK_CHANGE';
@@ -373,11 +374,11 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                         return false;
                     if (v[0].block_pseudo_id != v[1].block_pseudo_id)
                         return false;
-                    if (_.isEqual(v[0].domPlayerDataJson, v[1].domPlayerDataJson))
+                    if (Lib.IsEqual(v[0].domPlayerDataJson, v[1].domPlayerDataJson))
                         return false;
                     delete v["0"].domPlayerDataJson.Player.Data.Layout;
                     delete v["1"].domPlayerDataJson.Player.Data.Layout;
-                    if (_.isEqual(v[0].domPlayerDataJson, v[1].domPlayerDataJson))
+                    if (Lib.IsEqual(v[0].domPlayerDataJson, v[1].domPlayerDataJson))
                         return false;
                     return true;
                 })
