@@ -8,6 +8,7 @@ import {storeFreeze} from "ngrx-store-freeze";
 import {ActionReducer, combineReducers} from "@ngrx/store";
 import {ApplicationState} from "./application.state";
 import {compose} from "@ngrx/core";
+import {MainAppShowStateEnum} from "../app/app-component";
 
 const reducers = {msDatabase, appDb};
 export const developmentReducer: ActionReducer<ApplicationState> = compose(storeFreeze, combineReducers)(reducers);
@@ -43,8 +44,7 @@ export interface IUiStateScene  {
 }
 
 export interface IUiState {
-    saving?:boolean;
-    previewing?:boolean;
+    mainAppState?: MainAppShowStateEnum;
     previewMode?:number;
     uiSideProps?:number;
     campaign?: IUiStateCampaign;
@@ -72,8 +72,7 @@ export const INITIAL_STORE_DATA: IMsDatabase = {
 
 export const INITIAL_APP_DB: IAppDb = {
     uiState: {
-        saving: false,
-        previewing: false,
+        mainAppState: MainAppShowStateEnum.INIT,
         previewMode: -1,
         uiSideProps: SideProps.none,
         campaign: {

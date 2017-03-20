@@ -83,7 +83,7 @@ export class RedPepperService {
     }
 
     /**
-     Save to server
+     Save to remote server
      @method save
      @return none
      **/

@@ -13,7 +13,7 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
     `],
     template: `
         <small class="debug">{{me}}</small>
-        <ul  matchBodyHeight="50" style="overflow-y: auto; overflow-x: hidden" [ngSwitch]="m_uiUserFocusItem$ | async">
+        <ul matchBodyHeight="50" style="overflow-y: auto; overflow-x: hidden" [ngSwitch]="m_uiUserFocusItem$ | async">
             <div *ngSwitchCase="m_uiUserFocusItemEnum.campaignProps">
                 <campaign-props></campaign-props>
             </div>

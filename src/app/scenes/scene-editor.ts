@@ -18,6 +18,7 @@ import {IAddContents} from "../../interfaces/IAddContent";
 import {PreviewModeEnum} from "../live-preview/live-preview";
 import {AddContent} from "../campaigns/add-content";
 import {Lib} from "../../Lib";
+import {MainAppShowStateEnum} from "../app-component";
 
 export const ADD_NEW_BLOCK_SCENE = 'ADD_NEW_BLOCK_SCENE';
 export const SCENE_BLOCK_CHANGE = 'SCENE_BLOCK_CHANGE';
@@ -232,7 +233,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
                 break;
             }
             case 'playPreview': {
-                let uiState: IUiState = {previewing: true, previewMode: PreviewModeEnum.SCENE}
+                let uiState: IUiState = {mainAppState: MainAppShowStateEnum.SAVE_AND_PREVIEW, previewMode: PreviewModeEnum.SCENE}
                 this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
                 break;
             }

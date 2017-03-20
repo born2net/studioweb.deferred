@@ -71,12 +71,8 @@ export class YellowPepperService {
         }, [])
     }
 
-    listenSave() {
-        return this.store.select(store => store.appDb.uiState.saving)
-    }
-
-    listenPreview() {
-        return this.store.select(store => store.appDb.uiState.previewing)
+    listenMainAppState() {
+        return this.store.select(store => store.appDb.uiState.mainAppState)
     }
 
     /**

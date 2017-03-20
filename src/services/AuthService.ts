@@ -84,10 +84,10 @@ export class AuthService {
 
     private enterApplication() {
         setTimeout(() => {
-            // this.router.navigate(['/App1/Dashboard']);
             if (Lib.DevMode()) {
-                var nav = '/App1/Scenes';
-                // var nav = '/App1/Campaigns';
+                // var nav = '/App1/Scenes';
+                var nav = '/App1/Campaigns';
+                // this.router.navigate(['/App1/Dashboard']);
                 Lib.Con(`in dev mode entering:  ${nav}`);
                 this.router.navigate([nav]);
             } else {

@@ -7,8 +7,10 @@ import {RedPepperService} from "../../services/redpepper.service";
 import {CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 import {ISceneData} from "../blocks/block-service";
 import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
+import {MainAppShowStateEnum} from "../app-component";
 
 export enum PreviewModeEnum {
+    NONE,
     SCENE,
     CAMPAIGN,
     TIMELINE
@@ -89,7 +91,7 @@ export class LivePreview extends Compbaser implements AfterViewInit {
     }
 
     _onExit() {
-        let uiState: IUiState = {previewing: false}
+        let uiState: IUiState = {mainAppState: MainAppShowStateEnum.NORMAL, previewMode: PreviewModeEnum.NONE}
         this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 

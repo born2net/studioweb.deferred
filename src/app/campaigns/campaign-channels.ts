@@ -103,37 +103,45 @@ export class CampaignChannels extends Compbaser implements AfterViewInit {
 
         this.cancelOnDestroy(
             this.yp.listenCampaignTimelineBoardViewerSelected(true)
-                .combineLatest(this.durationChanged$)
-
+                .combineLatest(
+                    this.durationChanged$,
+                    this.yp.ngrxStore.select(store => store.msDatabase.sdk.table_campaign_timeline_chanel_players)
+                )
                 .filter((v) => {
                     var campaignTimelineBoardViewerChanelsModel: CampaignTimelineBoardViewerChanelsModel = v[0];
                     var totalDuration = v[1];
+                    var campaignTimelineChanelPlayersModel = v[2];
                     if (campaignTimelineBoardViewerChanelsModel == null) this.m_blockList = List([]);
                     return campaignTimelineBoardViewerChanelsModel != null;
 
-                }).withLatestFrom(this.yp.listenTimelineSelected(), (i_channelModel: CampaignTimelineBoardViewerChanelsModel, i_timelinesModel: CampaignTimelinesModel) => {
-                this.selected_campaign_timeline_chanel_id = i_channelModel[0].getCampaignTimelineChanelId();
-                this.selected_campaign_timeline_id = i_timelinesModel.getCampaignTimelineId();
-                return i_channelModel[0].getCampaignTimelineBoardViewerChanelId()
+                })
+                .withLatestFrom(this.yp.listenTimelineSelected(), (i_channelModel: CampaignTimelineBoardViewerChanelsModel, i_timelinesModel: CampaignTimelinesModel) => {
+                    this.selected_campaign_timeline_chanel_id = i_channelModel[0].getCampaignTimelineChanelId();
+                    this.selected_campaign_timeline_id = i_timelinesModel.getCampaignTimelineId();
+                    return i_channelModel[0].getCampaignTimelineBoardViewerChanelId()
 
-            }).mergeMap(i_boardViewerChanelId => {
-                return this.yp.getChannelFromCampaignTimelineBoardViewer(i_boardViewerChanelId)
+                })
+                .mergeMap(i_boardViewerChanelId => {
+                    return this.yp.getChannelFromCampaignTimelineBoardViewer(i_boardViewerChanelId)
 
-            }).mergeMap((i_campaignTimelineChanelsModel: CampaignTimelineChanelsModel) => {
-                return this.yp.getChannelBlocks(i_campaignTimelineChanelsModel.getCampaignTimelineChanelId())
+                })
+                .mergeMap((i_campaignTimelineChanelsModel: CampaignTimelineChanelsModel) => {
+                    return this.yp.getChannelBlocks(i_campaignTimelineChanelsModel.getCampaignTimelineChanelId())
 
-            }).mergeMap(blockIds => {
-                if (blockIds.length == 0)
-                    return Observable.of([])
+                })
+                .mergeMap(blockIds => {
+                    if (blockIds.length == 0)
+                        return Observable.of([])
 
-                return Observable.from(blockIds)
-                    .map((blockId) => this.bs.getBlockData(blockId))
-                    .combineAll()
+                    return Observable.from(blockIds)
+                        .map((blockId) => this.bs.getBlockData(blockId))
+                        .combineAll()
 
-            }).subscribe((i_blockList: Array<IBlockData>) => {
-                this.m_blockList = List(this._sortBlock(i_blockList));
-                // this.draggableList.createSortable()
-            }, e => console.error(e))
+                })
+                .subscribe((i_blockList: Array<IBlockData>) => {
+                    this.m_blockList = List(this._sortBlock(i_blockList));
+                    // this.draggableList.createSortable()
+                }, e => console.error(e))
         )
 
         this.cancelOnDestroy(

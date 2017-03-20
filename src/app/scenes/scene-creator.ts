@@ -10,6 +10,7 @@ import {IUiState} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE} from "../../store/actions/appdb.actions";
 import {ToastsManager} from "ng2-toastr";
 import {PLACEMENT_IS_SCENE} from "../../interfaces/Consts";
+import {MainAppShowStateEnum} from "../app-component";
 
 @Component({
     selector: 'scene-creator',
@@ -105,10 +106,10 @@ export class SceneCreator extends Compbaser implements AfterViewInit {
         });
 
         this.cancelOnDestroy(
-            this.yp.listenSave()
+            this.yp.listenMainAppState()
                 .skip(1)
-                .subscribe(i_saving => {
-                    if (!i_saving) {
+                .subscribe(i_status => {
+                    if (i_status == MainAppShowStateEnum.SAVED) {
                         this.toastr.info('scene imported and is available in scene list');
                         this._goBack();
                     }
@@ -120,7 +121,7 @@ export class SceneCreator extends Compbaser implements AfterViewInit {
     _onSceneImport() {
         this.rp.loaderManager.importScene(this.m_selectedAccount.businessId, this.m_selectedAccount.nativeId, (i_SceneId) => {
             this.rp.injectPseudoScenePlayersIDs(i_SceneId);
-            let uiState: IUiState = {saving: true}
+            let uiState: IUiState = {mainAppState: MainAppShowStateEnum.SAVE}
             this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
         });
     }

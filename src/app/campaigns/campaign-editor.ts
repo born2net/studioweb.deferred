@@ -1,6 +1,6 @@
 import {animate, ChangeDetectionStrategy, Component, EventEmitter, Output, state, style, transition, trigger} from "@angular/core";
 import {Compbaser} from "ng-mslib";
-import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
+import {CampaignsModelExt, CampaignTimelineChanelPlayersModelExt} from "../../store/model/msdb-models-extended";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {CampaignTimelineChanelsModel, CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 import {List} from "immutable";
@@ -10,6 +10,8 @@ import {IUiState} from "../../store/store.data";
 import {Lib} from "../../Lib";
 import {PreviewModeEnum} from "../live-preview/live-preview";
 import * as _ from "lodash";
+import {RedPepperService} from "../../services/redpepper.service";
+import {MainAppShowStateEnum} from "../app-component";
 
 @Component({
     selector: 'campaign-editor',
@@ -38,11 +40,12 @@ export class CampaignEditor extends Compbaser {
     private channelModel: CampaignTimelineChanelsModel;
 
     m_campaignTimelinesModels: List<CampaignTimelinesModel>;
+    m_campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModelExt;
     m_isVisible1 = true;
     m_isVisible2 = true;
     m_toggleShowChannel = true;
 
-    constructor(private yp: YellowPepperService, private actions: AppdbAction) {
+    constructor(private yp: YellowPepperService, private actions: AppdbAction, private rp: RedPepperService) {
         super();
         this.cancelOnDestroy(
             this.yp.listenCampaignSelected()
@@ -69,6 +72,12 @@ export class CampaignEditor extends Compbaser {
                     console.error(e)
                 })
         );
+        this.cancelOnDestroy(
+            this.yp.listenBlockChannelSelected(true)
+                .subscribe((i_campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModelExt) => {
+                    this.m_campaignTimelineChanelPlayersModel = i_campaignTimelineChanelPlayersModel;
+                }, (e) => console.error(e))
+        )
     }
 
     _onAddContent() {
@@ -104,15 +113,34 @@ export class CampaignEditor extends Compbaser {
             )
     }
 
+    /**
+     Delete the selected block from the channel
+     @method _deleteChannelBlock
+     @return none
+     **/
+    _onRemoveContent() {
+        if (!this.m_campaignTimelineChanelPlayersModel)
+            return bootbox.alert('No item selected');
+        this.rp.removeBlockFromTimelineChannel(this.m_campaignTimelineChanelPlayersModel.getCampaignTimelineChanelPlayerId());
+        this.rp.reduxCommit();
+        let uiState: IUiState = {
+            uiSideProps: SideProps.miniDashboard,
+            campaign: {
+                blockChannelSelected: -1
+            }
+        }
+        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+    }
+
     _onCampaignPreview() {
-        let uiState: IUiState = {previewing: true, previewMode: PreviewModeEnum.CAMPAIGN}
+        let uiState: IUiState = {mainAppState: MainAppShowStateEnum.SAVE_AND_PREVIEW, previewMode: PreviewModeEnum.CAMPAIGN}
         this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 
     _onTimelinePreview() {
         if (_.isUndefined(this.campaignTimelinesModel))
             return bootbox.alert('No timeline selected');
-        let uiState: IUiState = {previewing: true, previewMode: PreviewModeEnum.TIMELINE}
+        let uiState: IUiState = {mainAppState: MainAppShowStateEnum.SAVE_AND_PREVIEW, previewMode: PreviewModeEnum.TIMELINE}
         this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 

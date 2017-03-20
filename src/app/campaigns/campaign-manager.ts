@@ -9,6 +9,7 @@ import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
 import {IUiState} from "../../store/store.data";
 import {YellowPepperService} from "../../services/yellowpepper.service";
+import {MainAppShowStateEnum} from "../app-component";
 
 @Component({
     // changeDetection: ChangeDetectionStrategy.OnPush,
@@ -117,7 +118,7 @@ export class CampaignManager extends Compbaser {
     }
 
     private save() {
-        let uiState: IUiState = {saving: true}
+        let uiState: IUiState = {mainAppState: MainAppShowStateEnum.SAVE}
         this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 
