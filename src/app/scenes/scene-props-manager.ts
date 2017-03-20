@@ -18,7 +18,7 @@ import {CommBroker} from "../../services/CommBroker";
     `],
     template: `
         <small class="debug">{{me}}</small>
-        <ul [ngSwitch]="m_sideProps$ | async">
+        <ul matchBodyHeight="50" style="overflow-y: auto; overflow-x: hidden" [ngSwitch]="m_sideProps$ | async">
             <div *ngSwitchCase="m_sidePropsEnum.sceneEditor">
                 <h5>scene editor</h5>
             </div>
