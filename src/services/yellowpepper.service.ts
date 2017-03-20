@@ -60,6 +60,7 @@ export class YellowPepperService {
             result.push({
                 scene_id: playerDataId,
                 scene_id_pseudo_id: scene_id_pseudo_id,
+                scene_native_id: playerDataModel.getNativeId,
                 block_pseudo_id: scene_id_pseudo_id,
                 domPlayerData: domPlayerData,
                 playerDataModel: playerDataModel,
@@ -234,6 +235,7 @@ export class YellowPepperService {
                     selectedSnippet = $.parseXML(xml)
                     var sceneData: ISceneData = {
                         scene_id: ids.sceneId,
+                        scene_native_id: playerDataModel.getNativeId,
                         scene_id_pseudo_id: null,
                         block_pseudo_id: ids.blockId,
                         playerDataModel: playerDataModel,
@@ -297,6 +299,7 @@ export class YellowPepperService {
                     selectedSnippet = $.parseXML(xml)
                     sceneData = {
                         scene_id: ids.sceneId,
+                        scene_native_id: playerDataModel.getNativeId,
                         scene_id_pseudo_id: null,
                         block_pseudo_id: ids.blockId,
                         playerDataModel: playerDataModel,
@@ -549,7 +552,7 @@ export class YellowPepperService {
     /**
      Get player_data via its scene id
      **/
-    getScene(scene_id): Observable<PlayerDataModel> {
+    getScene(scene_id): Observable<PlayerDataModelExt> {
         return this.store.select(store => store.msDatabase.sdk.table_player_data)
             .map((playerDataModels: List<PlayerDataModel>) => {
                 return playerDataModels.find((playerDataModel: PlayerDataModel) => {

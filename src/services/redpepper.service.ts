@@ -1087,7 +1087,7 @@ export class RedPepperService {
         if (campaignIDs.length == 0)
             this.removeAllBoards();
     }
-
+          
     /**
      Create a new player (a.k.a block) and add it to the specified channel_id
      @method createNewChannelPlayer
@@ -1099,8 +1099,8 @@ export class RedPepperService {
         var player_data = i_boilerPlate.getDefaultPlayerData(PLACEMENT_CHANNEL, i_addContents.resourceId);
 
         // dealing with embedded scene, override player_data with scene handle
-        if (!_.isUndefined(i_addContents.sceneId))
-            player_data = '<Player hDataSrc="' + i_addContents.sceneId + '"/>';
+        if (!_.isUndefined(i_addContents.sceneData))
+            player_data = '<Player hDataSrc="' + i_addContents.sceneData.scene_id + '"/>';
 
         recTimelinePlayer.player_data = player_data;
         recTimelinePlayer.campaign_timeline_chanel_id = i_campaign_timeline_chanel_id;
@@ -2144,7 +2144,6 @@ export class RedPepperService {
      @return {Object} XML playerdata
      **/
     getScenePlayerRecord(i_scene_id) {
-
         return this.databaseManager.table_player_data().getRec(i_scene_id);
     }
 
@@ -2334,7 +2333,6 @@ export class RedPepperService {
      @return {Object} foundResourceRecord
      **/
     getResourceRecord(i_resource_id) {
-
         return this.databaseManager.table_resources().getRec(i_resource_id);
     }
 

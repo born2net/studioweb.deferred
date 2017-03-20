@@ -42,4 +42,8 @@ export class PlayerDataModelExt extends PlayerDataModel {
         return jXML(domPlayerData).find('Player').attr('mimeType');
     }
 
+    public get getNativeId() {
+        return Number(this.getKey('native_id'));
+    }
+
 }

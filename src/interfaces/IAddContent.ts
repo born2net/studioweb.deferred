@@ -1,16 +1,16 @@
 import {BlockTypeEnum} from "./BlockTypeEnum";
+import {ISceneData} from "../app/blocks/block-service";
 
 export interface IAddContents {
-    resourceId?: number;
-    sceneId?:number;
-    blockId?:number;
     type:BlockTypeEnum;
     blockCode: number;
     name: string;
     allow: boolean;
     fa: string;
     description: string;
-    data?: any;
+    resourceId?: number;
+    blockId?:number;
+    sceneData?: ISceneData;
     size?:string;
     specialJsonItemName?: string;
     specialJsonItemColor?: string;

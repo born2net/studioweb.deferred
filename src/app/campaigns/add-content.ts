@@ -225,8 +225,8 @@ export class AddContent extends Compbaser implements AfterViewInit {
         this._close();
     }
 
-    _onSceneSelected(i_scnene) {
-        this._addBlock(i_scnene);
+    _onSceneSelected(i_scene) {
+        this._addBlock(i_scene);
         this._close();
     }
 
@@ -335,7 +335,6 @@ export class AddContent extends Compbaser implements AfterViewInit {
                 type: BlockTypeEnum.RESOURCE,
                 name: i_resourcesModel.getResourceName(),
                 blockCode: this.bs.getBlockCodeFromFileExt(i_resourcesModel.getResourceType()) as number,
-                data: i_resourcesModel,
                 size: size,
                 allow: true,
                 fa: this.bs.getFontAwesome(i_resourcesModel.getResourceType()),
@@ -356,13 +355,12 @@ export class AddContent extends Compbaser implements AfterViewInit {
                 if (this.m_placement == PLACEMENT_CHANNEL) {
                     if (!_.isUndefined(mimeType))
                         return;
-                }
+                }       
                 this.m_sceneList.push({
-                    sceneId: i_sceneData.scene_id,
+                    sceneData: i_sceneData,
                     type: BlockTypeEnum.SCENE,
                     blockCode: 3510,
                     name: label,
-                    data: i_sceneData.domPlayerData,
                     fa: this.bs.getFontAwesome('scene'),
                     allow: true,
                     description: 'scene'
@@ -412,9 +410,3 @@ export class AddContent extends Compbaser implements AfterViewInit {
     destroy() {
     }
 }
-
-// var sceneID = $(i_sceneData.domPlayerData).find('Player').eq(0).attr('id');
-// this.yp.getSceneIdFromPseudoId(sceneID).subscribe(a=>{
-//     console.log(a);
-// })
-// sceneID = this.rp.sterilizePseudoId(sceneID);

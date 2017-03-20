@@ -68,6 +68,7 @@ interface IDomPlayerDataJson {
 export interface ISceneData {
     scene_id: number;
     scene_id_pseudo_id: string;
+    scene_native_id: number;
     playerDataModel: PlayerDataModelExt;
     domPlayerData: XMLDocument;
     domPlayerDataJson: IDomPlayerDataJson;
@@ -746,6 +747,176 @@ export class BlockService {
         };
     }
 
+    getBlockNameByCode(i_blockCode: number): string {
+        return this.m_blockCodes[i_blockCode];
+    }
+
+    /**
+     Get the common layout which only applies when block is inside a scene
+     @method getCommonSceneLayout
+     @param {string} i_placement
+     @return {String} common xml
+     **/
+    getCommonSceneLayout(i_placement, w ?, h ?) {
+        w = w == undefined ? 100 : w;
+        h = h == undefined ? 100 : h;
+        if (i_placement == PLACEMENT_CHANNEL)
+            return '';
+        return '<Layout rotation="0" x="0" y="0" width="' + w + '" height="' + h + '" />';
+    }
+
+    /**
+     Get the common properties XML with all default values
+     @method getCommonDefaultXML
+     @return {String} common xml
+     **/
+    getCommonDefaultXML() {
+        var self = this;
+        var common = '<Appearance alpha="1.0" blendMode="normal" />' + self.getCommonBackgroundXML() + self.getCommonBorderXML();
+        return common;
+    }
+
+    /**
+     Get the common properties Scene XML with all default values
+     @method getCommonSceneDefaultXML
+     @return {String} common xml
+     **/
+    getCommonSceneDefaultXML() {
+        var self = this;
+        var common = '<Appearance alpha="1.0" blendMode="normal" />' + self.getCommonBorderXML();
+        return common;
+    }
+
+    /**
+     Get the common border XML with all default values
+     @method getCommonBorderXML
+     @return {String} common xml
+     **/
+    getCommonBorderXML() {
+        return '<Border borderThickness="0" borderColor="65535" cornerRadius="0"/>';
+    }
+
+    /**
+     Get the common properties XML with all default values
+     @method getCommonBackgroundXML
+     @return {String} common xml
+     **/
+    getCommonBackgroundXML() {
+        var common = `
+            <Background style="Gradient" gradientType="linear" angle="0" offsetX="0" offsetY="0"> 
+                <GradientPoints> 
+                    <Point color="4361162" opacity="1" midpoint="125" /> 
+                </GradientPoints> 
+            </Background>
+            `
+        return common;
+    }
+
+    /**
+     Get a component data structure and properties for a particular component id.
+     @method getBlockBoilerplate
+     @param {Number} i_blockID
+     @return {Object} return the data structure of a specific component
+     **/
+    getBlockBoilerplate(i_blockID) {
+        var self = this;
+        return self.m_components[i_blockID];
+    }
+
+    /**
+     Translate a mimeType to a font-awesome icon of generic icons if does not exist
+     @method getIconFromMimeType
+     @param {Number} i_playerData
+     @return {String} foundMimeIcon
+     **/
+    getIconFromMimeType(i_mimeType) {
+        var self = this;
+        var foundMimeIcon = 'fa-star';
+        var blocks = self.getBlocks();
+        _.forEach(blocks, function (block: any) {
+            if (block.mimeType && block.mimeType == i_mimeType)
+                foundMimeIcon = block.fontAwesome;
+        });
+        return foundMimeIcon
+    }
+
+    /**
+     Get the entire set data structure for all components.
+     @method getBlocks
+     @return {Object} return all data structure
+     **/
+    getBlocks() {
+        var self = this;
+        return self.m_components;
+    }
+
+    /**
+     Retrieve a component code from a file extension type (i.e.: flv > 3100).
+     @method getBlockCodeFromFileExt
+     @param {String} i_fileExtension
+     @return {Number} return component code
+     **/
+    getBlockCodeFromFileExt(i_fileExtension) {
+        var self = this;
+        for (var code in self.m_components) {
+            if (self.m_components[code]['ext'] != undefined) {
+                for (var i = 0; i < self.m_components[code]['ext'].length; i++) {
+                    if (self.m_components[code]['ext'][i] == i_fileExtension) {
+                        return code;
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
+    /**
+     Get the font awesome path
+     @method getFontAwesome
+     @param {String} i_fontName
+     @return {String} url path
+     **/
+    getFontAwesome(i_fontName) {
+        var self = this;
+        if (_.isUndefined((self.m_fontAwesome[i_fontName])))
+            return undefined;
+        return self.m_fontAwesome[i_fontName]['image'];
+    }
+
+    /**
+     Get the  entire font awesome set
+     @method getFontsAwesome
+     @return {Object} data set
+     **/
+    getFontsAwesome() {
+        var self = this;
+        return self.m_fontAwesome;
+    }
+
+    /**
+     Convert player data to json format
+     @method playerDataTojson
+     @param {String} i_playerData
+     @return {Json} jPlayerData
+     **/
+    playerDataTojson(i_playerData) {
+        // var x2js = BB.comBroker.getService('compX2JS');
+        // var jPlayerData = x2js.xml_str2json(i_playerData);
+        // return jPlayerData;
+    }
+
+    /**
+     Convert player data to xml format
+     @method playerDataToxml
+     @param {String} i_playerData
+     @return {XML} xml data
+     **/
+    playerDataToxml(i_playerData) {
+        // var x2js = BB.comBroker.getService('compX2JS');
+        // var xPlayerData = x2js.json2xml_str(i_playerData);
+        // return xPlayerData;
+    }
+
     public getServiceType(): string {
         return this.blockPlacement;
     }
@@ -998,175 +1169,7 @@ export class BlockService {
         this.rp.reduxCommit();
     }
 
-    getBlockNameByCode(i_blockCode: number): string {
-        return this.m_blockCodes[i_blockCode];
-    }
 
-    /**
-     Get the common layout which only applies when block is inside a scene
-     @method getCommonSceneLayout
-     @param {string} i_placement
-     @return {String} common xml
-     **/
-    getCommonSceneLayout(i_placement, w ?, h ?) {
-        w = w == undefined ? 100 : w;
-        h = h == undefined ? 100 : h;
-        if (i_placement == PLACEMENT_CHANNEL)
-            return '';
-        return '<Layout rotation="0" x="0" y="0" width="' + w + '" height="' + h + '" />';
-    }
-
-    /**
-     Get the common properties XML with all default values
-     @method getCommonDefaultXML
-     @return {String} common xml
-     **/
-    getCommonDefaultXML() {
-        var self = this;
-        var common = '<Appearance alpha="1.0" blendMode="normal" />' + self.getCommonBackgroundXML() + self.getCommonBorderXML();
-        return common;
-    }
-
-    /**
-     Get the common properties Scene XML with all default values
-     @method getCommonSceneDefaultXML
-     @return {String} common xml
-     **/
-    getCommonSceneDefaultXML() {
-        var self = this;
-        var common = '<Appearance alpha="1.0" blendMode="normal" />' + self.getCommonBorderXML();
-        return common;
-    }
-
-    /**
-     Get the common border XML with all default values
-     @method getCommonBorderXML
-     @return {String} common xml
-     **/
-    getCommonBorderXML() {
-        return '<Border borderThickness="0" borderColor="65535" cornerRadius="0"/>';
-    }
-
-    /**
-     Get the common properties XML with all default values
-     @method getCommonBackgroundXML
-     @return {String} common xml
-     **/
-    getCommonBackgroundXML() {
-        var common = `
-            <Background style="Gradient" gradientType="linear" angle="0" offsetX="0" offsetY="0"> 
-                <GradientPoints> 
-                    <Point color="4361162" opacity="1" midpoint="125" /> 
-                </GradientPoints> 
-            </Background>
-            `
-        return common;
-    }
-
-    /**
-     Get a component data structure and properties for a particular component id.
-     @method getBlockBoilerplate
-     @param {Number} i_blockID
-     @return {Object} return the data structure of a specific component
-     **/
-    getBlockBoilerplate(i_blockID) {
-        var self = this;
-        return self.m_components[i_blockID];
-    }
-
-    /**
-     Translate a mimeType to a font-awesome icon of generic icons if does not exist
-     @method getIconFromMimeType
-     @param {Number} i_playerData
-     @return {String} foundMimeIcon
-     **/
-    getIconFromMimeType(i_mimeType) {
-        var self = this;
-        var foundMimeIcon = 'fa-star';
-        var blocks = self.getBlocks();
-        _.forEach(blocks, function (block: any) {
-            if (block.mimeType && block.mimeType == i_mimeType)
-                foundMimeIcon = block.fontAwesome;
-        });
-        return foundMimeIcon
-    }
-
-    /**
-     Get the entire set data structure for all components.
-     @method getBlocks
-     @return {Object} return all data structure
-     **/
-    getBlocks() {
-        var self = this;
-        return self.m_components;
-    }
-
-    /**
-     Retrieve a component code from a file extension type (i.e.: flv > 3100).
-     @method getBlockCodeFromFileExt
-     @param {String} i_fileExtension
-     @return {Number} return component code
-     **/
-    getBlockCodeFromFileExt(i_fileExtension) {
-        var self = this;
-        for (var code in self.m_components) {
-            if (self.m_components[code]['ext'] != undefined) {
-                for (var i = 0; i < self.m_components[code]['ext'].length; i++) {
-                    if (self.m_components[code]['ext'][i] == i_fileExtension) {
-                        return code;
-                    }
-                }
-            }
-        }
-        return -1;
-    }
-
-    /**
-     Get the font awesome path
-     @method getFontAwesome
-     @param {String} i_fontName
-     @return {String} url path
-     **/
-    getFontAwesome(i_fontName) {
-        var self = this;
-        if (_.isUndefined((self.m_fontAwesome[i_fontName])))
-            return undefined;
-        return self.m_fontAwesome[i_fontName]['image'];
-    }
-
-    /**
-     Get the  entire font awesome set
-     @method getFontsAwesome
-     @return {Object} data set
-     **/
-    getFontsAwesome() {
-        var self = this;
-        return self.m_fontAwesome;
-    }
-
-    /**
-     Convert player data to json format
-     @method playerDataTojson
-     @param {String} i_playerData
-     @return {Json} jPlayerData
-     **/
-    playerDataTojson(i_playerData) {
-        // var x2js = BB.comBroker.getService('compX2JS');
-        // var jPlayerData = x2js.xml_str2json(i_playerData);
-        // return jPlayerData;
-    }
-
-    /**
-     Convert player data to xml format
-     @method playerDataToxml
-     @param {String} i_playerData
-     @return {XML} xml data
-     **/
-    playerDataToxml(i_playerData) {
-        // var x2js = BB.comBroker.getService('compX2JS');
-        // var xPlayerData = x2js.json2xml_str(i_playerData);
-        // return xPlayerData;
-    }
 }
 
 

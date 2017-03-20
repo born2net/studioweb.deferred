@@ -28,11 +28,6 @@ const STATIONS_POLL_TIME_CHANGED = 'STATIONS_POLL_TIME_CHANGED';
 const THEME_CHANGED = 'THEME_CHANGED';
 const SELECTED_STACK_VIEW = 'SELECTED_STACK_VIEW';
 const BLOCK_SELECTED = 'BLOCK_SELECTED';
-const SCENE_ZOOM_IN = 'SCENE_ZOOM_IN';
-const SCENE_ZOOM_OUT = 'SCENE_ZOOM_OUT';
-const SCENE_ZOOM_RESET = 'SCENE_ZOOM_RESET';
-const SCENE_PUSH_TOP = 'SCENE_PUSH_TOP';
-const SCENE_PUSH_BOTTOM = 'SCENE_PUSH_BOTTOM';
 const SCENE_BLOCKS_RENDERED = 'SCENE_BLOCKS_RENDERED';
 const SCENE_EDITOR_REMOVE = 'SCENE_EDITOR_REMOVE';
 const SCENE_ITEM_REMOVE = 'SCENE_ITEM_REMOVE';
@@ -120,7 +115,7 @@ export class aaaa extends Compbaser implements AfterViewInit {
                 <h4 i18n class="modal-title">add content to scene</h4>
             </modal-header>
             <modal-body>
-                <add-content #addContent [placement]="m_PLACEMENT_SCENE" (onDone)="_onAddedNewBlock()"></add-content>
+                <add-content #addContent [placement]="m_PLACEMENT_SCENE" (onAddContentSelected)="_onAddedNewBlock($event)"></add-content>
             </modal-body>
             <modal-footer [show-default-buttons]="true"></modal-footer>
         </modal>
@@ -358,6 +353,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         var sceneData: ISceneData = {
             scene_id: null,
             scene_id_pseudo_id: null,
+            scene_native_id: null,
             block_pseudo_id: null,
             playerDataModel: null,
             domPlayerData: null,

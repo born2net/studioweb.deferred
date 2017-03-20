@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, ViewChild} from "@angular/core";
+import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Input, ViewChild} from "@angular/core";
 import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
 import {BlockService, IBlockData} from "./block-service";
 import {Compbaser, NgmslibService} from "ng-mslib";
@@ -13,7 +13,8 @@ import {JsonEventResourceModel} from "./json-event-grid";
 import {Lib} from "../../Lib";
 import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
 import {IAddContents} from "../../interfaces/IAddContent";
-import {PLACEMENT_LISTS} from "../../interfaces/Consts";
+import {BlockLabels, PLACEMENT_LISTS, PLACEMENT_SCENE} from "../../interfaces/Consts";
+import {RedPepperService} from "../../services/redpepper.service";
 
 @Component({
     selector: 'block-prop-collection',
@@ -94,7 +95,7 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
     m_collectionList: List<StoreModel>;
     m_jsonEventResources: Array<JsonEventResourceModel>;
 
-    constructor(private fb: FormBuilder, private cd: ChangeDetectorRef, private bs: BlockService, private ngmslibService: NgmslibService) {
+    constructor(private fb: FormBuilder, private cd: ChangeDetectorRef, private bs: BlockService, @Inject('BLOCK_PLACEMENT') private blockPlacement: string, private rp: RedPepperService) {
         super();
         this.m_contGroup = fb.group({
             'mode': [0]
@@ -269,47 +270,33 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
      @method _onAddedContent
      @param {Event} e
      **/
-    _onAddedContent(i_addContents:IAddContents) {
-        // console.log(i_addContents);
-        // var domPlayerData = self._getBlockPlayerData();
-        // var xSnippetCollection = $(domPlayerData).find('Collection');
-        // var buff = '';
-        // // log(e.edata.blockCode, e.edata.resourceID, e.edata.sceneID);
-        // if (e.edata.blockCode == BB.CONSTS.BLOCKCODE_SCENE) {
-        //     // add scene to collection
-        //     // if block resides in scene don't allow cyclic reference to collection scene inside current scene
-        //     if (self.m_placement == BB.CONSTS.PLACEMENT_SCENE) {
-        //         var sceneEditView = BB.comBroker.getService(BB.SERVICES['SCENE_EDIT_VIEW']);
-        //         if (!_.isUndefined(sceneEditView)) {
-        //             var selectedSceneID = sceneEditView.getSelectedSceneID();
-        //             selectedSceneID = pepper.getSceneIdFromPseudoId(selectedSceneID);
-        //             if (selectedSceneID == e.edata.sceneID) {
-        //                 bootbox.alert($(Elements.MSG_BOOTBOX_SCENE_REFER_ITSELF).text());
-        //                 return;
-        //             }
-        //         }
-        //     }
-        //     var sceneRecord = pepper.getScenePlayerRecord(e.edata.sceneID);
-        //     var sceneName = $(sceneRecord.player_data_value).attr('label');
-        //     var nativeID = sceneRecord['native_id'];
-        //     buff = '<Page page="' + sceneName + '" type="scene" duration="5">' +
-        //         '<Player src="' + nativeID + '" hDataSrc="' + e.edata.sceneID + '" />' +
-        //         '</page>';
-        // } else {
-        //     // Add resources to collection
-        //     var resourceName = pepper.getResourceRecord(e.edata.resourceID).resource_name;
-        //     log('updating hResource ' + e.edata.resourceID);
-        //     buff = '<Page page="' + resourceName + '" type="resource" duration="5">' +
-        //         '<Player player="' + e.edata.blockCode + '">' +
-        //         '<Data>' +
-        //         '<Resource hResource="' + e.edata.resourceID + '" />' +
-        //         '</Data>' +
-        //         '</Player>' +
-        //         '</page>';
-        // }
-        // $(xSnippetCollection).append($(buff));
-        // self._setBlockPlayerData(pepper.xmlToStringIEfix(domPlayerData), BB.CONSTS.NO_NOTIFICATION, true);
-        // self._populateTableEvents();
+    _onAddedContent(i_addContents: IAddContents) {
+        var domPlayerData = this.m_blockData.playerDataDom;
+        var xSnippetCollection = jXML(domPlayerData).find('Collection');
+        var buff = '';
+        if (Number(i_addContents.blockCode) == BlockLabels.BLOCKCODE_SCENE) {
+            // add scene to collection, if block resides in scene don't allow cyclic reference to collection scene inside current scene
+            if (this.blockPlacement == PLACEMENT_SCENE && this.m_blockData.scene.handle == i_addContents.sceneData.scene_id) {
+                return bootbox.alert('You cannot display a scene in a collection that refers to itself, that is just weird');
+            }        
+            var sceneName = i_addContents.sceneData.domPlayerDataJson.Player._label;
+            var nativeId = i_addContents.sceneData.scene_native_id;
+            buff = `<Page page="${sceneName}" type="scene" duration="5"> 
+                        <Player src="${nativeId}" hDataSrc="${i_addContents.sceneData.scene_id}"/>
+                    </page>`;
+        } else {
+            // Add resources to collection
+            var resourceName = this.rp.getResourceRecord(i_addContents.resourceId).resource_name;
+            buff = `<Page page="${resourceName}" type="resource" duration="5">
+                            <Player player="${i_addContents.blockCode}">
+                                <Data>
+                                    <Resource hResource="${i_addContents.resourceId}"/>
+                                </Data>
+                            </Player>
+                        </page>`
+        }
+        jXML(xSnippetCollection).append(jXML(buff));
+        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
     }
 
     private saveToStore() {
