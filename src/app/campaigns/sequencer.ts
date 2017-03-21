@@ -89,6 +89,7 @@ export class Sequencer extends Compbaser {
 
     ngAfterViewInit() {
 
+        //todo: need to fix
         // auto select the timeline / division on component creation if need to
         this.yp.ngrxStore.select(store => store.appDb.uiState.campaign)
             .take(1)

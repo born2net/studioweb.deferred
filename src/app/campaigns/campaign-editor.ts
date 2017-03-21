@@ -47,19 +47,21 @@ export class CampaignEditor extends Compbaser {
 
     constructor(private yp: YellowPepperService, private actions: AppdbAction, private rp: RedPepperService) {
         super();
+
         this.cancelOnDestroy(
+            //
             this.yp.listenCampaignSelected()
-                .subscribe((i_campaignsModelExt: CampaignsModelExt) => {
-                    Lib.Try(() => {
-                        if (!i_campaignsModelExt)
-                            return;
-                        this.campaignModel = i_campaignsModelExt;
-                        this._loadCampaignTimelines();
-                    })
+                .switchMap((i_campaignsModelExt: CampaignsModelExt) => {
+                    this.campaignModel = i_campaignsModelExt;
+                    return this.yp.listenCampaignTimelines(i_campaignsModelExt.getCampaignId())
+                })
+                .subscribe((i_campaignTimelinesModel: List<CampaignTimelinesModel>) => {
+                    this.m_campaignTimelinesModels = i_campaignTimelinesModel;
                 }, (e) => console.error(e))
         );
+
         this.cancelOnDestroy(
-            this.yp.listenTimelineSelected(false)
+            this.yp.listenTimelineSelected(true)
                 .subscribe((i_campaignTimelinesModel: CampaignTimelinesModel) => {
                     this.campaignTimelinesModel = i_campaignTimelinesModel;
                 }, (e) => console.error(e))
@@ -80,25 +82,6 @@ export class CampaignEditor extends Compbaser {
         )
     }
 
-    _onAddContent() {
-        if (!this.channelModel)
-            return bootbox.alert('Select channel to add content to. First be sure to select a timeline and next, click the [Next Channel] button');
-        this.onToAddContent.emit();
-
-    }
-
-    _onAddTimeline(){
-        this.onToAddTimeline.emit();
-    }
-
-    _onEditScreenLayout() {
-        if (!this.campaignTimelinesModel)
-            return bootbox.alert('no timeline selected')
-        var uiState: IUiState = {uiSideProps: SideProps.screenLayoutEditor}
-        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
-        this.onToScreenLayoutEditor.emit();
-    }
-
     @Output()
     onToScreenLayoutEditor: EventEmitter<any> = new EventEmitter<any>();
 
@@ -111,13 +94,56 @@ export class CampaignEditor extends Compbaser {
     @Output()
     onGoBack: EventEmitter<any> = new EventEmitter<any>();
 
-    @Once()
-    private _loadCampaignTimelines() {
-        return this.yp.getCampaignTimelines(this.campaignModel.getCampaignId())
-            .subscribe((m_campaignTimelinesModels: List<CampaignTimelinesModel>) => {
-                    this.m_campaignTimelinesModels = m_campaignTimelinesModels;
-                }, (e) => console.error(e)
-            )
+    _onAddContent() {
+        if (!this.channelModel)
+            return bootbox.alert('Select channel to add content to. First be sure to select a timeline and next, click the [Next Channel] button');
+        this.onToAddContent.emit();
+
+    }
+
+    _onRemoveTimeline() {
+        if (!this.campaignTimelinesModel)
+            return bootbox.alert('you must first select a timeline to remove');
+        if (this.rp.getCampaignTimelines(this.campaignTimelinesModel.getCampaignId()).length == 1)
+            return bootbox.alert('you must keep at least one Timeline')
+        bootbox.confirm('are you sure you want to remove the selected timeline?', (i_result) => {
+            if (i_result == true) {
+                var boardTemplateID = this.rp.getGlobalTemplateIdOfTimeline(this.campaignTimelinesModel.getCampaignTimelineId());
+                this.rp.removeTimelineFromCampaign(this.campaignTimelinesModel.getCampaignTimelineId());
+                this.rp.removeSchedulerFromTime(this.campaignTimelinesModel.getCampaignTimelineId());
+                var campaignTimelineBoardTemplateID = this.rp.removeBoardTemplateFromTimeline(this.campaignTimelinesModel.getCampaignTimelineId());
+                this.rp.removeBoardTemplate(boardTemplateID);
+                this.rp.removeTimelineBoardViewerChannels(campaignTimelineBoardTemplateID);
+                this.rp.removeBoardTemplateViewers(boardTemplateID);
+                this.rp.getChannelsOfTimeline(this.campaignTimelinesModel.getCampaignTimelineId()).forEach(i_campaign_timeline_chanel_id => {
+                    this.rp.removeChannelFromTimeline(i_campaign_timeline_chanel_id);
+                    this.rp.getChannelBlocks(i_campaign_timeline_chanel_id).forEach((i_block_id) => {
+                        this.rp.removeBlockFromTimelineChannel(i_block_id);
+                    })
+                });
+                var uiState: IUiState = {
+                    campaign: {
+                        timelineSelected: -1,
+                        campaignTimelineChannelSelected: -1,
+                        campaignTimelineBoardViewerSelected: -1
+                    }
+                }
+                this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+                this.rp.reduxCommit();
+            }
+        });
+    }
+
+    _onAddTimeline() {
+        this.onToAddTimeline.emit();
+    }
+
+    _onEditScreenLayout() {
+        if (!this.campaignTimelinesModel)
+            return bootbox.alert('no timeline selected')
+        var uiState: IUiState = {uiSideProps: SideProps.screenLayoutEditor}
+        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+        this.onToScreenLayoutEditor.emit();
     }
 
     /**
