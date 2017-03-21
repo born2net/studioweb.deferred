@@ -4,13 +4,14 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
 import {BoardTemplateViewersModel, CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 import {Observable} from "rxjs";
 import {OrientationEnum} from "./campaign-orientation";
-import {IScreenTemplateData, ScreenTemplate} from "../../comps/screen-template/screen-template";
+import {ScreenTemplate} from "../../comps/screen-template/screen-template";
 import * as _ from "lodash";
 import {Lib} from "../../Lib";
 import {RedPepperService} from "../../services/redpepper.service";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
 import {IUiState} from "../../store/store.data";
 import Any = jasmine.Any;
+import {IScreenTemplateData} from "../../interfaces/IScreenTemplate";
 
 interface selectTimelineBoardIdResult {
     campaignTimelinesModel: CampaignTimelinesModel,

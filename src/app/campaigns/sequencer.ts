@@ -3,7 +3,7 @@ import {Compbaser} from "ng-mslib";
 import {RedPepperService} from "../../services/redpepper.service";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
-import {IScreenTemplateData, ScreenTemplate} from "../../comps/screen-template/screen-template";
+import {ScreenTemplate} from "../../comps/screen-template/screen-template";
 import {Observable, Subscriber, Subscription} from "rxjs";
 import {IUiState} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
@@ -11,6 +11,7 @@ import {List} from "immutable";
 import * as _ from "lodash";
 import {ContextMenuService} from "angular2-contextmenu/src/contextMenu.service";
 import {Once} from "../../decorators/once-decorator";
+import {IScreenTemplateData} from "../../interfaces/IScreenTemplate";
 
 @Component({
     selector: 'sequencer',

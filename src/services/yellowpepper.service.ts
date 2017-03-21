@@ -17,13 +17,13 @@ import {
     PlayerDataModel,
     ResourcesModel
 } from "../store/imsdb.interfaces_auto";
-import {IScreenTemplateData} from "../comps/screen-template/screen-template";
 import {OrientationEnum} from "../app/campaigns/campaign-orientation";
 import {List} from "immutable";
 import * as _ from "lodash";
 import {UserModel} from "../models/UserModel";
 import X2JS from "x2js";
 import {ISceneData} from "../app/blocks/block-service";
+import {IScreenTemplateData} from "../interfaces/IScreenTemplate";
 
 
 @Injectable()

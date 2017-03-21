@@ -6,13 +6,11 @@ import {IUiState, IUiStateCampaign} from "../../store/store.data";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {RedPepperService} from "../../services/redpepper.service";
 import {Once} from "../../decorators/once-decorator";
-import {IScreenTemplateData} from "../../comps/screen-template/screen-template";
-import {CampaignEditor} from "./campaign-editor";
 import {PLACEMENT_CHANNEL} from "../../interfaces/Consts";
 import {IAddContents} from "../../interfaces/IAddContent";
 import {CampaignTimelineBoardViewerChanelsModel} from "../../store/imsdb.interfaces_auto";
 import {BlockService} from "../blocks/block-service";
-// import {PLACEMENT_CHANNEL} from "../../interfaces/Consts";
+import {IScreenTemplateData} from "../../interfaces/IScreenTemplate";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -40,15 +38,25 @@ import {BlockService} from "../blocks/block-service";
                     <campaign-resolution #campaignResolution (onSelection)="sliderItemCampaignResolution.onNext()"></campaign-resolution>
                 </template>
             </Slideritem>
-            <Slideritem [templateRef]="e" #sliderItemCampaignLayout (onChange)="_onSlideChange($event)" class="page left campaignLayout" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignResolution'" [to]="'campaignEditor'">
+            <Slideritem [templateRef]="e" #sliderItemCampaignLayout (onChange)="_onSlideChange($event)" class="page left campaignLayout" [showToButton]="false" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignResolution'"
+                        [to]="'campaignEditor'">
                 <template #e>
-                    <campaign-layout (onSelection)="sliderItemCampaignLayout.onNext(); _createCampaign($event)"></campaign-layout>
+                    <campaign-layout [onNewCampaignMode]="true" (onSelection)="sliderItemCampaignLayout.onNext(); _createCampaign($event)"></campaign-layout>
+                </template>
+            </Slideritem>
+            <Slideritem [templateRef]="i" #sliderItemCampaignLayoutAddTimeline (onChange)="_onSlideChange($event)" class="page left campaignAddLayout" [showToButton]="false" [toDirection]="'right'" [fromDirection]="'right'" [from]="'campaignEditor'">
+                <template #i>
+                    <campaign-layout [onNewCampaignMode]="false" (onSelection)="_addTimelineToCampaign($event); sliderItemCampaignLayoutAddTimeline.onPrev();"></campaign-layout>
                 </template>
             </Slideritem>
             <Slideritem [templateRef]="f" #sliderItemCampaignEditor (onChange)="_onSlideChange($event)" [showFromButton]="false" class="page left campaignEditor" [fromDirection]="'left'" [from]="'campaignList'">
                 <template #f>
-                    <campaign-editor #campaignEditor (onToAddContent)="sliderAddContent.slideTo('addContent','right')" (onToScreenLayoutEditor)="_onOpenScreenLayoutEditor() ; sliderScreenLayoutEditor.slideTo('screenLayoutEditor','right')"
-                                     (onGoBack)="sliderItemCampaignEditor.slideTo('campaignList','left')"></campaign-editor>
+                    <campaign-editor #campaignEditor
+                                     (onToAddTimeline)="sliderItemCampaignLayoutAddTimeline.slideTo('campaignAddLayout','left')"
+                                     (onToAddContent)="sliderAddContent.slideTo('addContent','right')"
+                                     (onToScreenLayoutEditor)="_onOpenScreenLayoutEditor() ; sliderScreenLayoutEditor.slideTo('screenLayoutEditor','right')"
+                                     (onGoBack)="sliderItemCampaignEditor.slideTo('campaignList','left')">
+                    </campaign-editor>
                 </template>
             </Slideritem>
             <Slideritem [templateRef]="g" #sliderScreenLayoutEditor (onChange)="_onSlideChange($event)" [showFromButton]="false" class="page left screenLayoutEditor" [fromDirection]="'left'" [from]="'campaignList'">
@@ -64,6 +72,7 @@ import {BlockService} from "../blocks/block-service";
         </Sliderpanel>
     `
 })
+
 export class Campaigns extends Compbaser {
 
     m_PLACEMENT_CHANNEL = PLACEMENT_CHANNEL;
@@ -116,11 +125,32 @@ export class Campaigns extends Compbaser {
     }
 
     @Once()
-    private _createCampaign(i_createCampaign) {
-        var createCampaign: IScreenTemplateData = i_createCampaign;
+    private _addTimelineToCampaign(i_screenTemplateData: IScreenTemplateData) {
         return this.yp.getNewCampaignParmas()
             .subscribe((value: IUiStateCampaign) => {
-                var campaignId = this.rp.createCampaignEntire(createCampaign.screenProps, createCampaign.name, value.campaignCreateResolution);
+                var campaign_board_id = this.rp.getFirstBoardIDofCampaign(value.campaignSelected);
+                var board_id = this.rp.getBoardFromCampaignBoard(campaign_board_id);
+                var newTemplateData = this.rp.createNewTemplate(board_id, i_screenTemplateData.screenProps);
+                var board_template_id = newTemplateData['board_template_id']
+                var viewers = newTemplateData['viewers'];
+                var campaign_timeline_id = this.rp.createNewTimeline(value.campaignSelected);
+                this.rp.setCampaignTimelineSequencerIndex(value.campaignSelected, campaign_timeline_id, 0);
+                this.rp.setTimelineTotalDuration(campaign_timeline_id, '0');
+                this.rp.createCampaignTimelineScheduler(value.campaignSelected, campaign_timeline_id);
+                var campaign_timeline_board_template_id = this.rp.assignTemplateToTimeline(campaign_timeline_id, board_template_id, campaign_board_id);
+                var channels = this.rp.createTimelineChannels(campaign_timeline_id, viewers);
+                this.rp.assignViewersToTimelineChannels(campaign_timeline_board_template_id, viewers, channels);
+                this.rp.reduxCommit();
+            }, (e) => {
+                console.error(e)
+            })
+    }
+
+    @Once()
+    private _createCampaign(i_screenTemplateData: IScreenTemplateData) {
+        return this.yp.getNewCampaignParmas()
+            .subscribe((value: IUiStateCampaign) => {
+                var campaignId = this.rp.createCampaignEntire(i_screenTemplateData.screenProps, i_screenTemplateData.name, value.campaignCreateResolution);
                 var uiState: IUiState = {campaign: {campaignSelected: campaignId}}
                 this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
             }, (e) => {

@@ -534,6 +534,25 @@ export class RedPepperService {
         this.addPendingTables(['table_campaign_timelines', 'table_campaign_timeline_chanels', 'table_campaign_timeline_chanel_players']);
     }
 
+
+    /**
+     Update a timeline's duration which is set as the total sum of all blocks within the longest running channel
+     @method updateTotalTimelineDuration
+     @param {Number} i_campaign_timeline_id
+     @return none
+     **/
+    getGlobalBoardFromCampaignId(i_campaign_id) {
+        var res;
+        _.find(this.databaseManager.table_campaign_boards().getAllPrimaryKeys(), (campaign_board_id) => {
+            var recCampaignTimeline = this.databaseManager.table_campaign_boards().getRec(campaign_board_id);
+            if (recCampaignTimeline.campaign_id == i_campaign_id) {
+                var board_id = recCampaignTimeline['board_id']
+                res = this.databaseManager.table_boards().getRec(board_id);
+            }
+        });
+        return res;
+    }
+
     /**
      Remove the association between the screen division (aka viewer) and all channels that are assigned with that viewer
      @method removeTimelineBoardViewerChannel
@@ -1087,7 +1106,7 @@ export class RedPepperService {
         if (campaignIDs.length == 0)
             this.removeAllBoards();
     }
-          
+
     /**
      Create a new player (a.k.a block) and add it to the specified channel_id
      @method createNewChannelPlayer
@@ -1303,6 +1322,23 @@ export class RedPepperService {
     }
 
     /**
+     Get a global board record (not the board that assigned to a campaign, but global).
+     Keep in mind that we only give as an argument the campaign > timeline > board > template id, so we have to query it and find
+     out to which global board its pointing so we can grab the correct record for the correct global board.
+     @method getGlobalBoardRecFromTemplate
+     @param {Number} i_campaign_timeline_board_template_id to reverse map into global board
+     @return {Object} global board record;
+     **/
+    getGlobalBoardRecFromTemplate(i_campaign_timeline_board_template_id) {
+        var recCampaignTimelineBoardTemplate = this.databaseManager.table_campaign_timeline_board_templates().getRec(i_campaign_timeline_board_template_id);
+        var board_template_id = recCampaignTimelineBoardTemplate['board_template_id'];
+        var recBoardTemplate = this.databaseManager.table_board_templates().getRec(board_template_id);
+        var board_id = recBoardTemplate['board_id'];
+        var recBoard = this.databaseManager.table_boards().getRec(board_id);
+        return recBoard;
+    }
+
+    /**
      Set a block's record using key value pair
      The method uses generic key / value fields so it can set any part of the record.
      @method setBlockRecord
@@ -1478,7 +1514,7 @@ export class RedPepperService {
         });
         return found_campaign_board_id;
     }
-    
+
     /**
      Remove all boards in sdk
      @method removeAllBoards
@@ -2163,18 +2199,15 @@ export class RedPepperService {
      @return {Number} foundBoardID of the board, or -1 if none found
      **/
     getFirstBoardIDofCampaign(i_campaign_id) {
-
         var totalBoardsFound = 0;
         var foundCampainBoardID = -1;
-
-        $(this.databaseManager.table_campaign_boards().getAllPrimaryKeys()).each(function (k, campaign_board_id) {
+        $(this.databaseManager.table_campaign_boards().getAllPrimaryKeys()).each((k, campaign_board_id) => {
             var recCampaignBoard = this.databaseManager.table_campaign_boards().getRec(campaign_board_id);
             if (i_campaign_id == recCampaignBoard.campaign_id && totalBoardsFound == 0) {
                 foundCampainBoardID = recCampaignBoard['campaign_board_id']
                 totalBoardsFound++;
             }
         });
-
         return foundCampainBoardID;
     }
 
@@ -2185,7 +2218,6 @@ export class RedPepperService {
      @return {Number} board_id
      **/
     getBoardFromCampaignBoard(i_campaign_board_id) {
-
         var recCampaignBoard = this.databaseManager.table_campaign_boards().getRec(i_campaign_board_id);
         return recCampaignBoard.board_id;
     }
@@ -2231,25 +2263,6 @@ export class RedPepperService {
             w: recEditBoardTemplateViewer['pixel_width'],
             h: recEditBoardTemplateViewer['pixel_height']
         };
-    }
-
-
-    /**
-     Get a global board record (not the board that assigned to a campaign, but global).
-     Keep in mind that we only give as an argument the campaign > timeline > board > template id, so we have to query it and find
-     out to which global board its pointing so we can grab the correct record for the correct global board.
-     @method getGlobalBoardRecFromTemplate
-     @param {Number} i_campaign_timeline_board_template_id to reverse map into global board
-     @return {Object} global board record;
-     **/
-    getGlobalBoardRecFromTemplate(i_campaign_timeline_board_template_id) {
-
-        var recCampaignTimelineBoardTemplate = this.databaseManager.table_campaign_timeline_board_templates().getRec(i_campaign_timeline_board_template_id);
-        var board_template_id = recCampaignTimelineBoardTemplate['board_template_id'];
-        var recBoardTemplate = this.databaseManager.table_board_templates().getRec(board_template_id);
-        var board_id = recBoardTemplate['board_id'];
-        var recBoard = this.databaseManager.table_boards().getRec(board_id);
-        return recBoard;
     }
 
     /**

@@ -22,17 +22,8 @@ import {Compbaser} from "ng-mslib";
 import * as _ from "lodash";
 import {Lib} from "../../Lib";
 import {OrientationEnum} from "../../app/campaigns/campaign-orientation";
+import {IScreenTemplateData} from "../../interfaces/IScreenTemplate";
 
-export interface IScreenTemplateData {
-    resolution: string;
-    screenType: string;
-    orientation: OrientationEnum;
-    screenProps: {};
-    name: string;
-    scale: number;
-    campaignTimelineId?: number,
-    campaignTimelineBoardTemplateId?: number
-}
 
 @Component({
     selector: 'screen-template',

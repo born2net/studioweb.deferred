@@ -87,6 +87,10 @@ export class CampaignEditor extends Compbaser {
 
     }
 
+    _onAddTimeline(){
+        this.onToAddTimeline.emit();
+    }
+
     _onEditScreenLayout() {
         if (!this.campaignTimelinesModel)
             return bootbox.alert('no timeline selected')
@@ -100,6 +104,9 @@ export class CampaignEditor extends Compbaser {
 
     @Output()
     onToAddContent: EventEmitter<any> = new EventEmitter<any>();
+
+    @Output()
+    onToAddTimeline: EventEmitter<any> = new EventEmitter<any>();
 
     @Output()
     onGoBack: EventEmitter<any> = new EventEmitter<any>();
