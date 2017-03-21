@@ -91,23 +91,23 @@ export class Sequencer extends Compbaser {
 
         //todo: need to fix
         // auto select the timeline / division on component creation if need to
-        this.yp.ngrxStore.select(store => store.appDb.uiState.campaign)
-            .take(1)
-            .subscribe((i_campaign: IUiStateCampaign) => {
-                if (i_campaign.timelineSelected != -1 && i_campaign.campaignTimelineBoardViewerSelected != -1) {
-                    this.tmpScreenTemplates.forEach((i_screenTemplate) => {
-                        if (i_screenTemplate.campaignTimelineId == i_campaign.timelineSelected) {
-                            this.m_selectedScreenTemplate = i_screenTemplate;
-                            this.m_selectedTimelineId = i_campaign.timelineSelected;
-                            this.m_campaignTimelineBoardViewerSelected = i_campaign.campaignTimelineBoardViewerSelected;
-                            this.m_campaignTimelineChannelSelected = i_campaign.campaignTimelineChannelSelected;
-                            this.m_selectedCampaignId = i_campaign.campaignSelected;
-                            i_screenTemplate.selectFrame();
-                            i_screenTemplate.selectDivison(i_campaign.campaignTimelineBoardViewerSelected)
-                        }
-                    })
-                }
-            }, (e) => console.error(e)) //cancelOnDestroy please
+        // this.yp.ngrxStore.select(store => store.appDb.uiState.campaign)
+        //     .take(1)
+        //     .subscribe((i_campaign: IUiStateCampaign) => {
+        //         if (i_campaign.timelineSelected != -1 && i_campaign.campaignTimelineBoardViewerSelected != -1) {
+        //             this.tmpScreenTemplates.forEach((i_screenTemplate) => {
+        //                 if (i_screenTemplate.campaignTimelineId == i_campaign.timelineSelected) {
+        //                     this.m_selectedScreenTemplate = i_screenTemplate;
+        //                     this.m_selectedTimelineId = i_campaign.timelineSelected;
+        //                     this.m_campaignTimelineBoardViewerSelected = i_campaign.campaignTimelineBoardViewerSelected;
+        //                     this.m_campaignTimelineChannelSelected = i_campaign.campaignTimelineChannelSelected;
+        //                     this.m_selectedCampaignId = i_campaign.campaignSelected;
+        //                     i_screenTemplate.selectFrame();
+        //                     i_screenTemplate.selectDivison(i_campaign.campaignTimelineBoardViewerSelected)
+        //                 }
+        //             })
+        //         }
+        //     }, (e) => console.error(e));
     }
 
     _onContextClicked(cmd: string, screenTemplateData: IScreenTemplateData) {
