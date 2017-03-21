@@ -46,7 +46,7 @@ import {IScreenTemplateData} from "../../interfaces/IScreenTemplate";
             </Slideritem>
             <Slideritem [templateRef]="i" #sliderItemCampaignLayoutAddTimeline (onChange)="_onSlideChange($event)" class="page left campaignAddLayout" [showToButton]="false" [toDirection]="'right'" [fromDirection]="'right'" [from]="'campaignEditor'">
                 <template #i>
-                    <campaign-layout [onNewCampaignMode]="false" (onSelection)="_addTimelineToCampaign($event); sliderItemCampaignLayoutAddTimeline.onPrev();"></campaign-layout>
+                    <campaign-layout [mouseHoverEffect]="true" [onNewCampaignMode]="false" (onSelection)="_addTimelineToCampaign($event); sliderItemCampaignLayoutAddTimeline.onPrev();"></campaign-layout>
                 </template>
             </Slideritem>
             <Slideritem [templateRef]="f" #sliderItemCampaignEditor (onChange)="_onSlideChange($event)" [showFromButton]="false" class="page left campaignEditor" [fromDirection]="'left'" [from]="'campaignList'">

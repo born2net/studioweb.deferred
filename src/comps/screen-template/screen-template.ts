@@ -33,13 +33,25 @@ import {IScreenTemplateData} from "../../interfaces/IScreenTemplate";
 export class ScreenTemplate extends Compbaser {
 
     private created = false;
+    private m_mouseHoverEffect = false;
 
     constructor(private el: ElementRef) {
         super();
     }
 
+    ngAfterViewInit(){
+        if (this.m_mouseHoverEffect)
+            this._mouseOverEffect()
+        this.m_mouseHoverEffect = false;
+    }
+
     @Output()
     onDivisionDoubleClicked: EventEmitter<any> = new EventEmitter<any>();
+
+    @Input()
+    set mouseHoverEffect(i_value) {
+        this.m_mouseHoverEffect = i_value;
+    }
 
     @Input()
     set setTemplate(i_screenTemplateData: IScreenTemplateData) {
@@ -57,7 +69,7 @@ export class ScreenTemplate extends Compbaser {
         this.m_useLabels = false;
         this._create()
         // this.selectableFrame();
-        // this._mouseOverEffect()
+
         this._mouseDoubleClickDivision();
     }
 
@@ -319,6 +331,11 @@ export class ScreenTemplate extends Compbaser {
         }).mouseout(function () {
             jQuery(this).css({'fill': 'rgb(230,230,230)'});
         });
+
+        jQuery('#' + this.m_myElementID, self.el.nativeElement).find('rect').each(function () {
+            jQuery(this).off();
+        });
+
         // jQuery.each(self, function (k) {
         //     self[k] = undefined;
         // });

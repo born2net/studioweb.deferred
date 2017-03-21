@@ -21,7 +21,7 @@ import {IScreenTemplateData} from "../../interfaces/IScreenTemplate";
         <small class="debug">{{me}}</small>
         <h4 i18n>screen layout</h4>
         <div (click)="_nextClick.next(screenLayout)" style="float: left; padding: 20px" *ngFor="let screenLayout of m_screenLayouts">
-            <screen-template [setTemplate]="screenLayout"></screen-template>
+            <screen-template [mouseHoverEffect]="m_mouseHoverEffect" [setTemplate]="screenLayout"></screen-template>
         </div>
 
     `,
@@ -36,6 +36,7 @@ export class CampaignLayout extends Compbaser {
     m_screenLayouts: Array<IScreenTemplateData>;
     m_campaignName: string;
     m_onNewCampaignMode: boolean;
+    m_mouseHoverEffect:boolean = false;
 
     constructor(private yp: YellowPepperService, private rp: RedPepperService) {
         super();
@@ -56,6 +57,11 @@ export class CampaignLayout extends Compbaser {
                 }).subscribe(() => {
             }, (e) => console.error(e))
         )
+    }
+
+    @Input()
+    set mouseHoverEffect(i_value) {
+        this.m_mouseHoverEffect = i_value;
     }
 
     @Input()
