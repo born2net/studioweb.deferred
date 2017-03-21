@@ -2,10 +2,10 @@ import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Out
 import {Compbaser} from "ng-mslib";
 import {RedPepperService} from "../../services/redpepper.service";
 import {YellowPepperService} from "../../services/yellowpepper.service";
-import {CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
+import {CampaignTimelineBoardViewerChanelsModel, CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 import {ScreenTemplate} from "../../comps/screen-template/screen-template";
 import {Observable, Subscriber, Subscription} from "rxjs";
-import {IUiState} from "../../store/store.data";
+import {IUiState, IUiStateCampaign} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
 import {List} from "immutable";
 import * as _ from "lodash";
@@ -21,7 +21,6 @@ import {IScreenTemplateData} from "../../interfaces/IScreenTemplate";
             margin-left: 0;
             vertical-align: middle;
             width: 2500px;
-            height: 100px;
             overflow-y: hidden;
         }
 
@@ -71,6 +70,45 @@ import {IScreenTemplateData} from "../../interfaces/IScreenTemplate";
 })
 export class Sequencer extends Compbaser {
 
+    m_campaignTimelinesModels: List<CampaignTimelinesModel>;
+    m__screenTemplates$: Observable<any>;
+    private m_draggables;
+    private m_thumbsContainer;
+    private target;
+    private x: number;
+    private m_selectedScreenTemplate: ScreenTemplate;
+    private m_selectedTimelineId: number;
+    private m_campaignTimelineBoardViewerSelected: number = -1;
+    private m_campaignTimelineChannelSelected: number = -1;
+    private m_selectedCampaignId: number = -1;
+
+    constructor(private el: ElementRef, private yp: YellowPepperService, private pepper: RedPepperService, private contextMenuService: ContextMenuService) {
+        super();
+        this.m_thumbsContainer = el.nativeElement;
+    }
+
+    ngAfterViewInit() {
+
+        // auto select the timeline / division on component creation if need to
+        this.yp.ngrxStore.select(store => store.appDb.uiState.campaign)
+            .take(1)
+            .subscribe((i_campaign: IUiStateCampaign) => {
+                if (i_campaign.timelineSelected != -1 && i_campaign.campaignTimelineBoardViewerSelected != -1) {
+                    this.tmpScreenTemplates.forEach((i_screenTemplate) => {
+                        if (i_screenTemplate.campaignTimelineId == i_campaign.timelineSelected) {
+                            this.m_selectedScreenTemplate = i_screenTemplate;
+                            this.m_selectedTimelineId = i_campaign.timelineSelected;
+                            this.m_campaignTimelineBoardViewerSelected = i_campaign.campaignTimelineBoardViewerSelected;
+                            this.m_campaignTimelineChannelSelected = i_campaign.campaignTimelineChannelSelected;
+                            this.m_selectedCampaignId = i_campaign.campaignSelected;
+                            i_screenTemplate.selectFrame();
+                            i_screenTemplate.selectDivison(i_campaign.campaignTimelineBoardViewerSelected)
+                        }
+                    })
+                }
+            }, (e) => console.error(e)) //cancelOnDestroy please
+    }
+
     _onContextClicked(cmd: string, screenTemplateData: IScreenTemplateData) {
         switch (cmd) {
             case 'edit': {
@@ -91,23 +129,6 @@ export class Sequencer extends Compbaser {
         });
         $event.preventDefault();
         $event.stopPropagation();
-    }
-
-    m_campaignTimelinesModels: List<CampaignTimelinesModel>;
-    m__screenTemplates$: Observable<any>;
-    private m_draggables;
-    private m_thumbsContainer;
-    private target;
-    private x: number;
-    private m_selectedScreenTemplate: ScreenTemplate;
-    private m_selectedTimelineId: number;
-    private m_campaignTimelineBoardViewerSelected: number = -1;
-    private m_campaignTimelineChannelSelected: number = -1;
-    private m_selectedCampaignId: number = -1;
-
-    constructor(private el: ElementRef, private yp: YellowPepperService, private pepper: RedPepperService, private contextMenuService: ContextMenuService) {
-        super();
-        this.m_thumbsContainer = el.nativeElement;
     }
 
     @ViewChildren(ScreenTemplate) tmpScreenTemplates: QueryList<ScreenTemplate>;
@@ -133,7 +154,7 @@ export class Sequencer extends Compbaser {
     }
 
     @Output()
-    onEditLayout:EventEmitter<any> = new EventEmitter<any>();
+    onEditLayout: EventEmitter<any> = new EventEmitter<any>();
 
     @Once()
     private _sortTimelines(i_cb: (sortedTimelines: Array<CampaignTimelinesModel>) => void) {
@@ -187,10 +208,12 @@ export class Sequencer extends Compbaser {
                 } else {
                     i_screenTemplate.deselectDivisons();
                 }
-                var uiState: IUiState = {campaign: {
-                    campaignTimelineChannelSelected: -1,
-                    campaignTimelineBoardViewerSelected: -1
-                }}
+                var uiState: IUiState = {
+                    campaign: {
+                        campaignTimelineChannelSelected: -1,
+                        campaignTimelineBoardViewerSelected: -1
+                    }
+                }
                 this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
                 this._notifyPropertySelect(SideProps.timeline);
             } else {

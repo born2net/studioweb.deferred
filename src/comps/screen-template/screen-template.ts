@@ -34,6 +34,7 @@ export class ScreenTemplate extends Compbaser {
 
     private created = false;
     private m_mouseHoverEffect = false;
+    private m_campaign_timeline_id = -1;
 
     constructor(private el: ElementRef) {
         super();
@@ -217,7 +218,7 @@ export class ScreenTemplate extends Compbaser {
             var w = screenValue['w'] == 0 ? 0 : screenValue['w'] / self.m_scale;
             var h = screenValue['h'] == 0 ? 0 : screenValue['h'] / self.m_scale;
             var campaign_timeline_board_viewer_id = screenValue['campaign_timeline_board_viewer_id'];
-            var campaign_timeline_id = screenValue['campaign_timeline_id'];
+            var campaign_timeline_id = self.m_campaign_timeline_id = screenValue['campaign_timeline_id'];
             var sd = screenValues;
 
             var uniqueID = 'rectSD' + '_' + _.uniqueId();
@@ -275,6 +276,10 @@ export class ScreenTemplate extends Compbaser {
         }
     }
 
+    get campaignTimelineId(){
+        return this.m_campaign_timeline_id;
+    }
+    
     /**
      When enabled, selectableFrame will allow for UI mouse / click of the outer frame of the template (screen) and not
      individual viewers.
