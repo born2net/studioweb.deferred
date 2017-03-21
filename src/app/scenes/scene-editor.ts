@@ -48,37 +48,6 @@ const MOUSE_ENTERS_CANVAS = 'MOUSE_ENTERS_CANVAS';
 const FONT_SELECTION_CHANGED = 'FONT_SELECTION_CHANGED';
 const CAMPAIGN_LIST_LOADING = 'CAMPAIGN_LIST_LOADED';
 
-
-@Component({
-    selector: 'aaaa',
-    template: `
-        <small class="debug">{{me}}</small>
-    `,
-})
-export class aaaa extends Compbaser implements AfterViewInit {
-
-    constructor(private yp: YellowPepperService) {
-        super();
-    }
-
-    @Input()
-    set setVal(a) {
-        alert(a)
-    }
-
-    ngAfterViewInit() {
-
-
-    }
-
-    ngOnInit() {
-    }
-
-    destroy() {
-    }
-}
-
-
 @Component({
     selector: 'scene-editor',
     styles: [`

@@ -15,6 +15,9 @@ import {MainAppShowStateEnum} from "../app-component";
     // changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'campaign-manager',
     styles: [`
+        button {
+            width: 160px;
+        }
         /*.selectedItem {*/
         /*background-color: green !important*/
         /*}*/
@@ -27,9 +30,9 @@ import {MainAppShowStateEnum} from "../app-component";
 })
 export class CampaignManager extends Compbaser {
 
+    // public userModel$: Observable<UserModel>;
 
     public campaigns$: Observable<List<CampaignsModelExt>>;
-    public userModel$: Observable<UserModel>;
     public timelineSelected$: Observable<number>;
     cars;
 
@@ -38,7 +41,8 @@ export class CampaignManager extends Compbaser {
         this.preventRedirect(true);
         this.timelineSelected$ = this.yp.ngrxStore.select(store => store.appDb.uiState.campaign.timelineSelected).map(v => v);
 
-        this.userModel$ = this.yp.ngrxStore.select(store => store.appDb.userModel);
+        // this.userModel$ = this.yp.ngrxStore.select(store => store.appDb.userModel);
+
         this.campaigns$ = this.yp.ngrxStore.select(store => store.msDatabase.sdk.table_campaigns).map((list: List<CampaignsModelExt>) => {
             this.cars = list;//.toArray();
             return list.filter((campaignModel: CampaignsModelExt) => {

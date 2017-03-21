@@ -10,26 +10,26 @@
             <i style="font-size: 1em" class="fa fa-rocket"></i>
             <span i18n>new campaign</span>
         </button>
-        <button disabled="true" type="button" class="btn btn-default">
-            <i style="font-size: 1em" class="fa fa-trash-o"></i>
-            <span i18n>remove</span>
-        </button>
         <button disabled="true" type="button" class="btn btn-danger">
             <i class="fa fa-magic"></i>
             <span i18n>Get Wizard help</span>
         </button>
+        <button (click)="save()" type="button" class="btn btn-primary">
+            <i class="fa fa-plane"></i>
+            <span i18n>save</span>
+        </button>
     </div>
 </div>
-<button (click)="onRoute1()">camp</button>
-<button (click)="onRoute2()">fq</button>
-<button (click)="onRoute3()">res</button>
-<button (click)="onRoute4()">sett</button>
-<button (click)="onRoute5()">stations</button>
-<button (click)="onRoute6()">pro</button>
-<h4>user name: {{(userModel$ | async)?.getUser() }}</h4>
-<h4>account type: {{(userModel$ | async)?.getAccountType()}}</h4>
+<!--<button (click)="onRoute1()">camp</button>-->
+<!--<button (click)="onRoute2()">fq</button>-->
+<!--<button (click)="onRoute3()">res</button>-->
+<!--<button (click)="onRoute4()">sett</button>-->
+<!--<button (click)="onRoute5()">stations</button>-->
+<!--<button (click)="onRoute6()">pro</button>-->
 
-<button i18n class="btn btn-primary" (click)="save()">save to server</button>
+<!--<h4>user name: {{(userModel$ | async)?.getUser() }}</h4>-->
+<!--<h4>account type: {{(userModel$ | async)?.getAccountType()}}</h4>-->
+
 <!-- move scroller to proper offset -->
 <div class="responsive-pad-right">
     <div matchBodyHeight="350" style="overflow: scroll">
