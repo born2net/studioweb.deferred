@@ -200,6 +200,5 @@ export class BlockPropContainer extends Compbaser implements AfterViewInit {
     }
 
     destroy() {
-        console.log('dest container');
     }
 }
