@@ -106,6 +106,7 @@ export class CampaignEditor extends Compbaser {
             return bootbox.alert('you must first select a timeline to remove');
         if (this.rp.getCampaignTimelines(this.campaignTimelinesModel.getCampaignId()).length == 1)
             return bootbox.alert('you must keep at least one Timeline')
+
         bootbox.confirm('are you sure you want to remove the selected timeline?', (i_result) => {
             if (i_result == true) {
                 var boardTemplateID = this.rp.getGlobalTemplateIdOfTimeline(this.campaignTimelinesModel.getCampaignTimelineId());
@@ -122,6 +123,7 @@ export class CampaignEditor extends Compbaser {
                     })
                 });
                 var uiState: IUiState = {
+                    uiSideProps: SideProps.miniDashboard,
                     campaign: {
                         timelineSelected: -1,
                         campaignTimelineChannelSelected: -1,
