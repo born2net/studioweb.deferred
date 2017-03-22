@@ -78,7 +78,6 @@ export class CampaignChannels extends Compbaser implements AfterViewInit {
 
     constructor(private yp: YellowPepperService, private rp: RedPepperService, private bs: BlockService, private cd:ChangeDetectorRef) {
         super();
-
     }
 
     @ViewChild(DraggableList)
@@ -104,9 +103,6 @@ export class CampaignChannels extends Compbaser implements AfterViewInit {
 
         this.cancelOnDestroy(
             this.yp.listenCampaignTimelineBoardViewerSelected(true)
-                .do((v) => {
-                    console.log(v);
-                })
                 .combineLatest(
                     this.durationChanged$,
                     this.yp.ngrxStore.select(store => store.msDatabase.sdk.table_campaign_timeline_chanel_players)
