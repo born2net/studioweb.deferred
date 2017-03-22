@@ -35,16 +35,19 @@ import {RedPepperService} from "../../services/redpepper.service";
             <div class="row">
                 <li class="list-group-item">
                     <span i18n>Kiosk mode</span><br/>
+                    <div class="material-switch pull-right" style="position: relative; top: -24px">
+                        <input #imageRatio (change)="_toggleKioskMode(imageRatio.checked)" [formControl]="m_contGroup.controls['mode']" id="imageRatio" name="imageRatio" type="checkbox"/>
+                        <label for="imageRatio" class="label-primary"></label>
+                    </div>
+                </li>
+                
+                <li class="list-group-item">
                     <button (click)="_onAddNewCollectionItem()" type="button" title="add event" class="btn btn-default btn-sm">
                         <span class="fa fa-plus"></span>
                     </button>
                     <button (click)="_onRemoveCollectionItem()" type="button" title="remove event" class="btn btn-default btn-sm">
                         <span class="fa fa-minus"></span>
-                    </button>
-                    <div class="material-switch pull-right">
-                        <input #imageRatio (change)="_toggleKioskMode(imageRatio.checked)" [formControl]="m_contGroup.controls['mode']" id="imageRatio" name="imageRatio" type="checkbox"/>
-                        <label for="imageRatio" class="label-primary"></label>
-                    </div>
+                    </button>                    
                 </li>
                 <li class="list-group-item">
                     <label i18n>Play collection in sequence</label>
@@ -152,14 +155,8 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
     }
 
-    //todo: to be added collection insertion
     _onAddNewCollectionItem() {
         this._onAddNewBlock()
-        // var domPlayerData = this.m_blockData.playerDataDom;
-        // var buff = '<EventCommand from="event" condition="" command="firstPage" />';
-        // jXML(domPlayerData).find('EventCommands').append(jXML(buff));
-        // // domPlayerData = this.rp.xmlToStringIEfix(domPlayerData)
-        // this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
     }
 
     _onDurationEdited(event: ISimpleGridEdit, index) {
