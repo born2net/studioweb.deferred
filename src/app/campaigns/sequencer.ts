@@ -50,7 +50,7 @@ import {IScreenTemplateData} from "../../interfaces/IScreenTemplate";
             <hr class="dottedHR">
             <div id="dragcontainer">
                 <screen-template #st class="draggableTimeline"
-                                 *ngFor="let screenTemplate of m__screenTemplates$ | async"
+                                 *ngFor="let screenTemplate of m_screenTemplates$ | async"
                                  (contextmenu)="onContextMenu($event, screenTemplate)"
                                  (click)="_onScreenTemplateSelected(screenTemplate, st)"
                                  (onDivisionDoubleClicked)="_onDivisionDoubleClicked($event)"
@@ -71,7 +71,7 @@ import {IScreenTemplateData} from "../../interfaces/IScreenTemplate";
 export class Sequencer extends Compbaser {
 
     m_campaignTimelinesModels: List<CampaignTimelinesModel>;
-    m__screenTemplates$: Observable<any>;
+    m_screenTemplates$: Observable<any>;
     private m_draggables;
     private m_thumbsContainer;
     private target;
@@ -140,7 +140,7 @@ export class Sequencer extends Compbaser {
         this.m_selectedCampaignId = this.m_campaignTimelinesModels.first().getCampaignId();
 
         this._sortTimelines((sortedTimelines: Array<CampaignTimelinesModel>) => {
-            this.m__screenTemplates$ = Observable.from(sortedTimelines)
+            this.m_screenTemplates$ = Observable.from(sortedTimelines)
                 .map(i_campaignTimelinesModelsOrdered => {
                     return this._getScreenTemplate(i_campaignTimelinesModelsOrdered)
                 }).combineAll();
