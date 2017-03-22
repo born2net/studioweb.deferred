@@ -22,10 +22,10 @@ import {RedPepperService} from "../../services/redpepper.service";
         '(input-blur)': 'saveToStore($event)'
     },
     styles: [`
-        /* walk up the ancestor tree and if darkTheme is found, apply style */
-        /*:host-context(.darkTheme) * {*/
-        /*background-color: #1e1e1e;*/
-        /*}*/
+        .inliner {
+            display: inline-block;
+            width: 130px;
+        }
     `],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
@@ -70,25 +70,54 @@ import {RedPepperService} from "../../services/redpepper.service";
                 <button type="button" name="addLocation" title="add a new item" class="addResourceToLocation btn btn-default btn-sm">
                     <span class="glyphicon glyphicon-plus"></span>
                 </button>
-                <button type="button" name="removeLocation" title="remove item"  class="btn btn-default btn-sm">
+                <button type="button" name="removeLocation" title="remove item" class="btn btn-default btn-sm">
                     <span class="glyphicon glyphicon-minus"></span>
                 </button>
-                <button type="button" name="previous" title="remove item"  class="btn btn-default btn-sm">
+                <button (click)="_jumpToLocation('prev')" type="button" name="previous" title="remove item" class="btn btn-default btn-sm">
                     <span class="glyphicon glyphicon-chevron-left"></span>
                 </button>
-                <button type="button" name="next" title="remove item" class="btn btn-default btn-sm">
+                <button (click)="_jumpToLocation('next')" type="button" name="next" title="remove item" class="btn btn-default btn-sm">
                     <span class="glyphicon glyphicon-chevron-right"></span>
                 </button>
-                <button type="button" name="openLocation" title="openLocation item"  class="btn btn-default btn-sm">
+                <button type="button" name="openLocation" title="openLocation item" class="btn btn-default btn-sm">
                     <span class="glyphicon glyphicon glyphicon-map-marker"></span>
                 </button>
             </h4>
             <br/>
             <label>
-                <span data-localize="totalLocationBased">Total location based: </span>
-                <span id="totalMapLocations">0</span>
+                <span i18n>Total location based: {{m_totalLocations}}</span>
             </label>
-            
+
+            <div class="row">
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <span i18n class="inliner">name</span>
+                        <input type="text" class="numStepper inliner" formControlName="locationName">
+                    </li>
+                    <li class="list-group-item">
+                        <span i18n class="inliner">latitude</span>
+                        <input type="number" class="numStepper inliner" formControlName="lat">
+                    </li>
+                    <li class="list-group-item">
+                        <span i18n class="inliner">longitude</span>
+                        <input type="number" class="numStepper inliner" formControlName="lng">
+                    </li>
+                    <li class="list-group-item">
+                        <span i18n class="inliner">duration</span>
+                        <input type="number" min="5" max="86400" class="numStepper inliner" formControlName="duration">
+                    </li>
+                    <li class="list-group-item">
+                        <span i18n>radius range {{m_radius}} kilometers</span><br/>
+                        <input #radiusControl (change)="m_radius = radiusControl.value" class="default-prop-width" type="range" max="0.10" step="0.1" max="4" formControlName="radius"/>
+                    </li>
+                    <li class="list-group-item">
+                        <span i18n>conflict priority</span><br/>
+                        <input class="default-prop-width" type="range" step="1" max="1" max="5" formControlName="priority"/>
+                    </li>
+                </ul>
+            </div>
+
+
         </form><h5>block id {{m_blockData.blockID}}</h5>
         <modal #modal>
             <modal-header [show-close]="true">
@@ -103,7 +132,10 @@ import {RedPepperService} from "../../services/redpepper.service";
 })
 export class BlockPropLocation extends Compbaser implements AfterViewInit {
 
-    private formInputs = {};
+    private m_formInputs = {};
+    private m_currentIndex = 0;
+    private m_radius = '0';
+    private m_totalLocations = 0;
     private m_contGroup: FormGroup;
     private m_blockData: IBlockData;
 
@@ -113,10 +145,16 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
     constructor(private fb: FormBuilder, private cd: ChangeDetectorRef, private bs: BlockService, @Inject('BLOCK_PLACEMENT') private blockPlacement: string, private rp: RedPepperService) {
         super();
         this.m_contGroup = fb.group({
-            'mode': [0]
+            'mode': [0],
+            'locationName': [0],
+            'lng': [0],
+            'lat': [0],
+            'duration': [0],
+            'priority': [0],
+            'radius': [0]
         });
         _.forEach(this.m_contGroup.controls, (value, key: string) => {
-            this.formInputs[key] = this.m_contGroup.controls[key] as FormControl;
+            this.m_formInputs[key] = this.m_contGroup.controls[key] as FormControl;
         })
     }
 
@@ -169,6 +207,81 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
 
     _onAddNewCollectionItem() {
         this._onAddNewBlock()
+    }
+
+    /**
+     Populate the total map locations set
+     @method _populateTotalMapLocations
+     @param {Object} domPlayerData
+     **/
+    _populateTotalMapLocations() {
+        var domPlayerData = this.m_blockData.playerDataDom
+        this.m_totalLocations = jXML(domPlayerData).find('GPS').children().length;
+        if (this.m_totalLocations == 0) {
+            this.m_currentIndex = 0;
+        } else {
+            // jXML(Elements.LOCATION_SELECTED).show();
+        }
+        // jXML(Elements.TOTAL_MAP_LOCATIONS).text(total);
+    }
+
+    /**
+     Select specific location and populate both the UI as well scroll map to coordinates
+     **/
+    _jumpToLocation(i_index) {
+        var domPlayerData = this.m_blockData.playerDataDom;
+        var total = jXML(domPlayerData).find('GPS').children().length;
+        var item;
+        // no locations, done!
+        if (total == 0) {
+            this._populateTotalMapLocations();
+            return;
+        }
+        // load location
+        switch (i_index) {
+            case 'first': {
+                this.m_currentIndex = 0;
+                item = jXML(domPlayerData).find('GPS').children().first();
+                break;
+            }
+            case 'last': {
+                this.m_currentIndex = total - 1;
+                item = jXML(domPlayerData).find('GPS').children().last();
+                break;
+            }
+            case 'next': {
+                if (this.m_currentIndex == (total - 1)) {
+                    item = jXML(domPlayerData).find('GPS').children().last();
+                } else {
+                    this.m_currentIndex++;
+                    item = jXML(domPlayerData).find('GPS').children().get(this.m_currentIndex);
+                }
+                break;
+            }
+            case 'prev': {
+                if (this.m_currentIndex == 0) {
+                    item = jXML(domPlayerData).find('GPS').children().first();
+                } else {
+                    this.m_currentIndex--;
+                    item = jXML(domPlayerData).find('GPS').children().get(this.m_currentIndex);
+                }
+                break;
+            }
+        }
+
+        this.m_radius = jXML(item).attr('radios');
+
+        this.m_formInputs['locationName'].setValue(jXML(item).attr('page'));
+        this.m_formInputs['lat'].setValue(jXML(item).attr('lat'));
+        this.m_formInputs['lng'].setValue(jXML(item).attr('lng'));
+        this.m_formInputs['duration'].setValue(jXML(item).attr('duration'));
+        this.m_formInputs['radius'].setValue(this.m_radius);
+
+
+
+        this.m_formInputs['priority'].setValue(jXML(item).attr('priority'));
+
+        // this.m_addBlockLocationView.panToPoint(jXML(item).attr('lat'), jXML(item).attr('lng'));
     }
 
     _onDurationEdited(event: ISimpleGridEdit, index) {
@@ -258,8 +371,9 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
 
     _render() {
         this.m_contGroup.reset();
-        var domPlayerData = this.m_blockData.playerDataDom
         this._populateTableCollection();
+        this._populateTotalMapLocations();
+        this._jumpToLocation('first')
         this.cd.markForCheck();
     }
 
