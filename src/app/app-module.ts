@@ -1,5 +1,5 @@
 import {BrowserModule} from "@angular/platform-browser";
-import {Compiler, NgModule} from "@angular/core";
+import {Compiler, NgModule, ErrorHandler} from "@angular/core";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {HttpModule, JsonpModule} from "@angular/http";
 import {Ng2Bs3ModalModule} from "ng2-bs3-modal/ng2-bs3-modal";
@@ -10,7 +10,7 @@ import {YellowPepperService} from "../services/yellowpepper.service";
 import {MsLibModule} from "ng-mslib/dist/mslib.module";
 import {ToastModule} from "ng2-toastr";
 import {AccordionModule, AlertModule, DropdownModule, ModalModule} from "ng2-bootstrap";
-import {DropdownModule as DropdownModulePrime, InputTextModule, SelectButtonModule, TreeModule, SpinnerModule} from "primeng/primeng";
+import {DropdownModule as DropdownModulePrime, InputTextModule, SelectButtonModule, TreeModule} from "primeng/primeng";
 import {routing} from "../app-routes";
 import {LoginPanel} from "../comps/entry/LoginPanel";
 import {Logout} from "../comps/logout/Logout";
@@ -44,16 +44,21 @@ import "gsap/TweenLite";
 import {Lib} from "../Lib";
 import {FontLoaderService} from "../services/font-loader-service";
 import {SimpleGridModule} from "../comps/simple-grid-module/SimpleGridModule";
+import {GlobalErrorHandler} from "../services/global-error-handler";
 // import "fabric"; // need to remove if we import via cli
 // import {ScreenTemplate} from "../comps/screen-template/screen-template";
 
-export var providing = [CommBroker, AUTH_PROVIDERS, RedPepperService, YellowPepperService, LocalStorage, StoreService, FontLoaderService, AppdbAction,    {
-        provide: "OFFLINE_ENV",
-        useValue: window['offlineDevMode']
-    },
+export var providing = [CommBroker, AUTH_PROVIDERS, RedPepperService, YellowPepperService, LocalStorage, StoreService, FontLoaderService, AppdbAction, {
+    provide: "OFFLINE_ENV",
+    useValue: window['offlineDevMode']
+},
     {
         provide: "HYBRID_PRIVATE",
         useValue: false
+    },
+    {
+        provide: ErrorHandler,
+        useClass: GlobalErrorHandler
     }
 ];
 
@@ -114,7 +119,7 @@ export function appReducer(state: any = INITIAL_APPLICATION_STATE, action: any) 
 })
 
 export class AppModule {
-    constructor(private commBroker:CommBroker, private compiler:Compiler, private ngmslibService: NgmslibService, private yp:YellowPepperService, private fontLoaderService:FontLoaderService) {
+    constructor(private commBroker: CommBroker, private compiler: Compiler, private ngmslibService: NgmslibService, private yp: YellowPepperService, private fontLoaderService: FontLoaderService) {
         Lib.Con(`running in dev mode: ${Lib.DevMode()}`);
         Lib.Con(`App in ${(compiler instanceof Compiler) ? 'AOT' : 'JIT'} mode`);
         console.log(commBroker);

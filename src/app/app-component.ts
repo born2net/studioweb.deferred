@@ -135,49 +135,6 @@ export class AppComponent implements AfterViewInit {
         })
     }
 
-    // private listenPreview() {
-    //     this.yp.listenPreview()
-    //         .subscribe(i_previewing => {
-    //             if (i_previewing) {
-    //                 let uiState: IUiState = {mainAppState: MainAppShowStateEnum.PREVIEW}
-    //                 this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
-    //
-    //                 // this.viewMode(MainAppShowModeEnum.PREVIEW);
-    //             } else {
-    //                 this.viewMode(MainAppShowModeEnum.MAIN);
-    //             }
-    //         }, (e) => console.error(e))
-    // }
-
-    // private listenSave() {
-    //     this.yp.listenSave()
-    //         .combineLatest(this.yp.listenPreview(), ((a, b) => {
-    //             return {save: a, preview: b};
-    //         }))
-    //         .subscribe(i_data => {
-    //
-    //             if (i_data.save == false && i_data.preview == true){
-    //                 let uiState: IUiState = {saving: true}
-    //                 this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
-    //                 return;
-    //             }
-    //
-    //             if (i_data.save == true && i_data.preview == true) {
-    //                 this.viewMode(MainAppShowModeEnum.SAVE);
-    //                 this.rp.save((result) => {
-    //                     if (result.status == true) {
-    //                         this.rp.reduxCommit(null, true)
-    //                         this.viewMode(MainAppShowModeEnum.MAIN);
-    //                         let uiState: IUiState = {saving: false}
-    //                         this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
-    //                     } else {
-    //                         alert('error ' + JSON.stringify(result));
-    //                     }
-    //                 })
-    //             }
-    //         }, (e) => console.error(e))
-    // }
-
     private viewMode(i_mode: MainAppShowModeEnum) {
         this.m_showMode = i_mode;
         switch (i_mode) {
