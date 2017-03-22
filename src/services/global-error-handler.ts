@@ -1,6 +1,7 @@
 import {ErrorHandler, Injectable, Injector} from '@angular/core';
 import * as moment from 'moment'
 import * as StackTrace from 'stacktrace-js';
+import {Lib} from "../Lib";
 
 @Injectable()
 export class GlobalErrorHandler implements ErrorHandler {
@@ -8,6 +9,10 @@ export class GlobalErrorHandler implements ErrorHandler {
     }
 
     handleError(error) {
+        if (Lib.DevMode()){
+            throw error;
+        }
+
         // const loggingService = this.injector.get(LoggingService);
         // const location = this.injector.get(LocationStrategy);
         // const url = location instanceof PathLocationStrategy   ? location.path() : '';
