@@ -58,7 +58,7 @@ export class CampaignOrientation extends Compbaser {
             }).map((i_orientation) => {
                 this.m_orientation = i_orientation;
                 return i_orientation;
-            }).debounceTime(800)
+            }).debounceTime(100)
                 .subscribe(() => {
                     var uiState: IUiState = {
                         campaign: {

@@ -14,6 +14,7 @@ import {ADD_NEW_BLOCK_SCENE} from "../scenes/scene-editor";
 import {Lib} from "../../Lib";
 import {List} from "immutable";
 import * as _ from "lodash";
+import {timeout} from "../../decorators/timeout-decorator";
 
 @Component({
     selector: 'add-content',
@@ -184,7 +185,6 @@ export class AddContent extends Compbaser implements AfterViewInit {
     onAddContentSelected: EventEmitter<IAddContents> = new EventEmitter<IAddContents>();
 
     _addBlock(i_addContents: IAddContents) {
-
         switch (this.m_placement) {
             case PLACEMENT_CHANNEL: {
                 this.onAddContentSelected.emit(i_addContents)

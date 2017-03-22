@@ -1,5 +1,7 @@
-import {ChangeDetectorRef, Component, DoCheck, EventEmitter, Input, Output, TemplateRef, ViewContainerRef} from "@angular/core";
+import {ApplicationRef, ChangeDetectorRef, Component, DoCheck, Input, Output, TemplateRef, ViewContainerRef} from "@angular/core";
 import {Sliderpanel} from "./Sliderpanel";
+import {Observable, Subject} from "rxjs";
+import {Compbaser} from "ng-mslib";
 
 export interface ISliderItemData {
     to: string;
@@ -18,32 +20,42 @@ export interface ISliderItemData {
             <span class="fa fa-arrow-right"></span>
         </button>
 
-        <!--<ng-content *ngIf="render"></ng-content>-->
+        <!--<ng-content *ngIf="m_render"></ng-content>-->
 
-        <template *ngIf="render" [ngTemplateOutlet]="templateRef"></template>
+        <template *ngIf="m_render" [ngTemplateOutlet]="templateRef"></template>
     `,
 })
-export class Slideritem implements DoCheck  {
+export class Slideritem extends Compbaser implements DoCheck {
 
-    public render: boolean = false;
+    private m_render: boolean = false;
+    private m_onChanges$ = new Subject()
 
-    constructor(private viewContainer: ViewContainerRef, protected sliderPanel: Sliderpanel, private cd: ChangeDetectorRef) {
+    constructor(private viewContainer: ViewContainerRef, protected sliderPanel: Sliderpanel, private cd: ChangeDetectorRef, ap:ApplicationRef) {
+        super();
         this.viewContainer.element.nativeElement.classList.add('page');
         this.sliderPanel.addSlider(this);
+
+        this.cancelOnDestroy(
+            this.m_onChanges$.debounceTime(300)
+                .subscribe((data: any) => {
+                    this.sliderPanel.slideToPage(data.to, data.direction)
+                    this.cd.markForCheck();
+                })
+        )
     }
 
     ngDoCheck() {
         if (this.viewContainer.element.nativeElement.classList.contains('selected')) {
-            if (this.render == true)
+            if (this.m_render == true)
                 return;
-            this.render = true;
+            this.m_render = true;
             // console.log('added');
             this.cd.detectChanges();
         } else {
-            if (this.render == false)
+            if (this.m_render == false)
                 return;
             setTimeout(() => {
-                this.render = false;
+                this.m_render = false;
                 // console.log('removed');
                 this.cd.detectChanges();
             }, 500)
@@ -57,8 +69,9 @@ export class Slideritem implements DoCheck  {
     @Input() from: string;
     @Input() showToButton: boolean = true;
     @Input() showFromButton: boolean = true;
-    @Output()
-    onChange: EventEmitter<ISliderItemData> = new EventEmitter<ISliderItemData>();
+
+
+    @Output() onChange: Observable<ISliderItemData> = new Subject().delay(300).debounceTime(1000);
 
     public addClass(i_className) {
         this.viewContainer.element.nativeElement.classList.add(i_className);
@@ -77,11 +90,12 @@ export class Slideritem implements DoCheck  {
     }
 
     public slideTo(to: string, direction: string) {
-        this.onChange.emit({
+        (this.onChange as Subject<ISliderItemData>).next({
             to: to,
             direction: direction
         })
-        this.sliderPanel.slideToPage(to, direction)
+        this.m_onChanges$.next({to, direction})
+        // this.sliderPanel.slideToPage(to, direction)
     }
 
     public onNext() {
@@ -90,6 +104,10 @@ export class Slideritem implements DoCheck  {
 
     public onPrev() {
         this.slideTo(this.from, this.fromDirection);
+    }
+
+    destroy(){
+        // console.log('dest SliderItem');
     }
 }
 

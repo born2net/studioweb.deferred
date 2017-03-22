@@ -38,7 +38,7 @@ export class CampaignResolution extends Compbaser {
             }).map((i_resolution) => {
                 this.m_resolution = i_resolution;
                 return i_resolution;
-            }).debounceTime(800)
+            }).debounceTime(100)
                 .subscribe(() => {
                     var uiState: IUiState = {
                         campaign: {

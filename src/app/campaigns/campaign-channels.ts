@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input, ViewChild} from "@angular/core";
+import {AfterViewInit, ChangeDetectorRef, Component, Input, ViewChild} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {CampaignTimelineBoardViewerChanelsModel, CampaignTimelineChanelPlayersModel, CampaignTimelineChanelsModel, CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 import {BlockService, IBlockData} from "../blocks/block-service";
@@ -11,6 +11,7 @@ import {IUiState} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
 import {DraggableList} from "../../comps/draggable-list/draggable-list";
 import {IAddContents} from "../../interfaces/IAddContent";
+import {timeout} from "../../decorators/timeout-decorator";
 
 
 @Component({
@@ -50,9 +51,6 @@ import {IAddContents} from "../../interfaces/IAddContent";
         }
     `],
     template: `
-        <small class="release">my component
-            <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
-        </small>
         <small class="debug">{{me}}</small>
         <!-- todo: need to investigate as performance sometime lag when using the matchBodyHeight directive here -->
         <div matchBodyHeight="540" id="campaignView" style="padding-right: 5px; overflow-y: auto">
@@ -78,8 +76,9 @@ export class CampaignChannels extends Compbaser implements AfterViewInit {
     private durationChanged$ = new Subject();
     m_blockList: List<IBlockData> = List([]);
 
-    constructor(private yp: YellowPepperService, private rp: RedPepperService, private bs: BlockService) {
+    constructor(private yp: YellowPepperService, private rp: RedPepperService, private bs: BlockService, private cd:ChangeDetectorRef) {
         super();
+
     }
 
     @ViewChild(DraggableList)
@@ -88,10 +87,12 @@ export class CampaignChannels extends Compbaser implements AfterViewInit {
     ngAfterViewInit() {
         this.listenChannelSelected();
         this.preventRedirect(true);
+
     }
 
+    @timeout()
     private listenChannelSelected() {
-
+        this.cd.markForCheck();
         this.cancelOnDestroy(
             this.yp.listenCampaignTimelineBoardViewerSelected(true)
                 .skip(1)
@@ -103,6 +104,9 @@ export class CampaignChannels extends Compbaser implements AfterViewInit {
 
         this.cancelOnDestroy(
             this.yp.listenCampaignTimelineBoardViewerSelected(true)
+                .do((v) => {
+                    console.log(v);
+                })
                 .combineLatest(
                     this.durationChanged$,
                     this.yp.ngrxStore.select(store => store.msDatabase.sdk.table_campaign_timeline_chanel_players)
