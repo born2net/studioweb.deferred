@@ -37,12 +37,14 @@ testem.log
 !/typings
 
 # js/map
+*.js
 src/**/*.js
 *prod.js
 src/**/*.map
 #System Files
 .DS_Store
 Thumbs.db
+workspace.xml
 
 !signageSDK.js
 !service-worker.js

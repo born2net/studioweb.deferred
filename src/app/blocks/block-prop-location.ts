@@ -67,7 +67,7 @@ import {RedPepperService} from "../../services/redpepper.service";
             </div>
             <hr/>
             <h4 id="locationControls" class="panel-title">
-                <button type="button" name="addLocation" title="add a new item" class="addResourceToLocation btn btn-default btn-sm">
+                <button (click)="_onAddNewBlock()" type="button" name="addLocation" title="add a new item" class="addResourceToLocation btn btn-default btn-sm">
                     <span class="glyphicon glyphicon-plus"></span>
                 </button>
                 <button type="button" name="removeLocation" title="remove item" class="btn btn-default btn-sm">

@@ -57,6 +57,7 @@
     "fabric": "git://github.com/born2net/fabric.js.git",
     "font-awesome": "~4.7.0",
     "gsap": "^1.19.1",
+    "angular2-google-maps": "^0.16.0",
     "gulp-bump": "^2.5.1",
     "hammerjs": "^2.0.8",
     "immutable": "^3.8.1",

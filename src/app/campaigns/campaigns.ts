@@ -69,6 +69,11 @@ import {IScreenTemplateData} from "../../interfaces/IScreenTemplate";
                     <add-content #addContent [placement]="m_PLACEMENT_CHANNEL" (onAddContentSelected)="_onAddedContent($event) ; sliderItemCampaignEditor.slideTo('campaignEditor','left')"></add-content>
                 </template>
             </Slideritem>
+            <Slideritem [templateRef]="j" #sliderGoogleMaps [showFromButton]="false" class="page left googleMaps" [fromDirection]="'left'" [from]="'campaignEditor'">
+                <template #j>
+                    <location-map></location-map> 
+                </template>
+            </Slideritem>
         </Sliderpanel>
     `
 })
