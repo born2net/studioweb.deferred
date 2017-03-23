@@ -1,6 +1,6 @@
 {
   "name": "studioweb",
-  "version": "0.1.173",
+  "version": "0.1.174",
   "license": "Modified GPL (see readme.md)",
   "angular-cli": {},
   "scripts": {
@@ -47,7 +47,6 @@
     "angular-pipes": "^5.4.0",
     "angular2-contextmenu": "^0.7.5",
     "angular2-fontawesome": "~0.8.0",
-    "angular2-google-maps": "^0.14.0",
     "angular2-highcharts": "^0.4.1",
     "angular2-redux-util": "^0.8.86",
     "angular2-uuid": "^1.1.0",
@@ -57,7 +56,7 @@
     "fabric": "git://github.com/born2net/fabric.js.git",
     "font-awesome": "~4.7.0",
     "gsap": "^1.19.1",
-    "angular2-google-maps": "^0.16.0",
+    "angular2-google-maps": "^0.17.0",
     "gulp-bump": "^2.5.1",
     "hammerjs": "^2.0.8",
     "immutable": "^3.8.1",

@@ -15,6 +15,9 @@ import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
 import {IAddContents} from "../../interfaces/IAddContent";
 import {BlockLabels, PLACEMENT_LISTS, PLACEMENT_SCENE} from "../../interfaces/Consts";
 import {RedPepperService} from "../../services/redpepper.service";
+import {IUiState} from "../../store/store.data";
+import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
+import {YellowPepperService} from "../../services/yellowpepper.service";
 
 @Component({
     selector: 'block-prop-collection',
@@ -82,7 +85,7 @@ import {RedPepperService} from "../../services/redpepper.service";
                 <h4 i18n class="modal-title">add content to collection</h4>
             </modal-header>
             <modal-body>
-                <add-content [placement]="m_PLACEMENT_LISTS" #addContent (onAddContentSelected)="_onAddedContent($event)"></add-content>
+                <add-content [placement]="m_PLACEMENT_LISTS" #addContent (onClosed)="_onClosed()" (onAddContentSelected)="_onAddedContent($event)"></add-content>
             </modal-body>
             <modal-footer [show-default-buttons]="true"></modal-footer>
         </modal>
@@ -98,7 +101,7 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
     m_collectionList: List<StoreModel>;
     m_jsonEventResources: Array<JsonEventResourceModel>;
 
-    constructor(private fb: FormBuilder, private cd: ChangeDetectorRef, private bs: BlockService, @Inject('BLOCK_PLACEMENT') private blockPlacement: string, private rp: RedPepperService) {
+    constructor(private fb: FormBuilder, private yp:YellowPepperService, private cd: ChangeDetectorRef, private bs: BlockService, @Inject('BLOCK_PLACEMENT') private blockPlacement: string, private rp: RedPepperService) {
         super();
         this.m_contGroup = fb.group({
             'mode': [0]
@@ -126,6 +129,11 @@ export class BlockPropCollection extends Compbaser implements AfterViewInit {
 
     _onAddNewBlock() {
         this.modal.open()
+    }
+
+    _onClosed(){
+        var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
+        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 
     // _onAddedNewBlock(i_addContents:IAddContents) {

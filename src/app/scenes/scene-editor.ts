@@ -85,7 +85,7 @@ const CAMPAIGN_LIST_LOADING = 'CAMPAIGN_LIST_LOADED';
                 <h4 i18n class="modal-title">add content to scene</h4>
             </modal-header>
             <modal-body>
-                <add-content #addContent [placement]="m_PLACEMENT_SCENE" (onAddContentSelected)="_onAddedNewBlock($event)"></add-content>
+                <add-content #addContent [placement]="m_PLACEMENT_SCENE" (onClosed)="_onClosed()" (onAddContentSelected)="_onAddedNewBlock($event)"></add-content>
             </modal-body>
             <modal-footer [show-default-buttons]="true"></modal-footer>
         </modal>
@@ -177,6 +177,11 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
 
     @Output()
     onGoBack: EventEmitter<any> = new EventEmitter<any>();
+
+    _onClosed(){
+        var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
+        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+    }
 
     _notifyScaleChange() {
         let uiState: IUiState = {scene: {fabric: {scale: this.m_canvasScale}}}

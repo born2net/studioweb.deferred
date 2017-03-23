@@ -66,14 +66,9 @@ import {IScreenTemplateData} from "../../interfaces/IScreenTemplate";
             </Slideritem>
             <Slideritem [templateRef]="h" #sliderAddContent [showFromButton]="false" class="page left addContent" [fromDirection]="'left'" [from]="'campaignList'">
                 <template #h>
-                    <add-content #addContent [placement]="m_PLACEMENT_CHANNEL" (onAddContentSelected)="_onAddedContent($event) ; sliderItemCampaignEditor.slideTo('campaignEditor','left')"></add-content>
+                    <add-content #addContent [placement]="m_PLACEMENT_CHANNEL" (onClosed)="_onClosed()" (onAddContentSelected)="_onAddedContent($event) ; sliderItemCampaignEditor.slideTo('campaignEditor','left')"></add-content>
                 </template>
-            </Slideritem>
-            <Slideritem [templateRef]="j" #sliderGoogleMaps [showFromButton]="false" class="page left googleMaps" [fromDirection]="'left'" [from]="'campaignEditor'">
-                <template #j>
-                    <location-map></location-map> 
-                </template>
-            </Slideritem>
+            </Slideritem>            
         </Sliderpanel>
     `
 })
@@ -110,6 +105,11 @@ export class Campaigns extends Compbaser {
                     this._createNewChannelBlock(i_addContents, boilerPlate, i_totalChannelLength);
                 }, (e) => console.error(e))
         )
+    }
+
+    _onClosed(){
+        var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
+        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 
     /**

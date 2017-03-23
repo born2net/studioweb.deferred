@@ -14,7 +14,6 @@ import {ADD_NEW_BLOCK_SCENE} from "../scenes/scene-editor";
 import {Lib} from "../../Lib";
 import {List} from "immutable";
 import * as _ from "lodash";
-import {timeout} from "../../decorators/timeout-decorator";
 
 @Component({
     selector: 'add-content',
@@ -184,6 +183,9 @@ export class AddContent extends Compbaser implements AfterViewInit {
     @Output()
     onAddContentSelected: EventEmitter<IAddContents> = new EventEmitter<IAddContents>();
 
+    @Output()
+    onClosed: EventEmitter<any> = new EventEmitter<any>();
+
     _addBlock(i_addContents: IAddContents) {
         switch (this.m_placement) {
             case PLACEMENT_CHANNEL: {
@@ -231,15 +233,7 @@ export class AddContent extends Compbaser implements AfterViewInit {
     }
 
     _close() {
-        var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
-        // var uiState: IUiState = {
-        //     uiSideProps: SideProps.miniDashboard,
-        //     campaign: {
-        //         campaignTimelineChannelSelected: -1,
-        //         campaignTimelineBoardViewerSelected: -1
-        //     }
-        // }
-        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+        this.onClosed.emit();
     }
 
     /**
