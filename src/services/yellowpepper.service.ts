@@ -172,6 +172,10 @@ export class YellowPepperService {
                 }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
     }
 
+    listenLocationMapLoad(): Observable<any> {
+        return this.store.select(store => store.appDb.uiState.locationMap.loadLocationMap);
+    }
+
     listenTimelineDurationChanged(emitOnEmpty: boolean = false): Observable<number> {
         var $timelinesList$ = this.store.select(store => store.msDatabase.sdk.table_campaign_timelines);
         return this.listenCampaignSelected()

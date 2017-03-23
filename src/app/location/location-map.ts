@@ -1,26 +1,29 @@
-import {Component, ChangeDetectionStrategy, AfterViewInit, ViewChild, ChangeDetectorRef} from "@angular/core";
+import {Component, ChangeDetectionStrategy, AfterViewInit, ViewChild, ChangeDetectorRef, Output, EventEmitter} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {timeout} from "../../decorators/timeout-decorator";
 import {SebmGoogleMap} from "angular2-google-maps/esm/core";
+import {IUiState} from "../../store/store.data";
+import {ACTION_UISTATE_UPDATE} from "../../store/actions/appdb.actions";
 
 @Component({
     selector: 'location-map',
     // changeDetection: ChangeDetectionStrategy.OnPush,
     styles: [`
         .sebm-google-map-container {
-            height: 760px;
+            height: 700px;
             width: 700px;
         }
     `],
     template: `
         <small class="debug">{{me}}</small>
-        <h1>aa</h1>
-        <sebm-google-map #googleMaps [disableDefaultUI]="false" style="width: 700px ; height: 700px" [latitude]="38.2500" [longitude]="-96.7500"></sebm-google-map>
-        <br/>
-        <br/>
-        <br/>
-        <h1>ab</h1>
+        <button (click)="_close()"  type="button" class="openPropsButton btn btn-default btn-sm">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+        </button>
+        <div class="row">
+            <sebm-google-map class="center-block" #googleMaps [disableDefaultUI]="false" [latitude]="38.2500" [longitude]="-96.7500"></sebm-google-map>
+        </div>
+        
         <!--<sebm-google-map #googleMaps style="width: 100% ; height: 100%"-->
         <!--(mapClick)="mapClicked($event)"-->
         <!--[latitude]="38.2500"-->
@@ -56,8 +59,21 @@ export class LocationMap extends Compbaser implements AfterViewInit {
     @ViewChild('googleMaps')
     googleMaps: SebmGoogleMap;
 
+    @Output()
+    onClose:EventEmitter<any> = new EventEmitter<any>();
+
     ngAfterViewInit() {
         this.setCenter(38.2500, -96.7500);
+    }
+
+    _close(){
+        var uiState: IUiState = {
+            locationMap: {
+                loadLocationMap: false
+            }
+        }
+        this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+        this.onClose.emit()
     }
 
     public forceUpdateUi() {
@@ -83,5 +99,6 @@ export class LocationMap extends Compbaser implements AfterViewInit {
     }
 
     destroy() {
+        console.log('dest maps');
     }
 }

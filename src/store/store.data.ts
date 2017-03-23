@@ -14,8 +14,6 @@ const reducers = {msDatabase, appDb};
 export const developmentReducer: ActionReducer<ApplicationState> = compose(storeFreeze, combineReducers)(reducers);
 export const productionReducer: ActionReducer<ApplicationState> = combineReducers(reducers);
 
-
-
 export interface IMsDatabase {
     threads: { [key: number]: any };
     thread: {
@@ -35,6 +33,14 @@ export interface IUiStateCampaign  {
     blockChannelSelected?:number;
 }
 
+export interface IUiStateLocation  {
+    loadLocationMap?: boolean;
+    viewLocationPoint?: {
+        a: number,
+        b: number
+    }
+}
+
 export interface IUiStateScene  {
     sceneSelected?: number;
     blockSelected?: number;
@@ -48,6 +54,7 @@ export interface IUiState {
     previewMode?:number;
     uiSideProps?:number;
     campaign?: IUiStateCampaign;
+    locationMap?: IUiStateLocation;
     scene?: IUiStateScene;
 }
 
@@ -84,6 +91,13 @@ export const INITIAL_APP_DB: IAppDb = {
             blockChannelSelected: -1,
             campaignCreateResolution: '',
             campaignCreateName: ''
+        },
+        locationMap: {
+            loadLocationMap: false,
+            viewLocationPoint: {
+                a: -1,
+                b: -1
+            }
         },
         scene: {
             sceneSelected: -1,

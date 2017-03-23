@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, ViewChild} from "@angular/core";
 import {Compbaser} from "ng-mslib";
-import {ISliderItemData} from "../../comps/sliderpanel/Slideritem";
+import {ISliderItemData, Slideritem} from "../../comps/sliderpanel/Slideritem";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
 import {IUiState, IUiStateCampaign} from "../../store/store.data";
 import {YellowPepperService} from "../../services/yellowpepper.service";
@@ -66,9 +66,15 @@ import {IScreenTemplateData} from "../../interfaces/IScreenTemplate";
             </Slideritem>
             <Slideritem [templateRef]="h" #sliderAddContent [showFromButton]="false" class="page left addContent" [fromDirection]="'left'" [from]="'campaignList'">
                 <template #h>
-                    <add-content #addContent [placement]="m_PLACEMENT_CHANNEL" (onClosed)="_onClosed()" (onAddContentSelected)="_onAddedContent($event) ; sliderItemCampaignEditor.slideTo('campaignEditor','left')"></add-content>
+                    <add-content #addContent [placement]="m_PLACEMENT_CHANNEL" (onClosed)="_onAddedContentClosed()" (onAddContentSelected)="_onAddedContent($event) ; sliderItemCampaignEditor.slideTo('campaignEditor','left')"></add-content>
                 </template>
-            </Slideritem>            
+            </Slideritem>
+            <Slideritem [templateRef]="j" #sliderLocation [showFromButton]="false" class="page left locationMap" [fromDirection]="'right'" [from]="'campaignEditor'">
+                <template #j>
+                    <location-map (onClose)="_onLocationMapClosed()"></location-map>
+                </template>
+            </Slideritem>
+            
         </Sliderpanel>
     `
 })
@@ -89,9 +95,23 @@ export class Campaigns extends Compbaser {
                 }, (e) => console.error(e))
         )
 
+        this.cancelOnDestroy(
+            //
+            this.yp.listenLocationMapLoad()
+                .subscribe((v) => {
+                    if (v){
+                        this.sliderItemCampaignEditor.slideTo('locationMap','right')
+                    }
+            }, (e) => console.error(e))
+
+        )
+
         var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
         this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
+
+    @ViewChild('sliderItemCampaignEditor')
+    sliderItemCampaignEditor:Slideritem;
 
     _onOpenScreenLayoutEditor() {
     }
@@ -107,7 +127,12 @@ export class Campaigns extends Compbaser {
         )
     }
 
-    _onClosed(){
+    _onLocationMapClosed(){
+        this.sliderItemCampaignEditor.slideTo('campaignEditor','left')
+        
+    }
+    
+    _onAddedContentClosed(){
         var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
         this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }

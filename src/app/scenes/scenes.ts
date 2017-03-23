@@ -1,11 +1,11 @@
-import {ChangeDetectionStrategy, Component} from "@angular/core";
+import {ChangeDetectionStrategy, Component, ViewChild} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
 import {IUiState} from "../../store/store.data";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {RedPepperService} from "../../services/redpepper.service";
 import {PLACEMENT_SCENE} from "../../interfaces/Consts";
-import {ISliderItemData} from "../../comps/sliderpanel/Slideritem";
+import {ISliderItemData, Slideritem} from "../../comps/sliderpanel/Slideritem";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,6 +29,11 @@ import {ISliderItemData} from "../../comps/sliderpanel/Slideritem";
                     <scene-creator (onGoBack)="sliderSceneCreator.slideTo('sceneList','left')"></scene-creator>
                 </template>
             </Slideritem>
+            <Slideritem [templateRef]="d" #sliderLocation [showFromButton]="false" class="page left locationMap" [fromDirection]="'right'" [from]="'sceneEditor'">
+                <template #d>
+                    <location-map (onClose)="_onLocationMapClosed()"></location-map>
+                </template>
+            </Slideritem>
         </Sliderpanel>
     `
 })
@@ -40,6 +45,27 @@ export class Scenes extends Compbaser {
         super();
         var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
         this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+
+        this.cancelOnDestroy(
+            //
+            this.yp.listenLocationMapLoad()
+                .subscribe((v) => {
+                    if (v){
+                        this.sliderSceneCreator.slideTo('locationMap','right')
+                    }
+                }, (e) => console.error(e))
+
+        )
+
+    }
+
+    @ViewChild('sliderSceneCreator')
+    sliderSceneCreator:Slideritem;
+
+
+    _onLocationMapClosed(){
+        this.sliderSceneCreator.slideTo('sceneEditor','left')
+
     }
 
     _onSlideChange(event: ISliderItemData) {

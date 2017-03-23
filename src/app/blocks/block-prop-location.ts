@@ -1,7 +1,7 @@
 import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Input, ViewChild} from "@angular/core";
 import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
 import {BlockService, IBlockData} from "./block-service";
-import {Compbaser, NgmslibService} from "ng-mslib";
+import {Compbaser} from "ng-mslib";
 import * as _ from "lodash";
 import {List} from "immutable";
 import {ISimpleGridEdit} from "../../comps/simple-grid-module/SimpleGrid";
@@ -15,10 +15,8 @@ import {IAddContents} from "../../interfaces/IAddContent";
 import {BlockLabels, PLACEMENT_LISTS, PLACEMENT_SCENE} from "../../interfaces/Consts";
 import {RedPepperService} from "../../services/redpepper.service";
 import {IUiState} from "../../store/store.data";
-import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
+import {ACTION_UISTATE_UPDATE} from "../../store/actions/appdb.actions";
 import {YellowPepperService} from "../../services/yellowpepper.service";
-import {SebmGoogleMap} from "angular2-google-maps/core";
-import {timeout} from "../../decorators/timeout-decorator";
 
 @Component({
     selector: 'block-prop-location',
@@ -133,15 +131,15 @@ import {timeout} from "../../decorators/timeout-decorator";
             <modal-footer [show-default-buttons]="true"></modal-footer>
         </modal>
 
-        <modal #modalMap [size]="'lg'">
-            <modal-header [show-close]="true">
-                <h4 i18n class="modal-title">add content to collection</h4>
-            </modal-header>
-            <modal-body>
-                <location-map *ngIf="m_showMap"></location-map>
-            </modal-body>
-            <modal-footer [show-default-buttons]="true"></modal-footer>
-        </modal>
+        <!--<modal [cssClass]="modal-xl" (onClose)="_onModelMapClosed()" #modalMap [size]="'lg'">-->
+        <!--<modal-header [show-close]="false">-->
+        <!--<h4 i18n class="modal-title">add content to collection</h4>-->
+        <!--</modal-header>-->
+        <!--<modal-body>-->
+        <!--<location-map *ngIf="m_showMap"></location-map>-->
+        <!--</modal-body>-->
+        <!--<modal-footer [show-default-buttons]="true"></modal-footer>-->
+        <!--</modal>-->
     `
 })
 export class BlockPropLocation extends Compbaser implements AfterViewInit {
@@ -180,8 +178,8 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
     @ViewChild('modalAddContent')
     modalAddContent: ModalComponent;
 
-    @ViewChild('modalMap')
-    modalMap: ModalComponent;
+    // @ViewChild('modalMap')
+    // modalMap: ModalComponent;
 
     @Input()
     set setBlockData(i_blockData) {
@@ -191,6 +189,10 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
 
     ngAfterViewInit() {
         this._render();
+    }
+
+    _onModelMapClosed() {
+        this.m_showMap = false;
     }
 
     _onDragComplete(dragData: ISimpleGridDraggedData) {
@@ -215,18 +217,9 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
     }
 
-    // _onAddNewCollectionItem() {
-    //     this.m_pendingBlocAddition = {type: 'Fixed'}
-    //     this._onAddNewBlock()
-    // }
 
     _onClosed() {
         this.modalAddContent.close()
-        this.modalMap.open();
-
-        this.m_showMap = true;
-        // var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
-        // this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 
     _onAddNewBlock(type: string) {
@@ -277,6 +270,12 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
 
             case 'GPS': {
                 this.m_pendingBlocAddition.content = i_addContents;
+                var uiState: IUiState = {
+                    locationMap: {
+                        loadLocationMap: true
+                    }
+                }
+                this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
                 break;
             }
         }
