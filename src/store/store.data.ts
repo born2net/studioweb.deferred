@@ -9,6 +9,7 @@ import {ActionReducer, combineReducers} from "@ngrx/store";
 import {ApplicationState} from "./application.state";
 import {compose} from "@ngrx/core";
 import {MainAppShowStateEnum} from "../app/app-component";
+import {LocationMarkModel} from "../models/LocationMarkModel";
 
 const reducers = {msDatabase, appDb};
 export const developmentReducer: ActionReducer<ApplicationState> = compose(storeFreeze, combineReducers)(reducers);
@@ -21,6 +22,8 @@ export interface IMsDatabase {
     },
     sdk: ISDK
 }
+
+
 
 export interface IUiStateCampaign  {
     campaignTimelineChannelSelected?: number;
@@ -35,10 +38,7 @@ export interface IUiStateCampaign  {
 
 export interface IUiStateLocation  {
     loadLocationMap?: boolean;
-    viewLocationPoint?: {
-        lat: number,
-        lng: number
-    }
+    locationMarkerSelected?: LocationMarkModel;
 }
 
 export interface IUiStateScene  {
@@ -94,10 +94,7 @@ export const INITIAL_APP_DB: IAppDb = {
         },
         locationMap: {
             loadLocationMap: false,
-            viewLocationPoint: {
-                lat: -1,
-                lng: -1
-            }
+            locationMarkerSelected: null
         },
         scene: {
             sceneSelected: -1,

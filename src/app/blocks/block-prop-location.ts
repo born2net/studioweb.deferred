@@ -17,6 +17,7 @@ import {RedPepperService} from "../../services/redpepper.service";
 import {IUiState} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE} from "../../store/actions/appdb.actions";
 import {YellowPepperService} from "../../services/yellowpepper.service";
+import {LocationMarkModel} from "../../models/LocationMarkModel";
 
 @Component({
     selector: 'block-prop-location',
@@ -81,7 +82,7 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
                 <button (click)="_jumpToLocation('next')" type="button" name="next" title="remove item" class="btn btn-default btn-sm">
                     <span class="glyphicon glyphicon-chevron-right"></span>
                 </button>
-                <button type="button" name="openLocation" title="openLocation item" class="btn btn-default btn-sm">
+                <button (click)="_openMap()" type="button" name="openLocation" title="openLocation item" class="btn btn-default btn-sm">
                     <span class="glyphicon glyphicon glyphicon-map-marker"></span>
                 </button>
             </h4>
@@ -146,7 +147,7 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
 
     private m_formInputs = {};
     private m_currentIndex = 0;
-    private m_radius = '0';
+    private m_radius = 0;
     private m_totalLocations = 0;
     private m_contGroup: FormGroup;
     private m_blockData: IBlockData;
@@ -176,7 +177,7 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
             this.yp.listenLocationMapLoad()
                 .pairwise()
                 .filter(v => v[0] == true && v[1] == false && this.m_pendingBlocAddition.xmlSnippet != '')
-                .combineLatest(this.yp.ngrxStore.select(store => store.appDb.uiState.locationMap.viewLocationPoint))
+                .combineLatest(this.yp.ngrxStore.select(store => store.appDb.uiState.locationMap.locationMarkerSelected))
                 .subscribe((v) => {
                     console.log(v);
                 }, (e) => console.error(e))
@@ -301,12 +302,7 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
             case 'GPS': {
                 this.m_pendingBlocAddition.content = i_addContents;
                 this.m_pendingBlocAddition.xmlSnippet = buff;
-                var uiState: IUiState = {
-                    locationMap: {
-                        loadLocationMap: true
-                    }
-                }
-                this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+                this._openMap();
                 break;
             }
         }
@@ -327,6 +323,11 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
             // jXML(Elements.LOCATION_SELECTED).show();
         }
         // jXML(Elements.TOTAL_MAP_LOCATIONS).text(total);
+    }
+
+    _openMap() {
+        var uiState: IUiState = {locationMap: {loadLocationMap: true}}
+        this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 
     /**
@@ -373,16 +374,30 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
             }
         }
 
-        this.m_radius = jXML(item).attr('radios');
+        this.m_radius = parseFloat(jXML(item).attr('radios'));
+        var lat = parseFloat(jXML(item).attr('lat'));
+        var lng = parseFloat(jXML(item).attr('lng'));
+        var duration = parseFloat(jXML(item).attr('duration'));
+
+        var marker:LocationMarkModel = new LocationMarkModel({
+            id: Math.random(),
+            lat: lat,
+            lng: lng,
+            radius: this.m_radius,
+            new: false,
+            label: '',
+            draggable: true
+        })
 
         this.m_formInputs['locationName'].setValue(jXML(item).attr('page'));
-        this.m_formInputs['lat'].setValue(jXML(item).attr('lat'));
-        this.m_formInputs['lng'].setValue(jXML(item).attr('lng'));
-        this.m_formInputs['duration'].setValue(jXML(item).attr('duration'));
+        this.m_formInputs['priority'].setValue(jXML(item).attr('priority'));
+        this.m_formInputs['lat'].setValue(lat);
+        this.m_formInputs['lng'].setValue(lng);
+        this.m_formInputs['duration'].setValue(duration);
         this.m_formInputs['radius'].setValue(this.m_radius);
 
-
-        this.m_formInputs['priority'].setValue(jXML(item).attr('priority'));
+        var uiState: IUiState = {locationMap: {locationMarkerSelected: marker}}
+        this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
 
         // this.m_addBlockLocationView.panToPoint(jXML(item).attr('lat'), jXML(item).attr('lng'));
     }

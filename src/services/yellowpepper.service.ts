@@ -24,6 +24,7 @@ import {UserModel} from "../models/UserModel";
 import X2JS from "x2js";
 import {ISceneData} from "../app/blocks/block-service";
 import {IScreenTemplateData} from "../interfaces/IScreenTemplate";
+import {LocationMarkModel} from "../models/LocationMarkModel";
 
 
 @Injectable()
@@ -175,6 +176,11 @@ export class YellowPepperService {
     listenLocationMapLoad(): Observable<any> {
         return this.store.select(store => store.appDb.uiState.locationMap.loadLocationMap);
     }
+
+    listenLocationMarkerSelected(): Observable<LocationMarkModel> {
+        return this.store.select(store => store.appDb.uiState.locationMap.locationMarkerSelected);
+    }
+
 
     listenTimelineDurationChanged(emitOnEmpty: boolean = false): Observable<number> {
         var $timelinesList$ = this.store.select(store => store.msDatabase.sdk.table_campaign_timelines);

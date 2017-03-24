@@ -59,6 +59,10 @@ export class AppdbAction {
 
     public resetCampaignSelection(){
         var uiState: IUiState = {
+            locationMap: {
+                loadLocationMap: false,
+                locationMarkerSelected: null
+            },
             campaign: {
                 timelineSelected: -1,
                 campaignSelected: -1,
