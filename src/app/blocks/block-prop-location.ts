@@ -363,14 +363,16 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
         var domPlayerData = this.m_blockData.playerDataDom;
         var total = jXML(domPlayerData).find('GPS').children().length;
         var item;
-        // no locations, done!
+
         if (total == 0) {
             this._populateTotalMapLocations();
             var uiState: IUiState = {locationMap: {locationMarkerSelected: null}}
             this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
             return;
         }
-        // load location
+        if (this.m_currentIndex > total - 1)
+            i_item = 'first';
+
         switch (i_item) {
             case 'first': {
                 this.m_currentIndex = 0;
