@@ -330,7 +330,7 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
 
     _removeLocation() {
         var domPlayerData = this.m_blockData.playerDataDom;
-        $(domPlayerData).find('GPS').children().eq(this.m_currentIndex).remove();
+        jXML(domPlayerData).find('GPS').children().eq(this.m_currentIndex).remove();
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
         this._jumpToLocation('first');
     }
@@ -534,16 +534,16 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
             return;
 
         var domPlayerData = this.m_blockData.playerDataDom;
-        var total = $(domPlayerData).find('GPS').children().length;
+        var total = jXML(domPlayerData).find('GPS').children().length;
         if (total == 0)
             return;
-        var item = $(domPlayerData).find('GPS').children().get(this.m_currentIndex);
-        $(item).attr('radios', this.m_contGroup.value.radius);
-        $(item).attr('page', this.m_contGroup.value.label);
-        $(item).attr('lat', this.m_contGroup.value.lat);
-        $(item).attr('lng', this.m_contGroup.value.lng);
-        $(item).attr('duration', this.m_contGroup.value.duration);
-        $(item).attr('priority', this.m_contGroup.value.priority);
+        var item = jXML(domPlayerData).find('GPS').children().get(this.m_currentIndex);
+        jXML(item).attr('radios', this.m_contGroup.value.radius);
+        jXML(item).attr('page', this.m_contGroup.value.label);
+        jXML(item).attr('lat', this.m_contGroup.value.lat);
+        jXML(item).attr('lng', this.m_contGroup.value.lng);
+        jXML(item).attr('duration', this.m_contGroup.value.duration);
+        jXML(item).attr('priority', this.m_contGroup.value.priority);
         this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
 
         // var xSnippet = jXML(domPlayerData).find('HTML');
