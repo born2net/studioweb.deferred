@@ -194,7 +194,7 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
             //
             this.yp.listenLocationMapLoad()
                 .pairwise()
-                .filter(v => v[0] == true && v[1] == false && this.m_pendingBlocAddition.xmlSnippet != '')
+                .filter(v => v[0] == true && v[1] == false && this.m_pendingBlocAddition && this.m_pendingBlocAddition.xmlSnippet != '')
                 .combineLatest(this.yp.ngrxStore.select(store => store.appDb.uiState.locationMap.locationMarkerSelected))
                 .subscribe((v) => {
                     console.log(v);

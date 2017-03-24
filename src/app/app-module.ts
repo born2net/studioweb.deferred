@@ -89,7 +89,8 @@ export function appReducer(state: any = INITIAL_APPLICATION_STATE, action: any) 
         StoreDevtoolsModule.instrumentStore({maxAge: 2}),
         // StoreDevtoolsModule.instrumentOnlyWithExtension(),
         AgmCoreModule.forRoot({
-            apiKey: 'AIzaSyAGD7EQugVG8Gq8X3vpyvkZCnW4E4HONLI'
+            apiKey: 'AIzaSyDKa8Z3QLtACfSfxF-S8A44gm5bkvNTmuM',
+            libraries: ['places']
         }),
         SimpleGridModule.forRoot(),
         SharedModule.forRoot(),

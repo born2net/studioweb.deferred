@@ -1,4 +1,4 @@
-import {Component, ChangeDetectionStrategy, AfterViewInit, ViewChild, ChangeDetectorRef, Output, EventEmitter, ElementRef, Inject} from "@angular/core";
+import {AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Inject, NgZone, Output, ViewChild} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {SebmGoogleMap} from "angular2-google-maps/esm/core";
@@ -14,7 +14,12 @@ import {LocationMarkModel} from "../../models/LocationMarkModel";
 export declare var google: any;
 
 
-/** example: http://embed.plnkr.co/YX7W20/ **/
+/**
+ *  examples:
+ *  http://embed.plnkr.co/YX7W20/
+ *  http://plnkr.co/edit/NtfCPol50mlwGoiB8UZu?p=preview
+ *
+ * **/
 
 @Component({
     selector: 'location-map',
@@ -29,7 +34,7 @@ export declare var google: any;
         <button (click)="_close()" type="button" class="openPropsButton btn btn-default btn-sm">
             <span class="glyphicon glyphicon-chevron-left"></span>
         </button>
-        <p class="inputPlacement"></p>
+        <input id="address" type="text"/>
         <div class="row map">
             <!--<sebm-google-map class="center-block" #googleMaps [disableDefaultUI]="false" [latitude]="38.2500" [longitude]="-96.7500"></sebm-google-map>-->
 
@@ -55,7 +60,6 @@ export declare var google: any;
                 <!--</sebm-google-map-info-window>-->
 
                 <!--</sebm-google-map-marker>-->
-
                 <sebm-google-map-circle *ngFor="let m of markers; let i = index"
                                         (circleClick)="clickedMarker(m, i)"
                                         [latitude]="m.lat"
@@ -104,14 +108,10 @@ export class LocationMap extends Compbaser implements AfterViewInit {
 
 
     constructor(private yp: YellowPepperService, private cd: ChangeDetectorRef, private m_mapsAPILoader: MapsAPILoader,
-                private bs: BlockService, @Inject('BLOCK_PLACEMENT') private blockPlacement: string, private rp: RedPepperService) {
+                private zone: NgZone, private bs: BlockService, @Inject('BLOCK_PLACEMENT') private blockPlacement: string, private rp: RedPepperService) {
 
         super();
-        // this.m_mapsAPILoader.load().then(() => {
-        //     console.log('google script loaded');
-        //     var geocoder = new google.maps.Geocoder();
-        //     // this._createMap();
-        // });
+
     }
 
     @ViewChild('googleMaps')
@@ -119,6 +119,39 @@ export class LocationMap extends Compbaser implements AfterViewInit {
 
     @Output()
     onClose: EventEmitter<any> = new EventEmitter<any>();
+
+    ngOnInit() {
+        // Google Place Autocomplete
+        var autocomplete: any;
+        var inputAddress = document.getElementById("address");
+
+        this.m_mapsAPILoader.load().then(() => {
+            console.log('google script loaded');
+
+            autocomplete = new google.maps.places.Autocomplete(inputAddress, {});
+            google.maps.event.addListener(autocomplete, 'place_changed', () => {
+
+                this.zone.run(() => {
+                    /*
+                     "Zone.run" allows the map to be immediately updated.
+                     Without it, you would have to click the map to observe
+                     the new lat and lng
+                     */
+                    var place = autocomplete.getPlace();
+                    if (!place || !place.geometry) return;
+                    var lat = place.geometry.location.lat();
+                    var lng = place.geometry.location.lng();
+                    this.setCenter(lat,lng)
+                });
+
+            });
+
+            // var geocoder = new google.maps.Geocoder();
+        });
+
+
+    }
+
 
     ngAfterViewInit() {
         this.cancelOnDestroy(
@@ -237,9 +270,6 @@ export class LocationMap extends Compbaser implements AfterViewInit {
             lng: lng,
         });
         this.forceUpdateUi();
-    }
-
-    ngOnInit() {
     }
 
     destroy() {
