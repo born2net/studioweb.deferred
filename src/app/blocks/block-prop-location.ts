@@ -150,7 +150,7 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
     private m_totalLocations = 0;
     private m_contGroup: FormGroup;
     private m_blockData: IBlockData;
-    private m_pendingBlocAddition: { type: string, content: IAddContents };
+    private m_pendingBlocAddition: { type: string, content: IAddContents, xmlSnippet: string };
 
     m_showMap = false;
     m_PLACEMENT_LISTS = PLACEMENT_LISTS;
@@ -170,6 +170,17 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
         _.forEach(this.m_contGroup.controls, (value, key: string) => {
             this.m_formInputs[key] = this.m_contGroup.controls[key] as FormControl;
         })
+
+        this.cancelOnDestroy(
+            //
+            this.yp.listenLocationMapLoad()
+                .pairwise()
+                .filter(v => v[0] == true && v[1] == false && this.m_pendingBlocAddition.xmlSnippet != '')
+                .combineLatest(this.yp.ngrxStore.select(store => store.appDb.uiState.locationMap.viewLocationPoint))
+                .subscribe((v) => {
+                    console.log(v);
+                }, (e) => console.error(e))
+        )
     }
 
     @ViewChild('simpleGrid')
@@ -223,7 +234,7 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
     }
 
     _onAddNewBlock(type: string) {
-        this.m_pendingBlocAddition = {type: type, content: null}
+        this.m_pendingBlocAddition = {type: type, content: null, xmlSnippet: ''}
         this.modalAddContent.open()
     }
 
@@ -234,42 +245,62 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
      **/
     _onAddedContent(i_addContents: IAddContents) {
 
+        var domPlayerData = this.m_blockData.playerDataDom;
+        var buff = '';
+        var locationBuff;
+        var xSnippetLocation;
+
+        switch (this.m_pendingBlocAddition.type) {
+            case 'Fixed': {
+                xSnippetLocation = jXML(domPlayerData).find('Fixed');
+                locationBuff = '>';
+                break;
+            }
+            case 'GPS': {
+                locationBuff = 'lat=":LAT:" lng=":LNG:" radios="0.10" duration="5" priority="1">';
+                xSnippetLocation = jXML(domPlayerData).find('GPS');
+                break;
+            }
+        }
+
+        if (Number(i_addContents.blockCode) == BlockLabels.BLOCKCODE_SCENE) {
+            // add scene to collection, if block resides in scene don't allow cyclic reference to collection scene inside current scene
+            if (this.blockPlacement == PLACEMENT_SCENE && this.m_blockData.scene.handle == i_addContents.sceneData.scene_id) {
+                return bootbox.alert('You cannot display a scene in a collection that refers to itself, that is just weird');
+            }
+
+            var sceneName = i_addContents.sceneData.domPlayerDataJson.Player._label;
+            var nativeId = i_addContents.sceneData.scene_native_id;
+
+            buff = `<Page page="${sceneName}" type="scene" duration="5" ${locationBuff}
+                        <Player src="${nativeId}" hDataSrc="${i_addContents.sceneData.scene_id}"/>
+                    </page>
+                    `;
+        } else {
+            // Add resources to collection
+            var resourceName = this.rp.getResourceRecord(i_addContents.resourceId).resource_name;
+            buff = `<Page page="${resourceName}" type="resource" duration="5">
+                        <Player player="${i_addContents.blockCode}">
+                            <Data>
+                                <Resource hResource="${i_addContents.resourceId}"/>
+                            </Data>
+                        </Player>
+                    </page>`
+        }
+
+        // if default item, just add it. if location item, remember it and only add it once user select
+        // a location for it in google the map as we need to wait for the coordinates.
+
         switch (this.m_pendingBlocAddition.type) {
 
             case 'Fixed': {
-                var domPlayerData = this.m_blockData.playerDataDom;
-                var xSnippetCollection = jXML(domPlayerData).find('Fixed');
-                var buff = '';
-                if (Number(i_addContents.blockCode) == BlockLabels.BLOCKCODE_SCENE) {
-                    // add scene to collection, if block resides in scene don't allow cyclic reference to collection scene inside current scene
-                    if (this.blockPlacement == PLACEMENT_SCENE && this.m_blockData.scene.handle == i_addContents.sceneData.scene_id) {
-                        return bootbox.alert('You cannot display a scene in a collection that refers to itself, that is just weird');
-                    }
-                    var sceneName = i_addContents.sceneData.domPlayerDataJson.Player._label;
-                    var nativeId = i_addContents.sceneData.scene_native_id;
-                    buff = `<Page page="${sceneName}" type="scene" duration="5"> 
-                                <Player src="${nativeId}" hDataSrc="${i_addContents.sceneData.scene_id}"/>
-                            </page>
-                    `;
-                } else {
-                    // Add resources to collection
-                    var resourceName = this.rp.getResourceRecord(i_addContents.resourceId).resource_name;
-                    buff = `<Page page="${resourceName}" type="resource" duration="5">
-                            <Player player="${i_addContents.blockCode}">
-                                <Data>
-                                    <Resource hResource="${i_addContents.resourceId}"/>
-                                </Data>
-                            </Player>
-                        </page>`
-                }
-                jXML(xSnippetCollection).append(jXML(buff));
+                jXML(xSnippetLocation).append(jXML(buff));
                 this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
-                this.m_pendingBlocAddition = null;
                 break;
             }
-
             case 'GPS': {
                 this.m_pendingBlocAddition.content = i_addContents;
+                this.m_pendingBlocAddition.xmlSnippet = buff;
                 var uiState: IUiState = {
                     locationMap: {
                         loadLocationMap: true
@@ -279,7 +310,6 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
                 break;
             }
         }
-
 
     }
 

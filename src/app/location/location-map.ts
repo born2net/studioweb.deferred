@@ -1,10 +1,24 @@
-import {Component, ChangeDetectionStrategy, AfterViewInit, ViewChild, ChangeDetectorRef, Output, EventEmitter} from "@angular/core";
+import {Component, ChangeDetectionStrategy, AfterViewInit, ViewChild, ChangeDetectorRef, Output, EventEmitter, ElementRef} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
-import {timeout} from "../../decorators/timeout-decorator";
 import {SebmGoogleMap} from "angular2-google-maps/esm/core";
 import {IUiState} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE} from "../../store/actions/appdb.actions";
+import {MapsAPILoader} from "angular2-google-maps/core";
+
+export declare var google: any;
+
+
+// example: http://embed.plnkr.co/YX7W20/
+
+interface marker {
+    id: number,
+    lat: number;
+    lng: number;
+    radius: number;
+    label?: string;
+    draggable?: boolean;
+}
 
 @Component({
     selector: 'location-map',
@@ -17,13 +31,52 @@ import {ACTION_UISTATE_UPDATE} from "../../store/actions/appdb.actions";
     `],
     template: `
         <small class="debug">{{me}}</small>
-        <button (click)="_close()"  type="button" class="openPropsButton btn btn-default btn-sm">
+        <button (click)="_close()" type="button" class="openPropsButton btn btn-default btn-sm">
             <span class="glyphicon glyphicon-chevron-left"></span>
         </button>
-        <div class="row">
-            <sebm-google-map class="center-block" #googleMaps [disableDefaultUI]="false" [latitude]="38.2500" [longitude]="-96.7500"></sebm-google-map>
+        <p class="inputPlacement"></p>
+        <div class="row map">
+            <!--<sebm-google-map class="center-block" #googleMaps [disableDefaultUI]="false" [latitude]="38.2500" [longitude]="-96.7500"></sebm-google-map>-->
+
+            <sebm-google-map #googleMaps class="center-block"
+                    [latitude]="lat"
+                    [longitude]="lng"
+                    [zoom]="zoom"
+                    [disableDefaultUI]="false"
+                    [zoomControl]="false"
+                    (mapClick)="mapClicked($event)">
+
+                <!--<sebm-google-map-marker-->
+                        <!--*ngFor="let m of markers; let i = index"-->
+                        <!--(markerClick)="clickedMarker(m, i)"-->
+                        <!--[latitude]="m.lat"-->
+                        <!--[longitude]="m.lng"                        -->
+                        <!--[label]="m.label"-->
+                        <!--[markerDraggable]="m.draggable"-->
+                        <!--(dragEnd)="markerDragEnd(m, $event)">-->
+
+                    <!--<sebm-google-map-info-window>-->
+                        <!--<strong>InfoWindow content</strong>-->
+                    <!--</sebm-google-map-info-window>-->
+
+                <!--</sebm-google-map-marker>-->
+
+                <sebm-google-map-circle *ngFor="let m of markers; let i = index"
+                                        (circleClick)="clickedMarker(m, i)"
+                                        [latitude]="m.lat"
+                                        [strokeColor]="'black'"
+                                        (dragEnd)="markerDragEnd(m, $event)"
+                                        [longitude]="m.lng"
+                                        [radius]="m.radius"
+                                        [fillColor]="'red'"
+                                        [circleDraggable]="true"
+                                        [editable]="true">
+                </sebm-google-map-circle>
+
+            </sebm-google-map>
+            
         </div>
-        
+
         <!--<sebm-google-map #googleMaps style="width: 100% ; height: 100%"-->
         <!--(mapClick)="mapClicked($event)"-->
         <!--[latitude]="38.2500"-->
@@ -49,24 +102,198 @@ import {ACTION_UISTATE_UPDATE} from "../../store/actions/appdb.actions";
 })
 export class LocationMap extends Compbaser implements AfterViewInit {
 
-    lat: number = 51.678418;
-    lng: number = 7.809007;
 
-    constructor(private yp: YellowPepperService, private cd:ChangeDetectorRef) {
+    lat: number = 51.673858;
+    lng: number = 7.815982;
+    m_map;
+
+    constructor(private yp: YellowPepperService, private cd: ChangeDetectorRef, private m_mapsAPILoader: MapsAPILoader, private el:ElementRef) {
         super();
+        // this.m_mapsAPILoader.load().then(() => {
+        //     console.log('google script loaded');
+        //     var geocoder = new google.maps.Geocoder();
+        //     // this._createMap();
+        // });
     }
 
     @ViewChild('googleMaps')
     googleMaps: SebmGoogleMap;
 
     @Output()
-    onClose:EventEmitter<any> = new EventEmitter<any>();
+    onClose: EventEmitter<any> = new EventEmitter<any>();
 
-    ngAfterViewInit() {
-        this.setCenter(38.2500, -96.7500);
+
+    zoom: number = 8;
+
+    // initial center position for the map
+
+
+    clickedMarker(i_marker:marker, index: number) {
+        console.log(`clicked the marker: ${i_marker.label || index}`)
     }
 
-    _close(){
+    mapClicked($event: MouseEvent) {
+        this.markers.push({
+            id: Math.random(),
+            radius: 10000,
+            lat: $event['coords'].lat,
+            lng: $event['coords'].lng
+        });
+        this.forceUpdateUi();
+    }
+
+    markerDragEnd(m: marker, $event: MouseEvent) {
+        console.log('dragEnd', m, $event);
+    }
+
+    markers: marker[] = [
+        {
+            lat: 51.673858,
+            lng: 7.815982,
+            label: 'A',
+            radius: 4000,
+            draggable: true,
+            id: 1
+        },
+        {
+            lat: 51.373858,
+            lng: 7.215982,
+            label: 'B',
+            radius: 10000,
+            draggable: true,
+            id: 2
+        },
+        {
+            lat: 51.723858,
+            lng: 7.895982,
+            radius: 300,
+            label: 'C',
+            draggable: true,
+            id: 3
+        }
+    ]
+
+    /**
+     Create the google map and listen to corresponding events such map clicks (not within a circle or marker)
+     as well as the Search box find input etc
+     @method _createMap
+     **/
+    // _createMap() {
+    //     var self = this;
+    //     google.maps.LatLng.prototype.destinationPoint = function (brng, dist) {
+    //         dist = dist / 6371;
+    //         brng = brng.toRad();
+    //
+    //         var lat1 = this.lat().toRad(), lon1 = this.lng().toRad();
+    //
+    //         var lat2:any = Math.asin(Math.sin(lat1) * Math.cos(dist) +
+    //             Math.cos(lat1) * Math.sin(dist) * Math.cos(brng));
+    //
+    //         var lon2 = lon1 + Math.atan2(Math.sin(brng) * Math.sin(dist) *
+    //                 Math.cos(lat1),
+    //                 Math.cos(dist) - Math.sin(lat1) *
+    //                 Math.sin(lat2));
+    //
+    //         if (isNaN(lat2) || isNaN(lon2)) return null;
+    //
+    //         return new google.maps.LatLng(lat2.toDeg(), lon2.toDeg());
+    //     };
+    //
+    //     var pointA = new google.maps.LatLng(34.155260, -118.787163);   // Circle center
+    //     var radius = 1; // 10km
+    //
+    //     var mapOpt = {
+    //         mapTypeId: google.maps.MapTypeId.TERRAIN,
+    //         center: pointA,
+    //         zoom: 10
+    //     };
+    //     var map = $('.map', self.el.nativeElement);
+    //     // self.m_map = new google.maps.Map(map[0], mapOpt);
+    //     console.log(this.googleMaps);
+
+        /*
+        
+        // Create the search box and link it to the UI element.
+        //var input = $('#pac-input', self.el)[0];
+        var c = $('.inputPlacement', self.el);
+        $(c).append('<input class="pac-input" class="controls" type="text" placeholder="Search Box">');
+        var input = $(c).find('input')[0];
+
+
+        var searchBox = new google.maps.places.SearchBox(input);
+        self.m_map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+        // Bias the SearchBox results towards current map's viewport.
+        self.m_map.addListener('bounds_changed', function () {
+            searchBox.setBounds(self.m_map.getBounds());
+        });
+
+        var markers = [];
+        // Listen for the event fired when the user selects a prediction and retrieve details for location
+        searchBox.addListener('places_changed', function () {
+            var places = searchBox.getPlaces();
+
+            if (places.length == 0) {
+                return;
+            }
+
+            // Clear out the old markers.
+            markers.forEach(function (marker) {
+                marker.setMap(null);
+            });
+            markers = [];
+
+            // For each place, get the icon, name and location.
+            var bounds = new google.maps.LatLngBounds();
+            places.forEach(function (place) {
+                var icon = {
+                    url: place.icon,
+                    size: new google.maps.Size(71, 71),
+                    origin: new google.maps.Point(0, 0),
+                    anchor: new google.maps.Point(17, 34),
+                    scaledSize: new google.maps.Size(25, 25)
+                };
+
+                // Create a marker for each place.
+                markers.push(new google.maps.Marker({
+                    map: self.m_map,
+                    icon: icon,
+                    title: place.name,
+                    position: place.geometry.location
+                }));
+
+                if (place.geometry.viewport) {
+                    // Only geocodes have viewport.
+                    bounds.union(place.geometry.viewport);
+                } else {
+                    bounds.extend(place.geometry.location);
+                }
+            });
+            self.m_map.fitBounds(bounds);
+        });
+
+        google.maps.event.addListener(self.m_map, 'click', function (event) {
+            var lat = event.latLng.lat();
+            var lng = event.latLng.lng();
+            if (self._getSimulationMode()) {
+                console.log('out of range ' + lat + ' ' + lng);
+                self._simulateEvent(lat, lng, false);
+                return;
+            }
+            if (self.m_markerOnClick) {
+                self.addPoint(event.latLng, 0.10);
+                self.m_markerOnClick = false;
+                BB.comBroker.fire(BB.EVENTS.ADD_LOCATION_POINT, self, null, {lat: lat, lng: lng});
+            }
+        });
+        */
+    //}
+
+    ngAfterViewInit() {
+        // this.setCenter(38.2500, -96.7500);
+    }
+
+    _close() {
         var uiState: IUiState = {
             locationMap: {
                 loadLocationMap: false
@@ -78,7 +305,7 @@ export class LocationMap extends Compbaser implements AfterViewInit {
 
     public forceUpdateUi() {
         this.cd.reattach();
-        setTimeout(()=> {
+        setTimeout(() => {
             this.cd.detach();
             this.googleMaps.triggerResize();
         }, 1000)

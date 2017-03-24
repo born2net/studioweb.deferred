@@ -36,8 +36,8 @@ export interface IUiStateCampaign  {
 export interface IUiStateLocation  {
     loadLocationMap?: boolean;
     viewLocationPoint?: {
-        a: number,
-        b: number
+        lat: number,
+        lng: number
     }
 }
 
@@ -95,8 +95,8 @@ export const INITIAL_APP_DB: IAppDb = {
         locationMap: {
             loadLocationMap: false,
             viewLocationPoint: {
-                a: -1,
-                b: -1
+                lat: -1,
+                lng: -1
             }
         },
         scene: {
