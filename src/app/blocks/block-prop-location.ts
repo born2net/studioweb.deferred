@@ -73,7 +73,7 @@ import {LocationMarkModel} from "../../models/LocationMarkModel";
                 <button (click)="_onAddNewBlock('GPS')" type="button" name="addLocation" title="add a new item" class="addResourceToLocation btn btn-default btn-sm">
                     <span class="glyphicon glyphicon-plus"></span>
                 </button>
-                <button type="button" name="removeLocation" title="remove item" class="btn btn-default btn-sm">
+                <button (click)="_removeLocation()" type="button" name="removeLocation" title="remove item" class="btn btn-default btn-sm">
                     <span class="glyphicon glyphicon-minus"></span>
                 </button>
                 <button (click)="_jumpToLocation('prev')" type="button" name="previous" title="remove item" class="btn btn-default btn-sm">
@@ -95,15 +95,15 @@ import {LocationMarkModel} from "../../models/LocationMarkModel";
                 <ul class="list-group">
                     <li class="list-group-item">
                         <span i18n class="inliner">name</span>
-                        <input type="text" class="numStepper inliner" formControlName="locationName">
+                        <input type="text" class="numStepper inliner" formControlName="label">
                     </li>
                     <li class="list-group-item">
                         <span i18n class="inliner">latitude</span>
-                        <input type="number" class="numStepper inliner" formControlName="lat">
+                        <input type="number" step="0.1" class="numStepper inliner" formControlName="lat">
                     </li>
                     <li class="list-group-item">
                         <span i18n class="inliner">longitude</span>
-                        <input type="number" class="numStepper inliner" formControlName="lng">
+                        <input type="number" step="0.1" class="numStepper inliner" formControlName="lng">
                     </li>
                     <li class="list-group-item">
                         <span i18n class="inliner">duration</span>
@@ -161,7 +161,7 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
         super();
         this.m_contGroup = fb.group({
             'mode': [0],
-            'locationName': [0],
+            'label': [0],
             'lng': [0],
             'lat': [0],
             'duration': [0],
@@ -171,6 +171,24 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
         _.forEach(this.m_contGroup.controls, (value, key: string) => {
             this.m_formInputs[key] = this.m_contGroup.controls[key] as FormControl;
         })
+
+        this.cancelOnDestroy(
+            //
+            this.yp.listenLocationMarkerSelected()
+                .filter((i_LocationMarkModel: LocationMarkModel) => !_.isEmpty(this.m_pendingBlocAddition))
+                .subscribe((i_LocationMarkModel: LocationMarkModel) => {
+                    var domPlayerData = this.m_blockData.playerDataDom;
+                    var reLat = new RegExp(":LAT:", "ig");
+                    var reLng = new RegExp(":LNG:", "ig");
+                    this.m_pendingBlocAddition.xmlSnippet = this.m_pendingBlocAddition.xmlSnippet.replace(reLat, i_LocationMarkModel.lat);
+                    this.m_pendingBlocAddition.xmlSnippet = this.m_pendingBlocAddition.xmlSnippet.replace(reLng, i_LocationMarkModel.lng);
+                    var xSnippetLocation = jXML(domPlayerData).find('GPS');
+                    jXML(xSnippetLocation).append(jXML(this.m_pendingBlocAddition.xmlSnippet));
+                    this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+                    this.m_pendingBlocAddition = null;
+                    this._jumpToLocation('last')
+                }, (e) => console.error(e))
+        )
 
         this.cancelOnDestroy(
             //
@@ -201,6 +219,7 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
 
     ngAfterViewInit() {
         this._render();
+        this._jumpToLocation('first');
     }
 
     _onModelMapClosed() {
@@ -258,7 +277,7 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
                 break;
             }
             case 'GPS': {
-                locationBuff = 'lat=":LAT:" lng=":LNG:" radios="0.10" duration="5" priority="1">';
+                locationBuff = 'lat=":LAT:" lng=":LNG:" radios="4" duration="5" priority="1">';
                 xSnippetLocation = jXML(domPlayerData).find('GPS');
                 break;
             }
@@ -278,9 +297,9 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
                     </page>
                     `;
         } else {
-            // Add resources to collection
+
             var resourceName = this.rp.getResourceRecord(i_addContents.resourceId).resource_name;
-            buff = `<Page page="${resourceName}" type="resource" duration="5">
+            buff = `<Page page="${resourceName}" type="resource" duration="5" ${locationBuff}
                         <Player player="${i_addContents.blockCode}">
                             <Data>
                                 <Resource hResource="${i_addContents.resourceId}"/>
@@ -309,6 +328,13 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
 
     }
 
+    _removeLocation() {
+        var domPlayerData = this.m_blockData.playerDataDom;
+        $(domPlayerData).find('GPS').children().eq(this.m_currentIndex).remove();
+        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
+        this._jumpToLocation('first');
+    }
+
     /**
      Populate the total map locations set
      @method _populateTotalMapLocations
@@ -333,17 +359,19 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
     /**
      Select specific location and populate both the UI as well scroll map to coordinates
      **/
-    _jumpToLocation(i_index) {
+    _jumpToLocation(i_item?) {
         var domPlayerData = this.m_blockData.playerDataDom;
         var total = jXML(domPlayerData).find('GPS').children().length;
         var item;
         // no locations, done!
         if (total == 0) {
             this._populateTotalMapLocations();
+            var uiState: IUiState = {locationMap: {locationMarkerSelected: null}}
+            this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
             return;
         }
         // load location
-        switch (i_index) {
+        switch (i_item) {
             case 'first': {
                 this.m_currentIndex = 0;
                 item = jXML(domPlayerData).find('GPS').children().first();
@@ -372,6 +400,9 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
                 }
                 break;
             }
+            default: {
+                item = jXML(domPlayerData).find('GPS').children().get(this.m_currentIndex);
+            }
         }
 
         this.m_radius = parseFloat(jXML(item).attr('radios'));
@@ -379,7 +410,7 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
         var lng = parseFloat(jXML(item).attr('lng'));
         var duration = parseFloat(jXML(item).attr('duration'));
 
-        var marker:LocationMarkModel = new LocationMarkModel({
+        var marker: LocationMarkModel = new LocationMarkModel({
             id: Math.random(),
             lat: lat,
             lng: lng,
@@ -389,7 +420,7 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
             draggable: true
         })
 
-        this.m_formInputs['locationName'].setValue(jXML(item).attr('page'));
+        this.m_formInputs['label'].setValue(jXML(item).attr('page'));
         this.m_formInputs['priority'].setValue(jXML(item).attr('priority'));
         this.m_formInputs['lat'].setValue(lat);
         this.m_formInputs['lng'].setValue(lng);
@@ -491,7 +522,7 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
         this.m_contGroup.reset();
         this._populateTableCollection();
         this._populateTotalMapLocations();
-        this._jumpToLocation('first')
+        this._jumpToLocation();
         this.cd.markForCheck();
     }
 
@@ -499,7 +530,20 @@ export class BlockPropLocation extends Compbaser implements AfterViewInit {
         // console.log(this.m_contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.m_contGroup.value)));
         if (this.m_contGroup.status != 'VALID')
             return;
-        // var domPlayerData = this.m_blockData.playerDataDom;
+
+        var domPlayerData = this.m_blockData.playerDataDom;
+        var total = $(domPlayerData).find('GPS').children().length;
+        if (total == 0)
+            return;
+        var item = $(domPlayerData).find('GPS').children().get(this.m_currentIndex);
+        $(item).attr('radios', this.m_contGroup.value.radius);
+        $(item).attr('page', this.m_contGroup.value.label);
+        $(item).attr('lat', this.m_contGroup.value.lat);
+        $(item).attr('lng', this.m_contGroup.value.lng);
+        $(item).attr('duration', this.m_contGroup.value.duration);
+        $(item).attr('priority', this.m_contGroup.value.priority);
+        this.bs.setBlockPlayerData(this.m_blockData, domPlayerData)
+
         // var xSnippet = jXML(domPlayerData).find('HTML');
         // xSnippet.attr('src', this.m_contGroup.value.url);
         // this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);

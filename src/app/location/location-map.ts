@@ -13,20 +13,11 @@ import {LocationMarkModel} from "../../models/LocationMarkModel";
 
 export declare var google: any;
 
-export interface IMarker {
-    lat: number;
-    lng: number;
-    radius: number;
-    draggable: boolean;
-    new:boolean;
-}
 
-
-// example: http://embed.plnkr.co/YX7W20/
+/** example: http://embed.plnkr.co/YX7W20/ **/
 
 @Component({
     selector: 'location-map',
-    // changeDetection: ChangeDetectionStrategy.OnPush,
     styles: [`
         .sebm-google-map-container {
             height: 700px;
@@ -72,8 +63,8 @@ export interface IMarker {
                                         [longitude]="m.lng"
                                         [radius]="m.radius"
                                         [fillColor]="'red'"
-                                        [circleDraggable]="true"
-                                        [editable]="true">
+                                        [circleDraggable]="false"
+                                        [editable]="false">
                 </sebm-google-map-circle>
 
             </sebm-google-map>
@@ -108,7 +99,7 @@ export class LocationMap extends Compbaser implements AfterViewInit {
     zoom: number = 8;
     lat: number = 51.673858;
     lng: number = 7.815982;
-    markers: IMarker[] = [];
+    markers: LocationMarkModel[] = [];
     private m_blockData: IBlockData;
 
 
@@ -130,19 +121,19 @@ export class LocationMap extends Compbaser implements AfterViewInit {
     onClose: EventEmitter<any> = new EventEmitter<any>();
 
     ngAfterViewInit() {
-
-        //
-        this.yp.listenLocationMarkerSelected()
-            .subscribe((i_marker: LocationMarkModel) => {
-                this.setCenter(i_marker.getLat(), i_marker.getLng())
-            }, (e) => console.error(e))
+        this.cancelOnDestroy(
+            //
+            this.yp.listenLocationMarkerSelected()
+                .subscribe((i_marker: LocationMarkModel) => {
+                    this.setCenter(i_marker.lat, i_marker.lng)
+                }, (e) => console.error(e))
+        )
 
         if (this.blockPlacement == PLACEMENT_CHANNEL)
             this._listenOnChannels();
         if (this.blockPlacement == PLACEMENT_SCENE)
             this._listenOnScenes();
     }
-
 
     private _listenOnChannels() {
         this.cancelOnDestroy(
@@ -178,20 +169,19 @@ export class LocationMap extends Compbaser implements AfterViewInit {
         var domPlayerData = this.bs.getBlockPlayerData(this.m_blockData)
         $(domPlayerData).find('GPS').children().each((k, v) => {
             var marker: LocationMarkModel = new LocationMarkModel({
-                id: Math.random(),
-                draggable: true,
+                draggable: false,
                 label: '',
                 lat: parseFloat(jXML(v).attr('lat')),
                 lng: parseFloat(jXML(v).attr('lng')),
                 radius: parseFloat(jXML(v).attr('radios')) * 1000, // convert to meters
-                new: false
             });
-            this.markers.push(marker.getData().toJS());
+            this.markers.push(marker);
             //map.points.push(point);
 
         });
         if (this.markers.length > 0)
             this.setCenter(this.markers[0].lat, this.markers[0].lng);
+        this.forceUpdateUi()
     }
 
     clickedMarker(i_marker: LocationMarkModel, index: number) {
@@ -209,8 +199,9 @@ export class LocationMap extends Compbaser implements AfterViewInit {
             draggable: true,
             new: true
         });
-        this.markers.push(marker.getData().toJS());
-        this.forceUpdateUi();
+        // enable code below if you wish to add new marker and not through reactive
+        // this.markers.push(marker);
+        // this.forceUpdateUi();
         var uiState: IUiState = {locationMap: {locationMarkerSelected: marker}}
         this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
@@ -399,3 +390,12 @@ export class LocationMap extends Compbaser implements AfterViewInit {
  });
  */
 //}
+
+
+// export interface IMarker {
+//     lat: number;
+//     lng: number;
+//     radius: number;
+//     draggable: boolean;
+//     new:boolean;
+// }

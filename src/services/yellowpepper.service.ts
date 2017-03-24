@@ -178,7 +178,8 @@ export class YellowPepperService {
     }
 
     listenLocationMarkerSelected(): Observable<LocationMarkModel> {
-        return this.store.select(store => store.appDb.uiState.locationMap.locationMarkerSelected);
+        return this.store.select(store => store.appDb.uiState.locationMap.locationMarkerSelected)
+            .filter(v => !_.isNull(v));
     }
 
 
@@ -291,7 +292,7 @@ export class YellowPepperService {
         }).filter((ids) => {
             return ids && ids.sceneId != -1 && ids.blockId != -1
         }).mergeMap(ids => {
-            
+
             return this.listenScene(ids.sceneId)
                 .mergeMap((playerDataModel: PlayerDataModelExt) => {
                     var domPlayerData = $.parseXML(playerDataModel.getPlayerDataValue())
@@ -319,7 +320,7 @@ export class YellowPepperService {
                     return Observable.of(sceneData);
                 });
         }).distinct()
-           // .mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
+        // .mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
     }
 
     listenSceneSelected(emitOnEmpty: boolean = false): Observable<ISceneData> {

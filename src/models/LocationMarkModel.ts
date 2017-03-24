@@ -5,20 +5,28 @@ export class LocationMarkModel extends StoreModel {
         super(data);
     }
 
+    public get lng() {
+        return this.getKey('lng');
+    }
+
+    public get lat() {
+        return this.getKey('lat');
+    }
+
+    public get radius() {
+        return this.getKey('radius');
+    }
+
+    public get draggable() {
+        return this.getKey('draggable');
+    }
+
     public setLng(value) {
         return this.setKey<LocationMarkModel>(LocationMarkModel, 'lng', value);
     }
 
-    public getLng() {
-        return this.getKey('lng');
-    }
-
     public setLat(value) {
         return this.setKey<LocationMarkModel>(LocationMarkModel, 'lat', value);
-    }
-
-    public getLat() {
-        return this.getKey('lat');
     }
 
     public seRadius(value) {
