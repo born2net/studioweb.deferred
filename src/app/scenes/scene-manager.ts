@@ -84,6 +84,8 @@ export class SceneManager extends Compbaser {
                             this.rp.removeBlocksWithSceneID(scene_id);
                             this.rp.removeSceneFromBlockCollectionInScenes(scene_id);
                             this.rp.removeSceneFromBlockCollectionsInChannels(scene_id);
+                            this.rp.removeSceneFromBlockLocationInScenes(scene_id);
+                            this.rp.removeSceneFromBlockLocationInChannels(scene_id);
                             this.rp.removeScene(scene_id);
                             this.rp.reduxCommit();
                             this.sceneList.resetSelection();

@@ -374,6 +374,35 @@ export class RedPepperService {
     }
 
     /**
+     Remove all references to a scene id from within Scenes > BlockCollections that refer to that particular scene id
+     In other words, check all scenes for existing block collections, and if they refer to scene_id, remove that entry
+     @method removeSceneFromBlockCollectionWithSceneId
+     @param {Number} i_scene_id scene id to search for and remove in all scenes > BlockCollections
+     **/
+    removeSceneFromBlockCollectionInScenes(i_scene_id) {
+        $(this.databaseManager.table_player_data().getAllPrimaryKeys()).each((k, player_data_id) => {
+            var recPlayerData = this.databaseManager.table_player_data().getRec(player_data_id);
+            var domSceneData = $.parseXML(recPlayerData['player_data_value']);
+            var currentSceneID = $(domSceneData).find('Player').eq(0).attr('id');
+            $(domSceneData).find('Player').each(function (i, playerData) {
+                $(playerData).find('[player="' + BlockLabels.BLOCKCODE_COLLECTION + '"]').each(function (i, playerDataBlockCollection) {
+                    $(playerDataBlockCollection).find('Collection').children().each(function (k, page) {
+                        var scene_id = $(page).find('Player').attr('hDataSrc');
+                        if (scene_id == i_scene_id) {
+                            $(page).remove();
+                            currentSceneID = this.sterilizePseudoId(currentSceneID);
+                            this.databaseManager.table_player_data().openForEdit(currentSceneID);
+                            var player_data = this.xmlToStringIEfix(domSceneData);
+                            recPlayerData['player_data_value'] = player_data;
+                        }
+                    });
+                });
+            });
+        });
+        this.addPendingTables(['table_player_data']);
+    }
+
+    /**
      Remove the scene from any block collection which resides in campaign timeline channels that uses that scene in its collection list
      @method removeSceneFromBlockCollectionsInChannels
      @param {Number} i_scene_id
@@ -404,20 +433,33 @@ export class RedPepperService {
         this.addPendingTables(['table_campaign_timeline_chanel_players']);
     }
 
-    /**
-     Remove all references to a scene id from within Scenes > BlockCollections that refer to that particular scene id
-     In other words, check all scenes for existing block collections, and if they refer to scene_id, remove that entry
-     @method removeSceneFromBlockCollectionWithSceneId
-     @param {Number} i_scene_id scene id to search for and remove in all scenes > BlockCollections
-     **/
-    removeSceneFromBlockCollectionInScenes(i_scene_id) {
+    removeSceneFromBlockLocationInScenes(i_scene_id) {
         $(this.databaseManager.table_player_data().getAllPrimaryKeys()).each((k, player_data_id) => {
             var recPlayerData = this.databaseManager.table_player_data().getRec(player_data_id);
             var domSceneData = $.parseXML(recPlayerData['player_data_value']);
             var currentSceneID = $(domSceneData).find('Player').eq(0).attr('id');
             $(domSceneData).find('Player').each(function (i, playerData) {
-                $(playerData).find('[player="' + BlockLabels.BLOCKCODE_COLLECTION + '"]').each(function (i, playerDataBlockCollection) {
-                    $(playerDataBlockCollection).find('Collection').children().each(function (k, page) {
+                $(playerData).find('[player="' + BlockLabels.LOCATION + '"]').each(function (i, playerDataBlockCollection) {
+                    $(playerDataBlockCollection).find('GPS').children().each(function (k, page) {
+                        var scene_id = $(page).find('Player').attr('hDataSrc');
+                        if (scene_id == i_scene_id) {
+                            $(page).remove();
+                            currentSceneID = this.sterilizePseudoId(currentSceneID);
+                            this.databaseManager.table_player_data().openForEdit(currentSceneID);
+                            var player_data = this.xmlToStringIEfix(domSceneData);
+                            recPlayerData['player_data_value'] = player_data;
+                        }
+                    });
+                });
+            });
+        });
+        $(this.databaseManager.table_player_data().getAllPrimaryKeys()).each((k, player_data_id) => {
+            var recPlayerData = this.databaseManager.table_player_data().getRec(player_data_id);
+            var domSceneData = $.parseXML(recPlayerData['player_data_value']);
+            var currentSceneID = $(domSceneData).find('Player').eq(0).attr('id');
+            $(domSceneData).find('Player').each(function (i, playerData) {
+                $(playerData).find('[player="' + BlockLabels.LOCATION + '"]').each(function (i, playerDataBlockCollection) {
+                    $(playerDataBlockCollection).find('Fixed').children().each(function (k, page) {
                         var scene_id = $(page).find('Player').attr('hDataSrc');
                         if (scene_id == i_scene_id) {
                             $(page).remove();
@@ -431,6 +473,58 @@ export class RedPepperService {
             });
         });
         this.addPendingTables(['table_player_data']);
+    }
+
+    /**
+     Remove the scene from any block collection which resides in campaign timeline channels that uses that scene in its collection list
+     @method removeSceneFromBlockCollectionsInChannels
+     @param {Number} i_scene_id
+     @return none
+     **/
+    removeSceneFromBlockLocationInChannels(i_scene_id) {
+        $(this.databaseManager.table_campaign_timeline_chanel_players().getAllPrimaryKeys()).each((k, campaign_timeline_chanel_player_id) => {
+            var recCampaignTimelineChannelPlayer = this.databaseManager.table_campaign_timeline_chanel_players().getRec(campaign_timeline_chanel_player_id);
+            var playerData = recCampaignTimelineChannelPlayer['player_data'];
+            var domPlayerData = $.parseXML(playerData);
+            var blockType = $(domPlayerData).find('Player').attr('player');
+            if (parseInt(blockType) == BlockLabels.LOCATION) {
+                $(domPlayerData).find('GPS').children().each((k, page) => {
+                    var scene_hDataSrc;
+                    var type = $(page).attr('type');
+                    if (type == 'scene') {
+                        scene_hDataSrc = $(page).find('Player').attr('hDataSrc');
+                        if (scene_hDataSrc == i_scene_id) {
+                            $(page).remove();
+                            var player_data = this.xmlToStringIEfix(domPlayerData)
+                            this.databaseManager.table_campaign_timeline_chanel_players().openForEdit(campaign_timeline_chanel_player_id);
+                            this.setCampaignTimelineChannelPlayerRecord(campaign_timeline_chanel_player_id, 'player_data', player_data);
+                        }
+                    }
+                });
+            }
+        });
+        $(this.databaseManager.table_campaign_timeline_chanel_players().getAllPrimaryKeys()).each((k, campaign_timeline_chanel_player_id) => {
+            var recCampaignTimelineChannelPlayer = this.databaseManager.table_campaign_timeline_chanel_players().getRec(campaign_timeline_chanel_player_id);
+            var playerData = recCampaignTimelineChannelPlayer['player_data'];
+            var domPlayerData = $.parseXML(playerData);
+            var blockType = $(domPlayerData).find('Player').attr('player');
+            if (parseInt(blockType) == BlockLabels.LOCATION) {
+                $(domPlayerData).find('Fixed').children().each((k, page) => {
+                    var scene_hDataSrc;
+                    var type = $(page).attr('type');
+                    if (type == 'scene') {
+                        scene_hDataSrc = $(page).find('Player').attr('hDataSrc');
+                        if (scene_hDataSrc == i_scene_id) {
+                            $(page).remove();
+                            var player_data = this.xmlToStringIEfix(domPlayerData)
+                            this.databaseManager.table_campaign_timeline_chanel_players().openForEdit(campaign_timeline_chanel_player_id);
+                            this.setCampaignTimelineChannelPlayerRecord(campaign_timeline_chanel_player_id, 'player_data', player_data);
+                        }
+                    }
+                });
+            }
+        });
+        this.addPendingTables(['table_campaign_timeline_chanel_players']);
     }
 
     /**
