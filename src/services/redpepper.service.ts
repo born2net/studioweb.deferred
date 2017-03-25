@@ -12,7 +12,7 @@ import {ApplicationState} from "../store/application.state";
 import * as _ from "lodash";
 import {NgmslibService} from "ng-mslib";
 import {IAddContents} from "../interfaces/IAddContent";
-import {PLACEMENT_CHANNEL} from "../interfaces/Consts";
+import {BlockLabels, PLACEMENT_CHANNEL} from "../interfaces/Consts";
 import X2JS from "x2js";
 
 var parser = new X2JS({
@@ -385,8 +385,8 @@ export class RedPepperService {
             var playerData = recCampaignTimelineChannelPlayer['player_data'];
             var domPlayerData = $.parseXML(playerData);
             var blockType = $(domPlayerData).find('Player').attr('player');
-            if (blockType == 'CONSTS.BLOCKCODE_COLLECTION') {
-                $(domPlayerData).find('Collection').children().each(function (k, page) {
+            if (parseInt(blockType) == BlockLabels.BLOCKCODE_COLLECTION) {
+                $(domPlayerData).find('Collection').children().each((k, page) => {
                     var scene_hDataSrc;
                     var type = $(page).attr('type');
                     if (type == 'scene') {
@@ -395,7 +395,7 @@ export class RedPepperService {
                             $(page).remove();
                             var player_data = this.xmlToStringIEfix(domPlayerData)
                             this.databaseManager.table_campaign_timeline_chanel_players().openForEdit(campaign_timeline_chanel_player_id);
-                            this.databaseManager.setCampaignTimelineChannelPlayerRecord(campaign_timeline_chanel_player_id, 'player_data', player_data);
+                            this.setCampaignTimelineChannelPlayerRecord(campaign_timeline_chanel_player_id, 'player_data', player_data);
                         }
                     }
                 });
@@ -405,7 +405,7 @@ export class RedPepperService {
     }
 
     /**
-     Remove all refernce to a scene id from within Scenes > BlockCollections that refer to that particulat scene id
+     Remove all references to a scene id from within Scenes > BlockCollections that refer to that particular scene id
      In other words, check all scenes for existing block collections, and if they refer to scene_id, remove that entry
      @method removeSceneFromBlockCollectionWithSceneId
      @param {Number} i_scene_id scene id to search for and remove in all scenes > BlockCollections
@@ -416,7 +416,7 @@ export class RedPepperService {
             var domSceneData = $.parseXML(recPlayerData['player_data_value']);
             var currentSceneID = $(domSceneData).find('Player').eq(0).attr('id');
             $(domSceneData).find('Player').each(function (i, playerData) {
-                $(playerData).find('[player="' + 'CONSTS.BLOCKCODE_COLLECTION' + '"]').each(function (i, playerDataBlockCollection) {
+                $(playerData).find('[player="' + BlockLabels.BLOCKCODE_COLLECTION + '"]').each(function (i, playerDataBlockCollection) {
                     $(playerDataBlockCollection).find('Collection').children().each(function (k, page) {
                         var scene_id = $(page).find('Player').attr('hDataSrc');
                         if (scene_id == i_scene_id) {
@@ -2437,7 +2437,7 @@ export class RedPepperService {
             var domSceneData = $.parseXML(recPlayerData['player_data_value']);
             var currentSceneID = $(domSceneData).find('Player').eq(0).attr('id');
             $(domSceneData).find('Player').each(function (i, playerData) {
-                $(playerData).find('[player="' + 'CONSTS.BLOCKCODE_COLLECTION' + '"]').each(function (i, playerDataBlockCollection) {
+                $(playerData).find('[player="' + BlockLabels.BLOCKCODE_COLLECTION + '"]').each(function (i, playerDataBlockCollection) {
                     $(playerDataBlockCollection).find('Collection').children().each(function (k, page) {
                         var resource_id = $(page).find('Resource').attr('hResource');
                         if (i_resource_id == resource_id) {
@@ -2466,7 +2466,7 @@ export class RedPepperService {
             var playerData = recCampaignTimelineChannelPlayer['player_data'];
             var domPlayerData = $.parseXML(playerData);
             var blockType = $(domPlayerData).find('Player').attr('player');
-            if (blockType == 'CONSTS.BLOCKCODE_COLLECTION') {
+            if (parseInt(blockType) == BlockLabels.BLOCKCODE_COLLECTION) {
                 $(domPlayerData).find('Collection').children().each(function (k, page) {
                     var resource_hResource;
                     var type = $(page).attr('type');
