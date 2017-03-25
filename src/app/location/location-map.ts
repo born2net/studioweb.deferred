@@ -28,6 +28,11 @@ export declare var google: any;
             width: 1700px;
         }
 
+        .green {
+            background-color: green;
+            color: white;
+        }
+
         .locationSimulationProps {
             width: 420px;
             height: 160px;
@@ -39,6 +44,13 @@ export declare var google: any;
             padding: 0 20px 20px 0;
             position: relative;
             top: -20px;
+        }
+
+        #addressLookup {
+            z-index: 1;
+            position: relative;
+            top: 50px;
+            width: 300px;
         }
 
     `],
@@ -62,18 +74,20 @@ export declare var google: any;
                 <button title="refresh" type="button" class="btn btn-default">
                     <span class="glyphicon glyphicon-refresh">&nbsp;</span><span data-localize="refresh"> refresh </span>
                 </button>
-                <select style="height: 31px; width: 170px; border: solid #cbcbcb 1px"> </select>
+                <select (change)="_onStationSelected($event)" style="height: 31px; width: 170px; border: solid #cbcbcb 1px">
+                    <option *ngFor="let station of m_stations"></option>
+                </select>
                 <select style="height: 31px; width: 90px; border: solid #cbcbcb 1px">
                     <option value="local">Local post</option>
                     <option value="remote">Remote post</option>
                 </select>
                 <h5>status: waiting...</h5>
-                <h5>longitude: none</h5>
-                <h5>longitude: none</h5>
+                <h5 [ngClass]="{'green': m_inRange == true}">Latitude: {{m_simulatedLat}}</h5>
+                <h5 [ngClass]="{'green': m_inRange == true}">longitude: {{m_simulatedLng}}</h5>
                 <h5 style="font-size: 7px; cursor: pointer"></h5>
             </div>
         </div>
-        <input style="position: relative; top: -20px" class="list-group-item" #address type="text"/>
+        <input id="addressLookup" class="list-group-item" #address type="text"/>
         <div class="row map">
             <!--<sebm-google-map class="center-block" #googleMaps [disableDefaultUI]="false" [latitude]="38.2500" [longitude]="-96.7500"></sebm-google-map>-->
 
@@ -144,7 +158,11 @@ export class LocationMap extends Compbaser implements AfterViewInit {
     lat: number = 51.673858;
     lng: number = 7.815982;
     markers: LocationMarkModel[] = [];
+    m_stations = [];
     inSimMode = false;
+    m_inRange = false;
+    m_simulatedLat = 0;
+    m_simulatedLng = 0;
     private m_blockData: IBlockData;
 
 
@@ -209,7 +227,76 @@ export class LocationMap extends Compbaser implements AfterViewInit {
 
     _toggleSimMode(value) {
         this.inSimMode = !this.inSimMode;
+        if (!this.inSimMode) {
+            this.m_simulatedLat = 0;
+            this.m_simulatedLng = 0;
+            this.m_inRange = false;
+        }
         this.cd.markForCheck();
+    }
+
+    _onStationSelected(event) {
+
+    }
+
+
+
+    /**
+     Load and refresh the station list so we can pull station id for simulation
+     @method _loadStationList
+     **/
+    _loadStationList() {
+        var userData = this.rp.getUserData();
+        var url = window.g_protocol + userData.domain + '/WebService/getStatus.ashx?user=' + userData.userName + '&password=' + userData.userPass + '&callback=?';
+        // var select = $(Elements.CLASS_LOCATION_SIMULATION_PROPS, self.el).find('select').eq(0);
+        // $(select).children().remove();
+        // $.getJSON(url, function (data) {
+        //     var s64 = data['ret'];
+        //     var str = $.base64.decode(s64);
+        //     var xml = $.parseXML(str);
+        //     $(xml).find('Station').each(function (key, value) {
+        //         var stationID = $(value).attr('id');
+        //         var stationName = $(value).attr('name');
+        //         var stationPort = $(value).attr('localPort') || 9999;
+        //         var stationIp = $(value).attr('localAddress');
+        //         var buff = '<option data-ip="' + stationIp + '" data-stationid="' + stationID + '">' + stationName + '</option>'
+        //         $(select).append(buff);
+        //     });
+        // });
+    }
+    /**
+     Simulate a trigger event of GPS coordinates by user clicks within the google map
+     @method _simulateEvent
+     @param {Number} lat
+     @param {Number} lng
+     @param {Boolean} inRange true if clicked within a marked circle radius
+     **/
+    private _simulateEvent(i_marker: LocationMarkModel, i_inRange) {
+        this.m_inRange = i_inRange;
+        this.m_simulatedLat = i_marker.lat;
+        this.m_simulatedLng = i_marker.lng;
+
+        // var selected = $(Elements.CLASS_LOCATION_SIMULATION_PROPS, self.el).find('select').eq(0).find('option:selected');
+        // var postMode = $(Elements.CLASS_LOCATION_SIMULATION_PROPS, self.el).find('select').eq(1).find('option:selected').attr('value');
+        // var msg = (postMode == 'local') ? 'click link to send post...' : 'sending post...';
+        // var id = $(selected).attr('data-stationid');
+        // var ip = $(selected).attr('data-ip');
+        // var stationRecord = BB.Pepper.getStationRecord(id);
+        // var port = stationRecord.lan_server_port;
+        // var $messages = $(Elements.CLASS_LOCATION_SIMULATION_PROPS, self.el).find('h5');
+        // var url = this.rp.sendLocalEventGPS(postMode, lat, lng, id, ip, port, function (e) {
+        //     console.log(e);
+        // });
+        // $messages.eq(0).text(msg);
+        // $messages.eq(1).text(lng);
+        // $messages.eq(2).text(lat);
+        // $messages.eq(3).text(url);
+        // $messages.eq(3).off('click');
+        // if (postMode == "local") {
+        //     $messages.eq(3).on('click', function () {
+        //         window.open(url, '_blank');
+        //     });
+        // }
     }
 
     private _listenOnChannels() {
@@ -262,6 +349,8 @@ export class LocationMap extends Compbaser implements AfterViewInit {
     }
 
     clickedMarker(i_marker: LocationMarkModel, index: number) {
+        if (this.inSimMode)
+            return this._simulateEvent(i_marker, true);
         // con(`clicked the marker: ${i_marker.label || index}`)
         var uiState: IUiState = {locationMap: {locationMarkerSelected: i_marker}}
         this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
@@ -276,6 +365,10 @@ export class LocationMap extends Compbaser implements AfterViewInit {
             draggable: true,
             new: true
         });
+
+        if (this.inSimMode)
+            return this._simulateEvent(marker, false);
+
         // enable code below if you wish to add new marker and not through reactive
         // this.markers.push(marker);
         // this.forceUpdateUi();
