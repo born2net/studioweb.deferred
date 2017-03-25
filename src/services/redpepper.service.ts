@@ -44,6 +44,8 @@ export class RedPepperService {
     private m_authenticated = false;
     private m_domain;
     private m_whiteLabel;
+    private m_userName;
+    private m_userPassword;
     private m_resellerId = -1;
     private m_resellerName = '';
     private m_businessID = -1;
@@ -67,6 +69,8 @@ export class RedPepperService {
                     self.m_authenticated = true;
                     self.m_domain = self.m_loaderManager['m_domain'];
                     var resellerInfo = self.m_loaderManager['m_resellerInfo'];
+                    self.m_userName = i_user;
+                    self.m_userPassword = i_pass;
                     self.m_whiteLabel = parseInt($(resellerInfo).find('WhiteLabel').attr('enabled'));
                     self.m_resellerId = parseInt($(resellerInfo).find('BusinessInfo').attr('businessId'));
                     self.m_resellerName = $(resellerInfo).find('BusinessInfo').attr('name');
@@ -114,8 +118,8 @@ export class RedPepperService {
      **/
     getUserData() {
         return {
-            userName: this['m_user'],
-            userPass: this['m_pass'],
+            userName: this['m_userName'],
+            userPass: this['m_userPassword'],
             domain: this['m_domain'],
             businessID: this['m_businessID'],
             eri: this['m_eri'],
@@ -1128,6 +1132,23 @@ export class RedPepperService {
         timelinePlayers.addRecord(recTimelinePlayer, null);
 
         this.addPendingTables(['table_campaign_timeline_chanel_players']);
+    }
+
+    /**
+     Returns the record for a station id
+     @method getStationRecord
+     @param {Number} i_native_station_id
+     @return {Object} recBranchStation
+     **/
+    getStationRecord(i_native_station_id) {
+        var record;
+        $(this.databaseManager.table_branch_stations().getAllPrimaryKeys()).each((k, branch_station_id) => {
+            var recBranchStation = this.databaseManager.table_branch_stations().getRec(branch_station_id);
+            if (recBranchStation['native_id'] == i_native_station_id) {
+                record = recBranchStation;
+            }
+        });
+        return record;
     }
 
     /**
@@ -2596,24 +2617,6 @@ export class RedPepperService {
             }
         });
         return campaignID;
-    }
-
-    /**
-     Returns the record for a station id
-     @method getStationRecord
-     @param {Number} i_native_station_id
-     @return {Object} recBranchStation
-     **/
-    getStationRecord(i_native_station_id) {
-
-        var record;
-        $(this.databaseManager.table_branch_stations().getAllPrimaryKeys()).each(function (k, branch_station_id) {
-            var recBranchStation = this.databaseManager.table_branch_stations().getRec(branch_station_id);
-            if (recBranchStation['native_id'] == i_native_station_id) {
-                record = recBranchStation;
-            }
-        });
-        return record;
     }
 
     /**

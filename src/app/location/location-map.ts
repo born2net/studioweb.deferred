@@ -10,6 +10,8 @@ import {RedPepperService} from "../../services/redpepper.service";
 import {PLACEMENT_CHANNEL, PLACEMENT_SCENE} from "../../interfaces/Consts";
 import {CampaignTimelineChanelPlayersModel} from "../../store/imsdb.interfaces_auto";
 import {LocationMarkModel} from "../../models/LocationMarkModel";
+import {FormBuilder, FormGroup} from "@angular/forms";
+import * as _ from 'lodash';
 
 export declare var google: any;
 
@@ -53,41 +55,51 @@ export declare var google: any;
             width: 300px;
         }
 
+        #refresh {
+            position: relative;
+            top: -1px;
+            height: 31px;
+        }
+
     `],
     template: `
         <small class="debug">{{me}}</small>
         <button (click)="_close()" type="button" class="openPropsButton btn btn-default btn-sm">
             <span class="glyphicon glyphicon-chevron-left"></span>
         </button>
-        <div class="clearFloat"></div>
-        <hr/>
-        <div id="simModeContainer">
-            <div class="material-switch pull-right">
-                <input #simMode (change)="_toggleSimMode()"
-                       id="simMode"
-                       name="simMode" type="checkbox"/>
-                <label for="simMode" class="label-primary"></label>
-            </div>
-            <span class="pull-right" i18n>simulation mode</span>
+        <form novalidate autocomplete="off" [formGroup]="contGroup">
             <div class="clearFloat"></div>
-            <div *ngIf="inSimMode" class="locationSimulationProps pull-right">
-                <button title="refresh" type="button" class="btn btn-default">
-                    <span class="glyphicon glyphicon-refresh">&nbsp;</span><span data-localize="refresh"> refresh </span>
-                </button>
-                <select (change)="_onStationSelected($event)" style="height: 31px; width: 170px; border: solid #cbcbcb 1px">
-                    <option *ngFor="let station of m_stations"></option>
-                </select>
-                <select style="height: 31px; width: 90px; border: solid #cbcbcb 1px">
-                    <option value="local">Local post</option>
-                    <option value="remote">Remote post</option>
-                </select>
-                <h5>status: waiting...</h5>
-                <h5 [ngClass]="{'green': m_inRange == true}">Latitude: {{m_simulatedLat}}</h5>
-                <h5 [ngClass]="{'green': m_inRange == true}">longitude: {{m_simulatedLng}}</h5>
-                <h5 style="font-size: 7px; cursor: pointer"></h5>
+            <hr/>
+            <div id="simModeContainer">
+                <div class="material-switch pull-right">
+                    <input #simMode (change)="_toggleSimMode()"
+                           id="simMode"
+                           name="simMode" type="checkbox"/>
+                    <label for="simMode" class="label-primary"></label>
+                </div>
+                <span class="pull-right" i18n>simulation mode</span>
+                <div class="clearFloat"></div>
+                <div *ngIf="inSimMode" class="locationSimulationProps pull-right">
+                    <button id="refresh" (click)="_loadStationList()" type="button" class="btn btn-default">
+                        <i class="fa fa-refresh"></i>
+                        refresh
+                    </button>
+                    <select formControlName="stations" (change)="_onStationSelected($event)" style="height: 31px; width: 170px; border: solid #cbcbcb 1px">
+                        <option [ngValue]="station" *ngFor="let station of m_stations">{{station.stationName}}</option>
+                    </select>
+                    <select formControlName="postMode" style="height: 31px; border: solid #cbcbcb 1px">
+                        <option value="local">Local post</option>
+                        <option value="remote">Remote post</option>
+                    </select>
+                    <h5>{{m_simStatus}}</h5>
+                    <h5 [ngClass]="{'green': m_inRange == true}">Latitude: {{m_simulatedLat}}</h5>
+                    <h5 [ngClass]="{'green': m_inRange == true}">longitude: {{m_simulatedLng}}</h5>
+                    <h5 (click)="_openSimUrl($event)" style="font-size: 7px; cursor: pointer">{{m_simUrl}}</h5>
+                </div>
             </div>
-        </div>
-        <input id="addressLookup" class="list-group-item" #address type="text"/>
+            <input id="addressLookup" class="list-group-item" #address type="text"/>
+        </form>
+
         <div class="row map">
             <!--<sebm-google-map class="center-block" #googleMaps [disableDefaultUI]="false" [latitude]="38.2500" [longitude]="-96.7500"></sebm-google-map>-->
 
@@ -161,15 +173,21 @@ export class LocationMap extends Compbaser implements AfterViewInit {
     m_stations = [];
     inSimMode = false;
     m_inRange = false;
+    m_simStatus = 'status: waiting...'
     m_simulatedLat = 0;
     m_simulatedLng = 0;
+    m_simUrl = '';
     private m_blockData: IBlockData;
+    private contGroup: FormGroup;
 
 
-    constructor(private yp: YellowPepperService, private cd: ChangeDetectorRef, private m_mapsAPILoader: MapsAPILoader,
+    constructor(private yp: YellowPepperService, private cd: ChangeDetectorRef, private m_mapsAPILoader: MapsAPILoader, private fb: FormBuilder,
                 private zone: NgZone, private bs: BlockService, @Inject('BLOCK_PLACEMENT') private blockPlacement: string, private rp: RedPepperService) {
         super();
-
+        this.contGroup = fb.group({
+            'stations': [],
+            'postMode': []
+        });
     }
 
     @ViewChild('address')
@@ -231,39 +249,42 @@ export class LocationMap extends Compbaser implements AfterViewInit {
             this.m_simulatedLat = 0;
             this.m_simulatedLng = 0;
             this.m_inRange = false;
+        } else {
+            this._loadStationList();
+            this.contGroup.controls.postMode.setValue('local');
         }
         this.cd.markForCheck();
     }
-
-    _onStationSelected(event) {
-
-    }
-
-
 
     /**
      Load and refresh the station list so we can pull station id for simulation
      @method _loadStationList
      **/
     _loadStationList() {
+        var self = this;
+        this.m_stations = [];
+        this.contGroup.controls.stations.setValue('');
         var userData = this.rp.getUserData();
         var url = window.g_protocol + userData.domain + '/WebService/getStatus.ashx?user=' + userData.userName + '&password=' + userData.userPass + '&callback=?';
-        // var select = $(Elements.CLASS_LOCATION_SIMULATION_PROPS, self.el).find('select').eq(0);
-        // $(select).children().remove();
-        // $.getJSON(url, function (data) {
-        //     var s64 = data['ret'];
-        //     var str = $.base64.decode(s64);
-        //     var xml = $.parseXML(str);
-        //     $(xml).find('Station').each(function (key, value) {
-        //         var stationID = $(value).attr('id');
-        //         var stationName = $(value).attr('name');
-        //         var stationPort = $(value).attr('localPort') || 9999;
-        //         var stationIp = $(value).attr('localAddress');
-        //         var buff = '<option data-ip="' + stationIp + '" data-stationid="' + stationID + '">' + stationName + '</option>'
-        //         $(select).append(buff);
-        //     });
-        // });
+        $.getJSON(url, (data) => {
+            var s64 = data['ret'];
+            var str = jQueryAny.base64.decode(s64);
+            var xml = jXML.parseXML(str);
+            $(xml).find('Station').each((key, value) => {
+                var stationId = $(value).attr('id');
+                var stationName = $(value).attr('name');
+                var stationPort = $(value).attr('localPort') || 9999;
+                var stationIp = $(value).attr('localAddress');
+                self.m_stations.push({stationIp, stationId, stationName, stationPort});
+            });
+            self.cd.markForCheck();
+        });
     }
+
+    _onStationSelected(event) {
+        console.log(this.contGroup.value);
+    }
+
     /**
      Simulate a trigger event of GPS coordinates by user clicks within the google map
      @method _simulateEvent
@@ -276,27 +297,33 @@ export class LocationMap extends Compbaser implements AfterViewInit {
         this.m_simulatedLat = i_marker.lat;
         this.m_simulatedLng = i_marker.lng;
 
-        // var selected = $(Elements.CLASS_LOCATION_SIMULATION_PROPS, self.el).find('select').eq(0).find('option:selected');
-        // var postMode = $(Elements.CLASS_LOCATION_SIMULATION_PROPS, self.el).find('select').eq(1).find('option:selected').attr('value');
-        // var msg = (postMode == 'local') ? 'click link to send post...' : 'sending post...';
-        // var id = $(selected).attr('data-stationid');
-        // var ip = $(selected).attr('data-ip');
-        // var stationRecord = BB.Pepper.getStationRecord(id);
-        // var port = stationRecord.lan_server_port;
-        // var $messages = $(Elements.CLASS_LOCATION_SIMULATION_PROPS, self.el).find('h5');
-        // var url = this.rp.sendLocalEventGPS(postMode, lat, lng, id, ip, port, function (e) {
-        //     console.log(e);
-        // });
-        // $messages.eq(0).text(msg);
-        // $messages.eq(1).text(lng);
-        // $messages.eq(2).text(lat);
-        // $messages.eq(3).text(url);
-        // $messages.eq(3).off('click');
-        // if (postMode == "local") {
-        //     $messages.eq(3).on('click', function () {
-        //         window.open(url, '_blank');
-        //     });
-        // }
+        var selected = this.contGroup.value.stations;
+        if (_.isNull(selected) || _.isEmpty(selected))
+            return bootbox.alert('no station selected...');
+        var postMode = this.contGroup.value.postMode;
+        var msg = (postMode == 'local') ? 'click link below to send post...' : 'sending post...';
+
+        var id = this.contGroup.value.stations.stationId;
+        var ip = this.contGroup.value.stations.stationIp;
+        var stationRecord = this.rp.getStationRecord(id);
+        var port = stationRecord.lan_server_port;
+        var url = this.rp.sendLocalEventGPS(postMode, this.m_simulatedLat, this.m_simulatedLng, id, ip, port, function (e) {
+            console.log(e);
+        });
+        this.m_simStatus = msg;
+        this.m_simUrl = url;
+    }
+
+    _openSimUrl() {
+        if (this.contGroup.value.postMode != 'local') return;
+        var id = this.contGroup.value.stations.stationId;
+        var ip = this.contGroup.value.stations.stationIp;
+        var stationRecord = this.rp.getStationRecord(id);
+        var port = stationRecord.lan_server_port;
+        var url = this.rp.sendLocalEventGPS('local', this.m_simulatedLat, this.m_simulatedLng, id, ip, port, function (e) {
+            console.log(e);
+        });
+        window.open(url, '_blank');
     }
 
     private _listenOnChannels() {
@@ -410,7 +437,6 @@ export class LocationMap extends Compbaser implements AfterViewInit {
     }
 
     destroy() {
-        console.log('dest maps');
     }
 }
 
@@ -566,3 +592,4 @@ export class LocationMap extends Compbaser implements AfterViewInit {
 //     draggable: boolean;
 //     new:boolean;
 // }
+
