@@ -13,7 +13,6 @@ import {LocationMarkModel} from "../../models/LocationMarkModel";
 
 export declare var google: any;
 
-
 /**
  *  examples:
  *  http://embed.plnkr.co/YX7W20/
@@ -28,13 +27,53 @@ export declare var google: any;
             height: 700px;
             width: 1700px;
         }
+
+        .locationSimulationProps {
+            width: 420px;
+            height: 160px;
+            border: 1px dotted gray;
+            padding: 6px;
+        }
+
+        #simModeContainer {
+            padding: 0 20px 20px 0;
+            position: relative;
+            top: -20px;
+        }
+
     `],
     template: `
         <small class="debug">{{me}}</small>
         <button (click)="_close()" type="button" class="openPropsButton btn btn-default btn-sm">
             <span class="glyphicon glyphicon-chevron-left"></span>
         </button>
-        <input id="address" type="text"/>
+        <div class="clearFloat"></div>
+        <hr/>
+        <div id="simModeContainer">
+            <div class="material-switch pull-right">
+                <input #simMode (change)="_toggleSimMode()"
+                       id="simMode"
+                       name="simMode" type="checkbox"/>
+                <label for="simMode" class="label-primary"></label>
+            </div>
+            <span class="pull-right" i18n>simulation mode</span>
+            <div class="clearFloat"></div>
+            <div *ngIf="inSimMode" class="locationSimulationProps pull-right">
+                <button title="refresh" type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-refresh">&nbsp;</span><span data-localize="refresh"> refresh </span>
+                </button>
+                <select style="height: 31px; width: 170px; border: solid #cbcbcb 1px"> </select>
+                <select style="height: 31px; width: 90px; border: solid #cbcbcb 1px">
+                    <option value="local">Local post</option>
+                    <option value="remote">Remote post</option>
+                </select>
+                <h5>status: waiting...</h5>
+                <h5>longitude: none</h5>
+                <h5>longitude: none</h5>
+                <h5 style="font-size: 7px; cursor: pointer"></h5>
+            </div>
+        </div>
+        <input style="position: relative; top: -20px" class="list-group-item" #address type="text"/>
         <div class="row map">
             <!--<sebm-google-map class="center-block" #googleMaps [disableDefaultUI]="false" [latitude]="38.2500" [longitude]="-96.7500"></sebm-google-map>-->
 
@@ -63,6 +102,7 @@ export declare var google: any;
                 <sebm-google-map-circle *ngFor="let m of markers; let i = index"
                                         (circleClick)="clickedMarker(m, i)"
                                         [latitude]="m.lat"
+                                        [fillOpacity]="0.6"
                                         (dragEnd)="markerDragEnd(m, $event)"
                                         [longitude]="m.lng"
                                         [radius]="m.radius"
@@ -104,15 +144,18 @@ export class LocationMap extends Compbaser implements AfterViewInit {
     lat: number = 51.673858;
     lng: number = 7.815982;
     markers: LocationMarkModel[] = [];
+    inSimMode = false;
     private m_blockData: IBlockData;
 
 
     constructor(private yp: YellowPepperService, private cd: ChangeDetectorRef, private m_mapsAPILoader: MapsAPILoader,
                 private zone: NgZone, private bs: BlockService, @Inject('BLOCK_PLACEMENT') private blockPlacement: string, private rp: RedPepperService) {
-
         super();
 
     }
+
+    @ViewChild('address')
+    address;
 
     @ViewChild('googleMaps')
     googleMaps: SebmGoogleMap;
@@ -120,15 +163,16 @@ export class LocationMap extends Compbaser implements AfterViewInit {
     @Output()
     onClose: EventEmitter<any> = new EventEmitter<any>();
 
-    ngOnInit() {
+    ngAfterViewInit() {
+
         // Google Place Autocomplete
         var autocomplete: any;
-        var inputAddress = document.getElementById("address");
+        // var inputAddress = document.getElementById("address");
 
         this.m_mapsAPILoader.load().then(() => {
             console.log('google script loaded');
 
-            autocomplete = new google.maps.places.Autocomplete(inputAddress, {});
+            autocomplete = new google.maps.places.Autocomplete(this.address.nativeElement, {});
             google.maps.event.addListener(autocomplete, 'place_changed', () => {
 
                 this.zone.run(() => {
@@ -141,7 +185,7 @@ export class LocationMap extends Compbaser implements AfterViewInit {
                     if (!place || !place.geometry) return;
                     var lat = place.geometry.location.lat();
                     var lng = place.geometry.location.lng();
-                    this.setCenter(lat,lng)
+                    this.setCenter(lat, lng)
                 });
 
             });
@@ -149,11 +193,6 @@ export class LocationMap extends Compbaser implements AfterViewInit {
             // var geocoder = new google.maps.Geocoder();
         });
 
-
-    }
-
-
-    ngAfterViewInit() {
         this.cancelOnDestroy(
             //
             this.yp.listenLocationMarkerSelected()
@@ -166,6 +205,11 @@ export class LocationMap extends Compbaser implements AfterViewInit {
             this._listenOnChannels();
         if (this.blockPlacement == PLACEMENT_SCENE)
             this._listenOnScenes();
+    }
+
+    _toggleSimMode(value) {
+        this.inSimMode = !this.inSimMode;
+        this.cd.markForCheck();
     }
 
     private _listenOnChannels() {
@@ -254,9 +298,9 @@ export class LocationMap extends Compbaser implements AfterViewInit {
     }
 
     public forceUpdateUi() {
-        this.cd.reattach();
+        this.cd.detach();
         setTimeout(() => {
-            this.cd.detach();
+            this.cd.reattach();
             this.googleMaps.triggerResize();
         }, 1000)
     }
