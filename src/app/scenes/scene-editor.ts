@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, Output, ViewChild} from "@angular/core";
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, NgZone, Output, ViewChild} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {BlockService, ISceneData} from "../blocks/block-service";
@@ -89,7 +89,7 @@ const CAMPAIGN_LIST_LOADING = 'CAMPAIGN_LIST_LOADED';
             </modal-body>
             <modal-footer [show-default-buttons]="true"></modal-footer>
         </modal>
-                    
+
     `
 })
 export class SceneEditor extends Compbaser implements AfterViewInit {
@@ -122,7 +122,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         blockSelected: undefined
     };
 
-    constructor(private blockFactory: BlockFactoryService, private rp: RedPepperService, private el: ElementRef, private yp: YellowPepperService, private cd: ChangeDetectorRef, private bs: BlockService, private commBroker: CommBroker) {
+    constructor(private zone: NgZone, private blockFactory: BlockFactoryService, private rp: RedPepperService, private el: ElementRef, private yp: YellowPepperService, private cd: ChangeDetectorRef, private bs: BlockService, private commBroker: CommBroker) {
         super();
         // this.cd.detach();
     }
@@ -178,7 +178,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
     @Output()
     onGoBack: EventEmitter<any> = new EventEmitter<any>();
 
-    _onClosed(){
+    _onClosed() {
         var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
         this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
@@ -539,15 +539,15 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         )
     }
 
-    /**
-     Listen when mouse enters canvas wrapper and announce it
-     @method _listenMouseEnterCanvas
-     **/
-    _listenMouseEnterCanvas() {
-        $('#sceneCanvasContainer', this.el.nativeElement).on("mouseover", (e) => {
-            this.commBroker.fire({event: MOUSE_ENTERS_CANVAS, fromInstance: this});
-        });
-    }
+    // /**
+    //  Listen when mouse enters canvas wrapper and announce it
+    //  @method _listenMouseEnterCanvas
+    //  **/
+    // _listenMouseEnterCanvas() {
+    //     $('#sceneCanvasContainer', this.el.nativeElement).on("mouseover", (e) => {
+    //         this.commBroker.fire({event: MOUSE_ENTERS_CANVAS, fromInstance: this});
+    //     });
+    // }
 
     _listenTotalBlocksModified() {
         this.cancelOnDestroy(
@@ -1141,15 +1141,17 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         var block = e.target;
         if (_.isUndefined(block))
             return;
-        block.on('modified', function () {
-            setTimeout(function () {
-                block.off('modified');
-                if (!(block instanceof BlockFabric))
-                    return;
-                var blockID = block.getBlockData().blockID;
-                self.commBroker.fire({event: SCENE_BLOCK_CHANGE, fromInstance: this, message: [blockID]});
-                self.m_objectScaling = 0;
-            }, 15);
+        self.zone.runOutsideAngular(() => {
+            block.on('modified', function () {
+                setTimeout(function () {
+                    block.off('modified');
+                    if (!(block instanceof BlockFabric))
+                        return;
+                    var blockID = block.getBlockData().blockID;
+                    self.commBroker.fire({event: SCENE_BLOCK_CHANGE, fromInstance: this, message: [blockID]});
+                    self.m_objectScaling = 0;
+                }, 15)
+            });
         });
     }
 
@@ -1180,15 +1182,17 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
      **/
     _listenBlockModified() {
         var self = this;
-        self.m_canvas.on({
-            //'object:moving': self.m_objectScaleHandler,
-            //'object:selected': self.m_objectScaleHandler,
-            'object:modified': () => {
-                self._sceneBlockModified();
-            },
-            'object:scaling': $.proxy(self._sceneBlockScaled, self)
+        self.zone.runOutsideAngular(() => {
+            self.m_canvas.on({
+                //'object:moving': self.m_objectScaleHandler,
+                //'object:selected': self.m_objectScaleHandler,
+                'object:modified': () => {
+                    self._sceneBlockModified();
+                },
+                'object:scaling': $.proxy(self._sceneBlockScaled, self)
+            });
+            self.m_canvas.on('object:moving', $.proxy(self._sceneBlockMoving, self));
         });
-        self.m_canvas.on('object:moving', $.proxy(self._sceneBlockMoving, self));
     }
 
     _drawGrid() {
@@ -1216,61 +1220,62 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
      @method _listenCanvasSelections
      **/
     _listenCanvasSelections() {
+        this.zone.runOutsideAngular(() => {
+            //this.m_canvas.on('object:selected',  (e) => {
+            //    var blockID = e.target.m_blockType;
+            //    BB.comBroker.fire(BB.EVENTS.BLOCK_SELECTED, this, null, blockID);
+            //});
 
-        //this.m_canvas.on('object:selected',  (e) => {
-        //    var blockID = e.target.m_blockType;
-        //    BB.comBroker.fire(BB.EVENTS.BLOCK_SELECTED, this, null, blockID);
-        //});
+            this.m_canvas.on('mouse:down', (options) => {
+                this.m_canvasMouseState = 1;
+            });
 
-        this.m_canvas.on('mouse:down', (options) => {
-            this.m_canvasMouseState = 1;
-        });
+            this.m_canvas.on('mouse:up', (options) => {
+                this.m_canvasMouseState = 0;
+                var active = this.m_canvas.getActiveObject();
+                var group = this.m_canvas.getActiveGroup();
 
-        this.m_canvas.on('mouse:up', (options) => {
-            this.m_canvasMouseState = 0;
-            var active = this.m_canvas.getActiveObject();
-            var group = this.m_canvas.getActiveGroup();
+                //options.e.stopImmediatePropagation();
+                //options.e.preventDefault();
 
-            //options.e.stopImmediatePropagation();
-            //options.e.preventDefault();
+                //// Group
+                if (group) {
+                    con('group selected');
+                    var selectedGroup = options.target || group;
+                    _.each(group.objects, (selectedObject) => {
+                        var objectPos = {
+                            x: (selectedGroup.left + (selectedObject.left)),
+                            y: (selectedGroup.top + (selectedObject.top))
+                        };
+                        if (objectPos.x < 0 && objectPos.y < 0) {
+                            // objectPos.x = objectPos.x * -1;
+                            // objectPos.y = objectPos.y * -1;
+                            return;
+                        }
+                        var blockID = selectedObject.getBlockData().blockID;
+                        con('object: ' + selectedObject.m_blockType + ' ' + blockID);
+                        this._updateBlockCords(selectedObject, true, objectPos.x, objectPos.y, selectedObject.currentWidth, selectedObject.currentHeight, selectedObject.angle);
+                        // this._updateZorder();
+                    });
+                    // this._mementoAddState();
+                    selectedGroup.hasControls = false;
+                    // this.m_property = BB.comBroker.getService(BB.SERVICES['PROPERTIES_VIEW']).resetPropertiesView();
+                    return;
+                }
 
-            //// Group
-            if (group) {
-                con('group selected');
-                var selectedGroup = options.target || group;
-                _.each(group.objects, (selectedObject) => {
-                    var objectPos = {
-                        x: (selectedGroup.left + (selectedObject.left)),
-                        y: (selectedGroup.top + (selectedObject.top))
-                    };
-                    if (objectPos.x < 0 && objectPos.y < 0) {
-                        // objectPos.x = objectPos.x * -1;
-                        // objectPos.y = objectPos.y * -1;
-                        return;
-                    }
-                    var blockID = selectedObject.getBlockData().blockID;
-                    con('object: ' + selectedObject.m_blockType + ' ' + blockID);
-                    this._updateBlockCords(selectedObject, true, objectPos.x, objectPos.y, selectedObject.currentWidth, selectedObject.currentHeight, selectedObject.angle);
-                    // this._updateZorder();
-                });
-                // this._mementoAddState();
-                selectedGroup.hasControls = false;
-                // this.m_property = BB.comBroker.getService(BB.SERVICES['PROPERTIES_VIEW']).resetPropertiesView();
-                return;
-            }
+                //// Object
+                if (options.target || active) {
+                    var block = options.target || active;
+                    this._blockSelected(block);
+                    return;
+                }
 
-            //// Object
-            if (options.target || active) {
-                var block = options.target || active;
-                this._blockSelected(block);
-                return;
-            }
+                //// Scene
+                this._sceneCanvasSelected();
+                con('scene: ' + this.m_selectedSceneID);
+                // log('object ' + options.e.clientX + ' ' + options.e.clientY + ' ' + options.target.m_blockType);
 
-            //// Scene
-            this._sceneCanvasSelected();
-            con('scene: ' + this.m_selectedSceneID);
-            // log('object ' + options.e.clientX + ' ' + options.e.clientY + ' ' + options.target.m_blockType);
-
+            });
         });
     }
 
@@ -1657,6 +1662,11 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         if (_.isUndefined(this.m_canvas))
             return;
         this.m_canvas.off('mouse:up');
+        this.m_canvas.off('mouse:down');
+        this.m_canvas.off('object:modified');
+        this.m_canvas.off('object:moving');
+        this.m_canvas.off('object:scaling');
+        this.m_canvas.off();
         this.m_blocks.blocksPost = {};
         this._disposeBlocks();
         this.m_sceneBlock.deleteBlock();
@@ -1703,6 +1713,7 @@ export class SceneEditor extends Compbaser implements AfterViewInit {
         //     }
         // }
         // this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+        this.disposeScene();
         this.m_canvasScale = -1;
         this._notifyScaleChange();
     }

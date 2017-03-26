@@ -91,11 +91,11 @@ interface jQueryModal extends JQuery {
 // interface JQuery {
 //     modal: any;
 // }
-
-declare var jQueryAny: any;
+             
 declare var Draggable;
 declare var con:Con;
 declare var jXML: JQueryStatic;
+declare var jQueryAny: JQueryStatic | any;
 
 interface Con {
     (msg:any, stringify?:boolean):void;
