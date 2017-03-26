@@ -163,11 +163,11 @@ export class LoginPanel extends Compbaser {
         )
     }
 
-    private passFocus() {
+    passFocus() {
         this.renderer.invokeElementMethod(this.userPass.nativeElement, 'focus', [])
     }
 
-    private onClickedLogin() {
+    onClickedLogin() {
         if (this.m_showTwoFactor) {
             // this.toast.warning('Authenticating Two factor...');
             this.authService.authServerTwoFactor(this.m_twoFactor);

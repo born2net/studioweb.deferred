@@ -94,6 +94,10 @@ export class Resources extends Compbaser {
         // )
     }
 
+    _onSceneSelected(valie){
+
+    }
+
     _onResourceSelected(event: MouseEvent, scene: ISceneData, index) {
         // this.selectedIdx = index;
         // let uiState: IUiState;

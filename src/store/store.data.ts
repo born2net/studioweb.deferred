@@ -23,8 +23,6 @@ export interface IMsDatabase {
     sdk: ISDK
 }
 
-
-
 export interface IUiStateCampaign  {
     campaignTimelineChannelSelected?: number;
     campaignTimelineBoardViewerSelected?: number;
@@ -41,6 +39,10 @@ export interface IUiStateLocation  {
     locationMarkerSelected?: LocationMarkModel;
 }
 
+export interface IUiStateResources  {
+    resourceSelected?: number;
+}
+
 export interface IUiStateScene  {
     sceneSelected?: number;
     blockSelected?: number;
@@ -55,6 +57,7 @@ export interface IUiState {
     uiSideProps?:number;
     campaign?: IUiStateCampaign;
     locationMap?: IUiStateLocation;
+    resources?:IUiStateResources
     scene?: IUiStateScene;
 }
 
@@ -95,6 +98,9 @@ export const INITIAL_APP_DB: IAppDb = {
         locationMap: {
             loadLocationMap: false,
             locationMarkerSelected: null
+        },
+        resources: {
+          resourceSelected: -1
         },
         scene: {
             sceneSelected: -1,
