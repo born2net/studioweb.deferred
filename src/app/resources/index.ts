@@ -5,6 +5,8 @@ import {ResourcesNavigation} from "./resources-navigation";
 import {DropdownModule as DropdownModulePrime} from "primeng/primeng";
 import {SharedModule} from "../../modules/shared.module";
 import {Orders} from "./orders";
+import {ResourcePropsManager} from "./resource-props-manager";
+import {Resources} from "./resources";
 
 export const LAZY_ROUTES = [
     {path: ':folder', component: ResourcesNavigation},
@@ -14,7 +16,7 @@ export const LAZY_ROUTES = [
 
 @NgModule({
     imports: [DropdownModulePrime, SharedModule, CommonModule, RouterModule.forChild(LAZY_ROUTES)],
-    declarations: [ResourcesNavigation, Orders]
+    declarations: [ResourcesNavigation, Orders, ResourcePropsManager, Resources]
 })
 export class ResourcesLazyModule {
 }

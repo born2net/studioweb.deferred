@@ -19,10 +19,16 @@ import {Compbaser} from "ng-mslib";
         ])
     ],
     template: `
-        <small class="release">resources
-            <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
-        </small>
-        <orders></orders>
+        <small class="debug">resource-navigation</small>
+        <panel-split-container>
+            <panel-split-main>
+                <resources>
+                </resources>
+            </panel-split-main>
+            <panel-split-side>
+                <resource-props-manager></resource-props-manager>
+            </panel-split-side>
+        </panel-split-container>
     `,
 })
 export class ResourcesNavigation extends Compbaser {
