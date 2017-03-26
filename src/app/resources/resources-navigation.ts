@@ -1,8 +1,6 @@
-import {Component, ChangeDetectionStrategy, trigger, transition, animate, state, style} from "@angular/core";
+import {ChangeDetectionStrategy, Component} from "@angular/core";
+import {animate, state, style, transition, trigger} from "@angular/animations";
 import {Compbaser} from "ng-mslib";
-import {RedPepperService} from "../../services/redpepper.service";
-import {Store} from "@ngrx/store";
-import {ApplicationState} from "../../store/application.state";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,11 +19,11 @@ import {ApplicationState} from "../../store/application.state";
         ])
     ],
     template: `
-               <small class="release">resources
-                   <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
-               </small>
-               <orders></orders>
-           `,
+        <small class="release">resources
+            <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
+        </small>
+        <orders></orders>
+    `,
 })
 export class ResourcesNavigation extends Compbaser {
 

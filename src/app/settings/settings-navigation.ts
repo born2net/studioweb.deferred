@@ -1,8 +1,6 @@
-import {Component, ChangeDetectionStrategy, trigger, transition, animate, state, style} from "@angular/core";
+import {ChangeDetectionStrategy, Component} from "@angular/core";
 import {Compbaser} from "ng-mslib";
-import {RedPepperService} from "../../services/redpepper.service";
-import {Store} from "@ngrx/store";
-import {ApplicationState} from "../../store/application.state";
+import {animate, state, style, transition, trigger} from "@angular/animations";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,

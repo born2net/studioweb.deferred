@@ -3,14 +3,9 @@ import {
     Injectable,
     ViewChild,
     ElementRef,
-    Renderer,
-    keyframes,
-    trigger,
-    state,
-    style,
-    transition,
-    animate
+    Renderer
 } from "@angular/core";
+import {keyframes, trigger, transition, animate, state, style} from "@angular/animations";
 import {ActivatedRoute} from "@angular/router";
 import {LocalStorage} from "../../services/LocalStorage";
 import {AuthService} from "../../services/AuthService";
@@ -168,11 +163,11 @@ export class LoginPanel extends Compbaser {
         )
     }
 
-    passFocus() {
+    private passFocus() {
         this.renderer.invokeElementMethod(this.userPass.nativeElement, 'focus', [])
     }
 
-    onClickedLogin() {
+    private onClickedLogin() {
         if (this.m_showTwoFactor) {
             // this.toast.warning('Authenticating Two factor...');
             this.authService.authServerTwoFactor(this.m_twoFactor);
@@ -184,7 +179,7 @@ export class LoginPanel extends Compbaser {
         }
     }
 
-    isAccessAllowed(i_reason: AuthenticateFlags): boolean {
+    private isAccessAllowed(i_reason: AuthenticateFlags): boolean {
         let msg1: string;
         let msg2: string;
         // this.loginState = 'default';

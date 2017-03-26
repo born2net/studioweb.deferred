@@ -1,8 +1,10 @@
-import {animate, ChangeDetectionStrategy, Component, state, style, transition, trigger} from "@angular/core";
+import {ChangeDetectionStrategy, Component} from "@angular/core";
+import {animate, state, style, transition, trigger} from "@angular/animations";
 import {Compbaser} from "ng-mslib";
 import {BlockService} from "../blocks/block-service";
 import {AppdbAction} from "../../store/actions/appdb.actions";
 import {PLACEMENT_CHANNEL} from "../../interfaces/Consts";
+
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,

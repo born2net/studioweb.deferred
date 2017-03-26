@@ -1,13 +1,11 @@
-import {Component, ChangeDetectionStrategy, trigger, transition, animate, state, style} from "@angular/core";
+import {ChangeDetectionStrategy, Component} from "@angular/core";
 import {Compbaser} from "ng-mslib";
-import {RedPepperService} from "../../services/redpepper.service";
 import {SelectItem} from "primeng/primeng";
 import {Observable} from "rxjs";
 import {UserModel} from "../../models/UserModel";
-import {Store} from "@ngrx/store";
-import {ApplicationState} from "../../store/application.state";
-import {routerTransition} from "../route-animation";
 import {YellowPepperService} from "../../services/yellowpepper.service";
+import {animate, state, style, transition, trigger} from "@angular/animations";
+
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,18 +31,18 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
         ])
     ],
     template: `
-               <small class="release">Fasterq
-                   <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
-               </small>
-               
-               <h4>user name: {{(userModel$ | async)?.getUser() }}</h4>
-               <h4>account type: {{(userModel$ | async)?.getAccountType()}}</h4>
-               <hr/>
-               <small class="debug">{{me}}</small>
-               <p-dropdown [options]="cities" ></p-dropdown>
-               <hr/>
-               <Infobox [value1]="lastLogin" value2="in seconds" value3="time since last login" icon="fa-clock-o"></Infobox>
-           `,
+        <small class="release">Fasterq
+            <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
+        </small>
+
+        <h4>user name: {{(userModel$ | async)?.getUser() }}</h4>
+        <h4>account type: {{(userModel$ | async)?.getAccountType()}}</h4>
+        <hr/>
+        <small class="debug">{{me}}</small>
+        <p-dropdown [options]="cities"></p-dropdown>
+        <hr/>
+        <Infobox [value1]="lastLogin" value2="in seconds" value3="time since last login" icon="fa-clock-o"></Infobox>
+    `,
 })
 export class FasterqNavigation extends Compbaser {
 

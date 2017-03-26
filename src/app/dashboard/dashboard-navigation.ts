@@ -1,5 +1,6 @@
-import {Component, ChangeDetectionStrategy, trigger, transition, animate, state, style} from "@angular/core";
+import {ChangeDetectionStrategy, Component} from "@angular/core";
 import {Compbaser} from "ng-mslib";
+import {animate, state, style, transition, trigger} from "@angular/animations";
 
 @Component({
     selector: 'Dashboard',
@@ -19,7 +20,7 @@ import {Compbaser} from "ng-mslib";
         ])
     ],
     template: `<h2 i18n>accoun't dashboard</h2>
-               <chart [options]="options"></chart>
+    <chart [options]="options"></chart>
     `,
 })
 export class Dashboard extends Compbaser {
@@ -27,16 +28,17 @@ export class Dashboard extends Compbaser {
     constructor() {
         super();
         this.options = {
-            title : { text : 'simple chart' },
+            title: {text: 'simple chart'},
             series: [{
                 data: [29.9, 71.5, 106.4, 129.2],
             }]
         };
 
     }
+
     options: Object;
 
-    
+
     destroy() {
     }
 }

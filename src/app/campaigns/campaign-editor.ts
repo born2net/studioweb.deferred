@@ -1,13 +1,12 @@
-import {animate, ChangeDetectionStrategy, Component, EventEmitter, Output, state, style, transition, trigger} from "@angular/core";
+import {ChangeDetectionStrategy, Component, EventEmitter, Output} from "@angular/core";
+import {animate, state, style, transition, trigger} from "@angular/animations";
 import {Compbaser} from "ng-mslib";
 import {CampaignsModelExt, CampaignTimelineChanelPlayersModelExt} from "../../store/model/msdb-models-extended";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {CampaignTimelineChanelsModel, CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
 import {List} from "immutable";
-import {Once} from "../../decorators/once-decorator";
 import {ACTION_UISTATE_UPDATE, AppdbAction, SideProps} from "../../store/actions/appdb.actions";
 import {IUiState} from "../../store/store.data";
-import {Lib} from "../../Lib";
 import {PreviewModeEnum} from "../live-preview/live-preview";
 import * as _ from "lodash";
 import {RedPepperService} from "../../services/redpepper.service";
