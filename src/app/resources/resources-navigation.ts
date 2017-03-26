@@ -1,6 +1,8 @@
 import {ChangeDetectionStrategy, Component} from "@angular/core";
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import {Compbaser} from "ng-mslib";
+import {BlockService} from "../blocks/block-service";
+import {PLACEMENT_SCENE} from "../../interfaces/Consts";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -8,6 +10,11 @@ import {Compbaser} from "ng-mslib";
         '[@routeAnimation]': 'true',
         '[style.display]': "'block'"
     },
+    providers: [BlockService, {
+        provide: "BLOCK_PLACEMENT",
+        useValue: PLACEMENT_SCENE
+    }
+    ],
     animations: [
         trigger('routeAnimation', [
             state('*', style({opacity: 1})),
