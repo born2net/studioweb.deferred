@@ -323,12 +323,10 @@ export class LocationMap extends Compbaser implements AfterViewInit {
             this.cd.reattach();
             this.googleMaps.triggerResize();
             this.cd.markForCheck();
-        }, 500)
+        }, 300)
     }
 
     public setCenter(lat, lng) {
-        // this.googleMaps.latitude = lat;
-        // this.googleMaps.longitude = lng;
         // for private access to all APIs do:
         this.googleMaps['_mapsWrapper'].setCenter({
             lat: lat,
@@ -341,33 +339,6 @@ export class LocationMap extends Compbaser implements AfterViewInit {
     }
 }
 
-
-// markers: marker[] = [
-//     {
-//         lat: 51.673858,
-//         lng: 7.815982,
-//         label: 'A',
-//         radius: 4000,
-//         draggable: true,
-//         id: 1
-//     },
-//     {
-//         lat: 51.373858,
-//         lng: 7.215982,
-//         label: 'B',
-//         radius: 10000,
-//         draggable: true,
-//         id: 2
-//     },
-//     {
-//         lat: 51.723858,
-//         lng: 7.895982,
-//         radius: 300,
-//         label: 'C',
-//         draggable: true,
-//         id: 3
-//     }
-// ]
 
 /**
  Create the google map and listen to corresponding events such map clicks (not within a circle or marker)
