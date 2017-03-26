@@ -38,6 +38,8 @@ declare module 'redux-thunk' {
 
 }
 
+
+
 declare module FlashDetect {
     export var installed;
     export var versionAtLeast:(v:number)=>void;

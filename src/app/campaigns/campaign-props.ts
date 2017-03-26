@@ -214,7 +214,7 @@ export class CampaignProps extends Compbaser {
     };
 
     // example on changes 1 blur
-    private listenUpdatedFormBlur(event) {
+    listenUpdatedFormBlur(event) {
         this.saveToStore();
     }
 
@@ -244,7 +244,7 @@ export class CampaignProps extends Compbaser {
         this.rp.reduxCommit()
     }
 
-    private removeCampaign() {
+    removeCampaign() {
         bootbox.confirm({
             message: "Are you sure you want to delete the campaign, there is NO WAY BACK?",
             buttons: {

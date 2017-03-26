@@ -38,8 +38,8 @@ export class Tab {
     activated: EventEmitter<any> = new EventEmitter<any>();
 
     public title: string;
-    private _active = false;
-    private _show = true;
+     _active = false;
+     _show = true;
 
     public set active(value) {
         this._active = value || false;

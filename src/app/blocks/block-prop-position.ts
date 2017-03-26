@@ -97,11 +97,11 @@ import {BlockLabels} from "../../interfaces/Consts";
 })
 export class BlockPropPosition extends Compbaser {
 
-    private m_formInputs = {};
-    private m_contGroup: FormGroup;
-    private m_blockData: IBlockData;
-    private m_canvasScale = -1;
-    private m_blockIsScene = false;
+    m_formInputs = {};
+    m_contGroup: FormGroup;
+    m_blockData: IBlockData;
+    m_canvasScale = -1;
+    m_blockIsScene = false;
 
     constructor(private fb: FormBuilder, private rp: RedPepperService, private yp: YellowPepperService, private bs: BlockService, private cd: ChangeDetectorRef) {
         super();
@@ -162,7 +162,7 @@ export class BlockPropPosition extends Compbaser {
         // )
     }
 
-    private saveToStoreLayout() {
+    saveToStoreLayout() {
         if (this.m_contGroup.status != 'VALID')
             return;
         var domPlayerData: XMLDocument = this.m_blockData.playerDataDom;
@@ -183,7 +183,7 @@ export class BlockPropPosition extends Compbaser {
             $(domPlayerData).find('Layout').eq(0).attr('height', h);
             this.bs.setBlockPlayerData(this.m_blockData, domPlayerData);
             this.bs.notifyReloadScene(this.m_blockData.scene.handle);
-            
+
         } else {
 
             var layout = $(domPlayerData).find('Layout');

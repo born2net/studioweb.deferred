@@ -168,11 +168,11 @@ export class LoginPanel extends Compbaser {
         )
     }
 
-    private passFocus() {
+    passFocus() {
         this.renderer.invokeElementMethod(this.userPass.nativeElement, 'focus', [])
     }
 
-    private onClickedLogin() {
+    onClickedLogin() {
         if (this.m_showTwoFactor) {
             // this.toast.warning('Authenticating Two factor...');
             this.authService.authServerTwoFactor(this.m_twoFactor);
@@ -184,7 +184,7 @@ export class LoginPanel extends Compbaser {
         }
     }
 
-    private isAccessAllowed(i_reason: AuthenticateFlags): boolean {
+    isAccessAllowed(i_reason: AuthenticateFlags): boolean {
         let msg1: string;
         let msg2: string;
         // this.loginState = 'default';

@@ -57,15 +57,15 @@ import {MainAppShowStateEnum} from "../app-component";
 })
 export class SceneCreator extends Compbaser implements AfterViewInit {
 
-    private m_selectedAccount;
-    private m_largePreview = '';
-    private m_sceneCategories = [];
-    private m_sceneAccounts = [];
-    private m_selectTypeMode = true;
-    private m_sceneTemplates;
-    private m_selectedSceneMime: string;
+    m_selectedAccount;
+    m_largePreview = '';
+    m_sceneCategories = [];
+    m_sceneAccounts = [];
+    m_selectTypeMode = true;
+    m_sceneTemplates;
+    m_selectedSceneMime: string;
 
-    constructor(private yp: YellowPepperService, private bs: BlockService, private rp: RedPepperService,  private toastr: ToastsManager) {
+    constructor(private yp: YellowPepperService, private bs: BlockService, private rp: RedPepperService, private toastr: ToastsManager) {
         super();
         this._initSceneTemplates();
     }

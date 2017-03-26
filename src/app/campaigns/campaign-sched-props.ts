@@ -29,7 +29,7 @@ export class CampaignSchedProps extends Compbaser implements AfterViewInit {
     private m_PRIORITY_HIGH = 0;
     private m_WEEKDAYS = [1, 2, 4, 8, 16, 32, 64];
     private m_WEEKDAYS_NAME = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    
+
     constructor(private fb: FormBuilder, private el: ElementRef, private yp: YellowPepperService, private rp: RedPepperService, private cd: ChangeDetectorRef, private ngmslibService: NgmslibService) {
         super();
         this.contGroup = this.fb.group({
@@ -183,7 +183,7 @@ export class CampaignSchedProps extends Compbaser implements AfterViewInit {
         });
     }
 
-    _onDaysChanged(checked, day:{}, i:number) {
+    _onDaysChanged(checked, day: {}, i: number) {
         var weekBitsTotal = 0;
         this.m_days[i] = {
             day: this.m_WEEKDAYS_NAME[i],
@@ -219,7 +219,7 @@ export class CampaignSchedProps extends Compbaser implements AfterViewInit {
     }
 
     @timeout(1000)
-    private _saveRepeat() {
+    _saveRepeat() {
         this._saveToStore();
     }
 

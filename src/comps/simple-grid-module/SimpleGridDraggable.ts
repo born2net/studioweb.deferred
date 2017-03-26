@@ -13,6 +13,7 @@ import {timeout} from "../../decorators/timeout-decorator";
 import {SimpleGridRecord} from "./SimpleGridRecord";
 import {Subscription} from "rxjs";
 import {StoreModel} from "../../models/StoreModel";
+// import TweenLite = gsap.TweenLite;
 
 export interface ISimpleGridDraggedData {
     newIndex: number;
@@ -63,7 +64,7 @@ export class SimpleGridDraggable {
     @timeout(500)
     public createSortable() {
         var self = this;
-        jQuery(self.el.nativeElement).children().each((i, child) => jQuery.data(child, "idx", i));
+        jQueryAny(self.el.nativeElement).children().each((i, child) => jQuery.data(child, "idx", i));
         this.simpleGridRecords.forEach((rec: SimpleGridRecord, i) => rec.index = i);
 
         if (jQuery(self.el.nativeElement).children().length == 0) return;

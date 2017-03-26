@@ -93,9 +93,9 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
 })
 export class BlockPropCollection extends Compbaser implements AfterViewInit {
 
-    private formInputs = {};
-    private m_contGroup: FormGroup;
-    private m_blockData: IBlockData;
+    formInputs = {};
+    m_contGroup: FormGroup;
+    m_blockData: IBlockData;
 
     m_PLACEMENT_LISTS = PLACEMENT_LISTS;
     m_collectionList: List<StoreModel>;

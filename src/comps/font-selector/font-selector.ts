@@ -108,14 +108,13 @@ export interface IFontSelector {
 })
 export class FontSelector extends Compbaser implements AfterViewInit {
 
-    private bold: boolean;
-    private italic: boolean;
-    private underline: boolean;
-    private alignment: 'left' | 'center' | 'right';
+    bold: boolean;
+    italic: boolean;
+    underline: boolean;
+    alignment: 'left' | 'center' | 'right';
     m_fonts: Array<string>;
-
-    private m_borderColorChanged = new Subject();
-    private m_moveColorPickerOnce = false;
+    m_borderColorChanged = new Subject();
+    m_moveColorPickerOnce = false;
 
     m_config: IFontSelector = {
         size: 12,
@@ -160,7 +159,8 @@ export class FontSelector extends Compbaser implements AfterViewInit {
     _moveColorPicker() {
         if (this.m_moveColorPickerOnce) return;
         this.m_moveColorPickerOnce = true;
-        jQuery(".color-picker", this.el.nativeElement).css("left", "+=100").css("top", "-=100");;
+        jQuery(".color-picker", this.el.nativeElement).css("left", "+=100").css("top", "-=100");
+        ;
     }
 
     _onFontChanged(e) {

@@ -82,12 +82,12 @@ import {SimpleGridTable} from "../../comps/simple-grid-module/SimpleGridTable";
 })
 export class BlockPropJsonPlayer extends Compbaser implements AfterViewInit {
 
-    private formInputs = {};
+    formInputs = {};
     m_contGroup: FormGroup;
     m_blockData: IBlockData;
     m_sceneSelection = [];
     m_sceneSeleced: any = {};
-    private m_slideShowMode = 0;
+    m_slideShowMode = 0;
 
     constructor(private fb: FormBuilder, private yp: YellowPepperService, private rp: RedPepperService, private bs: BlockService, private cd: ChangeDetectorRef) {
         super();

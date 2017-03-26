@@ -62,113 +62,13 @@ export declare var google: any;
         }
 
     `],
-    template: `
-        <small class="debug">{{me}}</small>
-        <button (click)="_close()" type="button" class="openPropsButton btn btn-default btn-sm">
-            <span class="glyphicon glyphicon-chevron-left"></span>
-        </button>
-        <form novalidate autocomplete="off" [formGroup]="contGroup">
-            <div class="clearFloat"></div>
-            <hr/>
-            <div id="simModeContainer">
-                <div class="material-switch pull-right">
-                    <input #simMode (change)="_toggleSimMode()"
-                           id="simMode"
-                           name="simMode" type="checkbox"/>
-                    <label for="simMode" class="label-primary"></label>
-                </div>
-                <span class="pull-right" i18n>simulation mode</span>
-                <div class="clearFloat"></div>
-                <div *ngIf="inSimMode" class="locationSimulationProps pull-right">
-                    <button id="refresh" (click)="_loadStationList()" type="button" class="btn btn-default">
-                        <i class="fa fa-refresh"></i>
-                        refresh
-                    </button>
-                    <select formControlName="stations" (change)="_onStationSelected($event)" style="height: 31px; width: 170px; border: solid #cbcbcb 1px">
-                        <option [ngValue]="station" *ngFor="let station of m_stations">{{station.stationName}}</option>
-                    </select>
-                    <select formControlName="postMode" style="height: 31px; border: solid #cbcbcb 1px">
-                        <option value="local">Local post</option>
-                        <option value="remote">Remote post</option>
-                    </select>
-                    <h5>{{m_simStatus}}</h5>
-                    <h5 [ngClass]="{'green': m_inRange == true}">Latitude: {{m_simulatedLat}}</h5>
-                    <h5 [ngClass]="{'green': m_inRange == true}">longitude: {{m_simulatedLng}}</h5>
-                    <h5 (click)="_openSimUrl($event)" style="font-size: 7px; cursor: pointer">{{m_simUrl}}</h5>
-                </div>
-            </div>
-            <input id="addressLookup" class="list-group-item" #address type="text"/>
-        </form>
-
-        <div class="row map">
-            <!--<sebm-google-map class="center-block" #googleMaps [disableDefaultUI]="false" [latitude]="38.2500" [longitude]="-96.7500"></sebm-google-map>-->
-
-            <sebm-google-map #googleMaps class="center-block"
-                             [latitude]="lat"
-                             [longitude]="lng"
-                             [zoom]="zoom"
-                             [disableDefaultUI]="false"
-                             [zoomControl]="false"
-                             (mapClick)="mapClicked($event)">
-
-                <!--<sebm-google-map-marker-->
-                <!--*ngFor="let m of markers; let i = index"-->
-                <!--(markerClick)="clickedMarker(m, i)"-->
-                <!--[latitude]="m.lat"-->
-                <!--[longitude]="m.lng"                        -->
-                <!--[label]="m.label"-->
-                <!--[markerDraggable]="m.draggable"-->
-                <!--(dragEnd)="markerDragEnd(m, $event)">-->
-
-                <!--<sebm-google-map-info-window>-->
-                <!--<strong>InfoWindow content</strong>-->
-                <!--</sebm-google-map-info-window>-->
-
-                <!--</sebm-google-map-marker>-->
-                <sebm-google-map-circle *ngFor="let m of markers; let i = index"
-                                        (circleClick)="clickedMarker(m, i)"
-                                        [latitude]="m.lat"
-                                        [fillOpacity]="0.6"
-                                        (dragEnd)="markerDragEnd(m, $event)"
-                                        [longitude]="m.lng"
-                                        [radius]="m.radius"
-                                        [fillColor]="'red'"
-                                        [circleDraggable]="false"
-                                        [editable]="false">
-                </sebm-google-map-circle>
-
-            </sebm-google-map>
-
-        </div>
-
-        <!--<sebm-google-map #googleMaps style="width: 100% ; height: 100%"-->
-        <!--(mapClick)="mapClicked($event)"-->
-        <!--[latitude]="38.2500"-->
-        <!--[longitude]="-96.7500"-->
-        <!--[zoom]="zoom"-->
-        <!--[disableDefaultUI]="false"-->
-        <!--[zoomControl]="false">-->
-
-        <!--<sebm-google-map-marker style="width: 300px ; height: 400px"-->
-        <!--*ngFor="let m of markers; let i = index"-->
-        <!--(markerClick)="clickedMarker(m, i)"-->
-        <!--[latitude]="m.lat"-->
-        <!--[longitude]="m.lng"-->
-        <!--[iconUrl]="getMarkerIcon(m)"-->
-        <!--[label]="m.label">-->
-        <!--&lt;!&ndash;<sebm-google-map-info-window>&ndash;&gt;-->
-        <!--&lt;!&ndash;<strong>InfoWindow content</strong>&ndash;&gt;-->
-        <!--&lt;!&ndash;</sebm-google-map-info-window>&ndash;&gt;-->
-
-        <!--</sebm-google-map-marker>-->
-        <!--</sebm-google-map>-->
-    `,
+    templateUrl: './location-map.html'
 })
 export class LocationMap extends Compbaser implements AfterViewInit {
 
-    zoom: number = 8;
-    lat: number = 51.673858;
-    lng: number = 7.815982;
+    zoom: any = 8;
+    lat: any = 51.673858;
+    lng: any = 7.815982;
     markers: LocationMarkModel[] = [];
     m_stations = [];
     inSimMode = false;
@@ -177,8 +77,8 @@ export class LocationMap extends Compbaser implements AfterViewInit {
     m_simulatedLat = 0;
     m_simulatedLng = 0;
     m_simUrl = '';
-    private m_blockData: IBlockData;
-    private contGroup: FormGroup;
+    m_blockData: IBlockData;
+    contGroup: FormGroup;
 
 
     constructor(private yp: YellowPepperService, private cd: ChangeDetectorRef, private m_mapsAPILoader: MapsAPILoader, private fb: FormBuilder,
@@ -243,7 +143,7 @@ export class LocationMap extends Compbaser implements AfterViewInit {
             this._listenOnScenes();
     }
 
-    _toggleSimMode(value) {
+    _toggleSimMode() {
         this.inSimMode = !this.inSimMode;
         if (!this.inSimMode) {
             this.m_simulatedLat = 0;
@@ -422,7 +322,8 @@ export class LocationMap extends Compbaser implements AfterViewInit {
         setTimeout(() => {
             this.cd.reattach();
             this.googleMaps.triggerResize();
-        }, 1000)
+            this.cd.markForCheck();
+        }, 500)
     }
 
     public setCenter(lat, lng) {

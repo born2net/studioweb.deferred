@@ -145,13 +145,13 @@ import {LocationMarkModel} from "../../models/LocationMarkModel";
 })
 export class BlockPropLocation extends Compbaser implements AfterViewInit {
 
-    private m_formInputs = {};
-    private m_currentIndex = 0;
-    private m_radius = 0;
-    private m_totalLocations = 0;
-    private m_contGroup: FormGroup;
-    private m_blockData: IBlockData;
-    private m_pendingBlocAddition: { type: string, content: IAddContents, xmlSnippet: string };
+     m_formInputs = {};
+     m_currentIndex = 0;
+     m_radius = 0;
+     m_totalLocations = 0;
+     m_contGroup: FormGroup;
+     m_blockData: IBlockData;
+     m_pendingBlocAddition: { type: string, content: IAddContents, xmlSnippet: string };
 
     m_showMap = false;
     m_PLACEMENT_LISTS = PLACEMENT_LISTS;

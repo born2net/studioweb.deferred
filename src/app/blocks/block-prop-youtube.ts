@@ -46,10 +46,11 @@ import * as _ from "lodash";
                     </li>
                     <li *ngIf="m_contGroup.controls['listType'].value != 'most_viewed'" class="list-group-item">
                         <span i18n>video ids</span><br/>
-                        <textarea  placeholder="enter comma separated video IDs, for example: SIFUUhN3TVo, pZH1itk6Udg, azZo59ayLS4"  class="default-prop-width" spellcheck="false" rows="10" cols="50" type="textarea" [formControl]="m_contGroup.controls['customList']">
+                        <textarea placeholder="enter comma separated video IDs, for example: SIFUUhN3TVo, pZH1itk6Udg, azZo59ayLS4" class="default-prop-width" spellcheck="false" rows="10" cols="50" type="textarea"
+                                  [formControl]="m_contGroup.controls['customList']">
                         </textarea>
                     </li>
-                    
+
                 </ul>
             </div>
         </form>
@@ -58,12 +59,12 @@ import * as _ from "lodash";
 })
 export class BlockPropYouTube extends Compbaser implements AfterViewInit {
 
-    private formInputs = {};
-    private m_contGroup: FormGroup;
-    private m_blockData: IBlockData;
-    m_regions = ['US','AR','AU','AT','BE','BR','CA','CL','CO','CZ','EG','FR','DE','GB','HK','HU','IN','IE','IL','IT','JP','JO','MY','MX','MA','NL','NZ','PE','PH','PL','RU','SA','SG','ZA','KR','ES','SE','CH','TW','AE'];
+    formInputs = {};
+    m_contGroup: FormGroup;
+    m_blockData: IBlockData;
+    m_regions = ['US', 'AR', 'AU', 'AT', 'BE', 'BR', 'CA', 'CL', 'CO', 'CZ', 'EG', 'FR', 'DE', 'GB', 'HK', 'HU', 'IN', 'IE', 'IL', 'IT', 'JP', 'JO', 'MY', 'MX', 'MA', 'NL', 'NZ', 'PE', 'PH', 'PL', 'RU', 'SA', 'SG', 'ZA', 'KR', 'ES', 'SE', 'CH', 'TW', 'AE'];
 
-    constructor(private fb: FormBuilder, private bs: BlockService, private cd:ChangeDetectorRef) {
+    constructor(private fb: FormBuilder, private bs: BlockService, private cd: ChangeDetectorRef) {
         super();
         this.m_contGroup = fb.group({
             'volume': [100],

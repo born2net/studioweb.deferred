@@ -61,9 +61,9 @@ export class JsonEventResourceModel extends StoreModel {
 })
 export class JsonEventGrid extends Compbaser implements AfterViewInit {
 
-    private m_blockData: IBlockData;
-    private m_events: List<StoreModel>;
-    private m_actions: List<StoreModel>;
+    m_blockData: IBlockData;
+    m_events: List<StoreModel>;
+    m_actions: List<StoreModel>;
     m_collectionList: List<StoreModel>;
     m_mode: 'url' | 'page';
     m_jsonEventResources: Array<JsonEventResourceModel>;

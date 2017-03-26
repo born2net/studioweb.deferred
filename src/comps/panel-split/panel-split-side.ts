@@ -58,7 +58,7 @@ export class PanelSplitSide {
     @Output()
     onToggle: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    private showSidePanel: boolean = true;
+    showSidePanel: boolean = true;
 
     _toggle(event: MouseEvent) {
         event.preventDefault();

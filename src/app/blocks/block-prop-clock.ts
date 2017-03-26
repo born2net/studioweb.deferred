@@ -36,7 +36,7 @@ import {Lib} from "../../Lib";
 })
 export class BlockPropClock extends Compbaser implements AfterViewInit {
 
-    private m_blockData: IBlockData;
+    m_blockData: IBlockData;
     m_fontConfig: IFontSelector;
     m_clockFormats = [{
         type: 'longDateAndTime',

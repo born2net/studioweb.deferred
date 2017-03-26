@@ -19,60 +19,60 @@ import {IScreenTemplateData} from "../../interfaces/IScreenTemplate";
         <small class="debug" style="padding-right: 25px">{{me}}</small>
         <Sliderpanel>
             <Slideritem [templateRef]="a" #sliderItemCampaignManager class="page center campaignList selected" [showToButton]="false" [toDirection]="'right'" [to]="'campaignEditor'">
-                <template #a>
+                <ng-template #a>
                     <campaign-manager (slideToCampaignName)="sliderItemCampaignManager.slideTo('campaignName','right')" (slideToCampaignEditor)="sliderItemCampaignManager.onNext()"></campaign-manager>
-                </template>
+                </ng-template>
             </Slideritem>
             <Slideritem [templateRef]="b" class="page left campaignName" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignList'" [to]="'campaignOrientation'">
-                <template #b>
+                <ng-template #b>
                     <campaign-name #campaignName></campaign-name>
-                </template>
+                </ng-template>
             </Slideritem>
             <Slideritem [templateRef]="c" #sliderItemCampaignOrientation class="page left campaignOrientation" [showToButton]="false" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignName'" [to]="'campaignResolution'">
-                <template #c>
+                <ng-template #c>
                     <campaign-orientation #campaignOrientation (onSelection)="sliderItemCampaignOrientation.onNext()"></campaign-orientation>
-                </template>
+                </ng-template>
             </Slideritem>
             <Slideritem [templateRef]="d" #sliderItemCampaignResolution class="page left campaignResolution" [showToButton]="false" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignOrientation'" [to]="'campaignLayout'">
-                <template #d>
+                <ng-template #d>
                     <campaign-resolution #campaignResolution (onSelection)="sliderItemCampaignResolution.onNext()"></campaign-resolution>
-                </template>
+                </ng-template>
             </Slideritem>
             <Slideritem [templateRef]="e" #sliderItemCampaignLayout (onChange)="_onSlideChange($event)" class="page left campaignLayout" [showToButton]="false" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignResolution'"
                         [to]="'campaignEditor'">
-                <template #e>
+                <ng-template #e>
                     <campaign-layout [onNewCampaignMode]="true" (onSelection)="sliderItemCampaignLayout.onNext(); _createCampaign($event)"></campaign-layout>
-                </template>
+                </ng-template>
             </Slideritem>
             <Slideritem [templateRef]="i" #sliderItemCampaignLayoutAddTimeline (onChange)="_onSlideChange($event)" class="page left campaignAddLayout" [showToButton]="false" [toDirection]="'right'" [fromDirection]="'right'" [from]="'campaignEditor'">
-                <template #i>
+                <ng-template #i>
                     <campaign-layout [mouseHoverEffect]="true" [onNewCampaignMode]="false" (onSelection)="_addTimelineToCampaign($event); sliderItemCampaignLayoutAddTimeline.onPrev();"></campaign-layout>
-                </template>
+                </ng-template>
             </Slideritem>
             <Slideritem [templateRef]="f" #sliderItemCampaignEditor (onChange)="_onSlideChange($event)" [showFromButton]="false" class="page left campaignEditor" [fromDirection]="'left'" [from]="'campaignList'">
-                <template #f>
+                <ng-template #f>
                     <campaign-editor #campaignEditor
                                      (onToAddTimeline)="sliderItemCampaignLayoutAddTimeline.slideTo('campaignAddLayout','left')"
                                      (onToAddContent)="sliderAddContent.slideTo('addContent','right')"
                                      (onToScreenLayoutEditor)="_onOpenScreenLayoutEditor() ; sliderScreenLayoutEditor.slideTo('screenLayoutEditor','right')"
                                      (onGoBack)="sliderItemCampaignEditor.slideTo('campaignList','left')">
                     </campaign-editor>
-                </template>
+                </ng-template>
             </Slideritem>
             <Slideritem [templateRef]="g" #sliderScreenLayoutEditor (onChange)="_onSlideChange($event)" [showFromButton]="false" class="page left screenLayoutEditor" [fromDirection]="'left'" [from]="'campaignList'">
-                <template #g>
+                <ng-template #g>
                     <screen-layout-editor #screenLayoutEditor (onGoBack)="sliderItemCampaignEditor.slideTo('campaignEditor','left')"></screen-layout-editor>
-                </template>
+                </ng-template>
             </Slideritem>
             <Slideritem [templateRef]="h" #sliderAddContent [showFromButton]="false" class="page left addContent" [fromDirection]="'left'" [from]="'campaignList'">
-                <template #h>
+                <ng-template #h>
                     <add-content #addContent [placement]="m_PLACEMENT_CHANNEL" (onClosed)="_onAddedContentClosed()" (onAddContentSelected)="_onAddedContent($event) ; sliderItemCampaignEditor.slideTo('campaignEditor','left')"></add-content>
-                </template>
+                </ng-template>
             </Slideritem>
             <Slideritem [templateRef]="j" #sliderLocation [showFromButton]="false" class="page left locationMap" [fromDirection]="'right'" [from]="'campaignEditor'">
-                <template #j>
+                <ng-template #j>
                     <location-map (onClose)="_onLocationMapClosed()"></location-map>
-                </template>
+                </ng-template>
             </Slideritem>
             
         </Sliderpanel>
@@ -99,8 +99,8 @@ export class Campaigns extends Compbaser {
             //
             this.yp.listenLocationMapLoad()
                 .subscribe((v) => {
-                    if (v){
-                        this.sliderItemCampaignEditor.slideTo('locationMap','right')
+                    if (v && this.sliderItemCampaignEditor){
+                        this.sliderItemCampaignEditor.slideTo('locationMap','right');
                     }
             }, (e) => console.error(e))
 

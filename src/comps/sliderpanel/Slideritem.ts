@@ -22,15 +22,15 @@ export interface ISliderItemData {
 
         <!--<ng-content *ngIf="m_render"></ng-content>-->
 
-        <template *ngIf="m_render" [ngTemplateOutlet]="templateRef"></template>
+        <ng-template *ngIf="m_render" [ngTemplateOutlet]="templateRef"></ng-template>
     `,
 })
 export class Slideritem extends Compbaser implements DoCheck {
 
-    private m_render: boolean = false;
-    private m_onChanges$ = new Subject()
+    m_render: boolean = false;
+    m_onChanges$ = new Subject()
 
-    constructor(private viewContainer: ViewContainerRef, protected sliderPanel: Sliderpanel, private cd: ChangeDetectorRef, ap:ApplicationRef) {
+    constructor(private viewContainer: ViewContainerRef, protected sliderPanel: Sliderpanel, private cd: ChangeDetectorRef, ap: ApplicationRef) {
         super();
         this.viewContainer.element.nativeElement.classList.add('page');
         this.sliderPanel.addSlider(this);
@@ -104,7 +104,7 @@ export class Slideritem extends Compbaser implements DoCheck {
         this.slideTo(this.from, this.fromDirection);
     }
 
-    destroy(){
+    destroy() {
         // console.log('dest SliderItem');
     }
 }

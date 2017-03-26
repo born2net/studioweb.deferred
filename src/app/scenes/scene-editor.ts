@@ -85,11 +85,11 @@ const CAMPAIGN_LIST_LOADING = 'CAMPAIGN_LIST_LOADED';
                 <h4 i18n class="modal-title">add content to scene</h4>
             </modal-header>
             <modal-body>
-                <add-content #addContent [placement]="m_PLACEMENT_SCENE" (onClosed)="_onClosed()" (onAddContentSelected)="_onAddedNewBlock($event)"></add-content>
+                <add-content #addContent [placement]="m_PLACEMENT_SCENE" (onClosed)="_onClosed()" (onAddContentSelected)="_onAddedNewBlock()"></add-content>
             </modal-body>
             <modal-footer [show-default-buttons]="true"></modal-footer>
         </modal>
-
+                    
     `
 })
 export class SceneEditor extends Compbaser implements AfterViewInit {

@@ -1,5 +1,4 @@
 import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output, QueryList, ViewChildren} from "@angular/core";
-import {Compbaser} from "ng-mslib";
 import {RedPepperService} from "../../services/redpepper.service";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {CampaignTimelineBoardViewerChanelsModel, CampaignTimelinesModel} from "../../store/imsdb.interfaces_auto";
@@ -12,6 +11,8 @@ import * as _ from "lodash";
 import {ContextMenuService} from "angular2-contextmenu/src/contextMenu.service";
 import {Once} from "../../decorators/once-decorator";
 import {IScreenTemplateData} from "../../interfaces/IScreenTemplate";
+import {Compbaser} from "ng-mslib";
+// import TweenLite = gsap.TweenLite;
 
 @Component({
     selector: 'sequencer',
@@ -274,7 +275,7 @@ export class Sequencer extends Compbaser {
                     } else {
                         if (preIndex >= 0) t.parentNode.insertBefore(t, t.kids[newIndex + 1]);
                         else t.parentNode.insertBefore(t, t.kids[newIndex]);
-                    }
+                    }    
                     TweenLite.set(t.kids, {xPercent: 0, overwrite: "all"});
                     TweenLite.set(t, {x: 0, color: ""});
 

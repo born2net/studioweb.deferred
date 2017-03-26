@@ -65,11 +65,11 @@ import {timeout} from "../../decorators/timeout-decorator";
 })
 export class BlockPropFasterQ extends Compbaser implements AfterViewInit {
 
-    private formInputs = {};
+    formInputs = {};
     m_contGroup: FormGroup;
     m_blockData: IBlockData;
-    private m_borderColorChanged = new Subject();
-    private m_moveColorPickerOnce = false;
+    m_borderColorChanged = new Subject();
+    m_moveColorPickerOnce = false;
     m_color = '#ffffff';
 
     constructor(private fb: FormBuilder, private el: ElementRef, private bs: BlockService, private cd: ChangeDetectorRef) {
@@ -134,7 +134,7 @@ export class BlockPropFasterQ extends Compbaser implements AfterViewInit {
         this.m_moveColorPickerOnce = true;
         jXML(".color-picker", this.el.nativeElement).css("left", "+=100");
     }
-    
+
     @timeout()
     private setNewColor(i_color) {
         this.m_color = i_color

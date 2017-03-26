@@ -36,9 +36,9 @@ export enum MainAppShowStateEnum {
 export class AppComponent implements AfterViewInit {
     version: string;
     ngVersion: string;
-    offlineDevMode: string = window['offlineDevMode'];
+    offlineDevMode: any = window['offlineDevMode'];
     m_ShowModeEnum = MainAppShowModeEnum;
-    m_showMode = MainAppShowModeEnum.MAIN;
+    m_showMode:any = MainAppShowModeEnum.MAIN;
     m_hidden = false;
 
     constructor(private router: Router,

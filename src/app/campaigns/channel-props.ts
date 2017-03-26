@@ -106,7 +106,7 @@ export class ChannelProps extends Compbaser {
         );
     }
 
-    private onFormChange(event) {
+    onFormChange(event) {
         this.updateSore();
     }
 

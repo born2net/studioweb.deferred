@@ -14,25 +14,25 @@ import {ISliderItemData, Slideritem} from "../../comps/sliderpanel/Slideritem";
         <small class="debug" style="padding-right: 25px">{{me}}</small>
         <Sliderpanel>
             <Slideritem [templateRef]="a" #sliderItemSceneManager class="page center sceneList selected" [showToButton]="false" [toDirection]="'right'" [to]="'sceneEditor'">
-                <template #a>
+                <ng-template #a>
                     <scene-manager (sceneCreate)="sliderItemSceneManager.slideTo('sceneCreator','right')" (slideToSceneEditor)="sliderItemSceneManager.onNext()"></scene-manager>
-                </template>
+                </ng-template>
             </Slideritem>
             <Slideritem [templateRef]="b" #sliderItemCampaignEditor (onChange)="_onSlideChange($event)" [showFromButton]="false" class="page left sceneEditor" [fromDirection]="'left'" [from]="'sceneList'">
-                <template #b>
+                <ng-template #b>
                     <scene-editor #sceneEditor (onGoBack)="sliderItemCampaignEditor.slideTo('sceneList','left')">
                     </scene-editor>
-                </template>
+                </ng-template>
             </Slideritem>
             <Slideritem [templateRef]="c" #sliderSceneCreator [showFromButton]="false" class="page left sceneCreator" [fromDirection]="'left'" [from]="'sceneList'">
-                <template #c>
+                <ng-template #c>
                     <scene-creator (onGoBack)="sliderSceneCreator.slideTo('sceneList','left')"></scene-creator>
-                </template>
+                </ng-template>
             </Slideritem>
             <Slideritem [templateRef]="d" #sliderLocation [showFromButton]="false" class="page left locationMap" [fromDirection]="'right'" [from]="'sceneEditor'">
-                <template #d>
+                <ng-template #d>
                     <location-map (onClose)="_onLocationMapClosed()"></location-map>
-                </template>
+                </ng-template>
             </Slideritem>
         </Sliderpanel>
     `
