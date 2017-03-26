@@ -1099,3 +1099,8 @@ form .list-group, form .list-group-item {
     position: relative;
     left: 50px;
 }
+
+.vg-icon-fullscreen:before {
+    font-family: FontAwesome;
+    content: "\f26c";
+}

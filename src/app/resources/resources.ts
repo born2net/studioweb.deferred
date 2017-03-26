@@ -40,7 +40,7 @@ import {Compbaser} from "ng-mslib";
                 <ul id="resourceLibList" class="list-group row"></ul>
             </div>
         </div>
-        <!-- move scroller to proper offset -->
+        <!-- move scroller to proper offset -->             
         <div class="responsive-pad-right">
             <div matchBodyHeight="150" style="overflow: scroll">
                 <resources-list [resources]="m_resourceModels$ | async" (_onResourceSelected)="_onSceneSelected($event)">
@@ -49,8 +49,35 @@ import {Compbaser} from "ng-mslib";
         </div>
     `,
     styles: [`
+
+        /*:host /deep/ vg-player {*/
+            /*background-color: transparent;*/
+            /*margin: 30px;*/
+            /*width: 30%;*/
+            /*height: calc(100% - 60px);*/
+        /*}*/
+        
+        /*:host /deep/ vg-player {*/
+            /*background-color: transparent;*/
+            /*margin: 30px;*/
+            /*width: 30%;*/
+            /*height: calc(100% - 60px);*/
+        /*}*/
+        
         * {
             border-radius: 0 !important;
+        }
+
+        vg-player {
+            background-color: transparent;
+            margin: 30px;
+            width: 30%;
+            height: calc(100% - 60px);
+        }
+
+        vg-controls {
+            padding: 30px;
+            transition: all 1s;
         }
 
         #resourcesPanel {
@@ -94,7 +121,7 @@ export class Resources extends Compbaser {
         // )
     }
 
-    _onSceneSelected(valie){
+    _onSceneSelected(valie) {
 
     }
 

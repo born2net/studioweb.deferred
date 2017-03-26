@@ -13,35 +13,12 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
     `],
     template: `
         <small class="debug">{{me}}</small>
-        <!--<ul matchBodyHeight="50" style="overflow-y: auto; overflow-x: hidden" [ngSwitch]="m_uiUserFocusItem$ | async">-->
-            <!--<div *ngSwitchCase="m_uiUserFocusItemEnum.campaignProps">-->
-                <!--<campaign-props></campaign-props>-->
-            <!--</div>-->
-            <!--<div *ngSwitchCase="m_uiUserFocusItemEnum.miniDashboard">-->
-                <!--<dashboard-props></dashboard-props>-->
-            <!--</div>-->
-            <!--&lt;!&ndash;<div *ngSwitchCase="m_uiUserFocusItemEnum.campaignBoard">&ndash;&gt;-->
-            <!--&lt;!&ndash;<h1>NOT USED</h1>&ndash;&gt;-->
-            <!--&lt;!&ndash;</div>&ndash;&gt;-->
-            <!--<div *ngSwitchCase="m_uiUserFocusItemEnum.campaignEditor">-->
-                <!--<campaign-editor-props></campaign-editor-props>-->
-            <!--</div>-->
-            <!--<div *ngSwitchCase="m_uiUserFocusItemEnum.timeline">-->
-                <!--<timeline-props></timeline-props>-->
-            <!--</div>-->
-            <!--<div *ngSwitchCase="m_uiUserFocusItemEnum.channel">-->
-                <!--<channel-props></channel-props>-->
-            <!--</div>-->
-            <!--<div *ngSwitchCase="m_uiUserFocusItemEnum.screenLayoutEditor">-->
-                <!--<screen-layout-editor-props></screen-layout-editor-props>-->
-            <!--</div>-->
-            <!--&lt;!&ndash;<div *ngSwitchCase="m_uiUserFocusItemEnum.sceneBlock">&ndash;&gt;-->
-            <!--&lt;!&ndash;<block-prop></block-prop>&ndash;&gt;-->
-            <!--&lt;!&ndash;</div>&ndash;&gt;-->
-            <!--<div *ngSwitchCase="m_uiUserFocusItemEnum.channelBlock">-->
-                <!--<channel-block-props></channel-block-props>-->
-            <!--</div>-->
-        <!--</ul>-->
+        <br/>
+        <br/>
+        <input class="form-control" inlength="1" placeholder="resource name" type="text"/>
+        <div style="width: 100% height: 200px">
+            <media-player></media-player>
+        </div>
     `,
 })
 export class ResourcePropsManager extends Compbaser {

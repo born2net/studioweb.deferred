@@ -53,14 +53,19 @@ import {Ng2Bs3ModalModule} from "ng2-bs3-modal/ng2-bs3-modal";
 import {AgmCoreModule} from "angular2-google-maps/core";
 import {LocationMap} from "../app/location/location-map";
 import {SlideritemContent} from "../comps/sliderpanel/SliderItemContent";
+import {MediaPlayer} from "../comps/media-player/media-player";
+import {VgCoreModule} from 'videogular2/core';
+import {VgControlsModule} from 'videogular2/controls';
+import {VgOverlayPlayModule} from 'videogular2/overlay-play';
+import {VgBufferingModule} from 'videogular2/buffering';
 
 var sharedComponents = [Tabs, Tab, Infobox, Sliderpanel, Slideritem, SlideritemContent, PanelSplitMain, PanelSplitSide, PanelSplitContainer, ListToArrayPipe, FormatSecondsPipe, MatchBodyHeight, ScreenTemplate, BlurForwarder, DraggableList, AddContent, Loading,
-    FontSelector, BlockPropContainer, BlockPropCommon, BlockPropHtml, BlockPropClock, BlockPropWeather, BlockPropInstagram, BlockPropJsonPlayer, BlockPropJsonItem, LivePreview, LocationMap,
+    FontSelector, BlockPropContainer, BlockPropCommon, BlockPropHtml, BlockPropClock, BlockPropWeather, BlockPropInstagram, BlockPropJsonPlayer, BlockPropJsonItem, LivePreview, LocationMap, MediaPlayer,
     BlockPropScene, BlockPropCalendar, BlockPropSheets, BlockPropTwitter, BlockPropVideo, BlockPropImage, BlockPropLabel, BlockPropMrss, BlockPropLocation, BlockPropRss, BlockPropDigg, BlockPropFasterQ, BlockPropCollection, BlockPropQR, BlockPropYouTube, JsonEventGrid];
 
 @NgModule({
-    imports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule, ContextMenuModule, ChartModule, ReactiveFormsModule, ColorPickerModule, DropdownModule, RadioButtonModule, SimpleGridModule, Ng2Bs3ModalModule, AgmCoreModule],
-    exports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule, ContextMenuModule, ChartModule, ColorPickerModule, DropdownModule, RadioButtonModule, SimpleGridModule, Ng2Bs3ModalModule, AgmCoreModule, ...sharedComponents],
+    imports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule, ContextMenuModule, ChartModule, ReactiveFormsModule, ColorPickerModule, DropdownModule, RadioButtonModule, SimpleGridModule, Ng2Bs3ModalModule, AgmCoreModule, VgCoreModule, VgControlsModule, VgOverlayPlayModule, VgBufferingModule],
+    exports: [CommonModule, FormsModule, HttpModule, JsonpModule, ReactiveFormsModule, ContextMenuModule, ChartModule, ColorPickerModule, DropdownModule, RadioButtonModule, SimpleGridModule, Ng2Bs3ModalModule, AgmCoreModule, VgCoreModule, VgControlsModule, VgOverlayPlayModule, VgBufferingModule, ...sharedComponents],
     entryComponents: [ScreenTemplate],
     declarations: [...sharedComponents]
 })
