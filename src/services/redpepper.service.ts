@@ -2499,7 +2499,6 @@ export class RedPepperService {
      @return {Number} nativeID
      **/
     getResourceNativeID(i_resource_id) {
-
         var recResource = this.databaseManager.table_resources().getRec(i_resource_id);
         if (_.isNull(recResource))
             return null;

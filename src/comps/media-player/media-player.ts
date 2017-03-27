@@ -1,11 +1,11 @@
-import {Component} from "@angular/core";
+import {Component, Input} from "@angular/core";
 import {VgAPI} from "videogular2/core";
 
 @Component({
     selector: 'media-player',
     template: `
         <!--<button (click)="onSwap('https://s3.signage.me/business1000/resources/SceneComponentsLite.mp4','video/mp4')">swap</button>-->
-        
+
         <vg-player (onPlayerReady)="onPlayerReady($event)" style="width: 100%; height: 100%">
             <vg-overlay-play></vg-overlay-play>
             <vg-buffering></vg-buffering>
@@ -30,8 +30,8 @@ import {VgAPI} from "videogular2/core";
                 <vg-mute></vg-mute>
                 <vg-fullscreen></vg-fullscreen>
                 <vg-volume></vg-volume>
-                
-                
+
+
             </vg-controls>
 
             <video width="100%" height="100%" [vgMedia]="media" #media id="singleVideo" preload="auto"> <!-- crossorigin -->
@@ -52,21 +52,25 @@ export class MediaPlayer {
                 src: "http://s3.signage.me/business1000/resources/OfflineUpdate.mp4",
                 type: "video/mp4"
             }
-
         ];
     }
 
+    @Input()
+    set playResource(i_resource: string) {
+        this.onSwap(i_resource, 'video/mp4')
+    }
+
     onSwap(source: string, type: string) {
-        this.api.pause();
+        if (this.api) this.api.pause();
         this.sources = new Array<Object>();
         this.sources.push({
             src: source,
             type: type
         });
-        this.api.getDefaultMedia().currentTime = 0;
-        setTimeout(()=>{
-            this.api.play();
-        },300)
+        setTimeout(() => {
+            this.api.getDefaultMedia().currentTime = 0;
+            // if (this.api) this.api.play();
+        }, 300)
 
 
     }
