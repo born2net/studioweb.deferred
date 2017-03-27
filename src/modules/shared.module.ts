@@ -58,9 +58,10 @@ import {VgCoreModule} from 'videogular2/core';
 import {VgControlsModule} from 'videogular2/controls';
 import {VgOverlayPlayModule} from 'videogular2/overlay-play';
 import {VgBufferingModule} from 'videogular2/buffering';
+import {FilterModelPipe} from "../filters/FilterModelPipe";
 
 var sharedComponents = [Tabs, Tab, Infobox, Sliderpanel, Slideritem, SlideritemContent, PanelSplitMain, PanelSplitSide, PanelSplitContainer, ListToArrayPipe, FormatSecondsPipe, MatchBodyHeight, ScreenTemplate, BlurForwarder, DraggableList, AddContent, Loading,
-    FontSelector, BlockPropContainer, BlockPropCommon, BlockPropHtml, BlockPropClock, BlockPropWeather, BlockPropInstagram, BlockPropJsonPlayer, BlockPropJsonItem, LivePreview, LocationMap, MediaPlayer,
+    FontSelector, BlockPropContainer, BlockPropCommon, BlockPropHtml, BlockPropClock, BlockPropWeather, BlockPropInstagram, BlockPropJsonPlayer, BlockPropJsonItem, LivePreview, LocationMap, MediaPlayer, FilterModelPipe,
     BlockPropScene, BlockPropCalendar, BlockPropSheets, BlockPropTwitter, BlockPropVideo, BlockPropImage, BlockPropLabel, BlockPropMrss, BlockPropLocation, BlockPropRss, BlockPropDigg, BlockPropFasterQ, BlockPropCollection, BlockPropQR, BlockPropYouTube, JsonEventGrid];
 
 @NgModule({

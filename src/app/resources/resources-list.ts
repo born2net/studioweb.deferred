@@ -13,6 +13,7 @@ import {SideProps} from "../../store/actions/appdb.actions";
         <small class="debug">{{me}}</small>
         <ul style="padding: 10px" (click)="$event.preventDefault()" class="appList list-group">
             <a *ngFor="let resource of m_resources; let i = index" (click)="_onSelected($event, resource, i)"
+               [class.hidden]="resource | FilterModelPipe:filter:resource:'getResourceName'"
                [ngClass]="{'selectedItem': selectedIdx == i}" href="#" class="list-group-item resourcesListItems">
                 <h4>{{resource.getResourceName()}}</h4>
                 <i class="pull-left fa {{bs.getFontAwesome(resource.getResourceType())}}"></i>
@@ -38,6 +39,9 @@ export class ResourcesList extends Compbaser {
     set resources(i_resources: List<ResourcesModel>) {
         this.m_resources = i_resources;
     }
+
+    
+    @Input() filter;
 
     @Input()
     set setViewMode(i_viewMode: 'grid' | 'list') {

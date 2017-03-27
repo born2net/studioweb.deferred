@@ -2,7 +2,6 @@ import {ChangeDetectionStrategy, Component} from "@angular/core";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {RedPepperService} from "../../services/redpepper.service";
 import {ResourcesModel} from "../../store/imsdb.interfaces_auto";
-import {ISceneData} from "../blocks/block-service";
 import {List} from "immutable";
 import {Observable} from "rxjs";
 import {Compbaser} from "ng-mslib";
@@ -10,7 +9,7 @@ import {IUiState} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
 
 @Component({
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    // changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'resources',
     template: `
         <small class="debug">{{me}}</small>
@@ -35,7 +34,7 @@ import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.action
                     <i style="font-size: 1em" class="fa fa-table"></i>
                     <span i18n>grid</span>
                 </button>
-                <input style="width: 200px" id="resourcesFilterList" class="form-control" placeholder="search for" required="">
+                <input [(ngModel)]="m_filter" style="width: 200px" id="resourcesFilterList" class="form-control" placeholder="search for" required="">
             </div>
             <h5 i18n>supported files: flv, mp4, jpg, png, swf and svg</h5>
             <div id="resourceLibListWrap">
@@ -45,7 +44,7 @@ import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.action
         <!-- move scroller to proper offset -->
         <div class="responsive-pad-right">
             <div matchBodyHeight="150" style="overflow: scroll">
-                <resources-list [setViewMode]="m_viewMode" [resources]="m_resourceModels$ | async" (onSceneSelected)="_onSelected($event)">
+                <resources-list [filter]="m_filter" [setViewMode]="m_viewMode" [resources]="m_resourceModels$ | async" (onSceneSelected)="_onSelected($event)">
                 </resources-list>
             </div>
         </div>
@@ -108,17 +107,14 @@ import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.action
 
 export class Resources extends Compbaser {
 
+    m_filter;
     m_resourceModels: List<ResourcesModel>;
     m_viewMode = 'list';
     m_resourceModels$: Observable<List<ResourcesModel>>;
 
     constructor(private yp: YellowPepperService, private rp: RedPepperService) {
         super();
-        this.m_resourceModels$ = this.yp.getResources().map((i_resourcesModels:List<ResourcesModel>)=>{
-            return i_resourcesModels.filter((i_resourcesModels:ResourcesModel)=>{
-                return i_resourcesModels.getResourceName().indexOf('v') > -1
-            })
-        });
+        this.m_resourceModels$ = this.yp.getResources();
         // this.cancelOnDestroy(
         //     //
         //     this.yp.getResources()
