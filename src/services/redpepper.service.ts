@@ -2190,7 +2190,7 @@ export class RedPepperService {
      @return {Number} Unique scene player id
      **/
     generateSceneId() {
-        return (jQueryAny.base64.encode(_.uniqueId('blockid'))).replace('=', '');
+        return (jQuery.base64.encode(_.uniqueId('blockid'))).replace('=', '');
     }
 
     /**

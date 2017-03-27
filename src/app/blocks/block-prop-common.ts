@@ -322,7 +322,7 @@ export class BlockPropCommon extends Compbaser implements AfterViewInit {
             // console.log('gradient 2');
         };
 
-        jQueryAny('#bgColorGradientSelector', self.el.nativeElement).gradientPicker({
+        jQuery('#bgColorGradientSelector', self.el.nativeElement).gradientPicker({
             change: lazyUpdateBgColor,
             closed: gradientColorPickerClosed,
             fillDirection: "90deg"

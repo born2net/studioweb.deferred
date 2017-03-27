@@ -358,7 +358,7 @@ export class ScreenLayoutEditor extends Compbaser implements AfterViewInit {
                 left: rectProperties.x.baseVal.value,
                 top: rectProperties.y.baseVal.value,
                 fill: '#ececec',
-                id: jQueryAny(rectProperties).data('campaign_timeline_board_viewer_id'),
+                id: jQuery(rectProperties).data('campaign_timeline_board_viewer_id'),
                 hasRotatingPoint: false,
                 borderColor: '#5d5d5d',
                 stroke: 'black',

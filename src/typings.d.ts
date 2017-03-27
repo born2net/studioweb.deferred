@@ -86,7 +86,9 @@ declare module 'xml2js' {
 interface jQueryModal extends JQuery {
 }
 
-
+// interface JQueryStatic {
+//     base64:any;
+// }
 
 // interface JQuery {
 //     modal: any;

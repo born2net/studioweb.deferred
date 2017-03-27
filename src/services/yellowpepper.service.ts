@@ -339,6 +339,17 @@ export class YellowPepperService {
                 }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
     }
 
+    listenResourceSelected(emitOnEmpty: boolean = false): Observable<ResourcesModel> {
+        var selected$ = this.store.select(store => store.appDb.uiState.resources.resourceSelected);
+        var resources$ = this.store.select(store => store.msDatabase.sdk.table_resources);
+        return selected$
+            .withLatestFrom(resources$, (resourceId, resources: List<ResourcesModel>) => {
+                return resources.find((resource: ResourcesModel) => {
+                    return resource.getResourceId() == resourceId;
+                });
+            }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
+    }
+
     /**
      Listen to ONLY when a campaign is selected via the store state uiState.campaign.campaignSelected and grab latest CampaignModel
      **/

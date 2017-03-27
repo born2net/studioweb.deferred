@@ -2,6 +2,7 @@ import {BlockFabric} from "./block-fabric";
 import * as _ from "lodash";
 import {BlockLabels} from "../../interfaces/Consts";
 
+
 const blockType = BlockLabels.BLOCKCODE_SVG;
 
 export class BlockFabricSvg extends BlockFabric {
@@ -56,7 +57,7 @@ export class BlockFabricSvg extends BlockFabric {
         var rec = self._fabricRect(w, h, domPlayerData);
 
         var svgPath = window.g_protocol + self.m_pepper.getUserData().domain + '/Resources/business' + self.m_pepper.getUserData().businessID + '/resources/' + self.m_nativeID + '.' + self.m_fileFormat;
-        var urlPath = jQueryAny.base64.encode(svgPath);
+        var urlPath = jQuery.base64.encode(svgPath);
         var srvPath = 'https://secure.digitalsignage.com/proxyRequest/' + urlPath;
 
         //svgPath = 'https://secure.digitalsignage.com/_public/assets/15.svg';

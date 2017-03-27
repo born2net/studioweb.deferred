@@ -70,7 +70,7 @@ export class CampaignSchedProps extends Compbaser implements AfterViewInit {
     }
 
     _listenTimepickerChanges() {
-        jQueryAny('#timepickerDurationInput', this.el.nativeElement).on("hide.timepicker", (e) => {
+        jQuery('#timepickerDurationInput', this.el.nativeElement).on("hide.timepicker", (e:any) => {
             var totalSeconds = this.rp.formatObjectToSeconds({
                 hours: e.time.hours,
                 minutes: e.time.minutes,
@@ -79,7 +79,7 @@ export class CampaignSchedProps extends Compbaser implements AfterViewInit {
             this.rp.setCampaignsSchedule(this.m_campaignTimelineSchedulesModel.getCampaignTimelineId(), 'duration', totalSeconds);
             this.rp.reduxCommit();
         });
-        jQueryAny('#timepickerTimeInput', this.el.nativeElement).on("hide.timepicker", (e) => {
+        jQuery('#timepickerTimeInput', this.el.nativeElement).on("hide.timepicker", (e:any) => {
             var totalSeconds = this.rp.formatObjectToSeconds({
                 hours: e.time.hours,
                 minutes: e.time.minutes,
@@ -91,7 +91,7 @@ export class CampaignSchedProps extends Compbaser implements AfterViewInit {
     }
 
     private _renderCarouselPosition() {
-        jQueryAny('#schedulerRepeatMode', this.el.nativeElement).carousel(Number(this.m_campaignTimelineSchedulesModel.getRepeatType()));
+        jQuery('#schedulerRepeatMode', this.el.nativeElement).carousel(Number(this.m_campaignTimelineSchedulesModel.getRepeatType()));
     }
 
     private _renderConflictPriority() {
@@ -133,14 +133,14 @@ export class CampaignSchedProps extends Compbaser implements AfterViewInit {
                     var startTime = this.rp.formatSecondsToObject(this.m_campaignTimelineSchedulesModel.getStartTime());
                     var startTimeFormatted = `${startTime.hours}:${startTime.minutes}:${startTime.seconds}`;
                     this.formInputs['start_time'].setValue(startTimeFormatted);
-                    jQueryAny('#timepickerTimeInput', this.el.nativeElement).timepicker('setTime', startTimeFormatted);
+                    jQuery('#timepickerTimeInput', this.el.nativeElement).timepicker('setTime', startTimeFormatted);
                     return;
                 }
                 case 'duration': {
                     var duration = this.rp.formatSecondsToObject(this.m_campaignTimelineSchedulesModel.getDuration());
                     var durationFormatted = `${duration.hours}:${duration.minutes}:${duration.seconds}`;
                     this.formInputs['duration'].setValue(durationFormatted);
-                    jQueryAny('#timepickerDurationInput', this.el.nativeElement).timepicker('setTime', durationFormatted);
+                    jQuery('#timepickerDurationInput', this.el.nativeElement).timepicker('setTime', durationFormatted);
                     return;
                 }
                 default: {
@@ -167,14 +167,14 @@ export class CampaignSchedProps extends Compbaser implements AfterViewInit {
     }
 
     private _initTimePicker() {
-        jQueryAny('#timepickerDurationInput', this.el.nativeElement).timepicker({
+        jQuery('#timepickerDurationInput', this.el.nativeElement).timepicker({
             showSeconds: true,
             showMeridian: false,
             defaultTime: false,
             minuteStep: 1,
             secondStep: 1
         });
-        jQueryAny('#timepickerTimeInput', this.el.nativeElement).timepicker({
+        jQuery('#timepickerTimeInput', this.el.nativeElement).timepicker({
             showSeconds: true,
             showMeridian: false,
             defaultTime: false,
@@ -231,7 +231,7 @@ export class CampaignSchedProps extends Compbaser implements AfterViewInit {
     }
 
     destroy() {
-        jQueryAny('#timepickerDurationInput', this.el.nativeElement).off("hide.timepicker");
-        jQueryAny('#timepickerTimeInput', this.el.nativeElement).off("hide.timepicker");
+        jQuery('#timepickerDurationInput', this.el.nativeElement).off("hide.timepicker");
+        jQuery('#timepickerTimeInput', this.el.nativeElement).off("hide.timepicker");
     }
 }

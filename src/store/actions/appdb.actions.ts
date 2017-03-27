@@ -40,6 +40,7 @@ export enum SideProps {
     channel,
     screenLayoutEditor,
     sceneProps,
+    resourceProps,
     sceneEditor,
 }
 

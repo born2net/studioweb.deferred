@@ -168,7 +168,7 @@ export class LocationMap extends Compbaser implements AfterViewInit {
         var url = window.g_protocol + userData.domain + '/WebService/getStatus.ashx?user=' + userData.userName + '&password=' + userData.userPass + '&callback=?';
         $.getJSON(url, (data) => {
             var s64 = data['ret'];
-            var str = jQueryAny.base64.decode(s64);
+            var str = jQuery.base64.decode(s64);
             var xml = jXML.parseXML(str);
             $(xml).find('Station').each((key, value) => {
                 var stationId = $(value).attr('id');

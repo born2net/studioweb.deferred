@@ -103,8 +103,7 @@ export class ChannelBlockProps extends Compbaser implements AfterViewInit {
      **/
     _propLengthKnobsInit() {
         var self = this;
-
-        jQueryAny('.knob', this.el.nativeElement).knob({
+        jQuery('.knob', this.el.nativeElement).knob({
             /*change: function (value) {
              console.log("change : " + value);
              var caller = this['i'][0].id;

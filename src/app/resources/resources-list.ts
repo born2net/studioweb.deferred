@@ -1,8 +1,10 @@
-import {ChangeDetectionStrategy, Component, Input} from "@angular/core";
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {ResourcesModel} from "../../store/imsdb.interfaces_auto";
 import {List} from "immutable";
 import {BlockService} from "../blocks/block-service";
+import {IUiState} from "../../store/store.data";
+import {SideProps} from "../../store/actions/appdb.actions";
 
 @Component({
     selector: 'resources-list',
@@ -11,7 +13,7 @@ import {BlockService} from "../blocks/block-service";
         <small class="debug">{{me}}</small>
         <ul style="padding: 10px" (click)="$event.preventDefault()" class="appList list-group">
 
-            <a *ngFor="let resource of m_resources; let i = index" (click)="_onSelected($event, scene, i)"
+            <a *ngFor="let resource of m_resources; let i = index" (click)="_onSelected($event, resource, i)"
                [ngClass]="{'selectedItem': selectedIdx == i}" href="#" class="list-group-item">
                 <h4>{{resource.getResourceName()}}</h4>
                 <i class="pull-left fa {{bs.getFontAwesome(resource.getResourceType())}}"></i>
@@ -44,27 +46,17 @@ export class ResourcesList extends Compbaser {
     // @Output()
     // slideToSceneName: EventEmitter<any> = new EventEmitter<any>();
     //
-    // @Output()
-    // onSceneSelected: EventEmitter<any> = new EventEmitter<any>();
+    @Output()
+    onSceneSelected: EventEmitter<IUiState> = new EventEmitter<IUiState>();
 
-    _onSelected(event: MouseEvent, scene, index) {
+    _onSelected(event: MouseEvent, i_resource:ResourcesModel, index) {
         this.selectedIdx = index;
-        // let uiState: IUiState;
-        // if (jQuery(event.target).hasClass('props')) {
-        //     uiState = {
-        //         uiSideProps: SideProps.sceneProps,
-        //         scene: {sceneSelected: scene.scene_id}
-        //     }
-        //     this.onSceneSelected.emit(uiState)
-        // } else {
-        //     uiState = {
-        //         uiSideProps: SideProps.miniDashboard,
-        //         scene: {sceneSelected: scene.scene_id}
-        //     }
-        //     this.slideToSceneEditor.emit();
-        //     this.onSceneSelected.emit(uiState)
-        // }
-        // this.m_selectedScene = scene;
+        let uiState: IUiState = {
+            uiSideProps: SideProps.resourceProps,
+            resources: {resourceSelected: i_resource.getResourceId()}
+        }
+        this.onSceneSelected.emit(uiState)
+        this.m_selected = i_resource;
     }
 
     resetSelection() {

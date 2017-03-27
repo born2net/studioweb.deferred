@@ -50,6 +50,17 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 // import "fabric"; // need to remove if we import via cli
 // import {ScreenTemplate} from "../comps/screen-template/screen-template";
 
+declare global {
+    interface JQueryStatic {
+        base64:any
+        knob:any
+        gradientPicker:any;
+        timepicker:any;
+        contextmenu:any;
+        index:any;
+    }
+}
+
 export var providing = [CommBroker, AUTH_PROVIDERS, RedPepperService, YellowPepperService, LocalStorage, StoreService, FontLoaderService, AppdbAction, {
     provide: "OFFLINE_ENV",
     useValue: window['offlineDevMode']
