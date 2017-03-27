@@ -27,11 +27,11 @@ import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.action
                     <i style="font-size: 1em" class="fa fa-minus"></i>
                     <span i18n>remove</span>
                 </button>
-                <button type="button" class="btn btn-default">
+                <button (click)="m_viewMode='list'" type="button" class="btn btn-default">
                     <i style="font-size: 1em" class="fa fa-list"></i>
                     <span i18n>list</span>
                 </button>
-                <button type="button" class="btn btn-default">
+                <button (click)="m_viewMode='grid'" type="button" class="btn btn-default">
                     <i style="font-size: 1em" class="fa fa-table"></i>
                     <span i18n>grid</span>
                 </button>
@@ -45,7 +45,7 @@ import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.action
         <!-- move scroller to proper offset -->
         <div class="responsive-pad-right">
             <div matchBodyHeight="150" style="overflow: scroll">
-                <resources-list [resources]="m_resourceModels$ | async" (onSceneSelected)="_onSelected($event)">
+                <resources-list [setViewMode]="m_viewMode" [resources]="m_resourceModels$ | async" (onSceneSelected)="_onSelected($event)">
                 </resources-list>
             </div>
         </div>
@@ -109,11 +109,16 @@ import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.action
 export class Resources extends Compbaser {
 
     m_resourceModels: List<ResourcesModel>;
+    m_viewMode = 'list';
     m_resourceModels$: Observable<List<ResourcesModel>>;
 
     constructor(private yp: YellowPepperService, private rp: RedPepperService) {
         super();
-        this.m_resourceModels$ = this.yp.getResources();
+        this.m_resourceModels$ = this.yp.getResources().map((i_resourcesModels:List<ResourcesModel>)=>{
+            return i_resourcesModels.filter((i_resourcesModels:ResourcesModel)=>{
+                return i_resourcesModels.getResourceName().indexOf('v') > -1
+            })
+        });
         // this.cancelOnDestroy(
         //     //
         //     this.yp.getResources()
