@@ -935,6 +935,22 @@ export class RedPepperService {
     }
 
     /**
+     Set a resource record via its resource_id.
+     The method uses generic key / value fields so it can set any part of the record.
+     @method setResourceRecord
+     @param {Number} i_resource_id
+     @param {Number} i_key
+     @param {String} i_value
+     @return {Object} foundResourceRecord
+     **/
+    setResourceRecord(i_resource_id, i_key, i_value) {
+        this.databaseManager.table_resources().openForEdit(i_resource_id);
+        var recResource = this.databaseManager.table_resources().getRec(i_resource_id);
+        recResource[i_key] = i_value;
+        this.addPendingTables(['table_resources']);
+    }
+
+    /**
      Set a channel_id record in channels table using key and value
      The method uses generic key / value fields so it can set any part of the record.
      @method setCampaignTimelineChannelRecord
@@ -2500,22 +2516,6 @@ export class RedPepperService {
 
         var recResource = this.databaseManager.table_resources().getRec(i_resource_id);
         return recResource['resource_name'];
-    }
-
-    /**
-     Set a resource record via its resource_id.
-     The method uses generic key / value fields so it can set any part of the record.
-     @method setResourceRecord
-     @param {Number} i_resource_id
-     @param {Number} i_key
-     @param {String} i_value
-     @return {Object} foundResourceRecord
-     **/
-    setResourceRecord(i_resource_id, i_key, i_value) {
-
-        this.databaseManager.table_resources().openForEdit(i_resource_id);
-        var recResource = this.databaseManager.table_resources().getRec(i_resource_id);
-        recResource[i_key] = i_value;
     }
 
     /**

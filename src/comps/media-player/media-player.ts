@@ -4,7 +4,8 @@ import {VgAPI} from "videogular2/core";
 @Component({
     selector: 'media-player',
     template: `
-        <button (click)="onSwap('https://s3.signage.me/business1000/resources/SceneComponentsLite.mp4','video/mp4')">swap</button>
+        <!--<button (click)="onSwap('https://s3.signage.me/business1000/resources/SceneComponentsLite.mp4','video/mp4')">swap</button>-->
+        
         <vg-player (onPlayerReady)="onPlayerReady($event)" style="width: 100%; height: 100%">
             <vg-overlay-play></vg-overlay-play>
             <vg-buffering></vg-buffering>
@@ -14,7 +15,7 @@ import {VgAPI} from "videogular2/core";
                 <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
             </vg-scrub-bar>
 
-            <vg-controls>
+            <vg-controls [vgAutohide]="true" [vgAutohideTime]="1.5">
                 <vg-play-pause></vg-play-pause>
                 <vg-playback-button></vg-playback-button>
 
@@ -27,9 +28,10 @@ import {VgAPI} from "videogular2/core";
 
                 <vg-track-selector></vg-track-selector>
                 <vg-mute></vg-mute>
-                <vg-volume></vg-volume>
-
                 <vg-fullscreen></vg-fullscreen>
+                <vg-volume></vg-volume>
+                
+                
             </vg-controls>
 
             <video width="100%" height="100%" [vgMedia]="media" #media id="singleVideo" preload="auto"> <!-- crossorigin -->

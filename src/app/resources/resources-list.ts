@@ -40,12 +40,6 @@ export class ResourcesList extends Compbaser {
         this.m_resources = i_resources;
     }
 
-    // @Output()
-    // slideToSceneEditor: EventEmitter<any> = new EventEmitter<any>();
-    //
-    // @Output()
-    // slideToSceneName: EventEmitter<any> = new EventEmitter<any>();
-    //
     @Output()
     onSceneSelected: EventEmitter<IUiState> = new EventEmitter<IUiState>();
 

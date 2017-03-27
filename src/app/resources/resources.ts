@@ -6,6 +6,8 @@ import {ISceneData} from "../blocks/block-service";
 import {List} from "immutable";
 import {Observable} from "rxjs";
 import {Compbaser} from "ng-mslib";
+import {IUiState} from "../../store/store.data";
+import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -40,10 +42,10 @@ import {Compbaser} from "ng-mslib";
                 <ul id="resourceLibList" class="list-group row"></ul>
             </div>
         </div>
-        <!-- move scroller to proper offset -->             
+        <!-- move scroller to proper offset -->
         <div class="responsive-pad-right">
             <div matchBodyHeight="150" style="overflow: scroll">
-                <resources-list [resources]="m_resourceModels$ | async" (_onResourceSelected)="_onSceneSelected($event)">
+                <resources-list [resources]="m_resourceModels$ | async" (onSceneSelected)="_onSelected($event)">
                 </resources-list>
             </div>
         </div>
@@ -51,19 +53,19 @@ import {Compbaser} from "ng-mslib";
     styles: [`
 
         /*:host /deep/ vg-player {*/
-            /*background-color: transparent;*/
-            /*margin: 30px;*/
-            /*width: 30%;*/
-            /*height: calc(100% - 60px);*/
+        /*background-color: transparent;*/
+        /*margin: 30px;*/
+        /*width: 30%;*/
+        /*height: calc(100% - 60px);*/
         /*}*/
-        
+
         /*:host /deep/ vg-player {*/
-            /*background-color: transparent;*/
-            /*margin: 30px;*/
-            /*width: 30%;*/
-            /*height: calc(100% - 60px);*/
+        /*background-color: transparent;*/
+        /*margin: 30px;*/
+        /*width: 30%;*/
+        /*height: calc(100% - 60px);*/
         /*}*/
-        
+
         * {
             border-radius: 0 !important;
         }
@@ -121,19 +123,9 @@ export class Resources extends Compbaser {
         // )
     }
 
-    _onSceneSelected(valie) {
+    _onSelected(uiState: IUiState) {
+        this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
 
-    }
-
-    _onResourceSelected(event: MouseEvent, scene: ISceneData, index) {
-        // this.selectedIdx = index;
-        // let uiState: IUiState;
-        // if (jQuery(event.target).hasClass('props')) {
-        //     uiState = {
-        //         uiSideProps: SideProps.sceneProps,
-        //         scene: {sceneSelected: scene.scene_id}
-        //     }
-        //     this.onSceneSelected.emit(uiState)
         // } else {
         //     uiState = {
         //         uiSideProps: SideProps.miniDashboard,
@@ -143,7 +135,7 @@ export class Resources extends Compbaser {
         //     this.onSceneSelected.emit(uiState)
         // }
         // this.m_selectedScene = scene;
-    }
 
+    }
 }
 
