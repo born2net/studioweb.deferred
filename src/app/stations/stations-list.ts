@@ -5,22 +5,50 @@ import {List} from "immutable";
 import {BlockService} from "../blocks/block-service";
 import {IUiState} from "../../store/store.data";
 import {SideProps} from "../../store/actions/appdb.actions";
+import {StationModel} from "../../models/StationModel";
 
 @Component({
     selector: 'stations-list',
     changeDetection: ChangeDetectionStrategy.OnPush,
+    styles: [`
+        .green {
+            color: green;
+        }
+
+        .red {
+            color: red;
+        }
+
+        .yellow {
+            color: yellow;
+        }
+
+        span {
+            background-color: transparent;
+            -webkit-text-stroke: 1px black;
+            text-shadow: 1px 1px 0 #000,
+            -1px -1px 0 #000,
+            1px -1px 0 #000,
+            -1px 1px 0 #000,
+            1px 1px 0 #000;
+        }
+    `],
     template: `
         <small class="debug">{{me}}</small>
         <ul style="padding: 10px" (click)="$event.preventDefault()" class="appList list-group">
-            <a *ngFor="let resource of m_resources; let i = index" (click)="_onSelected($event, resource, i)"
-               [class.hidden]="resource | FilterModelPipe:filter:resource:'getResourceName'"
+            <a *ngFor="let station of m_stations; let i = index" (click)="_onSelected($event, station, i)"
+               [class.hidden]="station | FilterModelPipe:filter:station:'getResourceName'"
                [ngClass]="{'selectedItem': selectedIdx == i}" href="#" class="list-group-item resourcesListItems">
-                <h4>{{resource.getResourceName()}}</h4>
-                <i class="pull-left fa {{bs.getFontAwesome(resource.getResourceType())}}"></i>
-                <p class="pull-left list-group-item-text">file type: {{resource.getResourceType()}} </p>
-                <span class="clearfix"></span>
+                <span [ngClass]="{'green': station.connection == '1', 'red': station.connection == '0', 'yellow': station.connection == '2'}" class="pull-left fa fa-4x fa-circle"></span>
+                <div style="position: relative; left: 20px">
+                    <h4>{{station.name}}</h4>
+                    <h5>os: {{station.os}}</h5>
+                </div>
+                <!--<i class="pull-left fa {{station.airVersion}}"></i>-->
+                <!--<p class="pull-left list-group-item-text">file type: {{station.os}} </p>-->
+                <!--<span class="clearfix"></span>-->
                 <!--<div class="openProps">-->
-                <!--<button type="button" class="props btn btn-default btn-sm"><i style="font-size: 1.5em" class="props fa fa-gear"></i></button>-->
+                    <!--<button type="button" class="props btn btn-default btn-sm"><i style="font-size: 1.5em" class="props fa fa-gear"></i></button>-->
                 <!--</div>-->
             </a>
         </ul>
@@ -28,7 +56,7 @@ import {SideProps} from "../../store/actions/appdb.actions";
 })
 export class StationsList extends Compbaser {
     selectedIdx = -1;
-    m_resources: List<ResourcesModel>;
+    m_stations: List<StationModel>;
     m_selected;
 
     constructor(private bs: BlockService, private el: ElementRef) {
@@ -36,36 +64,19 @@ export class StationsList extends Compbaser {
     }
 
     @Input()
-    set resources(i_resources: List<ResourcesModel>) {
-        this.m_resources = i_resources;
+    set stations(i_stations: List<StationModel>) {
+        this.m_stations = i_stations;
     }
-
 
     @Input() filter;
 
-    @Input()
-    set setViewMode(i_viewMode: 'grid' | 'list') {
-        if (i_viewMode == 'list') {
-            var query = $('.resourcesListItems', this.el.nativeElement);
-            $(query).addClass('col-xs-12');
-            $(query).removeClass('col-xs-3');
-        }
-
-        if (i_viewMode == 'grid') {
-            var query = $('.resourcesListItems', this.el.nativeElement);
-            $(query).addClass('col-xs-3');
-            $(query).removeClass('col-xs-12');
-        }
-    }
-
-
     @Output()
-    onSelected: EventEmitter<ResourcesModel> = new EventEmitter<ResourcesModel>();
+    onSelected: EventEmitter<StationModel> = new EventEmitter<StationModel>();
 
-    _onSelected(event: MouseEvent, i_resource: ResourcesModel, index) {
+    _onSelected(event: MouseEvent, i_station: StationModel, index) {
         this.selectedIdx = index;
-        this.onSelected.emit(i_resource)
-        this.m_selected = i_resource;
+        this.onSelected.emit(i_station)
+        // this.m_selected = i_resource;
     }
 
     resetSelection() {

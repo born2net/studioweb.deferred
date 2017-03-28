@@ -25,6 +25,7 @@ import X2JS from "x2js";
 import {ISceneData} from "../app/blocks/block-service";
 import {IScreenTemplateData} from "../interfaces/IScreenTemplate";
 import {LocationMarkModel} from "../models/LocationMarkModel";
+import {StationModel} from "../models/StationModel";
 
 
 @Injectable()
@@ -380,6 +381,17 @@ export class YellowPepperService {
             }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
     }
 
+    listenStationSelected(emitOnEmpty: boolean = false): Observable<StationModel> {
+        var selected$ = this.store.select(store => store.appDb.uiState.stations.stationSelected);
+        var stations$ = this.store.select(store => store.appDb.stations);
+        return selected$
+            .withLatestFrom(stations$, (stationId, stations: List<StationModel>) => {
+                return stations.find((station: StationModel) => {
+                    return station.id == stationId;
+                });
+            }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
+    }
+
     listenResources(): Observable<List<ResourcesModel>> {
         return this.store.select(store => store.msDatabase.sdk.table_resources)
             .map((resourceModels: List<ResourcesModel>) => {
@@ -387,6 +399,10 @@ export class YellowPepperService {
                     return i_resourceModel.getChangeType() != 3
                 })
             })
+    }
+
+    listenStations(): Observable<List<StationModel>> {
+        return this.store.select(store => store.appDb.stations);
     }
 
     /**

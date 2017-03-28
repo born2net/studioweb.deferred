@@ -22,10 +22,11 @@ export interface IMsDatabase {
 }
 
 export interface IStation {
-    stationId: number;
-    localAddress: string;
+    id: number;
+    localAddress: any;
+    publicIp: string;
     localPort: number;
-    stationName: string;
+    name: string;
     watchDogConnection: number;
     status: string;
     startTime: string;
@@ -35,7 +36,7 @@ export interface IStation {
     peakMemory: number;
     appVersion: string;
     airVersion: string;
-    stationOS: string;
+    os: string;
     socket: number;
     connection: number;
     connectionStatusChanged: boolean;

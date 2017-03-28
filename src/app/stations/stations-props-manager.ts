@@ -18,39 +18,12 @@ import {RedPepperService} from "../../services/redpepper.service";
         <small class="debug">{{me}}</small>
         <hr/>
         <ul matchBodyHeight="50" style="overflow-y: auto; overflow-x: hidden" [ngSwitch]="m_sideProps$ | async">
-            <div *ngSwitchCase="m_sidePropsEnum.resourceProps">
-                <h5><i class="fa fa-{{m_formatIcon}}"></i>resource property</h5>
-                <input class="form-control" inlength="1" placeholder="resource name" (blur)="_onUpdateResourceName($event)" [(ngModel)]="m_resourceName" type="text"/>
-                <br/>
-                <div [ngSwitch]="m_resourceType">
-                    <div *ngSwitchCase="'image'">
-                        <img style="width: 100%" class="img-responsive" [src]="m_imagePath"/>
-                    </div>
-                    <div *ngSwitchCase="'svg'">
-                        <svg-icon style="padding-left: 30px" [height]="'300'" [width]="'260'" [path]="m_svgPath"></svg-icon>
-
-                    </div>
-                </div>
-                <div [ngSwitch]="m_resourceType">
-                    <div *ngSwitchCase="'video'">
-                        <div style="width: 100%; height: 200px">
-                            <media-player [playResource]="m_playResource"></media-player>
-                        </div>
-                    </div>
-                </div>
-                <div [ngSwitch]="m_resourceType">
-                    <div *ngSwitchCase="'swf'">
-                        <p>Flash swf content</p>
-                        <div class="col-xs-4"></div>
-                        <i style="color: red" class="fa-5x col-xs-4 fa fa-flash"></i>
-                        <div class="col-xs-4"></div>
-                    </div>
-                </div>
-
+            <div *ngSwitchCase="m_sidePropsEnum.stationProps">
+                <h5>station props</h5>
             </div>
 
             <div *ngSwitchCase="m_sidePropsEnum.miniDashboard">
-                <h4>resource dashboard</h4>
+                <h5>station dashboard</h5>
             </div>
 
         </ul>

@@ -42,6 +42,7 @@ export enum SideProps {
     sceneProps,
     resourceProps,
     sceneEditor,
+    stationProps
 }
 
 
