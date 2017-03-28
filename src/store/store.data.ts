@@ -16,11 +16,31 @@ export const developmentReducer: ActionReducer<ApplicationState> = compose(store
 export const productionReducer: ActionReducer<ApplicationState> = combineReducers(reducers);
 
 export interface IMsDatabase {
-    threads: { [key: number]: any };
-    thread: {
-        id: number;
-    },
-    sdk: ISDK
+    stations: List<IStation>;
+    thread: { [key: number]: any };
+    sdk: ISDK;
+}
+
+export interface IStation  {
+    stationId: number;
+    localAddress: string;
+    localPort: number;
+    stationName: string;
+    watchDogConnection: number;
+    status: string;
+    startTime: string;
+    runningTime: string;
+    caching: boolean;
+    totalMemory: number;
+    peakMemory: number;
+    appVersion: string;
+    airVersion: string;
+    stationOS: string;
+    socket: number;
+    connection: number;
+    connectionStatusChanged: boolean;
+    lastUpdate: string;
+    stationColor: string;
 }
 
 export interface IUiStateCampaign  {
@@ -75,8 +95,8 @@ export interface IAppDb {
 }
 
 export const INITIAL_STORE_DATA: IMsDatabase = {
-    threads: {},
-    thread: {id: -1},
+    stations: null,
+    thread: null,
     sdk: null
 }
 

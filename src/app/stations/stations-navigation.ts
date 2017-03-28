@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {animate, state, style, transition, trigger} from "@angular/animations";
+import {BlockService} from "../blocks/block-service";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -8,6 +9,11 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
         '[@routeAnimation]': 'true',
         '[style.display]': "'block'"
     },
+    providers: [BlockService, {
+        provide: "BLOCK_PLACEMENT",
+        useValue: ''
+    }
+    ],
     animations: [
         trigger('routeAnimation', [
             state('*', style({opacity: 1})),
@@ -19,10 +25,17 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
         ])
     ],
     template: `
-               <small class="release">stations
-                   <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
-               </small>
-           `,
+        <small class="debug">station-navigation</small>
+        <panel-split-container>
+            <panel-split-main>
+                <stations>
+                </stations>
+            </panel-split-main>
+            <panel-split-side>
+                <!--<resource-props-manager></resource-props-manager>-->
+            </panel-split-side>
+        </panel-split-container>
+    `
 })
 export class StationsNavigation extends Compbaser {
 
