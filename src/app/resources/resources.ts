@@ -22,7 +22,7 @@ import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.action
                 <input type="file" accept=".flv,.mp4,.jpg,.png,.swf,.svg"/>
             </label>
             <div class="btn-group">
-                <button type="button" class="btn btn-default">
+                <button (click)="_onRemove()" type="button" class="btn btn-default">
                     <i style="font-size: 1em" class="fa fa-minus"></i>
                     <span i18n>remove</span>
                 </button>
@@ -44,7 +44,7 @@ import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.action
         <!-- move scroller to proper offset -->
         <div class="responsive-pad-right">
             <div matchBodyHeight="150" style="overflow: scroll">
-                <resources-list [filter]="m_filter" [setViewMode]="m_viewMode" [resources]="m_resourceModels$ | async" (onSceneSelected)="_onSelected($event)">
+                <resources-list [filter]="m_filter" [setViewMode]="m_viewMode" [resources]="m_resourceModels$ | async" (onSelected)="_onSelected($event)">
                 </resources-list>
             </div>
         </div>
@@ -108,35 +108,45 @@ import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.action
 export class Resources extends Compbaser {
 
     m_filter;
-    m_resourceModels: List<ResourcesModel>;
+    m_resourceModel:ResourcesModel;
     m_viewMode = 'list';
     m_resourceModels$: Observable<List<ResourcesModel>>;
 
     constructor(private yp: YellowPepperService, private rp: RedPepperService) {
         super();
-        this.m_resourceModels$ = this.yp.getResources();
-        // this.cancelOnDestroy(
-        //     //
-        //     this.yp.getResources()
-        //         .subscribe((i_resources: List<ResourcesModel>) => {
-        //             this.m_resourceModels = i_resources;
-        //         }, (e) => console.error(e))
-        // )
+        this.m_resourceModels$ = this.yp.listenResources();
+        this.cancelOnDestroy(
+            //
+            this.yp.listenResourceSelected()
+                .subscribe((i_resources: ResourcesModel) => {
+                    this.m_resourceModel = i_resources;
+                }, (e) => console.error(e))
+        )
     }
 
-    _onSelected(uiState: IUiState) {
+    _onRemove(){
+        bootbox.confirm(`are you sure you want to remove ${this.m_resourceModel.getResourceName()}`, (i_result) => {
+            if (!i_result) return;
+            this.rp.removeResource(this.m_resourceModel.getResourceId());
+            this.rp.removeBlocksWithResourceID(this.m_resourceModel.getResourceId());
+            this.rp.removeResourceFromBlockCollectionInScenes(this.m_resourceModel.getResourceId());
+            this.rp.removeResourceFromBlockCollectionsInChannel(this.m_resourceModel.getResourceId());
+            this.rp.removeAllScenePlayersWithResource(this.m_resourceModel.getResourceId());
+            this.rp.reduxCommit();
+            let uiState: IUiState = {
+                uiSideProps: SideProps.miniDashboard,
+                resources: {resourceSelected: -1}
+            }
+            this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+        });
+    }
+
+    _onSelected(i_resource: ResourcesModel) {
+        let uiState: IUiState = {
+            uiSideProps: SideProps.resourceProps,
+            resources: {resourceSelected: i_resource.getResourceId()}
+        }
         this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
-
-        // } else {
-        //     uiState = {
-        //         uiSideProps: SideProps.miniDashboard,
-        //         scene: {sceneSelected: scene.scene_id}
-        //     }
-        //     this.slideToSceneEditor.emit();
-        //     this.onSceneSelected.emit(uiState)
-        // }
-        // this.m_selectedScene = scene;
-
     }
 }
 

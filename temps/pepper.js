@@ -1803,7 +1803,7 @@ Pepper.prototype = {
 
     /**
      Get all none deleted (!=3) resources per current account
-     @method getResources
+     @method listenResources
      @return {Array} all records of all resources in current account
      **/
     getResources: function () {

@@ -144,7 +144,7 @@ export class AddContent extends Compbaser implements AfterViewInit {
 
         this.cancelOnDestroy(
             //
-            this.yp.getResources()
+            this.yp.listenResources()
                 .subscribe((i_resources: List<ResourcesModel>) => {
                     this.m_resourceModels = i_resources;
                 }, (e) => console.error(e))
@@ -320,7 +320,7 @@ export class AddContent extends Compbaser implements AfterViewInit {
         // show resource selection list
         /////////////////////////////////////////////////////////
 
-        // var recResources = pepper.getResources();
+        // var recResources = pepper.listenResources();
         this.m_resourceModels.forEach((i_resourcesModel: ResourcesModel) => {
             var size = (i_resourcesModel.getResourceBytesTotal() / 1000).toFixed(2);
             var resourceDescription = 'size: ' + size;

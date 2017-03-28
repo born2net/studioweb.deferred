@@ -60,15 +60,11 @@ export class ResourcesList extends Compbaser {
 
 
     @Output()
-    onSceneSelected: EventEmitter<IUiState> = new EventEmitter<IUiState>();
+    onSelected: EventEmitter<ResourcesModel> = new EventEmitter<ResourcesModel>();
 
     _onSelected(event: MouseEvent, i_resource: ResourcesModel, index) {
         this.selectedIdx = index;
-        let uiState: IUiState = {
-            uiSideProps: SideProps.resourceProps,
-            resources: {resourceSelected: i_resource.getResourceId()}
-        }
-        this.onSceneSelected.emit(uiState)
+        this.onSelected.emit(i_resource)
         this.m_selected = i_resource;
     }
 

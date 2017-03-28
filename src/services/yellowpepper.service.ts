@@ -339,17 +339,6 @@ export class YellowPepperService {
                 }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
     }
 
-    listenResourceSelected(emitOnEmpty: boolean = false): Observable<ResourcesModel> {
-        var selected$ = this.store.select(store => store.appDb.uiState.resources.resourceSelected);
-        var resources$ = this.store.select(store => store.msDatabase.sdk.table_resources);
-        return selected$
-            .withLatestFrom(resources$, (resourceId, resources: List<ResourcesModel>) => {
-                return resources.find((resource: ResourcesModel) => {
-                    return resource.getResourceId() == resourceId;
-                });
-            }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
-    }
-
     /**
      Listen to ONLY when a campaign is selected via the store state uiState.campaign.campaignSelected and grab latest CampaignModel
      **/
@@ -380,6 +369,25 @@ export class YellowPepperService {
             }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
     }
 
+    listenResourceSelected(emitOnEmpty: boolean = false): Observable<ResourcesModel> {
+        var selected$ = this.store.select(store => store.appDb.uiState.resources.resourceSelected);
+        var resources$ = this.store.select(store => store.msDatabase.sdk.table_resources);
+        return selected$
+            .withLatestFrom(resources$, (resourceId, resources: List<ResourcesModel>) => {
+                return resources.find((resource: ResourcesModel) => {
+                    return resource.getResourceId() == resourceId;
+                });
+            }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
+    }
+
+    listenResources(): Observable<List<ResourcesModel>> {
+        return this.store.select(store => store.msDatabase.sdk.table_resources)
+            .map((resourceModels: List<ResourcesModel>) => {
+                return resourceModels.filter((i_resourceModel: ResourcesModel) => {
+                    return i_resourceModel.getChangeType() != 3
+                })
+            })
+    }
 
     /**
      Listen to when a campaign that is selected changed value
@@ -663,18 +671,6 @@ export class YellowPepperService {
                         return i_resourcesModel.getResourceId() == i_resource_id
                     })
             }).take(1)
-    }
-
-    /**
-     Get all none deleted (!=3) resources per current account
-     **/
-    getResources(): Observable<List<ResourcesModel>> {
-        return this.store.select(store => store.msDatabase.sdk.table_resources)
-            .map((resourceModels: List<ResourcesModel>) => {
-                return resourceModels.filter((i_resourceModel: ResourcesModel) => {
-                    return i_resourceModel.getChangeType() != 3
-                })
-            })
     }
 
     // /**

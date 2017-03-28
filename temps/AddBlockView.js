@@ -181,7 +181,7 @@ define(['jquery', 'backbone', 'StackView', 'ScreenTemplateFactory', 'bootbox'], 
             // show resource selection list
             /////////////////////////////////////////////////////////
 
-            var recResources = pepper.getResources();
+            var recResources = pepper.listenResources();
             $(recResources).each(function (i) {
 
                 // dont process deleted resources

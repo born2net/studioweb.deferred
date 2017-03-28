@@ -273,6 +273,7 @@ export class RedPepperService {
      @param {Number} i_player_id
      **/
     removeScenePlayer(i_scene_id, i_player_data_id) {
+        console.log(i_player_data_id);
         i_scene_id = this.sterilizePseudoId(i_scene_id);
         this.databaseManager.table_player_data().openForEdit(i_scene_id);
         var recPlayerData = this.databaseManager.table_player_data().getRec(i_scene_id);
@@ -1548,6 +1549,103 @@ export class RedPepperService {
     }
 
     /**
+     Remove a timeline from a campaign.
+     @method removeResource
+     @param {Number} i_resource_id
+     @return none
+     **/
+    removeResource(i_resource_id) {
+        this.databaseManager.table_resources().openForDelete(i_resource_id);
+        this.addPendingTables(['table_resources']);
+    }
+
+    /**
+     Remove all refernce to a resource id from within Scenes > BlockCollections that refer to that particulat resource id
+     In other words, check all scenes for existing block collections, and if they refer to resource id, remove that entry
+     @method removeResourceFromBlockCollectionInScenes
+     @param {Number} i_resource_id resource id to search for and remove in all scenes > BlockCollections
+     **/
+    removeResourceFromBlockCollectionInScenes(i_resource_id) {
+        var self = this;
+        $(self.databaseManager.table_player_data().getAllPrimaryKeys()).each(function (k, player_data_id) {
+            var recPlayerData = self.databaseManager.table_player_data().getRec(player_data_id);
+            var domSceneData = $.parseXML(recPlayerData['player_data_value']);
+            var currentSceneID = $(domSceneData).find('Player').eq(0).attr('id');
+            $(domSceneData).find('Player').each(function (i, playerData) {
+                $(playerData).find('[player="' + BlockLabels.BLOCKCODE_COLLECTION + '"]').each(function (i, playerDataBlockCollection) {
+                    $(playerDataBlockCollection).find('Collection').children().each(function (k, page) {
+                        var resource_id = $(page).find('Resource').attr('hResource');
+                        if (i_resource_id == resource_id) {
+                            $(page).remove();
+                            currentSceneID = this.sterilizePseudoId(currentSceneID);
+                            self.databaseManager.table_player_data().openForEdit(currentSceneID);
+                            var player_data = this.xmlToStringIEfix(domSceneData);
+                            recPlayerData['player_data_value'] = player_data;
+                        }
+                    });
+                });
+            });
+        });
+        this.addPendingTables(['table_player_data']);
+    }
+
+    /**
+     Remove all scene players that use resources (3100 & 3130) and that include the specified resource id
+     @method removeAllScenePlayersWithResource
+     @param {Number} i_resource_id
+     **/
+    removeAllScenePlayersWithResource(i_resource_id) {
+        var self = this;
+        $(self.databaseManager.table_player_data().getAllPrimaryKeys()).each(function (k, player_data_id) {
+            var recPlayerData = self.databaseManager.table_player_data().getRec(player_data_id);
+            var domSceneData = $.parseXML(recPlayerData['player_data_value']);
+            var sceneID = $(domSceneData).find('Player').eq(0).attr('id');
+            $(domSceneData).find('Player').each(function (i, playerData) {
+                $(playerData).find('[player="3100"],[player="3130"],[player="3140"]').each(function (i, playeResourceData) {
+                    var playerDataID = $(this).attr('id');
+                    var hResource = $(playeResourceData).find('Resource').attr('hResource');
+                    if (hResource == i_resource_id) {
+                        self.removeScenePlayer(sceneID, playerDataID);
+                    }
+                });
+            });
+        });
+        this.addPendingTables(['table_player_data']);
+    }
+
+    /**
+     Remove the resource from any block collection which resides in campaign timeline channels that uses that resource in its collection list
+     @method removeResourceFromBlockCollectionsInChannel
+     @param {Number} i_resource_id
+     @return none
+     **/
+    removeResourceFromBlockCollectionsInChannel(i_resource_id) {
+        var self = this;
+        $(self.databaseManager.table_campaign_timeline_chanel_players().getAllPrimaryKeys()).each(function (k, campaign_timeline_chanel_player_id) {
+            var recCampaignTimelineChannelPlayer = self.databaseManager.table_campaign_timeline_chanel_players().getRec(campaign_timeline_chanel_player_id);
+            var playerData = recCampaignTimelineChannelPlayer['player_data'];
+            var domPlayerData = $.parseXML(playerData);
+            var blockType = $(domPlayerData).find('Player').attr('player');
+            if (parseInt(blockType) == BlockLabels.BLOCKCODE_COLLECTION) {
+                $(domPlayerData).find('Collection').children().each(function (k, page) {
+                    var resource_hResource;
+                    var type = $(page).attr('type');
+                    if (type == 'resource') {
+                        resource_hResource = $(page).find('Resource').attr('hResource');
+                        if (resource_hResource == i_resource_id) {
+                            $(page).remove();
+                            var player_data = self.xmlToStringIEfix(domPlayerData)
+                            self.databaseManager.table_campaign_timeline_chanel_players().openForEdit(campaign_timeline_chanel_player_id);
+                            self.setCampaignTimelineChannelPlayerRecord(campaign_timeline_chanel_player_id, 'player_data', player_data);
+                        }
+                    }
+                });
+            }
+        });
+        this.addPendingTables(['table_campaign_timeline_chanel_players']);
+    }
+
+    /**
      Get all the campaign > timeline > channels ids of a timeline
      @method getChannelsOfTimeline
      @param {Number} i_campaign_timeline_id
@@ -2255,29 +2353,6 @@ export class RedPepperService {
     }
 
     /**
-     Remove all scene players that use resources (3100 & 3130) and that include the specified resource id
-     @method removeAllScenePlayersWithResource
-     @param {Number} i_resource_id
-     **/
-    removeAllScenePlayersWithResource(i_resource_id) {
-
-        $(this.databaseManager.table_player_data().getAllPrimaryKeys()).each(function (k, player_data_id) {
-            var recPlayerData = this.databaseManager.table_player_data().getRec(player_data_id);
-            var domSceneData = $.parseXML(recPlayerData['player_data_value']);
-            var sceneID = $(domSceneData).find('Player').eq(0).attr('id');
-            $(domSceneData).find('Player').each(function (i, playerData) {
-                $(playerData).find('[player="3100"],[player="3130"],[player="3140"]').each(function (i, playeResourceData) {
-                    var playerDataID = $(this).attr('id');
-                    var hResource = $(playeResourceData).find('Resource').attr('hResource');
-                    if (hResource == i_resource_id) {
-                        this.databaseManager.removeScenePlayer(sceneID, playerDataID);
-                    }
-                });
-            });
-        });
-    }
-
-    /**
      When we remove scene player ids we actually store them aside so we can restore them back after a save as the
      remote server expects a scene's player_data to have no player ids on its scene player_data
      @method restoreScenesWithPlayersIDs
@@ -2453,7 +2528,7 @@ export class RedPepperService {
 
     /**
      Get all none deleted (!=3) resources per current account
-     @method getResources
+     @method listenResources
      @return {Array} all records of all resources in current account
      **/
     getResources() {
@@ -2515,77 +2590,6 @@ export class RedPepperService {
 
         var recResource = this.databaseManager.table_resources().getRec(i_resource_id);
         return recResource['resource_name'];
-    }
-
-    /**
-     Remove all refernce to a resource id from within Scenes > BlockCollections that refer to that particulat resource id
-     In other words, check all scenes for existing block collections, and if they refer to resource id, remove that entry
-     @method removeResourceFromBlockCollectionInScenes
-     @param {Number} i_resource_id resource id to search for and remove in all scenes > BlockCollections
-     **/
-    removeResourceFromBlockCollectionInScenes(i_resource_id) {
-
-        $(this.databaseManager.table_player_data().getAllPrimaryKeys()).each(function (k, player_data_id) {
-            var recPlayerData = this.databaseManager.table_player_data().getRec(player_data_id);
-            var domSceneData = $.parseXML(recPlayerData['player_data_value']);
-            var currentSceneID = $(domSceneData).find('Player').eq(0).attr('id');
-            $(domSceneData).find('Player').each(function (i, playerData) {
-                $(playerData).find('[player="' + BlockLabels.BLOCKCODE_COLLECTION + '"]').each(function (i, playerDataBlockCollection) {
-                    $(playerDataBlockCollection).find('Collection').children().each(function (k, page) {
-                        var resource_id = $(page).find('Resource').attr('hResource');
-                        if (i_resource_id == resource_id) {
-                            $(page).remove();
-                            currentSceneID = this.sterilizePseudoId(currentSceneID);
-                            this.databaseManager.table_player_data().openForEdit(currentSceneID);
-                            var player_data = this.xmlToStringIEfix(domSceneData);
-                            recPlayerData['player_data_value'] = player_data;
-                        }
-                    });
-                });
-            });
-        });
-    }
-
-    /**
-     Remove the resource from any block collection which resides in campaign timeline channels that uses that resource in its collection list
-     @method removeResourceFromBlockCollectionsInChannel
-     @param {Number} i_resource_id
-     @return none
-     **/
-    removeResourceFromBlockCollectionsInChannel(i_resource_id) {
-
-        $(this.databaseManager.table_campaign_timeline_chanel_players().getAllPrimaryKeys()).each(function (k, campaign_timeline_chanel_player_id) {
-            var recCampaignTimelineChannelPlayer = this.databaseManager.table_campaign_timeline_chanel_players().getRec(campaign_timeline_chanel_player_id);
-            var playerData = recCampaignTimelineChannelPlayer['player_data'];
-            var domPlayerData = $.parseXML(playerData);
-            var blockType = $(domPlayerData).find('Player').attr('player');
-            if (parseInt(blockType) == BlockLabels.BLOCKCODE_COLLECTION) {
-                $(domPlayerData).find('Collection').children().each(function (k, page) {
-                    var resource_hResource;
-                    var type = $(page).attr('type');
-                    if (type == 'resource') {
-                        resource_hResource = $(page).find('Resource').attr('hResource');
-                        if (resource_hResource == i_resource_id) {
-                            $(page).remove();
-                            var player_data = this.xmlToStringIEfix(domPlayerData)
-                            this.databaseManager.table_campaign_timeline_chanel_players().openForEdit(campaign_timeline_chanel_player_id);
-                            this.databaseManager.setCampaignTimelineChannelPlayerRecord(campaign_timeline_chanel_player_id, 'player_data', player_data);
-                        }
-                    }
-                });
-            }
-        });
-    }
-
-    /**
-     Remove a timeline from a campaign.
-     @method removeResource
-     @param {Number} i_resource_id
-     @return none
-     **/
-    removeResource(i_resource_id) {
-
-        this.databaseManager.table_resources().openForDelete(i_resource_id);
     }
 
     /**
