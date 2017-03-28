@@ -10,18 +10,18 @@ import {ApplicationState} from "./application.state";
 import {compose} from "@ngrx/core";
 import {MainAppShowStateEnum} from "../app/app-component";
 import {LocationMarkModel} from "../models/LocationMarkModel";
+import {StationModel} from "../models/StationModel";
 
 const reducers = {msDatabase, appDb};
 export const developmentReducer: ActionReducer<ApplicationState> = compose(storeFreeze, combineReducers)(reducers);
 export const productionReducer: ActionReducer<ApplicationState> = combineReducers(reducers);
 
 export interface IMsDatabase {
-    stations: List<IStation>;
     thread: { [key: number]: any };
     sdk: ISDK;
 }
 
-export interface IStation  {
+export interface IStation {
     stationId: number;
     localAddress: string;
     localPort: number;
@@ -43,41 +43,46 @@ export interface IStation  {
     stationColor: string;
 }
 
-export interface IUiStateCampaign  {
+export interface IUiStateCampaign {
     campaignTimelineChannelSelected?: number;
     campaignTimelineBoardViewerSelected?: number;
-    campaignCreateOrientation?:number,
-    campaignCreateResolution?:string,
-    campaignCreateName?:string,
+    campaignCreateOrientation?: number,
+    campaignCreateResolution?: string,
+    campaignCreateName?: string,
     campaignSelected?: number;
     timelineSelected?: number;
-    blockChannelSelected?:number;
+    blockChannelSelected?: number;
 }
 
-export interface IUiStateLocation  {
+export interface IUiStateLocation {
     loadLocationMap?: boolean;
     locationMarkerSelected?: LocationMarkModel;
 }
 
-export interface IUiStateResources  {
+export interface IUiStateResources {
     resourceSelected?: number;
 }
 
-export interface IUiStateScene  {
+export interface IUiStateStations {
+    stationSelected?: number;
+}
+
+export interface IUiStateScene {
     sceneSelected?: number;
     blockSelected?: number;
     fabric?: {
-        scale?:number;
+        scale?: number;
     }
 }
 
 export interface IUiState {
     mainAppState?: MainAppShowStateEnum;
-    previewMode?:number;
-    uiSideProps?:number;
+    previewMode?: number;
+    uiSideProps?: number;
     campaign?: IUiStateCampaign;
     locationMap?: IUiStateLocation;
-    resources?:IUiStateResources
+    resources?: IUiStateResources
+    stations?: IUiStateStations
     scene?: IUiStateScene;
 }
 
@@ -87,15 +92,15 @@ export interface IAppDb {
     appStartTime: number;
     appBaseUrl: string;
     userModel: UserModel,
+    stations: List<StationModel>,
     cloudServers: string;
     serversStatus: string;
-    appAuthStatus: Map<string,AuthenticateFlags>;
+    appAuthStatus: Map<string, AuthenticateFlags>;
     appBaseUrlUser: string;
     appBaseUrlCloud: string;
 }
 
 export const INITIAL_STORE_DATA: IMsDatabase = {
-    stations: null,
     thread: null,
     sdk: null
 }
@@ -120,7 +125,10 @@ export const INITIAL_APP_DB: IAppDb = {
             locationMarkerSelected: null
         },
         resources: {
-          resourceSelected: -1
+            resourceSelected: -1
+        },
+        stations: {
+            stationSelected: -1
         },
         scene: {
             sceneSelected: -1,
@@ -133,6 +141,7 @@ export const INITIAL_APP_DB: IAppDb = {
     totalStations: '',
     appStartTime: -1,
     appBaseUrl: '',
+    stations: List([]),
     userModel: new UserModel({
         user: '',
         pass: '',

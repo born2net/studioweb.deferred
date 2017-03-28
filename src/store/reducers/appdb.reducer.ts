@@ -1,10 +1,11 @@
 import {IAppDb} from "../store.data";
-import {Map} from "immutable";
 import {UserModel} from "../../models/UserModel";
 import * as StoreActions from "../actions/appdb.actions";
 import * as EffectActions from "../effects/appdb.effects";
 import * as ActionsConst from "../actions/appdb.actions";
 import * as _ from 'lodash';
+import {Map, List} from 'immutable';
+import {StationModel} from "../../models/StationModel";
 
 const baseUrl = 'https://galaxy.signage.me/WebService/ResellerService.ashx';
 export const appBaseUrlCloud = 'https://secure.digitalsignage.com';
@@ -27,6 +28,11 @@ export function appDb(state: IAppDb, action: any): IAppDb {
             state.userModel = userModel.setTime();
             state.appBaseUrlUser = `${baseUrl}?resellerUserName=${userModel.getKey('user')}&resellerPassword=${userModel.getKey('pass')}`;
             state.appBaseUrlCloud = `${appBaseUrlCloud}/END_POINT/${userModel.getKey('user')}/${userModel.getKey('pass')}`;
+            return state;
+
+        case EffectActions.EFFECT_LOADED_STATIONS:
+            var stations: List<StationModel> = action.payload;
+            state.stations = stations;
             return state;
 
         case EffectActions.EFFECT_TWO_FACTOR_UPDATED:

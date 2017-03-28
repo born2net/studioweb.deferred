@@ -6,14 +6,13 @@ import {Directive, ElementRef, Renderer} from "@angular/core";
     }
 })
 export class BlurForwarder {
-    constructor(private elRef:ElementRef, private renderer:Renderer) {
+    constructor(private elRef: ElementRef, private renderer: Renderer) {
     }
 
     onBlur($event) {
-        this.renderer.invokeElementMethod(this.elRef.nativeElement,
-            'dispatchEvent', [new CustomEvent('input-blur', {bubbles: true})]);
+        // this.renderer.invokeElementMethod(this.elRef.nativeElement, 'dispatchEvent', [new CustomEvent('input-blur', {bubbles: true})]);
         // or just
-        // el.dispatchEvent(new CustomEvent('input-blur', { bubbles: true }));
+        this.elRef.nativeElement.dispatchEvent(new CustomEvent('input-blur', { bubbles: true }));
         // if you don't care about webworker compatibility
     }
 }

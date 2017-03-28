@@ -6,6 +6,7 @@ import {DropdownModule as DropdownModulePrime} from "primeng/primeng";
 import {SharedModule} from "../../modules/shared.module";
 import {Stations} from "./stations";
 import {StationsList} from "./stations-list";
+import {StationsPropsManager} from "./stations-props-manager";
 
 export const LAZY_ROUTES = [
     {path: ':folder', component: StationsNavigation},
@@ -15,7 +16,7 @@ export const LAZY_ROUTES = [
 
 @NgModule({
     imports: [DropdownModulePrime, SharedModule, CommonModule, RouterModule.forChild(LAZY_ROUTES)],
-    declarations: [StationsNavigation, Stations, StationsList]
+    declarations: [StationsNavigation, Stations, StationsList, StationsPropsManager]
 })
 export class StationsLazyModule {
 }

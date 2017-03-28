@@ -9,6 +9,7 @@ import {IUiState} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
 import {BlockService} from "../blocks/block-service";
 import {MainAppShowStateEnum} from "../app-component";
+import {EFFECT_LOAD_STATIONS} from "../../store/effects/appdb.effects";
 
 @Component({
     // changeDetection: ChangeDetectionStrategy.OnPush,
@@ -113,6 +114,7 @@ export class Stations extends Compbaser {
 
     constructor(private yp: YellowPepperService, private rp: RedPepperService, private bs: BlockService) {
         super();
+        this._loadStations();
         this.m_resourceModels$ = this.yp.listenResources();
         this.cancelOnDestroy(
             //
@@ -121,6 +123,10 @@ export class Stations extends Compbaser {
                     this.m_resourceModel = i_resources;
                 }, (e) => console.error(e))
         )
+    }
+
+    _loadStations(){
+        this.yp.ngrxStore.dispatch({type: EFFECT_LOAD_STATIONS, payload: {userData: this.rp.getUserData()}})
     }
 
     _onRemove() {

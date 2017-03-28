@@ -32,7 +32,7 @@ import {BlockService} from "../blocks/block-service";
                 </stations>
             </panel-split-main>
             <panel-split-side>
-                <!--<resource-props-manager></resource-props-manager>-->
+                <stations-props-manager></stations-props-manager>
             </panel-split-side>
         </panel-split-container>
     `

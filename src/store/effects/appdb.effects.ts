@@ -14,6 +14,9 @@ import {AuthenticateFlags} from "../actions/appdb.actions";
 import {RedPepperService} from "../../services/redpepper.service";
 import {IPepperConnection} from "../../store/imsdb.interfaces";
 import * as _ from 'lodash';
+import {IStation} from "../store.data";
+import {Map, List} from 'immutable';
+import {StationModel} from "../../models/StationModel";
 
 export const EFFECT_AUTH_START = 'EFFECT_AUTH_START';
 export const EFFECT_AUTH_END = 'EFFECT_AUTH_END';
@@ -22,6 +25,9 @@ export const EFFECT_AUTH_STATUS = 'EFFECT_AUTH_STATUS';
 export const EFFECT_TWO_FACTOR_AUTH = 'EFFECT_TWO_FACTOR_AUTH';
 export const EFFECT_TWO_FACTOR_UPDATING = 'EFFECT_TWO_FACTOR_UPDATING';
 export const EFFECT_TWO_FACTOR_UPDATED = 'EFFECT_TWO_FACTOR_UPDATED';
+export const EFFECT_LOAD_STATIONS = 'EFFECT_LOAD_STATIONS';
+export const EFFECT_LOADING_STATIONS = 'EFFECT_LOADING_STATIONS';
+export const EFFECT_LOADED_STATIONS = 'EFFECT_LOADED_STATIONS';
 
 @Injectable()
 export class AppDbEffects {
@@ -207,6 +213,41 @@ export class AppDbEffects {
                     }, (e) => console.error(e))
             }
         });
+    }
+
+    @Effect({dispatch: true})
+    loadStations: Observable<Action> = this.actions$.ofType(EFFECT_LOAD_STATIONS)
+        .switchMap(action => this._loadStations(action))
+        .map(stations => ({type: EFFECT_LOADED_STATIONS, payload: stations}));
+
+    private _loadStations(action: Action): Observable<List<StationModel>> {
+        const boundCallback = Observable.bindCallback(this.processXml, (xmlData: any) => xmlData);
+
+        this.store.dispatch({type: EFFECT_LOADING_STATIONS, payload: {}})
+        var url = window.g_protocol + action.payload.userData.domain + '/WebService/getStatus.ashx?user=' + action.payload.userData.userName + '&password=' + action.payload.userData.userPass + '&callback=?';
+        return this.http.get(url)
+            .catch((err: any) => {
+                bootbox.alert('Error loading stations, try again later...');
+                return Observable.throw(err);
+            })
+            .finally(() => {
+            })
+            .mergeMap((result: Response) => {
+                var s64: string = String(result.text());
+                s64 = s64.replace(/\?\({ "ret": "/, '').replace(/" }\)/, '');
+                var str = jQuery.base64.decode(s64);
+                return boundCallback(this, str)
+            }).map(response => {
+                var stationsList: List<StationModel> = List([]);
+                if (_.isEmpty(response.Stations))
+                    return stationsList;
+                response.Stations.Station.forEach((i_station) => {
+                    var station: IStation = i_station.attr;
+                    var newStation = new StationModel(station)
+                    stationsList = stationsList.push(newStation);
+                })
+                return stationsList;
+            })
     }
 
     private processXml(context, xmlData, cb) {
