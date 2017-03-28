@@ -1577,9 +1577,52 @@ export class RedPepperService {
                         var resource_id = $(page).find('Resource').attr('hResource');
                         if (i_resource_id == resource_id) {
                             $(page).remove();
-                            currentSceneID = this.sterilizePseudoId(currentSceneID);
+                            currentSceneID = self.sterilizePseudoId(currentSceneID);
                             self.databaseManager.table_player_data().openForEdit(currentSceneID);
-                            var player_data = this.xmlToStringIEfix(domSceneData);
+                            var player_data = self.xmlToStringIEfix(domSceneData);
+                            recPlayerData['player_data_value'] = player_data;
+                        }
+                    });
+                });
+            });
+        });
+        this.addPendingTables(['table_player_data']);
+    }
+
+    removeResourceFromBlockLocationInScenes(i_resource_id) {
+        var self = this;
+        $(self.databaseManager.table_player_data().getAllPrimaryKeys()).each(function (k, player_data_id) {
+            var recPlayerData = self.databaseManager.table_player_data().getRec(player_data_id);
+            var domSceneData = $.parseXML(recPlayerData['player_data_value']);
+            var currentSceneID = $(domSceneData).find('Player').eq(0).attr('id');
+            $(domSceneData).find('Player').each(function (i, playerData) {
+                $(playerData).find('[player="' + BlockLabels.LOCATION + '"]').each(function (i, playerDataBlockCollection) {
+                    $(playerDataBlockCollection).find('Fixed').children().each(function (k, page) {
+                        var resource_id = $(page).find('Resource').attr('hResource');
+                        if (i_resource_id == resource_id) {
+                            $(page).remove();
+                            currentSceneID = self.sterilizePseudoId(currentSceneID);
+                            self.databaseManager.table_player_data().openForEdit(currentSceneID);
+                            var player_data = self.xmlToStringIEfix(domSceneData);
+                            recPlayerData['player_data_value'] = player_data;
+                        }
+                    });
+                });
+            });
+        });
+        $(self.databaseManager.table_player_data().getAllPrimaryKeys()).each(function (k, player_data_id) {
+            var recPlayerData = self.databaseManager.table_player_data().getRec(player_data_id);
+            var domSceneData = $.parseXML(recPlayerData['player_data_value']);
+            var currentSceneID = $(domSceneData).find('Player').eq(0).attr('id');
+            $(domSceneData).find('Player').each(function (i, playerData) {
+                $(playerData).find('[player="' + BlockLabels.LOCATION + '"]').each(function (i, playerDataBlockCollection) {
+                    $(playerDataBlockCollection).find('GPS').children().each(function (k, page) {
+                        var resource_id = $(page).find('Resource').attr('hResource');
+                        if (i_resource_id == resource_id) {
+                            $(page).remove();
+                            currentSceneID = self.sterilizePseudoId(currentSceneID);
+                            self.databaseManager.table_player_data().openForEdit(currentSceneID);
+                            var player_data = self.xmlToStringIEfix(domSceneData);
                             recPlayerData['player_data_value'] = player_data;
                         }
                     });
@@ -1628,6 +1671,53 @@ export class RedPepperService {
             var blockType = $(domPlayerData).find('Player').attr('player');
             if (parseInt(blockType) == BlockLabels.BLOCKCODE_COLLECTION) {
                 $(domPlayerData).find('Collection').children().each(function (k, page) {
+                    var resource_hResource;
+                    var type = $(page).attr('type');
+                    if (type == 'resource') {
+                        resource_hResource = $(page).find('Resource').attr('hResource');
+                        if (resource_hResource == i_resource_id) {
+                            $(page).remove();
+                            var player_data = self.xmlToStringIEfix(domPlayerData)
+                            self.databaseManager.table_campaign_timeline_chanel_players().openForEdit(campaign_timeline_chanel_player_id);
+                            self.setCampaignTimelineChannelPlayerRecord(campaign_timeline_chanel_player_id, 'player_data', player_data);
+                        }
+                    }
+                });
+            }
+        });
+        this.addPendingTables(['table_campaign_timeline_chanel_players']);
+    }
+
+    removeResourceFromBlockLocationInChannel(i_resource_id) {
+        var self = this;
+        $(self.databaseManager.table_campaign_timeline_chanel_players().getAllPrimaryKeys()).each(function (k, campaign_timeline_chanel_player_id) {
+            var recCampaignTimelineChannelPlayer = self.databaseManager.table_campaign_timeline_chanel_players().getRec(campaign_timeline_chanel_player_id);
+            var playerData = recCampaignTimelineChannelPlayer['player_data'];
+            var domPlayerData = $.parseXML(playerData);
+            var blockType = $(domPlayerData).find('Player').attr('player');
+            if (parseInt(blockType) == BlockLabels.LOCATION) {
+                $(domPlayerData).find('Fixed').children().each(function (k, page) {
+                    var resource_hResource;
+                    var type = $(page).attr('type');
+                    if (type == 'resource') {
+                        resource_hResource = $(page).find('Resource').attr('hResource');
+                        if (resource_hResource == i_resource_id) {
+                            $(page).remove();
+                            var player_data = self.xmlToStringIEfix(domPlayerData)
+                            self.databaseManager.table_campaign_timeline_chanel_players().openForEdit(campaign_timeline_chanel_player_id);
+                            self.setCampaignTimelineChannelPlayerRecord(campaign_timeline_chanel_player_id, 'player_data', player_data);
+                        }
+                    }
+                });
+            }
+        });
+        $(self.databaseManager.table_campaign_timeline_chanel_players().getAllPrimaryKeys()).each(function (k, campaign_timeline_chanel_player_id) {
+            var recCampaignTimelineChannelPlayer = self.databaseManager.table_campaign_timeline_chanel_players().getRec(campaign_timeline_chanel_player_id);
+            var playerData = recCampaignTimelineChannelPlayer['player_data'];
+            var domPlayerData = $.parseXML(playerData);
+            var blockType = $(domPlayerData).find('Player').attr('player');
+            if (parseInt(blockType) == BlockLabels.LOCATION) {
+                $(domPlayerData).find('GPS').children().each(function (k, page) {
                     var resource_hResource;
                     var type = $(page).attr('type');
                     if (type == 'resource') {

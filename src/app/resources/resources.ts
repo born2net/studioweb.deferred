@@ -130,7 +130,9 @@ export class Resources extends Compbaser {
             this.rp.removeResource(this.m_resourceModel.getResourceId());
             this.rp.removeBlocksWithResourceID(this.m_resourceModel.getResourceId());
             this.rp.removeResourceFromBlockCollectionInScenes(this.m_resourceModel.getResourceId());
+            this.rp.removeResourceFromBlockLocationInScenes(this.m_resourceModel.getResourceId());
             this.rp.removeResourceFromBlockCollectionsInChannel(this.m_resourceModel.getResourceId());
+            this.rp.removeResourceFromBlockLocationInChannel(this.m_resourceModel.getResourceId());
             this.rp.removeAllScenePlayersWithResource(this.m_resourceModel.getResourceId());
             this.rp.reduxCommit();
             let uiState: IUiState = {

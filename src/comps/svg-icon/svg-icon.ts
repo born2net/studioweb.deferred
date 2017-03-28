@@ -16,12 +16,12 @@ export class SvgIcon {
     @Input() width;
     @Input() alt: string;
 
-    constructor(private http: Http, private elementRef: ElementRef) {
-        // private renderer: Renderer,
+    constructor(private http: Http, private elementRef: ElementRef,  private renderer: Renderer,) {
+
     }
 
     loadSvg(val: string) {
-        // this.http.get(`svgs/${val}.svg`)
+        // this.http.get(`svgs/${val}.svg`) // grab locally
         this.http.get(val)
             .subscribe(
                 res => {
