@@ -7,6 +7,8 @@ import {Observable} from "rxjs";
 import {Compbaser} from "ng-mslib";
 import {IUiState} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
+import {BlockService} from "../blocks/block-service";
+import {MainAppShowStateEnum} from "../app-component";
 
 @Component({
     // changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,7 +21,8 @@ import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.action
                     <i style="font-size: 1em" class="fa fa-plus"></i>
                     <span i18n>upload files</span>
                 </button>
-                <input type="file" accept=".flv,.mp4,.jpg,.png,.swf,.svg"/>
+                <input id="file"(change)="_onFileUpload($event)" type="file" title="add files" data-filename-placement="inside" multiple data-role="none" accept=".flv,.mp4,.jpg,.png,.swf,.svg"/>
+                <!--<input id="file" name="file" type="file" accept=".flv,.mp4,.jpg,.png,.swf,.svg" class="btn-primary" title="add files" data-filename-placement="inside" multiple data-role="none">-->
             </label>
             <div class="btn-group">
                 <button (click)="_onRemove()" type="button" class="btn btn-default">
@@ -108,11 +111,11 @@ import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.action
 export class Resources extends Compbaser {
 
     m_filter;
-    m_resourceModel:ResourcesModel;
+    m_resourceModel: ResourcesModel;
     m_viewMode = 'list';
     m_resourceModels$: Observable<List<ResourcesModel>>;
 
-    constructor(private yp: YellowPepperService, private rp: RedPepperService) {
+    constructor(private yp: YellowPepperService, private rp: RedPepperService, private bs: BlockService) {
         super();
         this.m_resourceModels$ = this.yp.listenResources();
         this.cancelOnDestroy(
@@ -124,7 +127,7 @@ export class Resources extends Compbaser {
         )
     }
 
-    _onRemove(){
+    _onRemove() {
         bootbox.confirm(`are you sure you want to remove ${this.m_resourceModel.getResourceName()}`, (i_result) => {
             if (!i_result) return;
             this.rp.removeResource(this.m_resourceModel.getResourceId());
@@ -141,6 +144,16 @@ export class Resources extends Compbaser {
             }
             this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
         });
+    }
+
+    _onFileUpload(event) {
+        var status: any = this.rp.uploadResources('file', this.bs);
+        if (status.length == 0) {
+            bootbox.alert('The file format is not supported');
+            return -1;
+        }
+        let uiState: IUiState = {mainAppState: MainAppShowStateEnum.SAVE}
+        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 
     _onSelected(i_resource: ResourcesModel) {

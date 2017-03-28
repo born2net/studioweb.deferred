@@ -14,6 +14,7 @@ import {NgmslibService} from "ng-mslib";
 import {IAddContents} from "../interfaces/IAddContent";
 import {BlockLabels, PLACEMENT_CHANNEL} from "../interfaces/Consts";
 import X2JS from "x2js";
+import {BlockService} from "../app/blocks/block-service";
 
 var parser = new X2JS({
     escapeMode: true,
@@ -2888,21 +2889,19 @@ export class RedPepperService {
      @param {String} i_elementID
      @return {Array} list of resources created from newly attached files or empty array if not valid resource loaded
      **/
-    uploadResources(i_elementID) {
-
-        //todo: fix
-        // var i_uploadFileElement = document.getElementById(i_elementID);
-        // var count = i_uploadFileElement.files.length;
-        // for (var iFile = 0; iFile < count; iFile++) {
-        //     var fileName = i_uploadFileElement.files[iFile];
-        //     var fileExtension = fileName.name.split('.')[1];
-        //     var block = BB.PepperHelper.getBlockCodeFromFileExt(fileExtension);
-        //     if (block == -1)
-        //         return [];
-        // }
-        // var resourceList = this.m_loaderManager.createResources(document.getElementById(i_elementID));
-        // // BB.comBroker.fire('EVENTS.ADDED_RESOURCE');
-        // return resourceList;
+    uploadResources(i_elementID, i_bs:BlockService) {
+        var i_uploadFileElement:any = document.getElementById(i_elementID);
+        var count = i_uploadFileElement.files.length;
+        for (var iFile = 0; iFile < count; iFile++) {
+            var fileName = i_uploadFileElement.files[iFile];
+            var fileExtension = fileName.name.split('.')[1].toLowerCase();
+            var block = i_bs.getBlockCodeFromFileExt(fileExtension);
+            if (block == -1)
+                return [];
+        }
+        var resourceList = this.loaderManager.createResources(document.getElementById(i_elementID));
+        // BB.comBroker.fire('EVENTS.ADDED_RESOURCE');
+        return resourceList;
     }
 
 

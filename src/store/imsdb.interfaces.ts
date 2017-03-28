@@ -40,5 +40,6 @@ export interface ILoadManager {
     m_dataBaseManager: IDataBaseManager;
     m_shortcutMap: {};
     m_userpass64: any;
+    createResources:( v:any )=>void;
 }
 
