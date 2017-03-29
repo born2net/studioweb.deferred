@@ -1,6 +1,6 @@
 import {Component} from "@angular/core";
 import {Compbaser} from "ng-mslib";
-import {Observable} from "rxjs";
+import {Observable, Subject} from "rxjs";
 import {SideProps} from "../../store/actions/appdb.actions";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {ResourcesModel} from "../../store/imsdb.interfaces_auto";
@@ -63,6 +63,8 @@ export class StationsPropsManager extends Compbaser {
     m_snapPath = '';
     shouldToggle = true;
     m_disabled = true;
+    m_eventValue = '';
+    // m_imageGrabber = new Subject();
 
     constructor(private yp: YellowPepperService, private rp: RedPepperService) {
         super();
@@ -76,10 +78,29 @@ export class StationsPropsManager extends Compbaser {
                     this.m_snapPath = '';
                     this.m_selected = i_station;
                     this.m_disabled = this.m_selected.connection == "0";
-                    console.log(this.m_disabled);
                 }, (e) => console.error(e))
         )
+    }
 
+    _fetchImage(url){
+        // var interval = 1000;
+        // function fetchItems() {
+        //     return 'items';
+        // }
+        //
+        // var data$ = Observable.interval(interval)
+        //     .map(() => {
+        //     return http.get();
+        // })
+        //     .filter(function(x) {return x.lastModified > Date.now() - interval}
+        //         .skip(1)
+        //         .startWith(fetchItems());
+    }
+
+    _onImageError(event){
+        this.m_snapPath = '';
+        this.m_loading = false;
+        console.log('could not load snap image');
     }
 
     _onCommand(i_command) {
@@ -111,16 +132,19 @@ export class StationsPropsManager extends Compbaser {
         this.m_snapPath = '';
         this.m_loading = true;
         var path = this.rp.sendSnapshot(d, 0.2, this.m_selected.id, () => {
+        this.m_snapPath = path;
         });
         setTimeout(() => {
             this.m_loading = false;
             this.m_snapPath = path;
-        }, 3000);
+        }, 100);
 
     }
 
     _onSendEvent() {
         this.shouldToggle != this.shouldToggle;
+        this.rp.sendEvent(this.m_eventValue, this.m_selected.id, function () {
+        });
     }
 
     ngOnInit() {

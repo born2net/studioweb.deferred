@@ -16,10 +16,11 @@
                     <loading class="loading" [size]="'50px'" *ngIf="m_loading"></loading>
                 </div>
                 <div *ngIf="m_snapPath != ''" style="text-align: center">
-                    <img [src]="m_snapPath"/>
+                    <img (error)="_onImageError($event)" [src]="m_snapPath"/>
                 </div>
 
             </div>
+            <hr/>
             <div id="propWrap">
                 <div id="stationcontrol" class="btn-group">
                     <button (click)="_onCommand('snap')" [disabled]="m_disabled" type="button" class="btn btn-default">
@@ -71,14 +72,15 @@
                         </li>
                     </ul>
                 </div>
-                <hr/>
+                <br/>
+                <br/>
                 <Label>Station events</Label>
-                <input type="text" name="eventName" data-localize="eventName" placeholder="event name" id="stationSendEventValue" value="">
+                <input [(ngModel)]="m_eventValue" type="text" name="eventName" data-localize="eventName" placeholder="event name" id="stationSendEventValue" value="">
 
                 <p></p>
                 <button (click)="_onSendEvent()" [@toggleState]="shouldToggle" id="stationEventSendCommand" class="btn btn-primary"><i class="fa fa-paper-plane"></i> Send event to remote station
                 </button>
-                <hr class="hrthin"/>
+                <hr/>
                 <div>
                     <label class="pull-left" data-localize="serverMode">server mode (listen to local
                         events)</label>

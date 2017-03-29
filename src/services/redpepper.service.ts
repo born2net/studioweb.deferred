@@ -2140,7 +2140,7 @@ export class RedPepperService {
         var url = window.g_protocol + this.getUserData().domain + '/WebService/sendCommand.ashx?i_user=' + this.getUserData().userName + '&i_password=' + this.getUserData().userPass + '&i_stationId=' + i_stationId + '&i_command=' + 'captureScreen2' + '&i_param1=' + i_fileName + '&i_param2=' + i_quality + '&callback=?';
         $.getJSON(url, i_callBack);
         var path = window.g_protocol + this.getUserData().domain + '/Snapshots/business' + this.getUserData().businessID + "/station" + i_stationId + '/' + i_fileName + '.jpg';
-        console.log(path);
+        // console.log(path);
         return path;
     }
 
