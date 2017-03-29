@@ -47,6 +47,7 @@ import {FontLoaderService} from "../services/font-loader-service";
 import {SimpleGridModule} from "../comps/simple-grid-module/SimpleGridModule";
 import {GlobalErrorHandler} from "../services/global-error-handler";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+
 // import "fabric"; // need to remove if we import via cli
 // import {ScreenTemplate} from "../comps/screen-template/screen-template";
 

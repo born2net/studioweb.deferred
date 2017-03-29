@@ -54,6 +54,10 @@ export class StationModel extends StoreModel implements IStation{
         return this.getKey('name');
     }
 
+    public getStationName() {
+        return this.getKey('name');
+    }
+
     public get connectionStatusChanged() {
         return this.getKey('connectionStatusChanged');
     }

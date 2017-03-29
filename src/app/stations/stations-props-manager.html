@@ -1,0 +1,106 @@
+<small class="debug">{{me}}</small>
+<hr/>
+<ul matchBodyHeight="50" style="overflow-y: auto; overflow-x: hidden" [ngSwitch]="m_sideProps$ | async">
+    <div *ngSwitchCase="m_sidePropsEnum.stationProps">
+        <div id="stationProperties">
+            <div id="stationRename"></div>
+            <div id="snapShotWrap">
+                <div style="text-align: center" >
+                    <svg style="width: 250px" xmlns="http://www.w3.org/2000/svg">
+                        <g>
+                            <rect stroke-width="10" stroke="#191919" height="120" width="220" y="9.5" x="10" fill="#cccccc"></rect>
+                        </g>
+                    </svg>
+                </div>
+                <div style="text-align: center" >
+                    <loading class="loading" [size]="'50px'" *ngIf="m_loading" ></loading>
+                </div>
+
+                <img id="snapShotImage"/>
+                <img id="snapShotSpinner" style="display: none" src="_assets/preload2_gray.gif"/>
+            </div>
+            <div id="stationcontrol" class="btn-group">
+                <button [disabled]="m_disabled" type="button" class="btn btn-default">
+                    <span class="glyphicon  glyphicon glyphicon-picture"></span>
+                </button>
+                <button  [disabled]="m_disabled" type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon glyphicon-play"></span>
+                </button>
+                <button  [disabled]="m_disabled" type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon glyphicon-stop"></span>
+                </button>
+                <button  [disabled]="m_disabled" type="button" class="btn btn-default">
+                    <span class="fa fa-power-off"></span>
+                </button>
+            </div>
+            <div id="stationSelectionCampaignWrap">
+                <select id="stationSelectionCampaign" class="form-control"> </select>
+            </div>
+            <br/>
+            <div id="stationInfo">
+                <ul>
+                    <li>
+                        <span>Name </span>: {{m_selected.name}}
+                    </li>
+                    <li>
+                        <span>Station id: </span>: {{m_selected.id}}
+                    </li>
+                    <li>
+                        <span>OS </span>: {{m_selected.os}}
+                    </li>
+                    <li>
+                        <span>AIR </span>: {{m_selected.airVersion}}
+                    </li>
+                    <li>
+                        <span>App version: </span>: {{m_selected.appVersion}}
+                    </li>
+                    <li>
+                        <span>Peak memory: </span>: {{m_selected.peakMemory}}
+                    </li>
+                    <li>
+                        <span>Total memory: </span>: {{m_selected.totalMemory}}
+                    </li>
+                    <li>
+                        <span>Running: </span>: {{m_selected.runningTime}}
+                    </li>
+                    <li>
+                        <span>Watchdog: </span>: {{m_selected.watchDogConnection == "1" ? 'ON' : 'OFF'}}
+                    </li>
+                    <li>
+                        <span>Last update: </span>: {{m_selected.lastUpdate}}
+                    </li>
+                </ul>
+            </div>
+            <hr/>
+            <Label>Station events</Label>
+            <input type="text" name="eventName" data-localize="eventName" placeholder="event name" id="stationSendEventValue" value="">
+
+            <p></p>
+            <button (click)="_onSendEvent()" [@toggleState]="shouldToggle" id="stationEventSendCommand" class="btn btn-primary" ><i class="fa fa-paper-plane"></i> Send event to remote station
+            </button>
+            <hr class="hrthin"/>
+            <div>
+                <label class="pull-left" data-localize="serverMode">server mode (listen to local
+                    events)</label>
+
+                <div class="clearfix" style="padding-bottom: 13px"></div>
+                <div style="position: relative; top: -12px" class="material-switch pull-left">
+                    <input id="stationServerMode" name="someSwitchOption001" type="checkbox"/>
+                    <label for="stationServerMode" class="label-primary"></label>
+                </div>
+            </div>
+            <div id="stationServerProps">
+                <div class="clearfix"></div>
+                <div id="stationServerIp" class="pull-left"></div>
+                <div class="clearfix"></div>
+                <div id="stationServerPort" class="pull-left"></div>
+            </div>
+        </div>
+    </div>
+
+    <div *ngSwitchCase="m_sidePropsEnum.miniDashboard">
+        <h5>station dashboard</h5>
+    </div>
+
+</ul>
+

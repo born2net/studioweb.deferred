@@ -21,6 +21,10 @@
     font-size: 13px;
 }
 
+select {
+    border-radius: 0 !important;
+}
+
 button, a {
     border-radius: 0 !important;
 }

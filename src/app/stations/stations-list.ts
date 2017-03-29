@@ -37,7 +37,7 @@ import {StationModel} from "../../models/StationModel";
         <small class="debug">{{me}}</small>
         <ul style="padding: 10px" (click)="$event.preventDefault()" class="appList list-group">
             <a *ngFor="let station of m_stations; let i = index" (click)="_onSelected($event, station, i)"
-               [class.hidden]="station | FilterModelPipe:filter:station:'getResourceName'"
+               [class.hidden]="station | FilterModelPipe:filter:station:'getStationName'"
                [ngClass]="{'selectedItem': selectedIdx == i}" href="#" class="list-group-item resourcesListItems">
                 <span [ngClass]="{'green': station.connection == '1', 'red': station.connection == '0', 'yellow': station.connection == '2'}" class="pull-left fa fa-4x fa-circle"></span>
                 <div style="position: relative; left: 20px">
