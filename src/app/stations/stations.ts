@@ -125,7 +125,7 @@ export class Stations extends Compbaser {
         if (_.isUndefined(this.m_loadStationsHandle)){
             this.m_loadStationsHandle = setInterval(() => {
                 this._loadStations();
-            }, 50000)
+            }, 5000)
         }
     }
 

@@ -76,7 +76,7 @@ export class StationsPropsManager extends Compbaser {
     m_campaigns: List<CampaignsModelExt>;
     m_ip = '';
     m_eventValue = '';
-    // m_imageGrabber = new Subject();
+    m_inFocus = false;
 
     constructor(private fb: FormBuilder, private yp: YellowPepperService, private rp: RedPepperService, private cd:ChangeDetectorRef) {
         super();
@@ -127,10 +127,16 @@ export class StationsPropsManager extends Compbaser {
     _render() {
         this.contGroup.controls.m_campaignsControl.setValue(this.m_selectedCampaignId);
         this.contGroup.controls.m_enableLan.setValue(this.m_selectedBranchStation.getLanEnabled);
+        if (this.m_inFocus)
+            return;
         this.contGroup.controls.m_ip.setValue(this.m_selectedBranchStation.getLanServerIp());
         this.contGroup.controls.m_port.setValue(this.m_selectedBranchStation.getLanServerPort());
     }
 
+    _onFocus(i_value){
+        console.log(Math.random() + ' ' + i_value);
+        this.m_inFocus = i_value;
+    }
     _fetchImage(url) {
         // var interval = 1000;
         // function fetchItems() {
@@ -201,8 +207,12 @@ export class StationsPropsManager extends Compbaser {
         // console.log(this.contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.contGroup.value)));
         if (this.contGroup.status != 'VALID')
             return;
+        if (this.contGroup.value.m_ip.match(/\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}\b/))
+            this.rp.setStationRecordValue(this.m_selectedStation.id, 'lan_server_ip', this.contGroup.value.m_ip);
         this.rp.setStationCampaignID(this.m_selectedStation.id, this.contGroup.value.m_campaignsControl);
         this.rp.setStationRecordValue(this.m_selectedStation.id, 'lan_server_enabled', this.contGroup.value.m_enableLan == true ? 'True' : 'False');
+        this.rp.setStationRecordValue(this.m_selectedStation.id, 'lan_server_port', this.contGroup.value.m_port);
+
         this.rp.reduxCommit();
         this.cd.markForCheck();
     }

@@ -99,11 +99,11 @@
                         <ul class="list-group">
                             <li class="list-group-item">
                                 <span i18n class="inliner">ip address</span>
-                                <input formControlName="m_ip" type="text" class="numStepper inliner">
+                                <input (focus)="_onFocus(true)" (blur)="_onFocus(false)" formControlName="m_ip" type="text" class="numStepper inliner">
                             </li>
                             <li class="list-group-item">
                                 <span i18n class="inliner">port</span>
-                                <input formControlName="m_port" type="number" step="0.1" class="numStepper inliner">
+                                <input (focus)="_onFocus(true)" (blur)="_onFocus(false)" formControlName="m_port" type="number" step="1" class="numStepper inliner">
                             </li>
                         </ul>
                     </div>
