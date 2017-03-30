@@ -1839,6 +1839,22 @@ export class RedPepperService {
     }
 
     /**
+     Remove station, delete it from internal sdk and push to server on save
+     @method removeStation
+     @param {Number} i_station
+     **/
+    removeStation(i_native_station_id) {
+        $(this.databaseManager.table_branch_stations().getAllPrimaryKeys()).each((k, branch_station_id) => {
+            var recBranchStation = this.databaseManager.table_branch_stations().getRec(branch_station_id);
+            if (recBranchStation['native_id'] == i_native_station_id) {
+                this.databaseManager.table_branch_stations().openForDelete(branch_station_id);
+                this.databaseManager.table_station_ads().openForDelete(branch_station_id);
+            }
+        });
+        this.addPendingTables(['table_station_ads','table_branch_stations']);
+    }
+
+    /**
      Set a player_id record in sdk on key with value
      The method uses generic key / value fields so it can set any part of the record.
      **/
@@ -2889,22 +2905,6 @@ export class RedPepperService {
                 recBranchStationEdit.lan_server_enabled = i_enabled;
                 recBranchStationEdit.lan_server_port = i_port;
                 recBranchStationEdit.lan_server_ip = i_lan_server_ip;
-            }
-        });
-    }
-
-    /**
-     Remove station, delete it from internal sdk and push to server on save
-     @method removeStation
-     @param {Number} i_station
-     **/
-    removeStation(i_native_station_id) {
-
-        $(this.databaseManager.table_branch_stations().getAllPrimaryKeys()).each(function (k, branch_station_id) {
-            var recBranchStation = this.databaseManager.table_branch_stations().getRec(branch_station_id);
-            if (recBranchStation['native_id'] == i_native_station_id) {
-                this.databaseManager.table_branch_stations().openForDelete(branch_station_id);
-                this.databaseManager.table_station_ads().openForDelete(branch_station_id);
             }
         });
     }

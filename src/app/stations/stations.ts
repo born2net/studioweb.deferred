@@ -24,7 +24,7 @@ import * as _ from 'lodash';
                     <i style="font-size: 1em" class="fa fa-refresh"></i>
                     <span i18n>reload</span>
                 </button>
-                <button (click)="_onRemove()" type="button" class="btn btn-default">
+                <button (click)="_removeStation()" type="button" class="btn btn-default">
                     <i style="font-size: 1em" class="fa fa-minus"></i>
                     <span i18n>remove</span>
                 </button>
@@ -103,7 +103,6 @@ export class Stations extends Compbaser {
 
     m_filter;
     m_stationModel: StationModel;
-    m_viewMode = 'list';
     m_stationModels$: Observable<List<StationModel>>;
     m_loadStationsHandle;
 
@@ -118,44 +117,57 @@ export class Stations extends Compbaser {
                     this.m_stationModel = i_staionModel;
                 }, (e) => console.error(e))
         )
+
+        this.cancelOnDestroy(
+            //
+            this.yp.listenMainAppState()
+                .subscribe((i_value: MainAppShowStateEnum) => {
+                    switch (i_value) {
+                        case MainAppShowStateEnum.SAVED: {
+                            this._loadStations();
+                            break;
+                        }
+                    }
+                }, (e) => console.error(e))
+        )
     }
 
     _loadStations() {
         this.yp.ngrxStore.dispatch({type: EFFECT_LOAD_STATIONS, payload: {userData: this.rp.getUserData()}})
-        if (_.isUndefined(this.m_loadStationsHandle)){
+        if (_.isUndefined(this.m_loadStationsHandle)) {
             this.m_loadStationsHandle = setInterval(() => {
                 this._loadStations();
             }, 5000)
         }
     }
 
-    _onRemove() {
-        // bootbox.confirm(`are you sure you want to remove ${this.m_resourceModel.getResourceName()}`, (i_result) => {
-        //     if (!i_result) return;
-        //     // this.rp.removeResource(this.m_resourceModel.getResourceId());
-        //     // this.rp.removeBlocksWithResourceID(this.m_resourceModel.getResourceId());
-        //     // this.rp.removeResourceFromBlockCollectionInScenes(this.m_resourceModel.getResourceId());
-        //     // this.rp.removeResourceFromBlockLocationInScenes(this.m_resourceModel.getResourceId());
-        //     // this.rp.removeResourceFromBlockCollectionsInChannel(this.m_resourceModel.getResourceId());
-        //     // this.rp.removeResourceFromBlockLocationInChannel(this.m_resourceModel.getResourceId());
-        //     // this.rp.removeAllScenePlayersWithResource(this.m_resourceModel.getResourceId());
-        //     // this.rp.reduxCommit();
-        //     // let uiState: IUiState = {
-        //     //     uiSideProps: SideProps.miniDashboard,
-        //     //     resources: {resourceSelected: -1}
-        //     // }
-        //     // this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
-        // });
-    }
-
-    _onFileUpload(event) {
-        var status: any = this.rp.uploadResources('file', this.bs);
-        if (status.length == 0) {
-            bootbox.alert('The file format is not supported');
-            return -1;
+    _removeStation() {
+        if (_.isUndefined(this.m_stationModel)) {
+            bootbox.dialog({
+                message: 'No station selected...',
+                buttons: {
+                    danger: {
+                        label: 'close',
+                        className: "btn-danger",
+                        callback: function () {
+                        }
+                    }
+                }
+            });
+            return false;
         }
-        let uiState: IUiState = {mainAppState: MainAppShowStateEnum.SAVE}
-        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+        bootbox.confirm('Are you sure you want to uninstall the selected station?', (result) => {
+            if (!result) return;
+            // pepper.sendCommand('rebootStation', self.m_selected_station_id, () => {});
+            this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: {uiSideProps: SideProps.miniDashboard}}))
+            this.rp.removeStation(this.m_stationModel.id);
+            this.rp.sendCommand('rebootPlayer', this.m_stationModel.id, () => {
+            });
+            this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: {mainAppState: MainAppShowStateEnum.SAVE}}))
+            this.rp.sync(() => {
+                // this.rp.reduxCommit()
+            });
+        });
     }
 
     _onSelected(i_station: StationModel) {
@@ -166,8 +178,10 @@ export class Stations extends Compbaser {
         this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 
-    destroy(){
+    destroy() {
         clearInterval(this.m_loadStationsHandle);
+        var uiState: IUiState = {stations: {stationSelected: -1}}
+        this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 }
 

@@ -75,10 +75,9 @@ export class StationsPropsManager extends Compbaser {
     m_port = '';
     m_campaigns: List<CampaignsModelExt>;
     m_ip = '';
-    m_eventValue = '';
     m_inFocus = false;
 
-    constructor(private fb: FormBuilder, private yp: YellowPepperService, private rp: RedPepperService, private cd:ChangeDetectorRef) {
+    constructor(private fb: FormBuilder, private yp: YellowPepperService, private rp: RedPepperService, private cd: ChangeDetectorRef) {
         super();
         this.m_uiUserFocusItem$ = this.yp.ngrxStore.select(store => store.appDb.uiState.uiSideProps);
         this.m_sideProps$ = this.yp.ngrxStore.select(store => store.appDb.uiState.uiSideProps);
@@ -98,33 +97,36 @@ export class StationsPropsManager extends Compbaser {
                     this.m_campaigns = i_campaigns;
                 }, (e) => console.error(e))
         )
+        this.cancelOnDestroy(
+            //
+            this.yp.listenStationSelected()
+                .map((i_station: StationModel) => {
+                    this.m_snapPath = '';
+                    this.m_selectedStation = i_station;
+                    this.m_disabled = this.m_selectedStation.connection == "0";
+                    return this.m_selectedStation.id;
+                })
+                .mergeMap(i_station_id => {
+                    return this.yp.getStationCampaignID(i_station_id, true)
+                        .map((i_campaign_id) => {
+                            return {i_station_id, i_campaign_id};
+                        })
 
-        //
-        this.yp.listenStationSelected()
-            .map((i_station: StationModel) => {
-                this.m_snapPath = '';
-                this.m_selectedStation = i_station;
-                this.m_disabled = this.m_selectedStation.connection == "0";
-                return this.m_selectedStation.id;
-            })
-            .mergeMap(i_station_id => {
-                return this.yp.getStationCampaignID(i_station_id, true)
-                    .map((i_campaign_id) => {
-                        return {i_station_id, i_campaign_id};
-                    })
-
-            })
-            .mergeMap(({i_station_id, i_campaign_id}) => {
-                this.m_selectedCampaignId = i_campaign_id;
-                return this.yp.listenStationRecord(i_station_id)
-            })
-            .subscribe((i_branchStationsModel) => {
-                this.m_selectedBranchStation = i_branchStationsModel;
-                this._render();
-            }, (e) => console.error(e))
+                })
+                .mergeMap(({i_station_id, i_campaign_id}) => {
+                    this.m_selectedCampaignId = i_campaign_id;
+                    return this.yp.listenStationRecord(i_station_id)
+                })
+                .subscribe((i_branchStationsModel) => {
+                    this.m_selectedBranchStation = i_branchStationsModel;
+                    this._render();
+                }, (e) => console.error(e))
+        )
     }
 
     _render() {
+        if(!this.m_selectedBranchStation)
+            return;
         this.contGroup.controls.m_campaignsControl.setValue(this.m_selectedCampaignId);
         this.contGroup.controls.m_enableLan.setValue(this.m_selectedBranchStation.getLanEnabled);
         if (this.m_inFocus)
@@ -133,10 +135,10 @@ export class StationsPropsManager extends Compbaser {
         this.contGroup.controls.m_port.setValue(this.m_selectedBranchStation.getLanServerPort());
     }
 
-    _onFocus(i_value){
-        console.log(Math.random() + ' ' + i_value);
+    _onFocus(i_value) {
         this.m_inFocus = i_value;
     }
+
     _fetchImage(url) {
         // var interval = 1000;
         // function fetchItems() {
@@ -192,6 +194,7 @@ export class StationsPropsManager extends Compbaser {
         setTimeout(() => {
             this.m_loading = false;
             this.m_snapPath = path;
+            console.log('loading image from ' + this.m_snapPath);
         }, 100);
 
     }

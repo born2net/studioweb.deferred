@@ -42,7 +42,7 @@
                     </select>
                     <br/>
                     <div id="stationInfo">
-                        <ul>
+                        <ul *ngIf="m_selectedStation">
                             <li>
                                 <span>Name </span>: {{m_selectedStation.name}}
                             </li>
@@ -95,7 +95,7 @@
                         </div>
                     </div>
                     <div class="clearfix"></div>
-                    <div *ngIf="m_selectedBranchStation.getLanEnabled" class="row">
+                    <div *ngIf="m_selectedBranchStation && m_selectedBranchStation.getLanEnabled" class="row">
                         <ul class="list-group">
                             <li class="list-group-item">
                                 <span i18n class="inliner">ip address</span>
