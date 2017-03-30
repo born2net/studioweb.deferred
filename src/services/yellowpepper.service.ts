@@ -385,7 +385,7 @@ export class YellowPepperService {
         var selected$ = this.store.select(store => store.appDb.uiState.stations.stationSelected);
         var stations$ = this.store.select(store => store.appDb.stations);
         return selected$
-            .withLatestFrom(stations$, (stationId, stations: List<StationModel>) => {
+            .combineLatest(stations$, (stationId, stations: List<StationModel>) => {
                 return stations.find((station: StationModel) => {
                     return station.id == stationId;
                 });
@@ -445,6 +445,18 @@ export class YellowPepperService {
     }
 
     /**
+     Returns the record for a station id
+     **/
+    listenStationRecord(i_native_station_id): Observable<BranchStationsModelExt> {
+        return this.ngrxStore.select(store => store.msDatabase.sdk.table_branch_stations)
+            .map((i_branchStationsModels: List<BranchStationsModelExt>) => {
+                return i_branchStationsModels.find((i_branchStationsModel) => {
+                    return i_branchStationsModel.getNativeId == i_native_station_id;
+                })
+            });
+    }
+
+    /**
      get time line total duration by channel
      **/
     getTimelineTotalDurationByChannel(i_campaign_timeline_id): Observable<number> {
@@ -472,18 +484,6 @@ export class YellowPepperService {
                 // console.log('winner ' + longestChannelDuration);
                 return longestChannelDuration;
             })
-    }
-
-    /**
-     Returns the record for a station id
-     **/
-    getStationRecord(i_native_station_id): Observable<BranchStationsModelExt> {
-        return this.ngrxStore.select(store => store.msDatabase.sdk.table_branch_stations)
-            .map((i_branchStationsModels: List<BranchStationsModelExt>) => {
-                return i_branchStationsModels.find((i_branchStationsModel) => {
-                    return i_branchStationsModel.getNativeId == i_native_station_id;
-                })
-            }).take(1);
     }
 
     getStationCampaignID(i_native_station_id, emitOnEmpty: boolean = false): Observable<number> {

@@ -129,7 +129,7 @@ export class RedPepperService {
     /**
      Return all authenticated user data
      **/
-    getUserData():IPepperUserData {
+    getUserData(): IPepperUserData {
         return {
             userName: this['m_userName'],
             userPass: this['m_userPassword'],
@@ -1197,6 +1197,21 @@ export class RedPepperService {
     }
 
     /**
+     Set a station record via object arg into sdk table_branch_stations
+     **/
+    setStationRecordValue(i_native_station_id, field, value) {
+        $(this.databaseManager.table_branch_stations().getAllPrimaryKeys()).each((k, branch_station_id) => {
+            var recBranchStation = this.databaseManager.table_branch_stations().getRec(branch_station_id);
+            if (recBranchStation['native_id'] == i_native_station_id) {
+                this.databaseManager.table_branch_stations().openForEdit(branch_station_id);
+                var recBranchStationEdit = this.databaseManager.table_branch_stations().getRec(branch_station_id);
+                recBranchStationEdit[field] = value;
+            }
+        });
+        this.addPendingTables(['table_branch_stations']);
+    }
+
+    /**
      Remove the enitre campaigns and it's related boards
      @method removeCampaignEntirely
      @param {Number} i_campaign_id
@@ -1543,6 +1558,25 @@ export class RedPepperService {
         //     totalSeconds: totalSeconds
         // }
         // this.databaseManager.fire(Pepper['BLOCK_LENGTH_CHANGED'], this, null, returnData);
+    }
+
+    /**
+     Set a station so its bound to campaign_id
+     @method SetStationCampaignID
+     @param {Number} i_native_station_id
+     @param {Number} i_campaign_id
+     **/
+    setStationCampaignID(i_native_station_id, i_campaign_id) {
+        $(this.databaseManager.table_branch_stations().getAllPrimaryKeys()).each((k, branch_station_id) => {
+            var recBranchStation = this.databaseManager.table_branch_stations().getRec(branch_station_id);
+            if (recBranchStation['native_id'] == i_native_station_id) {
+                this.databaseManager.table_branch_stations().openForEdit(branch_station_id);
+                var recBranchStationEdit = this.databaseManager.table_branch_stations().getRec(branch_station_id);
+                var campaign_board_id = this.getCampaignBoardIdFromCampaignId(i_campaign_id);
+                recBranchStationEdit.campaign_board_id = campaign_board_id;
+            }
+        });
+        this.addPendingTables(['table_branch_stations']);
     }
 
     /**
@@ -2838,25 +2872,6 @@ export class RedPepperService {
         });
     }
 
-    /**
-     Set a station so its bound to campaign_id
-     @method SetStationCampaignID
-     @param {Number} i_native_station_id
-     @param {Number} i_campaign_id
-     **/
-    setStationCampaignID(i_native_station_id, i_campaign_id) {
-
-        $(this.databaseManager.table_branch_stations().getAllPrimaryKeys()).each(function (k, branch_station_id) {
-            var recBranchStation = this.databaseManager.table_branch_stations().getRec(branch_station_id);
-            if (recBranchStation['native_id'] == i_native_station_id) {
-                this.databaseManager.table_branch_stations().openForEdit(branch_station_id);
-                var recBranchStationEdit = this.databaseManager.table_branch_stations().getRec(branch_station_id);
-                var campaign_board_id = this.getCampaignBoardIdFromCampaignId(i_campaign_id);
-                recBranchStationEdit.campaign_board_id = campaign_board_id;
-            }
-        });
-    }
-
 
     /**
      Set a station to server mode enable / disable
@@ -2901,8 +2916,8 @@ export class RedPepperService {
      @param {String} i_elementID
      @return {Array} list of resources created from newly attached files or empty array if not valid resource loaded
      **/
-    uploadResources(i_elementID, i_bs:BlockService) {
-        var i_uploadFileElement:any = document.getElementById(i_elementID);
+    uploadResources(i_elementID, i_bs: BlockService) {
+        var i_uploadFileElement: any = document.getElementById(i_elementID);
         var count = i_uploadFileElement.files.length;
         for (var iFile = 0; iFile < count; iFile++) {
             var fileName = i_uploadFileElement.files[iFile];

@@ -90,7 +90,7 @@
 
                         <div class="clearfix" style="padding-bottom: 13px"></div>
                         <div style="position: relative; top: -12px" class="material-switch pull-left">
-                            <input formControlName="m_enableLan" id="stationServerMode" name="someSwitchOption001" type="checkbox"/>
+                            <input (change)="saveToStore()" formControlName="m_enableLan" id="stationServerMode" name="someSwitchOption001" type="checkbox"/>
                             <label for="stationServerMode" class="label-primary"></label>
                         </div>
                     </div>

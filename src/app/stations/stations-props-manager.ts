@@ -1,4 +1,4 @@
-import {Component} from "@angular/core";
+import {ChangeDetectorRef, Component} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {Observable} from "rxjs";
 import {SideProps} from "../../store/actions/appdb.actions";
@@ -78,7 +78,7 @@ export class StationsPropsManager extends Compbaser {
     m_eventValue = '';
     // m_imageGrabber = new Subject();
 
-    constructor(private fb: FormBuilder, private yp: YellowPepperService, private rp: RedPepperService) {
+    constructor(private fb: FormBuilder, private yp: YellowPepperService, private rp: RedPepperService, private cd:ChangeDetectorRef) {
         super();
         this.m_uiUserFocusItem$ = this.yp.ngrxStore.select(store => store.appDb.uiState.uiSideProps);
         this.m_sideProps$ = this.yp.ngrxStore.select(store => store.appDb.uiState.uiSideProps);
@@ -87,8 +87,8 @@ export class StationsPropsManager extends Compbaser {
             'm_campaignsControl': [''],
             'm_eventValue': [''],
             'm_enableLan': [],
-            'm_ip': ['192.168.1.2'],
-            'm_port': [1024]
+            'm_ip': [],
+            'm_port': []
         });
 
         this.cancelOnDestroy(
@@ -116,60 +116,19 @@ export class StationsPropsManager extends Compbaser {
             })
             .mergeMap(({i_station_id, i_campaign_id}) => {
                 this.m_selectedCampaignId = i_campaign_id;
-                return this.yp.getStationRecord(i_station_id)
+                return this.yp.listenStationRecord(i_station_id)
             })
             .subscribe((i_branchStationsModel) => {
                 this.m_selectedBranchStation = i_branchStationsModel;
-                this.contGroup.controls.m_campaignsControl.setValue(this.m_selectedCampaignId);
-                this.contGroup.controls.m_enableLan.setValue(this.m_selectedBranchStation.getLanEnabled);
+                this._render();
             }, (e) => console.error(e))
-
-
-        // this.cancelOnDestroy(
-        //     //
-        //     this.yp.listenStationSelected()
-        //         .map((i_station: StationModel) => {
-        //             this.m_snapPath = '';
-        //             this.m_selectedStation = i_station;
-        //             this.m_disabled = this.m_selectedStation.connection == "0";
-        //             return this.m_selectedStation.id;
-        //         })
-        //         .mergeMap(i_station_id => {
-        //             return this.yp.getStationCampaignID(i_station_id, true)
-        //         })
-        //         .mergeMap((i_campaign_id) => {
-        //             this.m_selectedCampaignId = i_campaign_id;
-        //             return this.yp.getStationRecord(this.m_selectedCampaignId)
-        //         })
-        //         .map((i_branchStationsModel: BranchStationsModelExt) => {
-        //             this.m_selectedBranchStation = i_branchStationsModel;
-        //         })
-        //         .subscribe(() => {
-        //             this._render();
-        //         }, (e) => console.error(e))
-        // )
     }
 
     _render() {
         this.contGroup.controls.m_campaignsControl.setValue(this.m_selectedCampaignId);
-        con(this.m_selectedBranchStation);
-        con(this.m_selectedBranchStation.getLanServerEnabled());
-        // var v = this.m_selectedBranchStation.getLanServerEnabled()
-        this.contGroup.controls.m_enableLan.setValue(this.m_selectedBranchStation.getLanServerEnabled());
-
-        // $(Elements.STATION_SELECTION_CAMPAIGN).append('<option selected data-campaign_id="-1">Select campaign</option>');
-        // this.m_campaigns = [];
-        // var campaignIDs = this.rp.getCampaignIDs();
-        // for (var i = 0; i < campaignIDs.length; i++) {
-        //     var campaignID = campaignIDs[i];
-        //     var recCampaign = this.rp.getCampaignRecord(campaignID);
-        //     this.m_campaigns.push({
-        //         campaignName:
-        //     })
-        //     var selected = campaignID == i_campaignID ? 'selected' : '';
-        //     var snippet = '<option ' + selected + ' data-campaign_id="' + campaignID + '">' + recCampaign['campaign_name'] + '</option>';
-        //     $(Elements.STATION_SELECTION_CAMPAIGN).append(snippet);
-        // }
+        this.contGroup.controls.m_enableLan.setValue(this.m_selectedBranchStation.getLanEnabled);
+        this.contGroup.controls.m_ip.setValue(this.m_selectedBranchStation.getLanServerIp());
+        this.contGroup.controls.m_port.setValue(this.m_selectedBranchStation.getLanServerPort());
     }
 
     _fetchImage(url) {
@@ -242,11 +201,10 @@ export class StationsPropsManager extends Compbaser {
         // console.log(this.contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.contGroup.value)));
         if (this.contGroup.status != 'VALID')
             return;
-        // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_name', this.contGroup.value.campaign_name);
-        // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_playlist_mode', this.contGroup.value.campaign_playlist_mode);
-        // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_timeline_id', 0); //todo: you need to fix this as zero is arbitrary number right now
-        // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_mode', this.contGroup.value.kiosk_mode);
-        // this.rp.reduxCommit()
+        this.rp.setStationCampaignID(this.m_selectedStation.id, this.contGroup.value.m_campaignsControl);
+        this.rp.setStationRecordValue(this.m_selectedStation.id, 'lan_server_enabled', this.contGroup.value.m_enableLan == true ? 'True' : 'False');
+        this.rp.reduxCommit();
+        this.cd.markForCheck();
     }
 
     destroy() {
