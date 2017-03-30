@@ -4,7 +4,7 @@
  */
 
 
-import {CampaignsModel, CampaignTimelineChanelPlayersModel, PlayerDataModel} from "../imsdb.interfaces_auto";
+import {BranchStationsModel, CampaignsModel, CampaignTimelineChanelPlayersModel, PlayerDataModel} from "../imsdb.interfaces_auto";
 
 export class CampaignsModelExt extends CampaignsModel {
 
@@ -29,6 +29,17 @@ export class CampaignTimelineChanelPlayersModelExt extends CampaignTimelineChane
 
 }
 
+
+export class BranchStationsModelExt extends BranchStationsModel {
+    public get getLanEnabled() {
+        return this.getLanServerEnabled() == 'True' ? true : false;
+    }
+
+    public get getNativeId() {
+        return this.getKey('native_id');
+    }
+
+}
 
 export class PlayerDataModelExt extends PlayerDataModel {
 

@@ -2,7 +2,7 @@ import {Injectable} from "@angular/core";
 import {Action, Store} from "@ngrx/store";
 import {ApplicationState} from "../store/application.state";
 import {Observable} from "rxjs";
-import {CampaignsModelExt, PlayerDataModelExt} from "../store/model/msdb-models-extended";
+import {BranchStationsModelExt, CampaignsModelExt, PlayerDataModelExt} from "../store/model/msdb-models-extended";
 import {
     BoardsModel,
     BoardTemplatesModel,
@@ -474,17 +474,29 @@ export class YellowPepperService {
             })
     }
 
-    getStationCampaignID(i_native_station_id, emitOnEmpty: boolean = false) {
+    /**
+     Returns the record for a station id
+     **/
+    getStationRecord(i_native_station_id): Observable<BranchStationsModelExt> {
+        return this.ngrxStore.select(store => store.msDatabase.sdk.table_branch_stations)
+            .map((i_branchStationsModels: List<BranchStationsModelExt>) => {
+                return i_branchStationsModels.find((i_branchStationsModel) => {
+                    return i_branchStationsModel.getNativeId == i_native_station_id;
+                })
+            }).take(1);
+    }
+
+    getStationCampaignID(i_native_station_id, emitOnEmpty: boolean = false): Observable<number> {
         var table_branch_stations$ = this.ngrxStore.select(store => store.msDatabase.sdk.table_branch_stations)
         var table_campaign_boards$ = this.ngrxStore.select(store => store.msDatabase.sdk.table_campaign_boards)
         return table_branch_stations$
             .combineLatest(
-                table_campaign_boards$, (branchStationsModels: List<BranchStationsModel>, campaignBoardsModels: List<CampaignBoardsModel>) => {
+                table_campaign_boards$, (branchStationsModels: List<BranchStationsModelExt>, campaignBoardsModels: List<CampaignBoardsModel>) => {
                     return {branchStationsModels, campaignBoardsModels}
                 })
             .map((value) => {
-                var branchStationsModel: BranchStationsModel = value.branchStationsModels.find((i_branchStationsModel: BranchStationsModel) => {
-                    return i_branchStationsModel.getKey('native_id') == i_native_station_id;
+                var branchStationsModel: BranchStationsModelExt = value.branchStationsModels.find((i_branchStationsModel: BranchStationsModelExt) => {
+                    return i_branchStationsModel.getNativeId == i_native_station_id;
                 })
                 var campaignBoardsModel = value.campaignBoardsModels.find((i_campaignBoardsModel: CampaignBoardsModel) => {
                     return i_campaignBoardsModel.getCampaignBoardId() == branchStationsModel.getCampaignBoardId();

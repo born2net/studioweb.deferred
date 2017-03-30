@@ -1,18 +1,15 @@
 import {Component} from "@angular/core";
 import {Compbaser} from "ng-mslib";
-import {Observable, Subject} from "rxjs";
+import {Observable} from "rxjs";
 import {SideProps} from "../../store/actions/appdb.actions";
 import {YellowPepperService} from "../../services/yellowpepper.service";
-import {ResourcesModel} from "../../store/imsdb.interfaces_auto";
-import {Lib} from "../../Lib";
 import {RedPepperService} from "../../services/redpepper.service";
 import {StationModel} from "../../models/StationModel";
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import {FormBuilder, FormGroup} from "@angular/forms";
 import {timeout} from "../../decorators/timeout-decorator";
-import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
-import * as _ from 'lodash';
-import {Map, List} from 'immutable';
+import {BranchStationsModelExt, CampaignsModelExt} from "../../store/model/msdb-models-extended";
+import {List} from "immutable";
 
 @Component({
     selector: 'stations-props-manager',
@@ -69,6 +66,7 @@ export class StationsPropsManager extends Compbaser {
     m_sidePropsEnum = SideProps;
     m_uiUserFocusItem$: Observable<SideProps>;
     m_selectedStation: StationModel;
+    m_selectedBranchStation: BranchStationsModelExt;
     m_selectedCampaignId = -1;
     m_loading = false;
     m_snapPath = '';
@@ -88,8 +86,9 @@ export class StationsPropsManager extends Compbaser {
         this.contGroup = fb.group({
             'm_campaignsControl': [''],
             'm_eventValue': [''],
-            'm_ip': [0],
-            'm_port': [0]
+            'm_enableLan': [],
+            'm_ip': ['192.168.1.2'],
+            'm_port': [1024]
         });
 
         this.cancelOnDestroy(
@@ -99,27 +98,64 @@ export class StationsPropsManager extends Compbaser {
                     this.m_campaigns = i_campaigns;
                 }, (e) => console.error(e))
         )
-        this.cancelOnDestroy(
-            //
-            this.yp.listenStationSelected()
-                .map((i_station: StationModel) => {
-                    this.m_snapPath = '';
-                    this.m_selectedStation = i_station;
-                    this.m_disabled = this.m_selectedStation.connection == "0";
-                    return this.m_selectedStation.id;
-                })
-                .mergeMap(i_station_id => {
-                    return this.yp.getStationCampaignID(i_station_id, true)
-                })
-                .subscribe((i_campaign_id) => {
-                    this.m_selectedCampaignId = i_campaign_id;
-                    this._render();
-                }, (e) => console.error(e))
-        )
+
+        //
+        this.yp.listenStationSelected()
+            .map((i_station: StationModel) => {
+                this.m_snapPath = '';
+                this.m_selectedStation = i_station;
+                this.m_disabled = this.m_selectedStation.connection == "0";
+                return this.m_selectedStation.id;
+            })
+            .mergeMap(i_station_id => {
+                return this.yp.getStationCampaignID(i_station_id, true)
+                    .map((i_campaign_id) => {
+                        return {i_station_id, i_campaign_id};
+                    })
+
+            })
+            .mergeMap(({i_station_id, i_campaign_id}) => {
+                this.m_selectedCampaignId = i_campaign_id;
+                return this.yp.getStationRecord(i_station_id)
+            })
+            .subscribe((i_branchStationsModel) => {
+                this.m_selectedBranchStation = i_branchStationsModel;
+                this.contGroup.controls.m_campaignsControl.setValue(this.m_selectedCampaignId);
+                this.contGroup.controls.m_enableLan.setValue(this.m_selectedBranchStation.getLanEnabled);
+            }, (e) => console.error(e))
+
+
+        // this.cancelOnDestroy(
+        //     //
+        //     this.yp.listenStationSelected()
+        //         .map((i_station: StationModel) => {
+        //             this.m_snapPath = '';
+        //             this.m_selectedStation = i_station;
+        //             this.m_disabled = this.m_selectedStation.connection == "0";
+        //             return this.m_selectedStation.id;
+        //         })
+        //         .mergeMap(i_station_id => {
+        //             return this.yp.getStationCampaignID(i_station_id, true)
+        //         })
+        //         .mergeMap((i_campaign_id) => {
+        //             this.m_selectedCampaignId = i_campaign_id;
+        //             return this.yp.getStationRecord(this.m_selectedCampaignId)
+        //         })
+        //         .map((i_branchStationsModel: BranchStationsModelExt) => {
+        //             this.m_selectedBranchStation = i_branchStationsModel;
+        //         })
+        //         .subscribe(() => {
+        //             this._render();
+        //         }, (e) => console.error(e))
+        // )
     }
 
     _render() {
         this.contGroup.controls.m_campaignsControl.setValue(this.m_selectedCampaignId);
+        con(this.m_selectedBranchStation);
+        con(this.m_selectedBranchStation.getLanServerEnabled());
+        // var v = this.m_selectedBranchStation.getLanServerEnabled()
+        this.contGroup.controls.m_enableLan.setValue(this.m_selectedBranchStation.getLanServerEnabled());
 
         // $(Elements.STATION_SELECTION_CAMPAIGN).append('<option selected data-campaign_id="-1">Select campaign</option>');
         // this.m_campaigns = [];

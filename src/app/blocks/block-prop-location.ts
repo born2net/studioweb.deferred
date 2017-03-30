@@ -24,12 +24,6 @@ import {LocationMarkModel} from "../../models/LocationMarkModel";
     host: {
         '(input-blur)': 'saveToStore($event)'
     },
-    styles: [`
-        .inliner {
-            display: inline-block;
-            width: 130px;
-        }
-    `],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <small class="debug">{{me}}</small>

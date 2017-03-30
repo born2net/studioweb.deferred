@@ -1109,3 +1109,7 @@ form .list-group, form .list-group-item {
     content: "\f26c";
 }
 
+.inliner {
+    display: inline-block;
+    width: 130px;
+}
