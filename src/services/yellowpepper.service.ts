@@ -6,7 +6,7 @@ import {CampaignsModelExt, PlayerDataModelExt} from "../store/model/msdb-models-
 import {
     BoardsModel,
     BoardTemplatesModel,
-    BoardTemplateViewersModel,
+    BoardTemplateViewersModel, BranchStationsModel, CampaignBoardsModel,
     CampaignTimelineBoardTemplatesModel,
     CampaignTimelineBoardViewerChanelsModel,
     CampaignTimelineChanelPlayersModel,
@@ -474,6 +474,25 @@ export class YellowPepperService {
             })
     }
 
+    getStationCampaignID(i_native_station_id, emitOnEmpty: boolean = false) {
+        var table_branch_stations$ = this.ngrxStore.select(store => store.msDatabase.sdk.table_branch_stations)
+        var table_campaign_boards$ = this.ngrxStore.select(store => store.msDatabase.sdk.table_campaign_boards)
+        return table_branch_stations$
+            .combineLatest(
+                table_campaign_boards$, (branchStationsModels: List<BranchStationsModel>, campaignBoardsModels: List<CampaignBoardsModel>) => {
+                    return {branchStationsModels, campaignBoardsModels}
+                })
+            .map((value) => {
+                var branchStationsModel: BranchStationsModel = value.branchStationsModels.find((i_branchStationsModel: BranchStationsModel) => {
+                    return i_branchStationsModel.getKey('native_id') == i_native_station_id;
+                })
+                var campaignBoardsModel = value.campaignBoardsModels.find((i_campaignBoardsModel: CampaignBoardsModel) => {
+                    return i_campaignBoardsModel.getCampaignBoardId() == branchStationsModel.getCampaignBoardId();
+                })
+                return campaignBoardsModel.getCampaignId();
+            }).take(1);
+    }
+
     getPreviewMode() {
         return this.store.select(store => store.appDb.uiState.previewMode).take(1)
     }
@@ -486,6 +505,11 @@ export class YellowPepperService {
             .map((playerDataModels: List<PlayerDataModel>) => {
                 return this.reducePlayerDataModelsToSceneData(playerDataModels)
             }).take(1);
+    }
+
+    getCampaigns(): Observable<List<CampaignsModelExt>> {
+        return this.store.select(store => store.msDatabase.sdk.table_campaigns)
+            .take(1);
     }
 
     /**

@@ -16,6 +16,20 @@ import {BlockLabels, PLACEMENT_CHANNEL} from "../interfaces/Consts";
 import X2JS from "x2js";
 import {BlockService} from "../app/blocks/block-service";
 
+export interface IPepperUserData {
+    userName: string;
+    userPass: string;
+    domain: string;
+    businessID: number;
+    eri: string;
+    authTime: string;
+    whiteLabel: boolean;
+    resellerName: string;
+    resellerID: number;
+    components: any;
+}
+
+
 var parser = new X2JS({
     escapeMode: true,
     attributePrefix: "_",
@@ -114,10 +128,8 @@ export class RedPepperService {
 
     /**
      Return all authenticated user data
-     @method getUserData
-     @return {Object} reference to all user data
      **/
-    getUserData() {
+    getUserData():IPepperUserData {
         return {
             userName: this['m_userName'],
             userPass: this['m_userPassword'],

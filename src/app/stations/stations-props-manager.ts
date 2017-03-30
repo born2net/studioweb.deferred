@@ -8,9 +8,17 @@ import {Lib} from "../../Lib";
 import {RedPepperService} from "../../services/redpepper.service";
 import {StationModel} from "../../models/StationModel";
 import {animate, state, style, transition, trigger} from "@angular/animations";
+import {FormBuilder, FormGroup} from "@angular/forms";
+import {timeout} from "../../decorators/timeout-decorator";
+import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
+import * as _ from 'lodash';
+import {Map, List} from 'immutable';
 
 @Component({
     selector: 'stations-props-manager',
+    host: {
+        '(input-blur)': 'saveToStore($event)'
+    },
     animations: [
         trigger('toggleState', [
             state('true', style({})),
@@ -38,6 +46,7 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
             top: -106px;
             left: calc((100% / 2) - 30px);
         }
+
         img {
             float: left;
             position: relative;
@@ -45,7 +54,7 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
             top: -140px;
             left: calc((100% / 2) - 109px);
         }
-        
+
         #propWrap {
             position: fixed;
             padding-left: 20px;
@@ -55,34 +64,79 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
 })
 export class StationsPropsManager extends Compbaser {
 
+    contGroup: FormGroup;
     m_sideProps$: Observable<SideProps>;
     m_sidePropsEnum = SideProps;
     m_uiUserFocusItem$: Observable<SideProps>;
-    m_selected: StationModel;
+    m_selectedStation: StationModel;
+    m_selectedCampaignId = -1;
     m_loading = false;
     m_snapPath = '';
     shouldToggle = true;
     m_disabled = true;
+    m_port = '';
+    m_campaigns: List<CampaignsModelExt>;
+    m_ip = '';
     m_eventValue = '';
     // m_imageGrabber = new Subject();
 
-    constructor(private yp: YellowPepperService, private rp: RedPepperService) {
+    constructor(private fb: FormBuilder, private yp: YellowPepperService, private rp: RedPepperService) {
         super();
         this.m_uiUserFocusItem$ = this.yp.ngrxStore.select(store => store.appDb.uiState.uiSideProps);
         this.m_sideProps$ = this.yp.ngrxStore.select(store => store.appDb.uiState.uiSideProps);
 
+        this.contGroup = fb.group({
+            'm_campaignsControl': [''],
+            'm_eventValue': [''],
+            'm_ip': [0],
+            'm_port': [0]
+        });
+
+        this.cancelOnDestroy(
+            //
+            this.yp.getCampaigns()
+                .subscribe((i_campaigns: List<CampaignsModelExt>) => {
+                    this.m_campaigns = i_campaigns;
+                }, (e) => console.error(e))
+        )
         this.cancelOnDestroy(
             //
             this.yp.listenStationSelected()
-                .subscribe((i_station: StationModel) => {
+                .map((i_station: StationModel) => {
                     this.m_snapPath = '';
-                    this.m_selected = i_station;
-                    this.m_disabled = this.m_selected.connection == "0";
+                    this.m_selectedStation = i_station;
+                    this.m_disabled = this.m_selectedStation.connection == "0";
+                    return this.m_selectedStation.id;
+                })
+                .mergeMap(i_station_id => {
+                    return this.yp.getStationCampaignID(i_station_id, true)
+                })
+                .subscribe((i_campaign_id) => {
+                    this.m_selectedCampaignId = i_campaign_id;
+                    this._render();
                 }, (e) => console.error(e))
         )
     }
 
-    _fetchImage(url){
+    _render() {
+        this.contGroup.controls.m_campaignsControl.setValue(this.m_selectedCampaignId);
+
+        // $(Elements.STATION_SELECTION_CAMPAIGN).append('<option selected data-campaign_id="-1">Select campaign</option>');
+        // this.m_campaigns = [];
+        // var campaignIDs = this.rp.getCampaignIDs();
+        // for (var i = 0; i < campaignIDs.length; i++) {
+        //     var campaignID = campaignIDs[i];
+        //     var recCampaign = this.rp.getCampaignRecord(campaignID);
+        //     this.m_campaigns.push({
+        //         campaignName:
+        //     })
+        //     var selected = campaignID == i_campaignID ? 'selected' : '';
+        //     var snippet = '<option ' + selected + ' data-campaign_id="' + campaignID + '">' + recCampaign['campaign_name'] + '</option>';
+        //     $(Elements.STATION_SELECTION_CAMPAIGN).append(snippet);
+        // }
+    }
+
+    _fetchImage(url) {
         // var interval = 1000;
         // function fetchItems() {
         //     return 'items';
@@ -97,7 +151,7 @@ export class StationsPropsManager extends Compbaser {
         //         .startWith(fetchItems());
     }
 
-    _onImageError(event){
+    _onImageError(event) {
         this.m_snapPath = '';
         this.m_loading = false;
         console.log('could not load snap image');
@@ -106,12 +160,12 @@ export class StationsPropsManager extends Compbaser {
     _onCommand(i_command) {
         switch (i_command) {
             case 'play': {
-                this.rp.sendCommand('start', this.m_selected.id, () => {
+                this.rp.sendCommand('start', this.m_selectedStation.id, () => {
                 });
                 break;
             }
             case 'stop': {
-                this.rp.sendCommand('stop', this.m_selected.id, () => {
+                this.rp.sendCommand('stop', this.m_selectedStation.id, () => {
                 });
                 break;
             }
@@ -120,7 +174,7 @@ export class StationsPropsManager extends Compbaser {
                 break;
             }
             case 'off': {
-                this.rp.sendCommand('rebootPlayer', this.m_selected.id, () => {
+                this.rp.sendCommand('rebootPlayer', this.m_selectedStation.id, () => {
                 });
                 break;
             }
@@ -131,8 +185,8 @@ export class StationsPropsManager extends Compbaser {
         var d = new Date().getTime();
         this.m_snapPath = '';
         this.m_loading = true;
-        var path = this.rp.sendSnapshot(d, 0.2, this.m_selected.id, () => {
-        this.m_snapPath = path;
+        var path = this.rp.sendSnapshot(d, 0.2, this.m_selectedStation.id, () => {
+            this.m_snapPath = path;
         });
         setTimeout(() => {
             this.m_loading = false;
@@ -143,13 +197,23 @@ export class StationsPropsManager extends Compbaser {
 
     _onSendEvent() {
         this.shouldToggle != this.shouldToggle;
-        this.rp.sendEvent(this.m_eventValue, this.m_selected.id, function () {
+        this.rp.sendEvent(this.contGroup.controls.m_eventValue.value, this.m_selectedStation.id, function () {
         });
     }
 
-    ngOnInit() {
+    @timeout()
+    private  saveToStore() {
+        // console.log(this.contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.contGroup.value)));
+        if (this.contGroup.status != 'VALID')
+            return;
+        // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_name', this.contGroup.value.campaign_name);
+        // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_playlist_mode', this.contGroup.value.campaign_playlist_mode);
+        // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_timeline_id', 0); //todo: you need to fix this as zero is arbitrary number right now
+        // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_mode', this.contGroup.value.kiosk_mode);
+        // this.rp.reduxCommit()
     }
 
     destroy() {
     }
 }
+
