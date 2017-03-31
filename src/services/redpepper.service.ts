@@ -1851,7 +1851,7 @@ export class RedPepperService {
                 this.databaseManager.table_station_ads().openForDelete(branch_station_id);
             }
         });
-        this.addPendingTables(['table_station_ads','table_branch_stations']);
+        this.addPendingTables(['table_station_ads', 'table_branch_stations']);
     }
 
     /**
@@ -2787,6 +2787,13 @@ export class RedPepperService {
                 }
             });
         });
+    }
+
+    /**
+     Total branch stations
+     **/
+    getStationBranchTotal() {
+        return this.databaseManager.table_branch_stations().getAllPrimaryKeys().length;
     }
 
     /**

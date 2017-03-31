@@ -99,7 +99,7 @@ export class StationsPropsManager extends Compbaser {
         )
         this.cancelOnDestroy(
             //
-            this.yp.listenStationSelected()
+            this.yp.listenStationBranchSelected()
                 .map((i_station: StationModel) => {
                     this.m_snapPath = '';
                     this.m_selectedStation = i_station;
@@ -107,7 +107,8 @@ export class StationsPropsManager extends Compbaser {
                     return this.m_selectedStation.id;
                 })
                 .mergeMap(i_station_id => {
-                    return this.yp.getStationCampaignID(i_station_id, true)
+                    console.log(i_station_id);
+                    return this.yp.getStationCampaignID(i_station_id)
                         .map((i_campaign_id) => {
                             return {i_station_id, i_campaign_id};
                         })
@@ -215,7 +216,6 @@ export class StationsPropsManager extends Compbaser {
         this.rp.setStationCampaignID(this.m_selectedStation.id, this.contGroup.value.m_campaignsControl);
         this.rp.setStationRecordValue(this.m_selectedStation.id, 'lan_server_enabled', this.contGroup.value.m_enableLan == true ? 'True' : 'False');
         this.rp.setStationRecordValue(this.m_selectedStation.id, 'lan_server_port', this.contGroup.value.m_port);
-
         this.rp.reduxCommit();
         this.cd.markForCheck();
     }

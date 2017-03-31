@@ -110,11 +110,12 @@ export class Stations extends Compbaser {
         super();
         this._loadStations();
         this.m_stationModels$ = this.yp.listenStations();
+
         this.cancelOnDestroy(
             //
             this.yp.listenStationSelected()
-                .subscribe((i_staionModel: StationModel) => {
-                    this.m_stationModel = i_staionModel;
+                .subscribe((i_stationModel: StationModel) => {
+                    this.m_stationModel = i_stationModel;
                 }, (e) => console.error(e))
         )
 
@@ -137,7 +138,7 @@ export class Stations extends Compbaser {
         if (_.isUndefined(this.m_loadStationsHandle)) {
             this.m_loadStationsHandle = setInterval(() => {
                 this._loadStations();
-            }, 5000)
+            }, 4000)
         }
     }
 
@@ -158,15 +159,16 @@ export class Stations extends Compbaser {
         }
         bootbox.confirm('Are you sure you want to uninstall the selected station?', (result) => {
             if (!result) return;
-            // pepper.sendCommand('rebootStation', self.m_selected_station_id, () => {});
+
             this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: {uiSideProps: SideProps.miniDashboard}}))
             this.rp.removeStation(this.m_stationModel.id);
-            this.rp.sendCommand('rebootPlayer', this.m_stationModel.id, () => {
-            });
+            // this.rp.sendCommand('rebootStation', this.m_stationModel.id, () => {});
+            this.rp.sendCommand('rebootPlayer', this.m_stationModel.id, () => {});
+            this.rp.sendCommand('rebootPlayer', this.m_stationModel.id, () => {});
+            this.rp.sendCommand('rebootPlayer', this.m_stationModel.id, () => {});
+            var uiState: IUiState = {uiSideProps: SideProps.miniDashboard, stations: {stationSelected: -1}}
+            this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
             this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: {mainAppState: MainAppShowStateEnum.SAVE}}))
-            this.rp.sync(() => {
-                // this.rp.reduxCommit()
-            });
         });
     }
 

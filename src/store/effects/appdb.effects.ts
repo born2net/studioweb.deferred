@@ -35,7 +35,7 @@ export class AppDbEffects {
 
     constructor(private actions$: Actions,
                 private store: Store<ApplicationState>,
-                private redPepperService: RedPepperService,
+                private rp: RedPepperService,
                 private http: Http) {
 
         // todo: disabled injection as broken in AOT
@@ -118,7 +118,7 @@ export class AppDbEffects {
         let userModel: UserModel = action.payload;
         this.store.dispatch({type: EFFECT_UPDATE_USER_MODEL, payload: userModel});
 
-        return this.redPepperService.dbConnect(userModel.user(), userModel.pass()).take(1).map((pepperConnection: IPepperConnection) => {
+        return this.rp.dbConnect(userModel.user(), userModel.pass()).take(1).map((pepperConnection: IPepperConnection) => {
 
             if (pepperConnection.pepperAuthReply.status == false) {
                 userModel = userModel.setAuthenticated(false);
@@ -221,8 +221,20 @@ export class AppDbEffects {
         .map(stations => ({type: EFFECT_LOADED_STATIONS, payload: stations}));
 
     private _loadStations(action: Action): Observable<List<StationModel>> {
-        const boundCallback = Observable.bindCallback(this.processXml, (xmlData: any) => xmlData);
 
+        const insertStations = (response) => {
+            var stationsList: List<StationModel> = List([]);
+            response.Stations.Station.forEach((i_station) => {
+                if(_.isEmpty(i_station.attr.name))
+                    i_station.attr.name = 'new station';
+                var station: IStation = i_station.attr;
+                var newStation = new StationModel(station)
+                stationsList = stationsList.push(newStation);
+            })
+            return stationsList;
+        }
+
+        const boundCallback = Observable.bindCallback(this.processXml, (xmlData: any) => xmlData);
         this.store.dispatch({type: EFFECT_LOADING_STATIONS, payload: {}})
         var url = window.g_protocol + action.payload.userData.domain + '/WebService/getStatus.ashx?user=' + action.payload.userData.userName + '&password=' + action.payload.userData.userPass + '&callback=?';
         return this.http.get(url)
@@ -238,15 +250,21 @@ export class AppDbEffects {
                 var str = jQuery.base64.decode(s64);
                 return boundCallback(this, str)
             }).map(response => {
-                var stationsList: List<StationModel> = List([]);
+
                 if (_.isEmpty(response.Stations))
-                    return stationsList;
-                response.Stations.Station.forEach((i_station) => {
-                    var station: IStation = i_station.attr;
-                    var newStation = new StationModel(station)
-                    stationsList = stationsList.push(newStation);
-                })
-                return stationsList;
+                    return List([]);
+
+                var totalBranches = this.rp.getStationBranchTotal();
+                var totalStations = response.Stations.Station.length;
+
+                if (totalStations != totalBranches) {
+                    this.rp.sync(() => {
+                        this.rp.reduxCommit();
+                    })
+                    return insertStations(response);
+                } else {
+                    return insertStations(response);
+                }
             })
     }
 
@@ -299,6 +317,6 @@ export class AppDbEffects {
 //
 //             })
 //     })
-// this.redPepperService.dbConnect(userModel.user(), userModel.pass(), (result:{[key: string]: string}) => {
+// this.rp.dbConnect(userModel.user(), userModel.pass(), (result:{[key: string]: string}) => {
 //     console.log(result);
 // })

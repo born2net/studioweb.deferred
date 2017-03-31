@@ -6,7 +6,7 @@ import {BranchStationsModelExt, CampaignsModelExt, PlayerDataModelExt} from "../
 import {
     BoardsModel,
     BoardTemplatesModel,
-    BoardTemplateViewersModel, BranchStationsModel, CampaignBoardsModel,
+    BoardTemplateViewersModel, CampaignBoardsModel,
     CampaignTimelineBoardTemplatesModel,
     CampaignTimelineBoardViewerChanelsModel,
     CampaignTimelineChanelPlayersModel,
@@ -381,15 +381,31 @@ export class YellowPepperService {
             }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
     }
 
-    listenStationSelected(emitOnEmpty: boolean = false): Observable<StationModel> {
+    listenStationSelected(): Observable<StationModel> {
         var selected$ = this.store.select(store => store.appDb.uiState.stations.stationSelected);
         var stations$ = this.store.select(store => store.appDb.stations);
         return selected$
             .combineLatest(stations$, (stationId, stations: List<StationModel>) => {
+                if (_.isUndefined(stations))
+                    return null;
                 return stations.find((station: StationModel) => {
                     return station.id == stationId;
                 });
-            }).mergeMap(v => (v ? Observable.of(v) : ( emitOnEmpty ? Observable.of(v) : Observable.empty())));
+            }).filter(value => value != null);
+    }
+
+    listenStationBranchSelected(): Observable<StationModel> {
+        var selected$ = this.store.select(store => store.appDb.uiState.stations.stationSelected);
+        var stations$ = this.store.select(store => store.appDb.stations);
+        var branches$ = this.store.select(store => store.msDatabase.sdk.table_branch_stations);
+        return selected$
+            .combineLatest(stations$, branches$, (stationId, stations: List<StationModel>, branches: List<BranchStationsModelExt>) => {
+                if (_.isUndefined(stations))
+                    return null;
+                return stations.find((station: StationModel) => {
+                    return station.id == stationId;
+                });
+            }).filter(value => value != null);
     }
 
     listenResources(): Observable<List<ResourcesModel>> {
@@ -486,7 +502,7 @@ export class YellowPepperService {
             })
     }
 
-    getStationCampaignID(i_native_station_id, emitOnEmpty: boolean = false): Observable<number> {
+    getStationCampaignID(i_native_station_id): Observable<number> {
         var table_branch_stations$ = this.ngrxStore.select(store => store.msDatabase.sdk.table_branch_stations)
         var table_campaign_boards$ = this.ngrxStore.select(store => store.msDatabase.sdk.table_campaign_boards)
         return table_branch_stations$
@@ -498,6 +514,8 @@ export class YellowPepperService {
                 var branchStationsModel: BranchStationsModelExt = value.branchStationsModels.find((i_branchStationsModel: BranchStationsModelExt) => {
                     return i_branchStationsModel.getNativeId == i_native_station_id;
                 })
+                if (!branchStationsModel)
+                    return Observable.empty()
                 var campaignBoardsModel = value.campaignBoardsModels.find((i_campaignBoardsModel: CampaignBoardsModel) => {
                     return i_campaignBoardsModel.getCampaignBoardId() == branchStationsModel.getCampaignBoardId();
                 })
