@@ -37,7 +37,7 @@
                             <span class="fa fa-power-off"></span>
                         </button>
                     </div>
-                    <select formControlName="m_campaignsControl" id="stationSelectionCampaign" class="form-control">
+                    <select (change)="saveToStore()" formControlName="m_campaignsControl" id="stationSelectionCampaign" class="form-control">
                         <option [value]="campaign.getCampaignId()" *ngFor="let campaign of m_campaigns">{{campaign.getCampaignName()}}</option>
                     </select>
                     <br/>
