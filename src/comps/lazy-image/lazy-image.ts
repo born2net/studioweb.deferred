@@ -29,7 +29,11 @@ import {Subject} from "rxjs/Subject";
 
  @ViewChild(LazyImage)
  lazyImage: LazyImage;
- 
+
+ _lazyLoad() {
+     this.lazyImage.setUrl('https://secure.digitalsignage.com/studioweb/assets/some_lazy.png');
+ }
+
  _resetSnapshotSelection() {
     if (this.lazyImage)
          this.lazyImage.resetToDefault();
