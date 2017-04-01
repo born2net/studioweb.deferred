@@ -13,6 +13,7 @@ import {Subject} from "rxjs/Subject";
  usage:
  
  <img lazyImage class="center-block" style="width: 229px; height: 130px"
+ [url]="'https://secure.digitalsignage.com/studioweb/assets/some_lazy.png'"
  [loadingImage]="'https://secure.digitalsignage.com/studioweb/assets/screen_loading.png'"
  [defaultImage]="'https://secure.digitalsignage.com/studioweb/assets/screen.png'"
  [errorImage]="'https://secure.digitalsignage.com/studioweb/assets/screen_error.png'"
