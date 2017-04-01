@@ -11,6 +11,10 @@ export class LazyImage {
     constructor(private el: ElementRef, private ngZone: NgZone) {
     }
 
+    @Input() defaultImage:string;
+    @Input() loadingImage:string;
+    @Input() errorImage:string;
+
     @Input()
     set url(i_url: string) {
         this.m_url = i_url;
@@ -26,7 +30,7 @@ export class LazyImage {
     }
 
     ngAfterViewInit() {
-        this.setImage(this.el.nativeElement, 'https://secure.digitalsignage.com/studioweb/assets/screen.png');
+        this.setImage(this.el.nativeElement, this.defaultImage);
     }
 
     ngOnInit() {
@@ -46,13 +50,12 @@ export class LazyImage {
         const pollAPI$ = Observable.defer(() => {
             return new Promise((resolve, reject) => {
                 const img = new Image();
-                img.src = 'http://example.com/aaa';
                 img.src = i_url;
                 img.onload = () => {
                     resolve(i_url);
                 };
                 img.onerror = err => {
-                    this.setImage(this.el.nativeElement, 'https://secure.digitalsignage.com/studioweb/assets/screen_loading.png');
+                    this.setImage(this.el.nativeElement, this.loadingImage);
                     reject(err)
                 };
             })
@@ -71,7 +74,7 @@ export class LazyImage {
             this.setImage(this.el.nativeElement, this.m_url)
             this.loaded.emit();
         }, (e) => {
-            this.setImage(this.el.nativeElement, 'https://secure.digitalsignage.com/studioweb/assets/screen_error.png');
+            this.setImage(this.el.nativeElement, this.errorImage);
             console.error(e)
         }, () => {
             this.completed.emit();

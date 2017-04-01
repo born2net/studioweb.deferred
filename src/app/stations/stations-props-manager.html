@@ -4,7 +4,12 @@
     <ul matchBodyHeight="50" style="overflow-y: auto; overflow-x: hidden" [ngSwitch]="m_sideProps$ | async">
         <div *ngSwitchCase="m_sidePropsEnum.stationProps">
             <div id="stationProperties">
-                <img lazyImage class="center-block" style="width: 229px; height: 130px" (loaded)="_onLoaded()" (completed)="_onCompleted()">
+                <img lazyImage class="center-block" style="width: 229px; height: 130px"
+                     [loadingImage]="'https://secure.digitalsignage.com/studioweb/assets/screen_loading.png'"
+                     [defaultImage]="'https://secure.digitalsignage.com/studioweb/assets/screen.png'"
+                     [errorImage]="'https://secure.digitalsignage.com/studioweb/assets/screen_error.png'"
+                     (loaded)="_onLoaded()"
+                     (completed)="_onCompleted()">
 
                 <!--<div id="snapShotWrap">-->
                     <!--<img lazyImage [url]="'http://s3-us-west-2.amazonaws.com/oregon-signage-snapshots/business358613/station75/_1491055107002.jpg'">-->
