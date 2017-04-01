@@ -4,23 +4,25 @@
     <ul matchBodyHeight="50" style="overflow-y: auto; overflow-x: hidden" [ngSwitch]="m_sideProps$ | async">
         <div *ngSwitchCase="m_sidePropsEnum.stationProps">
             <div id="stationProperties">
-                <div id="stationRename"></div>
-                <div id="snapShotWrap">
-                    <div style="text-align: center">
-                        <svg style="width: 250px" xmlns="http://www.w3.org/2000/svg">
-                            <g>
-                                <rect stroke-width="10" stroke="#191919" height="120" width="220" y="9.5" x="10" fill="#cccccc"></rect>
-                            </g>
-                        </svg>
-                    </div>
-                    <div style="text-align: center">
-                        <loading class="loading" [size]="'50px'" *ngIf="m_loading"></loading>
-                    </div>
-                    <div *ngIf="m_snapPath != ''" style="text-align: center">
-                        <img (error)="_onImageError($event)" [src]="m_snapPath"/>
-                    </div>
+                <img lazyImage class="center-block" style="width: 229px; height: 130px" (loaded)="_onLoaded()" (completed)="_onCompleted()">
 
-                </div>
+                <!--<div id="snapShotWrap">-->
+                    <!--<img lazyImage [url]="'http://s3-us-west-2.amazonaws.com/oregon-signage-snapshots/business358613/station75/_1491055107002.jpg'">-->
+                    <!--<div style="text-align: center">-->
+                        <!--<svg style="width: 250px" xmlns="http://www.w3.org/2000/svg">-->
+                            <!--<g>-->
+                                <!--<rect stroke-width="10" stroke="#191919" height="120" width="220" y="9.5" x="10" fill="#cccccc"></rect>-->
+                            <!--</g>-->
+                        <!--</svg>-->
+                    <!--</div>-->
+                    <!--<div style="text-align: center">-->
+                        <!--<loading class="loading" [size]="'50px'" *ngIf="m_loading"></loading>-->
+                    <!--</div>-->
+                    <!--<div *ngIf="m_snapPath != ''" style="text-align: center">-->
+                        <!--<img (error)="_onImageError($event)" [src]="m_snapPath"/>-->
+                    <!--</div>-->
+                <!--</div>-->
+
                 <hr/>
                 <div id="propWrap">
                     <div id="stationcontrol" class="btn-group">
@@ -77,6 +79,7 @@
                     </div>
                     <br/>
                     <br/>
+
                     <Label>Station events</Label>
                     <input formControlName="m_eventValue" type="text" name="eventName" data-localize="eventName" placeholder="event name" id="stationSendEventValue" value="">
 

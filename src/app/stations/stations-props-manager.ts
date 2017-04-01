@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component} from "@angular/core";
+import {ChangeDetectorRef, Component, ViewChild} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {Observable} from "rxjs";
 import {SideProps} from "../../store/actions/appdb.actions";
@@ -10,6 +10,9 @@ import {FormBuilder, FormGroup} from "@angular/forms";
 import {timeout} from "../../decorators/timeout-decorator";
 import {BranchStationsModelExt, CampaignsModelExt} from "../../store/model/msdb-models-extended";
 import {List} from "immutable";
+import {Http} from "@angular/http";
+import {Subject} from "rxjs/Subject";
+import {LazyImage} from "../../comps/lazy-image/lazy-image";
 
 @Component({
     selector: 'stations-props-manager',
@@ -37,25 +40,25 @@ import {List} from "immutable";
             width: 25%;
         }
 
-        .loading {
-            float: left;
-            position: relative;
-            top: -106px;
-            left: calc((100% / 2) - 30px);
-        }
+        /*.loading {*/
+            /*float: left;*/
+            /*position: relative;*/
+            /*top: -106px;*/
+            /*left: calc((100% / 2) - 30px);*/
+        /*}*/
 
-        img {
-            float: left;
-            position: relative;
-            width: 210px;
-            top: -140px;
-            left: calc((100% / 2) - 109px);
-        }
+        /*img {*/
+            /*float: left;*/
+            /*position: relative;*/
+            /*width: 210px;*/
+            /*top: -140px;*/
+            /*left: calc((100% / 2) - 109px);*/
+        /*}*/
 
-        #propWrap {
-            position: fixed;
-            padding-left: 20px;
-        }
+        /*#propWrap {*/
+            /*position: fixed;*/
+            /*padding-left: 20px;*/
+        /*}*/
     `],
     templateUrl: './stations-props-manager.html'
 })
@@ -77,10 +80,11 @@ export class StationsPropsManager extends Compbaser {
     m_ip = '';
     m_inFocus = false;
 
-    constructor(private fb: FormBuilder, private yp: YellowPepperService, private rp: RedPepperService, private cd: ChangeDetectorRef) {
+    constructor(private http: Http, private fb: FormBuilder, private yp: YellowPepperService, private rp: RedPepperService, private cd: ChangeDetectorRef) {
         super();
         this.m_uiUserFocusItem$ = this.yp.ngrxStore.select(store => store.appDb.uiState.uiSideProps);
         this.m_sideProps$ = this.yp.ngrxStore.select(store => store.appDb.uiState.uiSideProps);
+
 
         this.contGroup = fb.group({
             'm_campaignsControl': [''],
@@ -125,8 +129,33 @@ export class StationsPropsManager extends Compbaser {
         )
     }
 
+    @ViewChild(LazyImage)
+    lazyImage:LazyImage;
+
+    loadImage(imagePath: string): Observable<HTMLImageElement> {
+        return Observable
+            .create(observer => {
+                const img = new Image();
+                try {
+                    img.src = imagePath;
+                    img.onload = () => {
+                        observer.next(imagePath);
+                        observer.complete();
+                    };
+                    img.onerror = err => {
+                        observer.error(null);
+                    };
+                }
+                catch (e) {
+                    console.log('some error ' + e);
+                }
+
+
+            });
+    }
+
     _render() {
-        if(!this.m_selectedBranchStation)
+        if (!this.m_selectedBranchStation)
             return;
         this.contGroup.controls.m_campaignsControl.setValue(this.m_selectedCampaignId);
         this.contGroup.controls.m_enableLan.setValue(this.m_selectedBranchStation.getLanEnabled);
@@ -185,13 +214,29 @@ export class StationsPropsManager extends Compbaser {
         }
     }
 
+    _onLoaded(){
+        console.log('loaded');
+    }
+
+    _onCompleted(){
+        console.log('completed');
+    }
+
     _takeSnapshot() {
         var d = new Date().getTime();
         this.m_snapPath = '';
         this.m_loading = true;
         var path = this.rp.sendSnapshot(d, 0.2, this.m_selectedStation.id, () => {
             this.m_snapPath = path;
+            this.lazyImage.url = path;
         });
+        setTimeout(()=>{
+            this.loadImage(path)
+                .subscribe(v => {
+                    console.log(v);
+                })
+        },100)
+
         setTimeout(() => {
             this.m_loading = false;
             this.m_snapPath = path;
