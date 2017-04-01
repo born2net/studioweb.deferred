@@ -4,7 +4,7 @@ import {Subject} from "rxjs/Subject";
 
 /**
  *  Usage
- * 
+ *
  <img lazyImage class="center-block" style="width: 229px; height: 130px"
  [loadingImage]="'https://secure.digitalsignage.com/studioweb/assets/screen_loading.png'"
  [defaultImage]="'https://secure.digitalsignage.com/studioweb/assets/screen.png'"
@@ -14,6 +14,25 @@ import {Subject} from "rxjs/Subject";
  (loaded)="_onLoaded()"
  (error)="_onError()"
  (completed)="_onCompleted()">
+
+ or to use via API
+
+ ...
+
+ @ViewChild(LazyImage)
+ lazyImage: LazyImage;
+ ..
+
+ _resetSnapshotSelection() {
+    if (this.lazyImage)
+         this.lazyImage.resetToDefault();
+ }
+
+ _takeSnapshot() {
+     this.lazyImage.url = 'http://example.com/foo.png;
+ }
+
+
  */
 
 @Directive({
