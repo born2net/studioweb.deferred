@@ -2,6 +2,20 @@ import {Directive, ElementRef, EventEmitter, Input, NgZone, Output} from "@angul
 import {Observable} from "rxjs/Observable";
 import {Subject} from "rxjs/Subject";
 
+/**
+ *  Usage
+ * 
+ <img lazyImage class="center-block" style="width: 229px; height: 130px"
+ [loadingImage]="'https://secure.digitalsignage.com/studioweb/assets/screen_loading.png'"
+ [defaultImage]="'https://secure.digitalsignage.com/studioweb/assets/screen.png'"
+ [errorImage]="'https://secure.digitalsignage.com/studioweb/assets/screen_error.png'"
+ [retry]="5"
+ [delay]="1500"
+ (loaded)="_onLoaded()"
+ (error)="_onError()"
+ (completed)="_onCompleted()">
+ */
+
 @Directive({
     selector: '[lazyImage]'
 })
@@ -13,11 +27,11 @@ export class LazyImage {
     constructor(private el: ElementRef, private ngZone: NgZone) {
     }
 
-    @Input() defaultImage:string;
-    @Input() loadingImage:string;
-    @Input() errorImage:string;
-    @Input() retry:number = 10;
-    @Input() delay:number = 500;
+    @Input() defaultImage: string;
+    @Input() loadingImage: string;
+    @Input() errorImage: string;
+    @Input() retry: number = 10;
+    @Input() delay: number = 500;
 
 
     @Input()
@@ -35,7 +49,7 @@ export class LazyImage {
         this.loadImage(i_url);
     }
 
-    public resetToDefault(){
+    public resetToDefault() {
         this.setImage(this.el.nativeElement, this.defaultImage);
         this.cancel$.next({})
     }
@@ -75,7 +89,7 @@ export class LazyImage {
         }).retryWhen(err => {
 
             return err.scan((errorCount, err) => {
-                if(errorCount >= this.retry) {
+                if (errorCount >= this.retry) {
                     throw err;
                 }
                 return errorCount + 1;
