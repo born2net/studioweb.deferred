@@ -1,5 +1,6 @@
 import {Directive, ElementRef, EventEmitter, Input, NgZone, Output} from "@angular/core";
 import {Observable} from "rxjs/Observable";
+import {Subject} from "rxjs/Subject";
 
 @Directive({
     selector: '[lazyImage]'
@@ -7,6 +8,7 @@ import {Observable} from "rxjs/Observable";
 export class LazyImage {
 
     private m_url;
+    private cancel$ = new Subject();
 
     constructor(private el: ElementRef, private ngZone: NgZone) {
     }
@@ -27,6 +29,11 @@ export class LazyImage {
     set setUrl(i_url) {
         this.m_url = i_url;
         this.loadImage(i_url);
+    }
+
+    public resetToDefault(){
+        this.setImage(this.el.nativeElement, this.defaultImage);
+        this.cancel$.next({})
     }
 
     ngAfterViewInit() {
@@ -60,6 +67,7 @@ export class LazyImage {
                 };
             })
 
+
         }).retryWhen(err => {
 
             return err.scan(function(errorCount, err) {
@@ -68,7 +76,7 @@ export class LazyImage {
                 }
                 return errorCount + 1;
             }, 0).delay(2000);
-        })
+        }).takeUntil(this.cancel$)
 
         pollAPI$.subscribe((v) => {
             this.setImage(this.el.nativeElement, this.m_url)

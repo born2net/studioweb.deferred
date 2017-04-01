@@ -13,6 +13,7 @@ import {List} from "immutable";
 import {Http} from "@angular/http";
 import {Subject} from "rxjs/Subject";
 import {LazyImage} from "../../comps/lazy-image/lazy-image";
+import {Lib} from "../../Lib";
 
 @Component({
     selector: 'stations-props-manager',
@@ -41,23 +42,23 @@ import {LazyImage} from "../../comps/lazy-image/lazy-image";
         }
 
         /*.loading {*/
-            /*float: left;*/
-            /*position: relative;*/
-            /*top: -106px;*/
-            /*left: calc((100% / 2) - 30px);*/
+        /*float: left;*/
+        /*position: relative;*/
+        /*top: -106px;*/
+        /*left: calc((100% / 2) - 30px);*/
         /*}*/
 
         /*img {*/
-            /*float: left;*/
-            /*position: relative;*/
-            /*width: 210px;*/
-            /*top: -140px;*/
-            /*left: calc((100% / 2) - 109px);*/
+        /*float: left;*/
+        /*position: relative;*/
+        /*width: 210px;*/
+        /*top: -140px;*/
+        /*left: calc((100% / 2) - 109px);*/
         /*}*/
 
         /*#propWrap {*/
-            /*position: fixed;*/
-            /*padding-left: 20px;*/
+        /*position: fixed;*/
+        /*padding-left: 20px;*/
         /*}*/
     `],
     templateUrl: './stations-props-manager.html'
@@ -106,6 +107,8 @@ export class StationsPropsManager extends Compbaser {
             this.yp.listenStationBranchSelected()
                 .map((i_station: StationModel) => {
                     this.m_snapPath = '';
+                    if (this.m_selectedStation && this.m_selectedStation.id != i_station.id)
+                        this._resetSnapshotSelection();
                     this.m_selectedStation = i_station;
                     this.m_disabled = this.m_selectedStation.connection == "0";
                     return this.m_selectedStation.id;
@@ -124,13 +127,14 @@ export class StationsPropsManager extends Compbaser {
                 })
                 .subscribe((i_branchStationsModel) => {
                     this.m_selectedBranchStation = i_branchStationsModel;
-                    this._render();
+                    this._render()
+
                 }, (e) => console.error(e))
         )
     }
 
     @ViewChild(LazyImage)
-    lazyImage:LazyImage;
+    lazyImage: LazyImage;
 
     loadImage(imagePath: string): Observable<HTMLImageElement> {
         return Observable
@@ -154,9 +158,15 @@ export class StationsPropsManager extends Compbaser {
             });
     }
 
+    _resetSnapshotSelection() {
+        if (this.lazyImage)
+            this.lazyImage.resetToDefault();
+    }
+
     _render() {
         if (!this.m_selectedBranchStation)
             return;
+
         this.contGroup.controls.m_campaignsControl.setValue(this.m_selectedCampaignId);
         this.contGroup.controls.m_enableLan.setValue(this.m_selectedBranchStation.getLanEnabled);
         if (this.m_inFocus)
@@ -214,11 +224,11 @@ export class StationsPropsManager extends Compbaser {
         }
     }
 
-    _onLoaded(){
+    _onLoaded() {
         console.log('loaded');
     }
 
-    _onCompleted(){
+    _onCompleted() {
         console.log('completed');
     }
 
@@ -230,12 +240,12 @@ export class StationsPropsManager extends Compbaser {
             this.m_snapPath = path;
             this.lazyImage.url = path;
         });
-        setTimeout(()=>{
+        setTimeout(() => {
             this.loadImage(path)
                 .subscribe(v => {
                     console.log(v);
                 })
-        },100)
+        }, 100)
 
         setTimeout(() => {
             this.m_loading = false;
