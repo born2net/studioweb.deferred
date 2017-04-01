@@ -8,7 +8,10 @@
                      [loadingImage]="'https://secure.digitalsignage.com/studioweb/assets/screen_loading.png'"
                      [defaultImage]="'https://secure.digitalsignage.com/studioweb/assets/screen.png'"
                      [errorImage]="'https://secure.digitalsignage.com/studioweb/assets/screen_error.png'"
+                     [retry]="5"
+                     [delay]="1500"
                      (loaded)="_onLoaded()"
+                     (error)="_onError()"
                      (completed)="_onCompleted()">
 
                 <!--<div id="snapShotWrap">-->

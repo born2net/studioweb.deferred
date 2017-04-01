@@ -16,6 +16,9 @@ export class LazyImage {
     @Input() defaultImage:string;
     @Input() loadingImage:string;
     @Input() errorImage:string;
+    @Input() retry:number = 10;
+    @Input() delay:number = 500;
+
 
     @Input()
     set url(i_url: string) {
@@ -25,6 +28,7 @@ export class LazyImage {
 
     @Output() loaded: EventEmitter<any> = new EventEmitter<any>();
     @Output() completed: EventEmitter<any> = new EventEmitter<any>();
+    @Output() errored: EventEmitter<any> = new EventEmitter<any>();
 
     set setUrl(i_url) {
         this.m_url = i_url;
@@ -70,12 +74,12 @@ export class LazyImage {
 
         }).retryWhen(err => {
 
-            return err.scan(function(errorCount, err) {
-                if(errorCount >= 3) {
+            return err.scan((errorCount, err) => {
+                if(errorCount >= this.retry) {
                     throw err;
                 }
                 return errorCount + 1;
-            }, 0).delay(2000);
+            }, 0).delay(this.delay);
         }).takeUntil(this.cancel$)
 
         pollAPI$.subscribe((v) => {
@@ -83,7 +87,8 @@ export class LazyImage {
             this.loaded.emit();
         }, (e) => {
             this.setImage(this.el.nativeElement, this.errorImage);
-            console.error(e)
+            this.errored.emit();
+            // console.error(e)
         }, () => {
             this.completed.emit();
         })

@@ -11,9 +11,7 @@ import {timeout} from "../../decorators/timeout-decorator";
 import {BranchStationsModelExt, CampaignsModelExt} from "../../store/model/msdb-models-extended";
 import {List} from "immutable";
 import {Http} from "@angular/http";
-import {Subject} from "rxjs/Subject";
 import {LazyImage} from "../../comps/lazy-image/lazy-image";
-import {Lib} from "../../Lib";
 
 @Component({
     selector: 'stations-props-manager',
@@ -225,11 +223,14 @@ export class StationsPropsManager extends Compbaser {
     }
 
     _onLoaded() {
-        console.log('loaded');
+        console.log('img loaded');
     }
 
+    _onError(){
+        console.log('img error');
+    }
     _onCompleted() {
-        console.log('completed');
+        console.log('img completed');
     }
 
     _takeSnapshot() {
