@@ -11,7 +11,7 @@ import {Subject} from "rxjs/Subject";
  as loading image.
 
  usage:
- 
+
  <img lazyImage class="center-block" style="width: 229px; height: 130px"
  [url]="'https://secure.digitalsignage.com/studioweb/assets/some_lazy.png'"
  [loadingImage]="'https://secure.digitalsignage.com/studioweb/assets/screen_loading.png'"
@@ -57,6 +57,8 @@ export class LazyImage {
 
     constructor(private el: ElementRef, private ngZone: NgZone) {
     }
+
+    // @Input('lazyImage') lazyImage;   // to change support to directive of: <img lazyImage="'http://www...'" ...
 
     @Input() defaultImage: string;
     @Input() loadingImage: string;
@@ -115,17 +117,16 @@ export class LazyImage {
                     reject(err)
                 };
             })
-
-
         }).retryWhen(err => {
-
             return err.scan((errorCount, err) => {
                 if (errorCount >= this.retry) {
                     throw err;
                 }
                 return errorCount + 1;
-            }, 0).delay(this.delay);
-        }).takeUntil(this.cancel$)
+            }, 0)
+                .delay(this.delay);
+        })
+            .takeUntil(this.cancel$)
 
         pollAPI$.subscribe((v) => {
             this.setImage(this.el.nativeElement, this.m_url)
