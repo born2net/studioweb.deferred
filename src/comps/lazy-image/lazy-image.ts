@@ -7,9 +7,11 @@ import {Subject} from "rxjs/Subject";
  *
 
  directive that allows you to load images which are deferred (not available right away)
- so image will polled. While image is polled we can show default image as well as
+ so image will be polled. While image is polled we can show default image as well as
  as loading image.
 
+ usage:
+ 
  <img lazyImage class="center-block" style="width: 229px; height: 130px"
  [loadingImage]="'https://secure.digitalsignage.com/studioweb/assets/screen_loading.png'"
  [defaultImage]="'https://secure.digitalsignage.com/studioweb/assets/screen.png'"
