@@ -114,7 +114,6 @@ export class StationsPropsManager extends Compbaser {
                     return this.m_selectedStation.id;
                 })
                 .mergeMap(i_station_id => {
-                    console.log(i_station_id);
                     return this.yp.getStationCampaignID(i_station_id)
                         .map((i_campaign_id) => {
                             return {i_station_id, i_campaign_id};
