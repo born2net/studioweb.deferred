@@ -3,8 +3,7 @@
 
 
 need to find a way to remove core-js from videoangular definitions
-sed -i.bak "/core-js/d" "./node_modules/videogular2/src/core/vg-media/i-playable.d.ts"
-sed -i.bak "/core-js/d" "./node_modules/videogular2/src/core/services/vg-api.d.ts"
+sed -i.bak '/core-js/d' './node_modules/videogular2/src/core/vg-media/i-playable.d.ts ; sed -i.bak '/core-js/d' './node_modules/videogular2/src/core/services/vg-api.d.ts'
 
 
 reload video:
