@@ -13,6 +13,7 @@ export var simpleRegExp = '[\\[\\]\\-A-Za-z0-9_~=!:@\.|\ ]{3,50}';
 //(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})
 export var urlRegExp = `(https?:\/\/(?:www\.|(?!www))\.*)`
 const rxjsDebugger = true;
+const rc4Key = '226a3a42f34ddd778ed2c3ba56644315';
 Observable.prototype.sub = Observable.prototype.subscribe;
 
 
@@ -110,12 +111,13 @@ export class Lib {
         }
     }
 
-    static IsEqual(obj1, obj2){
+    static IsEqual(obj1, obj2) {
         function _equals(obj1, obj2) {
             var clone = $.extend(true, {}, obj1),
                 cloneStr = JSON.stringify(clone);
             return cloneStr === JSON.stringify($.extend(true, clone, obj2));
         }
+
         return _equals(obj1, obj2) && _equals(obj2, obj1);
     }
 
@@ -124,6 +126,12 @@ export class Lib {
         if (light)
             return '#428ac9 ';
         return '#eb7c66';
+    }
+
+    static EncryptUserPass(i_user, i_pass) {
+        var rc4 = new RC4(rc4Key);
+        var crumb = i_user + ':SignageStudioLite:' + i_pass + ':' + ' USER'
+        return rc4.doEncrypt(crumb);
     }
 
     /**

@@ -68,6 +68,10 @@ export interface IUiStateStations {
     stationSelected?: number;
 }
 
+export interface IUiStateFatserq {
+    fasterqLineSelected?: number;
+}
+
 export interface IUiStateScene {
     sceneSelected?: number;
     blockSelected?: number;
@@ -82,8 +86,9 @@ export interface IUiState {
     uiSideProps?: number;
     campaign?: IUiStateCampaign;
     locationMap?: IUiStateLocation;
-    resources?: IUiStateResources
-    stations?: IUiStateStations
+    resources?: IUiStateResources;
+    stations?: IUiStateStations;
+    fasterq?: IUiStateFatserq;
     scene?: IUiStateScene;
 }
 
@@ -94,11 +99,13 @@ export interface IAppDb {
     appBaseUrl: string;
     userModel: UserModel,
     stations: List<StationModel>,
+    fasterq: any,
     cloudServers: string;
     serversStatus: string;
     appAuthStatus: Map<string, AuthenticateFlags>;
     appBaseUrlUser: string;
     appBaseUrlCloud: string;
+    appBaseUrlServices: string;
 }
 
 export const INITIAL_STORE_DATA: IMsDatabase = {
@@ -131,6 +138,9 @@ export const INITIAL_APP_DB: IAppDb = {
         stations: {
             stationSelected: -1
         },
+        fasterq: {
+          fasterqLineSelected: -1
+        },
         scene: {
             sceneSelected: -1,
             blockSelected: -1,
@@ -143,6 +153,7 @@ export const INITIAL_APP_DB: IAppDb = {
     appStartTime: -1,
     appBaseUrl: '',
     stations: List([]),
+    fasterq: null,
     userModel: new UserModel({
         user: '',
         pass: '',
@@ -156,5 +167,6 @@ export const INITIAL_APP_DB: IAppDb = {
     cloudServers: '',
     serversStatus: '',
     appBaseUrlUser: '',
-    appBaseUrlCloud: ''
+    appBaseUrlCloud: '',
+    appBaseUrlServices: ''
 };

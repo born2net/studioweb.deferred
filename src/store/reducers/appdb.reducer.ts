@@ -6,9 +6,11 @@ import * as ActionsConst from "../actions/appdb.actions";
 import * as _ from 'lodash';
 import {Map, List} from 'immutable';
 import {StationModel} from "../../models/StationModel";
+import {Lib} from "../../Lib";
 
 const baseUrl = 'https://galaxy.signage.me/WebService/ResellerService.ashx';
 export const appBaseUrlCloud = 'https://secure.digitalsignage.com';
+
 
 export function appDb(state: IAppDb, action: any): IAppDb {
 
@@ -28,6 +30,7 @@ export function appDb(state: IAppDb, action: any): IAppDb {
             state.userModel = userModel.setTime();
             state.appBaseUrlUser = `${baseUrl}?resellerUserName=${userModel.getKey('user')}&resellerPassword=${userModel.getKey('pass')}`;
             state.appBaseUrlCloud = `${appBaseUrlCloud}/END_POINT/${userModel.getKey('user')}/${userModel.getKey('pass')}`;
+            state.appBaseUrlServices = `https://secure.digitalsignage.com${Lib.DevMode() ? ':442' : ''}`;
             return state;
 
         case EffectActions.EFFECT_LOADED_STATIONS:

@@ -20,7 +20,7 @@ import * as _ from 'lodash';
         <small class="debug">{{me}}</small>
         <div id="resourcesPanel">
             <div class="btn-group">
-                <button (click)="_loadStations()" type="button" class="btn btn-danger">
+                <button (click)="_loadData()" type="button" class="btn btn-danger">
                     <i style="font-size: 1em" class="fa fa-refresh"></i>
                     <span i18n>reload</span>
                 </button>
@@ -108,7 +108,7 @@ export class Stations extends Compbaser {
 
     constructor(private yp: YellowPepperService, private rp: RedPepperService, private bs: BlockService) {
         super();
-        this._loadStations();
+        this._loadData();
         this.m_stationModels$ = this.yp.listenStations();
 
         this.cancelOnDestroy(
@@ -125,7 +125,7 @@ export class Stations extends Compbaser {
                 .subscribe((i_value: MainAppShowStateEnum) => {
                     switch (i_value) {
                         case MainAppShowStateEnum.SAVED: {
-                            this._loadStations();
+                            this._loadData();
                             break;
                         }
                     }
@@ -133,11 +133,11 @@ export class Stations extends Compbaser {
         )
     }
 
-    _loadStations() {
+    _loadData() {
         this.yp.ngrxStore.dispatch({type: EFFECT_LOAD_STATIONS, payload: {userData: this.rp.getUserData()}})
         if (_.isUndefined(this.m_loadStationsHandle)) {
             this.m_loadStationsHandle = setInterval(() => {
-                this._loadStations();
+                this._loadData();
             }, 4000)
         }
     }

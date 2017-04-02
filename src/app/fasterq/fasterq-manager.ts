@@ -7,6 +7,8 @@ import {IUiState} from "../../store/store.data";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {ISceneData} from "../blocks/block-service";
 import {ToastsManager} from "ng2-toastr";
+import {EFFECT_LOAD_FASTERQ_LINES} from "../../store/effects/appdb.effects";
+import {Once} from "../../decorators/once-decorator";
 
 @Component({
     selector: 'fasterq-manager',
@@ -44,9 +46,10 @@ export class FasterqManager extends Compbaser {
     constructor(private yp: YellowPepperService, private rp: RedPepperService, private toastr: ToastsManager) {
         super();
         this.preventRedirect(true);
-        this.scenes$ = this.yp.listenScenes()
-        this.sceneSelected$ = this.yp.ngrxStore.select(store => store.appDb.uiState.scene.sceneSelected)
-        this._notifyResetSceneSelection();
+        this._loadData();
+        // this.scenes$ = this.yp.listenScenes()
+        // this.sceneSelected$ = this.yp.ngrxStore.select(store => store.appDb.uiState.scene.sceneSelected)
+        // this._notifyResetSceneSelection();
     }
 
     // @ViewChild(SceneList)
@@ -60,6 +63,15 @@ export class FasterqManager extends Compbaser {
 
     @Output()
     slideToCampaignName: EventEmitter<any> = new EventEmitter<any>();
+
+    @Once()
+    _loadData() {
+        return this.yp.ngrxStore.select(store => store.appDb.appBaseUrlServices)
+            .subscribe((appBaseUrlServices) => {
+                this.yp.ngrxStore.dispatch({type: EFFECT_LOAD_FASTERQ_LINES, payload: {appBaseUrlServices}})
+            })
+
+    }
 
     _notifyResetSceneSelection() {
         var uiState: IUiState = {scene: {sceneSelected: -1}}
@@ -87,18 +99,6 @@ export class FasterqManager extends Compbaser {
         //             });
         //         })
         // )
-    }
-
-    _duplicateScene() {
-        this.cancelOnDestroy(
-            this.yp.ngrxStore.select(store => store.appDb.uiState.scene.sceneSelected)
-                .take(1)
-                .subscribe(scene_id => {
-                    var scenePlayerData = this.rp.getScenePlayerdata(scene_id);
-                    this.createScene(scenePlayerData, true, '');
-                    this.toastr.info('scene duplicated and is available in scene list');
-                })
-        )
     }
 
     /**

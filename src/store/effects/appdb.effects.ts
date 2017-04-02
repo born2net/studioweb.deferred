@@ -1,5 +1,5 @@
-import {Injectable, Inject} from "@angular/core";
-import {Http} from "@angular/http";
+import {Injectable} from "@angular/core";
+import {Headers, Http, RequestMethod, RequestOptions, RequestOptionsArgs} from "@angular/http";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/mergeMap";
 import "rxjs/add/operator/merge";
@@ -13,10 +13,11 @@ import {UserModel} from "../../models/UserModel";
 import {AuthenticateFlags} from "../actions/appdb.actions";
 import {RedPepperService} from "../../services/redpepper.service";
 import {IPepperConnection} from "../../store/imsdb.interfaces";
-import * as _ from 'lodash';
+import * as _ from "lodash";
 import {IStation} from "../store.data";
-import {Map, List} from 'immutable';
+import {List} from "immutable";
 import {StationModel} from "../../models/StationModel";
+import {Lib} from "../../Lib";
 
 export const EFFECT_AUTH_START = 'EFFECT_AUTH_START';
 export const EFFECT_AUTH_END = 'EFFECT_AUTH_END';
@@ -28,6 +29,10 @@ export const EFFECT_TWO_FACTOR_UPDATED = 'EFFECT_TWO_FACTOR_UPDATED';
 export const EFFECT_LOAD_STATIONS = 'EFFECT_LOAD_STATIONS';
 export const EFFECT_LOADING_STATIONS = 'EFFECT_LOADING_STATIONS';
 export const EFFECT_LOADED_STATIONS = 'EFFECT_LOADED_STATIONS';
+export const EFFECT_LOAD_FASTERQ_LINES = 'EFFECT_LOAD_FASTERQ_LINES';
+export const EFFECT_LOADED_FASTERQ_LINES = 'EFFECT_LOADED_FASTERQ_LINES';
+export const EFFECT_LOADING_FASTERQ_LINES = 'EFFECT_LOADING_FASTERQ_LINES';
+
 
 @Injectable()
 export class AppDbEffects {
@@ -225,7 +230,7 @@ export class AppDbEffects {
         const insertStations = (response) => {
             var stationsList: List<StationModel> = List([]);
             response.Stations.Station.forEach((i_station) => {
-                if(_.isEmpty(i_station.attr.name))
+                if (_.isEmpty(i_station.attr.name))
                     i_station.attr.name = 'new station';
                 var station: IStation = i_station.attr;
                 var newStation = new StationModel(station)
@@ -265,6 +270,41 @@ export class AppDbEffects {
                 } else {
                     return insertStations(response);
                 }
+            })
+    }
+
+
+    @Effect({dispatch: true})
+    loadfasterqLines: Observable<Action> = this.actions$.ofType(EFFECT_LOAD_FASTERQ_LINES)
+        .switchMap(action => this._loadFasterqLines(action))
+        .map(stations => ({type: EFFECT_LOADED_FASTERQ_LINES, payload: stations}));
+
+    private _loadFasterqLines(action: Action): Observable<List<StationModel>> {
+        this.store.dispatch({type: EFFECT_LOADING_FASTERQ_LINES, payload: {}})
+        var credentials = Lib.EncryptUserPass('lite28@ms.com', '123123');
+        var url = `${action.payload.appBaseUrlServices}/Lines`;
+
+        var headers = new Headers();
+        headers.append('Authorization', credentials);
+
+        var basicOptions: RequestOptionsArgs = {
+            url: url,
+            method: RequestMethod.Get,
+            search: null,
+            headers: new Headers({'Authorization': credentials}),
+            body: null
+        };
+
+        return this.http.get(url, basicOptions)
+            .catch((err: any) => {
+                bootbox.alert('Error loading fasterq lines, try again later...');
+                return Observable.throw(err);
+            })
+            .finally(() => {
+            })
+            .map((response: Response) => {
+                var lines = response.json();
+                return {}
             })
     }
 
