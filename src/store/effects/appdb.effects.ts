@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {Headers, Http, RequestMethod, RequestOptions, RequestOptionsArgs} from "@angular/http";
+import {Headers, Http, RequestMethod, RequestOptionsArgs, Response} from "@angular/http";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/mergeMap";
 import "rxjs/add/operator/merge";
@@ -18,6 +18,7 @@ import {IStation} from "../store.data";
 import {List} from "immutable";
 import {StationModel} from "../../models/StationModel";
 import {Lib} from "../../Lib";
+import {FasterqLineModel} from "../../models/FasterqLineModel";
 
 export const EFFECT_AUTH_START = 'EFFECT_AUTH_START';
 export const EFFECT_AUTH_END = 'EFFECT_AUTH_END';
@@ -279,14 +280,12 @@ export class AppDbEffects {
         .switchMap(action => this._loadFasterqLines(action))
         .map(stations => ({type: EFFECT_LOADED_FASTERQ_LINES, payload: stations}));
 
-    private _loadFasterqLines(action: Action): Observable<List<StationModel>> {
+    private _loadFasterqLines(action: Action): Observable<List<FasterqLineModel>> {
         this.store.dispatch({type: EFFECT_LOADING_FASTERQ_LINES, payload: {}})
-        var credentials = Lib.EncryptUserPass('lite28@ms.com', '123123');
+        var credentials = Lib.EncryptUserPass(this.rp.getUserData().userName, this.rp.getUserData().userPass);
         var url = `${action.payload.appBaseUrlServices}/Lines`;
-
         var headers = new Headers();
         headers.append('Authorization', credentials);
-
         var basicOptions: RequestOptionsArgs = {
             url: url,
             method: RequestMethod.Get,
@@ -302,9 +301,13 @@ export class AppDbEffects {
             })
             .finally(() => {
             })
-            .map((response: Response) => {
-                var lines = response.json();
-                return {}
+            .map((response:Response) => {
+                var lines = List([]);
+                var rxLines = response.json();
+                rxLines.forEach((line)=>{
+                    lines = lines.push(new FasterqLineModel(line))
+                })
+                return lines;
             })
     }
 

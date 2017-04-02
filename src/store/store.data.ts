@@ -11,6 +11,7 @@ import {compose} from "@ngrx/core";
 import {MainAppShowStateEnum} from "../app/app-component";
 import {LocationMarkModel} from "../models/LocationMarkModel";
 import {StationModel} from "../models/StationModel";
+import {FasterqLineModel} from "../models/FasterqLineModel";
 
 const reducers = {msDatabase, appDb};
 export const developmentReducer: ActionReducer<ApplicationState> = compose(storeFreeze, combineReducers)(reducers);
@@ -92,14 +93,18 @@ export interface IUiState {
     scene?: IUiStateScene;
 }
 
+export interface IFasterQ {
+    lines:List<FasterqLineModel>
+}
+
 export interface IAppDb {
     uiState: IUiState;
     totalStations: string;
     appStartTime: number;
     appBaseUrl: string;
-    userModel: UserModel,
-    stations: List<StationModel>,
-    fasterq: any,
+    userModel: UserModel;
+    stations: List<StationModel>;
+    fasterq: IFasterQ;
     cloudServers: string;
     serversStatus: string;
     appAuthStatus: Map<string, AuthenticateFlags>;
@@ -153,7 +158,9 @@ export const INITIAL_APP_DB: IAppDb = {
     appStartTime: -1,
     appBaseUrl: '',
     stations: List([]),
-    fasterq: null,
+    fasterq: {
+        lines: List([]),
+    },
     userModel: new UserModel({
         user: '',
         pass: '',
