@@ -9,35 +9,25 @@ import {ISliderItemData, Slideritem} from "../../comps/sliderpanel/Slideritem";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    selector: 'scenes',
+    selector: 'fasterq-lines',
     template: `
         <small class="debug" style="padding-right: 25px">{{me}}</small>
         <Sliderpanel>
-            <Slideritem [templateRef]="a" #sliderItemSceneManager class="page center sceneList selected" [showToButton]="false" [toDirection]="'right'" [to]="'sceneEditor'">
+            <Slideritem [templateRef]="a" #sliderFqLineManager class="page center fqList selected" [showToButton]="false" [toDirection]="'right'" [to]="'fqEditor'">
                 <ng-template #a>
-                    <scene-manager (sceneCreate)="sliderItemSceneManager.slideTo('sceneCreator','right')" (slideToSceneEditor)="sliderItemSceneManager.onNext()"></scene-manager>
+                    <fasterq-manager (sceneCreate)="sliderFqLineManager.slideTo('sceneCreator','right')" (slideToSceneEditor)="sliderFqLineManager.onNext()"></fasterq-manager>
                 </ng-template>
             </Slideritem>
-            <Slideritem [templateRef]="b" #sliderItemCampaignEditor (onChange)="_onSlideChange($event)" [showFromButton]="false" class="page left sceneEditor" [fromDirection]="'left'" [from]="'sceneList'">
+            <Slideritem [templateRef]="b" #sliderItemCampaignEditor (onChange)="_onSlideChange($event)" [showFromButton]="false" class="page left fqEditor" [fromDirection]="'left'" [from]="'fqList'">
                 <ng-template #b>
-                    <scene-editor #sceneEditor (onGoBack)="sliderItemCampaignEditor.slideTo('sceneList','left')">
-                    </scene-editor>
-                </ng-template>
-            </Slideritem>
-            <Slideritem [templateRef]="c" #sliderSceneCreator [showFromButton]="false" class="page left sceneCreator" [fromDirection]="'left'" [from]="'sceneList'">
-                <ng-template #c>
-                    <scene-creator (onGoBack)="sliderSceneCreator.slideTo('sceneList','left')"></scene-creator>
-                </ng-template>
-            </Slideritem>
-            <Slideritem [templateRef]="d" #sliderLocation [showFromButton]="false" class="page left locationMap" [fromDirection]="'right'" [from]="'sceneEditor'">
-                <ng-template #d>
-                    <location-map (onClose)="_onLocationMapClosed()"></location-map>
+                    <!--<scene-editor #fqEditor (onGoBack)="sliderItemCampaignEditor.slideTo('fqList','left')">-->
+                    <!--</scene-editor>-->
                 </ng-template>
             </Slideritem>
         </Sliderpanel>
     `
 })
-export class Scenes extends Compbaser {
+export class FasterqLines extends Compbaser {
 
     private m_placement = PLACEMENT_SCENE;
 
@@ -64,12 +54,12 @@ export class Scenes extends Compbaser {
 
 
     _onLocationMapClosed(){
-        this.sliderSceneCreator.slideTo('sceneEditor','left')
+        this.sliderSceneCreator.slideTo('fqEditor','left')
 
     }
 
     _onSlideChange(event: ISliderItemData) {
-        if (event.direction == 'left' && event.to == 'sceneList') {
+        if (event.direction == 'left' && event.to == 'fqList') {
             var uiState:IUiState = {
                 uiSideProps: SideProps.miniDashboard,
                 scene: {sceneSelected: -1}

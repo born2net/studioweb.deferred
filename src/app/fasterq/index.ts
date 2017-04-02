@@ -4,6 +4,8 @@ import {RouterModule} from "@angular/router";
 import {FasterqNavigation} from "./fasterq-navigation";
 import {DropdownModule as DropdownModulePrime} from "primeng/primeng";
 import {SharedModule} from "../../modules/shared.module";
+import {FasterqLines} from "./fasterq-lines";
+import {FasterqManager} from "./fasterq-manager";
 
 export const LAZY_ROUTES = [
     {path: ':folder', component: FasterqNavigation},
@@ -13,7 +15,7 @@ export const LAZY_ROUTES = [
 
 @NgModule({
     imports: [DropdownModulePrime, SharedModule, CommonModule, RouterModule.forChild(LAZY_ROUTES)],
-    declarations: [FasterqNavigation]
+    declarations: [FasterqNavigation, FasterqLines, FasterqManager]
 })
 export class FasterqLazyModule {
 }
