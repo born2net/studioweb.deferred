@@ -1,7 +1,7 @@
 <small class="debug">{{me}}</small>
 <hr/>
-<form novalidate autocomplete="off" [formGroup]="contGroup">
-    <ul matchBodyHeight="50" style="overflow-y: auto; overflow-x: hidden" [ngSwitch]="m_sideProps$ | async">
+<form matchBodyHeight="150" style="overflow-y: auto; overflow-x: hidden" novalidate autocomplete="off" [formGroup]="contGroup">
+    <ul [ngSwitch]="m_sideProps$ | async">
         <div *ngSwitchCase="m_sidePropsEnum.stationProps">
             <div id="stationProperties">
                 <img lazyImage class="center-block" style="width: 229px; height: 130px"
@@ -51,6 +51,9 @@
                         <option [value]="campaign.getCampaignId()" *ngFor="let campaign of m_campaigns">{{campaign.getCampaignName()}}</option>
                     </select>
                     <br/>
+                    <Label>Station name</Label>
+                    <input (change)="_onStationRename()" (focus)="_onFocus(true)" (blur)="_onFocus(false)" formControlName="m_stationName" type="text">
+                    <hr/>
                     <div id="stationInfo">
                         <ul *ngIf="m_selectedStation">
                             <li>

@@ -111,7 +111,7 @@ export function appReducer(state: any = INITIAL_APPLICATION_STATE, action: any) 
         ToastModule.forRoot({
             animate: 'flyRight',
             positionClass: 'toast-bottom-right',
-            toastLife: 5000,
+            toastLife: 10000,
             showCloseButton: true,
             maxShown: 5,
             newestOnTop: true,

@@ -12,6 +12,7 @@ import {BranchStationsModelExt, CampaignsModelExt} from "../../store/model/msdb-
 import {List} from "immutable";
 import {Http} from "@angular/http";
 import {LazyImage} from "../../comps/lazy-image/lazy-image";
+import {ToastsManager} from "ng2-toastr";
 
 @Component({
     selector: 'stations-props-manager',
@@ -79,7 +80,7 @@ export class StationsPropsManager extends Compbaser {
     m_ip = '';
     m_inFocus = false;
 
-    constructor(private http: Http, private fb: FormBuilder, private yp: YellowPepperService, private rp: RedPepperService, private cd: ChangeDetectorRef) {
+    constructor(private toast: ToastsManager, private fb: FormBuilder, private yp: YellowPepperService, private rp: RedPepperService, private cd: ChangeDetectorRef) {
         super();
         this.m_uiUserFocusItem$ = this.yp.ngrxStore.select(store => store.appDb.uiState.uiSideProps);
         this.m_sideProps$ = this.yp.ngrxStore.select(store => store.appDb.uiState.uiSideProps);
@@ -87,6 +88,7 @@ export class StationsPropsManager extends Compbaser {
 
         this.contGroup = fb.group({
             'm_campaignsControl': [''],
+            'm_stationName': [''],
             'm_eventValue': [''],
             'm_enableLan': [],
             'm_ip': [],
@@ -169,6 +171,7 @@ export class StationsPropsManager extends Compbaser {
         this.contGroup.controls.m_enableLan.setValue(this.m_selectedBranchStation.getLanEnabled);
         if (this.m_inFocus)
             return;
+        this.contGroup.controls.m_stationName.setValue(this.m_selectedBranchStation.getStationName());
         this.contGroup.controls.m_ip.setValue(this.m_selectedBranchStation.getLanServerIp());
         this.contGroup.controls.m_port.setValue(this.m_selectedBranchStation.getLanServerPort());
     }
@@ -177,25 +180,8 @@ export class StationsPropsManager extends Compbaser {
         this.m_inFocus = i_value;
     }
 
-    _fetchImage(url) {
-        // var interval = 1000;
-        // function fetchItems() {
-        //     return 'items';
-        // }
-        //
-        // var data$ = Observable.interval(interval)
-        //     .map(() => {
-        //     return http.get();
-        // })
-        //     .filter(function(x) {return x.lastModified > Date.now() - interval}
-        //         .skip(1)
-        //         .startWith(fetchItems());
-    }
-
-    _onImageError(event) {
-        this.m_snapPath = '';
-        this.m_loading = false;
-        console.log('could not load snap image');
+    _onStationRename(){
+        this.toast.info('Station name will apply a few minutes after you save Studio changes, click [Save]');
     }
 
     _onCommand(i_command) {
@@ -272,6 +258,7 @@ export class StationsPropsManager extends Compbaser {
         this.rp.setStationCampaignID(this.m_selectedStation.id, this.contGroup.value.m_campaignsControl);
         this.rp.setStationRecordValue(this.m_selectedStation.id, 'lan_server_enabled', this.contGroup.value.m_enableLan == true ? 'True' : 'False');
         this.rp.setStationRecordValue(this.m_selectedStation.id, 'lan_server_port', this.contGroup.value.m_port);
+        this.rp.setStationName(this.m_selectedStation.id, this.contGroup.value.m_stationName);
         this.rp.reduxCommit();
         this.cd.markForCheck();
     }

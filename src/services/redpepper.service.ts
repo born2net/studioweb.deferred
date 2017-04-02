@@ -1360,6 +1360,24 @@ export class RedPepperService {
     }
 
     /**
+     save new station name
+     @method setStationName
+     @param {Number} branch_station_id
+     @param {String} i_callBack
+     **/
+    setStationName(i_stationID, i_name) {
+        $(this.databaseManager.table_branch_stations().getAllPrimaryKeys()).each((k, branch_station_id) => {
+            var recBranchStation = this.databaseManager.table_branch_stations().getRec(branch_station_id);
+            if (recBranchStation['native_id'] == i_stationID) {
+                this.databaseManager.table_branch_stations().openForEdit(branch_station_id);
+                var recBranch = this.databaseManager.table_branch_stations().getRec(branch_station_id);
+                recBranch['station_name'] = i_name;
+            }
+        });
+        this.addPendingTables(['table_branch_stations']);
+    }
+
+    /**
      Get all the global board template ids of a timeline
      @method getGlobalTemplateIdOfTimeline
      @param {Number} i_campaign_timeline_id
@@ -2837,24 +2855,6 @@ export class RedPepperService {
             }
         });
         return result;
-    }
-
-    /**
-     save new station name
-     @method setStationName
-     @param {Number} branch_station_id
-     @param {String} i_callBack
-     **/
-    setStationName(i_stationID, i_name) {
-
-        $(this.databaseManager.table_branch_stations().getAllPrimaryKeys()).each(function (k, branch_station_id) {
-            var recBranchStation = this.databaseManager.table_branch_stations().getRec(branch_station_id);
-            if (recBranchStation['native_id'] == i_stationID) {
-                this.databaseManager.table_branch_stations().openForEdit(branch_station_id);
-                var recBranch = this.databaseManager.table_branch_stations().getRec(branch_station_id);
-                recBranch['station_name'] = i_name;
-            }
-        });
     }
 
     /**
