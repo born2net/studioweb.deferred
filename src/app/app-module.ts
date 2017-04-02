@@ -9,8 +9,8 @@ import {RedPepperService} from "../services/redpepper.service";
 import {YellowPepperService} from "../services/yellowpepper.service";
 import {MsLibModule} from "ng-mslib/dist/mslib.module";
 import {ToastModule} from "ng2-toastr";
-import {AccordionModule, AlertModule, DropdownModule, ModalModule} from "ng2-bootstrap";
-import {DropdownModule as DropdownModulePrime, InputTextModule, SelectButtonModule, TreeModule} from "primeng/primeng";
+import {AccordionModule, AlertModule, ModalModule} from "ng2-bootstrap";
+import {DropdownModule, DropdownModule as DropdownModulePrime, InputTextModule, SelectButtonModule, TreeModule} from "primeng/primeng";
 import {routing} from "../app-routes";
 import {LoginPanel} from "../comps/entry/LoginPanel";
 import {Logout} from "../comps/logout/Logout";
@@ -123,7 +123,7 @@ export function appReducer(state: any = INITIAL_APPLICATION_STATE, action: any) 
         AlertModule.forRoot(),
         MsLibModule.forRoot({a: 1}),
         ModalModule.forRoot(),
-        DropdownModule.forRoot(),
+        DropdownModule,
         AccordionModule.forRoot(),
         JsonpModule,
         TreeModule,
