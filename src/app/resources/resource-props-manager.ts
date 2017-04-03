@@ -103,7 +103,7 @@ export class ResourcePropsManager extends Compbaser {
                         case 'png': {
                             this.m_formatIcon = 'image';
                             this.m_resourceType = 'image';
-                            var path = window['g_protocol'] + 's3.signage.me/business' + this.rp.getUserData().businessID + '/resources/' + this.rp.getResourceNativeID(this.m_selectedResource.getResourceId()) + '.' + this.m_selectedResource.getResourceType();
+                            var path = 'http://' + 's3.signage.me/business' + this.rp.getUserData().businessID + '/resources/' + this.rp.getResourceNativeID(this.m_selectedResource.getResourceId()) + '.' + this.m_selectedResource.getResourceType();
                             this.m_imagePath = path;
                             break;
                         }
@@ -112,7 +112,7 @@ export class ResourcePropsManager extends Compbaser {
                         case 'flv': {
                             this.m_formatIcon = 'video-camera';
                             this.m_resourceType = 'video';
-                            var path = window['g_protocol'] + 's3.signage.me/business' + this.rp.getUserData().businessID + '/resources/' + this.rp.getResourceNativeID(this.m_selectedResource.getResourceId()) + '.' + this.m_selectedResource.getResourceType();
+                            var path = 'http://' + 's3.signage.me/business' + this.rp.getUserData().businessID + '/resources/' + this.rp.getResourceNativeID(this.m_selectedResource.getResourceId()) + '.' + this.m_selectedResource.getResourceType();
                             this.m_playResource = path;
                             // path = window['g_protocol'] + BB.Pepper.getUserData().domain + '/Resources/business' +  BB.Pepper.getUserData().businessID + '/resources/' + BB.Pepper.getResourceNativeID(i_recResource['resource_id']) + '.' + ext;
                             console.log(path);

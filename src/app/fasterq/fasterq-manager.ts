@@ -36,7 +36,7 @@ import {Map, List} from 'immutable';
                 <ul (click)="$event.preventDefault()" class="appList list-group">
                     <a *ngFor="let line of lines$ | async; let i = index" (click)="_onLineSelected($event, line, i)"
                        [ngClass]="{'selectedItem': selectedIdx == i}" href="#" class="list-group-item">
-                        <h4 style="padding-left: 50px; float: left" >{{line.lineName}} (id: {{line.lineId}}) </h4>
+                        <h4 style="padding-left: 50px; float: left">{{line.lineName}} (id: {{line.lineId}}) </h4>
                         <div style="position: relative; left: -235px" class="peopleInGroup">
                             <i class="peopleInLine fa fa-male"></i>
                             <i class="peopleInLine fa fa-male"></i>
@@ -58,7 +58,7 @@ import {Map, List} from 'immutable';
 export class FasterqManager extends Compbaser {
 
     selectedIdx = -1;
-    m_selectedLine:FasterqLineModel;
+    m_selectedLine: FasterqLineModel;
     sceneSelected$;
     public lines$: Observable<List<FasterqLineModel>>
 
@@ -147,7 +147,7 @@ export class FasterqManager extends Compbaser {
         });
     }
 
-    _onLineSelected(event: MouseEvent, i_fasterqLineModel:FasterqLineModel, index) {
+    _onLineSelected(event: MouseEvent, i_fasterqLineModel: FasterqLineModel, index) {
         // event.stopPropagation();
         // event.preventDefault();
         this.selectedIdx = index;
@@ -182,5 +182,12 @@ export class FasterqManager extends Compbaser {
     }
 
     destroy() {
+        var uiState: IUiState = {
+            uiSideProps: SideProps.miniDashboard,
+            fasterq: {
+                fasterqLineSelected: -1
+            }
+        }
+        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 }
