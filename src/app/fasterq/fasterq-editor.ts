@@ -1,4 +1,4 @@
-import {Component, ChangeDetectionStrategy, AfterViewInit, ElementRef} from "@angular/core";
+import {Component, ChangeDetectionStrategy, AfterViewInit, ElementRef, ChangeDetectorRef} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {Observable} from "rxjs/Observable";
@@ -7,7 +7,25 @@ import {Map, List} from 'immutable';
 
 @Component({
     selector: 'fasterq-editor',
-    // changeDetection: ChangeDetectionStrategy.OnPush,
+    styles: [`
+        .personInLine {
+            margin: 10px;
+            padding: 0;
+            float: left;
+            width: 40px;
+            height: 100px;
+            cursor: pointer;
+            color: #D0D0D0;
+        }
+
+        .called {
+            color: #BE6734;
+        }
+
+        .serviced {
+            color: #ACFD89;
+        }
+    `],
     templateUrl: './fasterq-editor.html'
 })
 export class FasterqEditor extends Compbaser implements AfterViewInit {
@@ -15,11 +33,21 @@ export class FasterqEditor extends Compbaser implements AfterViewInit {
     m_stopWatchHandle = new Stopwatch();
     m_stopTimer = '00:00:00';
     m_selectedServiceID: any = -1;
-    queues$: Observable<List<FasterqQueueModel>>
+    m_queues: List<FasterqQueueModel> = List([]);
 
-    constructor(private yp: YellowPepperService, private el: ElementRef) {
+    constructor(private yp: YellowPepperService, private el: ElementRef, private cd:ChangeDetectorRef) {
         super();
-        this.queues$ = this.yp.listenFasterqQueues();
+        this.cancelOnDestroy(
+            this.yp.listenFasterqQueues()
+                .subscribe((i_queues:List<FasterqQueueModel>) => {
+                    this.m_queues = List([]);
+                    for (var i = -8; i < 0; i++) {
+                        i_queues = i_queues.unshift(new FasterqQueueModel({line_id: -1}))
+                    }
+                    this.m_queues = i_queues;
+                    this.cd.markForCheck();
+                }, (e) => console.error(e))
+        )
     }
 
     /**

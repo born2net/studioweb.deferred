@@ -182,6 +182,20 @@ export class Lib {
     }
 
     /**
+     Pad zeros
+     @method padZeros
+     @param {Number} n value
+     @param {Number} width pre-pad width
+     @param {Number} z negative as in '-'
+     @return {Number} zero padded string
+     **/
+    static PadZeros(n, width, z) {
+        z = z || '0';
+        n = n + '';
+        return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+    }
+
+    /**
      Convert number or string to float with double precision
      @method parseToFloatDouble
      @param {Object} i_value
