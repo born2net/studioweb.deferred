@@ -1113,3 +1113,44 @@ form .list-group, form .list-group-item {
     display: inline-block;
     width: 130px;
 }
+
+
+.peopleInGroup {
+    font-size: 2.4em;
+    width: 10px !important;
+    overflow: hidden;
+    padding-left: 18px;
+    padding-right: 15px;
+    display: inline;
+    margin: 0;
+}
+
+.peopleInLine:nth-child(1) {
+    color: #969696;
+    padding: 0;
+    margin: 0;
+}
+
+.peopleInLine:nth-child(2) {
+    position: relative;
+    left: -35px;
+    color: #717171;
+    padding: 0;
+    margin: 0;
+}
+
+.peopleInLine:nth-child(3) {
+    position: relative;
+    left: -70px;
+    color: #4c4c4c;
+    padding: 0;
+    margin: 0;
+}
+
+.peopleInLine:nth-child(4) {
+    position: relative;
+    left: -105px;
+    color: #2f2f2f;
+    padding: 0;
+    margin: 0;
+}

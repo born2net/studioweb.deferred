@@ -26,6 +26,7 @@ import {ISceneData} from "../app/blocks/block-service";
 import {IScreenTemplateData} from "../interfaces/IScreenTemplate";
 import {LocationMarkModel} from "../models/LocationMarkModel";
 import {StationModel} from "../models/StationModel";
+import {FasterqLineModel} from "../models/FasterqLineModel";
 
 
 @Injectable()
@@ -458,6 +459,13 @@ export class YellowPepperService {
             .map((playerDataModels: List<PlayerDataModel>) => {
                 return this.reducePlayerDataModelsToSceneData(playerDataModels)
             });
+    }
+
+    /**
+     Get all Scenes and update on any scene change
+     **/
+    listenFasterqLines(): Observable<List<FasterqLineModel>> {
+        return this.store.select(store => store.appDb.fasterq.lines)
     }
 
     /**

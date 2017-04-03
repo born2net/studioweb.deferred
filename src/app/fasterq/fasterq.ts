@@ -9,7 +9,7 @@ import {ISliderItemData, Slideritem} from "../../comps/sliderpanel/Slideritem";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    selector: 'fasterq-lines',
+    selector: 'fasterq',
     template: `
         <small class="debug" style="padding-right: 25px">{{me}}</small>
         <Sliderpanel>
@@ -20,14 +20,13 @@ import {ISliderItemData, Slideritem} from "../../comps/sliderpanel/Slideritem";
             </Slideritem>
             <Slideritem [templateRef]="b" #sliderItemCampaignEditor (onChange)="_onSlideChange($event)" [showFromButton]="false" class="page left fqEditor" [fromDirection]="'left'" [from]="'fqList'">
                 <ng-template #b>
-                    <!--<scene-editor #fqEditor (onGoBack)="sliderItemCampaignEditor.slideTo('fqList','left')">-->
-                    <!--</scene-editor>-->
+                    <fasterq-editor (onGoBack)="sliderItemCampaignEditor.slideTo('fqList','left')"></fasterq-editor>
                 </ng-template>
             </Slideritem>
         </Sliderpanel>
     `
 })
-export class FasterqLines extends Compbaser {
+export class Fasterq extends Compbaser {
 
     private m_placement = PLACEMENT_SCENE;
 

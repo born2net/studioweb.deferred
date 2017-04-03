@@ -23,10 +23,10 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
         <small class="debug">scene-navigation</small>
         <panel-split-container>
             <panel-split-main>
-                <fasterq-lines></fasterq-lines>
+                <fasterq></fasterq>
             </panel-split-main>
             <panel-split-side>
-                <!--<scene-props-manager></scene-props-manager>-->
+                <fasterq-line-props></fasterq-line-props>
             </panel-split-side>
         </panel-split-container>
     `

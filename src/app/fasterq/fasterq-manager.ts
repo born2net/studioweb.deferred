@@ -5,10 +5,11 @@ import {RedPepperService} from "../../services/redpepper.service";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
 import {IUiState} from "../../store/store.data";
 import {YellowPepperService} from "../../services/yellowpepper.service";
-import {ISceneData} from "../blocks/block-service";
 import {ToastsManager} from "ng2-toastr";
 import {EFFECT_LOAD_FASTERQ_LINES} from "../../store/effects/appdb.effects";
 import {Once} from "../../decorators/once-decorator";
+import {FasterqLineModel} from "../../models/FasterqLineModel";
+import {Map, List} from 'immutable';
 
 @Component({
     selector: 'fasterq-manager',
@@ -32,6 +33,22 @@ import {Once} from "../../decorators/once-decorator";
         <!-- move scroller to proper offset -->
         <div class="responsive-pad-right">
             <div matchBodyHeight="350" style="overflow: scroll">
+                <ul (click)="$event.preventDefault()" class="appList list-group">
+                    <a *ngFor="let line of lines$ | async; let i = index" (click)="_onLineSelected($event, scene, i)"
+                       [ngClass]="{'selectedItem': selectedIdx == i}" href="#" class="list-group-item">
+                        <h4 style="padding-left: 50px; float: left" >{{line.lineName}} (id: {{line.lineId}}) </h4>
+                        <div style="position: relative; left: -235px" class="peopleInGroup">
+                            <i class="peopleInLine fa fa-male"></i>
+                            <i class="peopleInLine fa fa-male"></i>
+                            <i class="peopleInLine fa fa-male"></i>
+                            <i class="peopleInLine fa fa-male"></i>
+                        </div>
+                        <p class="list-group-item-text">Reminder ahead of people: {{line.reminder}} </p>
+                        <div class="openProps">
+                            <button type="button" class="props btn btn-default btn-sm"><i style="font-size: 1.5em" class="props fa fa-gear"></i></button>
+                        </div>
+                    </a>
+                </ul>
                 <!--<scene-list [scenes]="scenes$ | async" (slideToSceneEditor)="slideToSceneEditor.emit($event)" (onSceneSelected)="_onSceneSelected($event)">-->
                 <!--</scene-list>-->
             </div>
@@ -40,14 +57,15 @@ import {Once} from "../../decorators/once-decorator";
 })
 export class FasterqManager extends Compbaser {
 
+    selectedIdx = -1;
     sceneSelected$;
-    public scenes$: Observable<Array<ISceneData>>
+    public lines$: Observable<List<FasterqLineModel>>
 
     constructor(private yp: YellowPepperService, private rp: RedPepperService, private toastr: ToastsManager) {
         super();
         this.preventRedirect(true);
         this._loadData();
-        // this.scenes$ = this.yp.listenScenes()
+        this.lines$ = this.yp.listenFasterqLines()
         // this.sceneSelected$ = this.yp.ngrxStore.select(store => store.appDb.uiState.scene.sceneSelected)
         // this._notifyResetSceneSelection();
     }
@@ -63,6 +81,9 @@ export class FasterqManager extends Compbaser {
 
     @Output()
     slideToCampaignName: EventEmitter<any> = new EventEmitter<any>();
+
+    @Output()
+    onLineSelected: EventEmitter<any> = new EventEmitter<any>();
 
     @Once()
     _loadData() {
@@ -128,8 +149,30 @@ export class FasterqManager extends Compbaser {
         });
     }
 
-    _onSceneSelected(i_uiState: IUiState) {
-        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: i_uiState}))
+    _onLineSelected(event: MouseEvent, line:FasterqLineModel, index) {
+        // event.stopPropagation();
+        // event.preventDefault();
+        this.selectedIdx = index;
+        let uiState: IUiState;
+        if (jQuery(event.target).hasClass('props')) {
+            uiState = {
+                uiSideProps: SideProps.fasterqLineProps,
+                fasterq: {
+                    fasterqLineSelected: 123
+                }
+            }
+            this.onLineSelected.emit(uiState)
+        } else {
+            uiState = {
+                uiSideProps: SideProps.campaignEditor,
+                fasterq: {
+                    fasterqLineSelected: 123
+                }
+            }
+            // this.slideToCampaignEditor.emit();
+            // this.onCampaignSelected.emit(uiState)
+        }
+        // this.m_selectedCampaign = campaign;
     }
 
     _newScene() {
