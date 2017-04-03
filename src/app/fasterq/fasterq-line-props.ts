@@ -85,8 +85,6 @@ export class FasterqLineProps extends Compbaser implements AfterViewInit {
                     this._render();
                 }, (e) => console.error(e))
         )
-
-
     }
 
     _render() {
@@ -95,8 +93,6 @@ export class FasterqLineProps extends Compbaser implements AfterViewInit {
     }
 
     ngAfterViewInit() {
-
-
     }
 
     ngOnInit() {
