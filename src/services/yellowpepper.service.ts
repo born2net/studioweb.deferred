@@ -26,7 +26,7 @@ import {ISceneData} from "../app/blocks/block-service";
 import {IScreenTemplateData} from "../interfaces/IScreenTemplate";
 import {LocationMarkModel} from "../models/LocationMarkModel";
 import {StationModel} from "../models/StationModel";
-import {FasterqLineModel} from "../models/FasterqLineModel";
+import {FasterqLineModel} from "../models/fasterq-line-model";
 
 
 @Injectable()

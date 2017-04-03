@@ -18,7 +18,8 @@ import {IStation} from "../store.data";
 import {List} from "immutable";
 import {StationModel} from "../../models/StationModel";
 import {Lib} from "../../Lib";
-import {FasterqLineModel} from "../../models/FasterqLineModel";
+import {FasterqLineModel} from "../../models/fasterq-line-model";
+import {YellowPepperService} from "../../services/yellowpepper.service";
 
 export const EFFECT_AUTH_START = 'EFFECT_AUTH_START';
 export const EFFECT_AUTH_END = 'EFFECT_AUTH_END';
@@ -33,22 +34,39 @@ export const EFFECT_LOADED_STATIONS = 'EFFECT_LOADED_STATIONS';
 export const EFFECT_LOAD_FASTERQ_LINES = 'EFFECT_LOAD_FASTERQ_LINES';
 export const EFFECT_LOADED_FASTERQ_LINES = 'EFFECT_LOADED_FASTERQ_LINES';
 export const EFFECT_LOADING_FASTERQ_LINES = 'EFFECT_LOADING_FASTERQ_LINES';
-
+export const EFFECT_UPDATE_FASTERQ_LINE = 'EFFECT_UPDATE_FASTERQ_LINE';
+export const EFFECT_UPDATED_FASTERQ_LINE = 'EFFECT_UPDATED_FASTERQ_LINE';
+export const EFFECT_REMOVE_FASTERQ_LINE = 'EFFECT_REMOVE_FASTERQ_LINE';
+export const EFFECT_REMOVED_FASTERQ_LINE = 'EFFECT_REMOVED_FASTERQ_LINE';
 
 @Injectable()
 export class AppDbEffects {
+
     parseString;
+    appBaseUrlServices
 
     constructor(private actions$: Actions,
                 private store: Store<ApplicationState>,
                 private rp: RedPepperService,
+                private yp: YellowPepperService,
                 private http: Http) {
 
         // todo: disabled injection as broken in AOT
         // @Inject('OFFLINE_ENV') private offlineEnv,
 
+        this.yp.ngrxStore.select(store => store.appDb.appBaseUrlServices)
+            .subscribe((i_appBaseUrlServices) => {
+                this.appBaseUrlServices = i_appBaseUrlServices;
+            })
+
         this.parseString = xml2js.parseString;
     }
+
+    /**
+     *
+     * Authentication
+     *
+     */
 
     @Effect({dispatch: true})
     authTwoFactor$: Observable<Action> = this.actions$.ofType(EFFECT_TWO_FACTOR_AUTH)
@@ -221,6 +239,12 @@ export class AppDbEffects {
         });
     }
 
+    /**
+     *
+     * Stations
+     *
+     */
+
     @Effect({dispatch: true})
     loadStations: Observable<Action> = this.actions$.ofType(EFFECT_LOAD_STATIONS)
         .switchMap(action => this._loadStations(action))
@@ -274,6 +298,24 @@ export class AppDbEffects {
             })
     }
 
+    /**
+     *
+     * Fasterq
+     *
+     */
+
+    private fasterqCreateServerCall(i_urlEndPoint, i_method, i_body): RequestOptionsArgs {
+        var credentials = Lib.EncryptUserPass(this.rp.getUserData().userName, this.rp.getUserData().userPass);
+        var url = `${this.appBaseUrlServices}${i_urlEndPoint}`;
+        var headers = new Headers();
+        headers.append('Authorization', credentials);
+        return {
+            url: url,
+            method: i_method,
+            headers: new Headers({'Authorization': credentials}),
+            body: i_body
+        };
+    }
 
     @Effect({dispatch: true})
     loadfasterqLines: Observable<Action> = this.actions$.ofType(EFFECT_LOAD_FASTERQ_LINES)
@@ -282,32 +324,65 @@ export class AppDbEffects {
 
     private _loadFasterqLines(action: Action): Observable<List<FasterqLineModel>> {
         this.store.dispatch({type: EFFECT_LOADING_FASTERQ_LINES, payload: {}})
-        var credentials = Lib.EncryptUserPass(this.rp.getUserData().userName, this.rp.getUserData().userPass);
-        var url = `${action.payload.appBaseUrlServices}/Lines`;
-        var headers = new Headers();
-        headers.append('Authorization', credentials);
-        var basicOptions: RequestOptionsArgs = {
-            url: url,
-            method: RequestMethod.Get,
-            search: null,
-            headers: new Headers({'Authorization': credentials}),
-            body: null
-        };
-
-        return this.http.get(url, basicOptions)
+        var options: RequestOptionsArgs = this.fasterqCreateServerCall('/Lines', RequestMethod.Get, '')
+        return this.http.get(options.url, options)
             .catch((err: any) => {
                 bootbox.alert('Error loading fasterq lines, try again later...');
                 return Observable.throw(err);
             })
             .finally(() => {
             })
-            .map((response:Response) => {
+            .map((response: Response) => {
                 var lines = List([]);
                 var rxLines = response.json();
-                rxLines.forEach((line)=>{
+                rxLines.forEach((line) => {
                     lines = lines.push(new FasterqLineModel(line))
                 })
                 return lines;
+            })
+    }
+
+    @Effect({dispatch: true})
+    updateFasterqLine: Observable<Action> = this.actions$.ofType(EFFECT_UPDATE_FASTERQ_LINE)
+        .switchMap(action => this._updateFasterqLine(action))
+        .map(payload => ({type: EFFECT_UPDATED_FASTERQ_LINE, payload: payload}));
+
+    private _updateFasterqLine(action: Action): Observable<any> {
+        var options: RequestOptionsArgs = this.fasterqCreateServerCall(`/Line/${action.payload.id}`, RequestMethod.Put, action.payload)
+        return this.http.get(options.url, options)
+            .catch((err: any) => {
+                bootbox.alert('Error saving fasterq line, try again later...');
+                return Observable.throw(err);
+            })
+            .finally(() => {
+            })
+            .map((response: Response) => {
+                return {
+                    data: action.payload,
+                    serverReplay: response.json()
+                }
+            })
+    }
+
+    @Effect({dispatch: true})
+    removeFasterqLine: Observable<Action> = this.actions$.ofType(EFFECT_REMOVE_FASTERQ_LINE)
+        .switchMap(action => this._removeFasterqLine(action))
+        .map(payload => ({type: EFFECT_REMOVED_FASTERQ_LINE, payload: payload}));
+
+    private _removeFasterqLine(action: Action): Observable<any> {
+        var options: RequestOptionsArgs = this.fasterqCreateServerCall(`/Line/${action.payload.id}`, RequestMethod.Delete, action.payload)
+        return this.http.get(options.url, options)
+            .catch((err: any) => {
+                bootbox.alert('Error removing fasterq line, try again later...');
+                return Observable.throw(err);
+            })
+            .finally(() => {
+            })
+            .map((response: Response) => {
+                return {
+                    data: action.payload,
+                    serverReplay: response.json()
+                }
             })
     }
 

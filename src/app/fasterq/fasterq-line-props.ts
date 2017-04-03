@@ -1,13 +1,18 @@
 import {Component, ChangeDetectionStrategy, AfterViewInit} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
-import {FasterqLineModel} from "../../models/FasterqLineModel";
+import {FasterqLineModel} from "../../models/fasterq-line-model";
 import {FormBuilder, FormGroup} from "@angular/forms";
 import {SideProps} from "../../store/actions/appdb.actions";
 import {Observable} from "rxjs/Observable";
+import {EFFECT_UPDATE_FASTERQ_LINE} from "../../store/effects/appdb.effects";
+import * as _ from 'lodash';
 
 @Component({
     selector: 'fasterq-line-props',
+    host: {
+        '(input-blur)': 'saveToStore($event)'
+    },
     styles: [`
         input.ng-invalid {
             border-right: 10px solid red;
@@ -32,7 +37,7 @@ import {Observable} from "rxjs/Observable";
                             <ul class="list-group">
                                 <!--<li class="list-group-item">-->
                                 <!--<span i18n>line name: </span>-->
-                                <!--{{lineSelected?.lineName}}-->
+                                <!--{{m_selectedLine?.lineName}}-->
                                 <!--</li>-->
                                 <li class="list-group-item">
                                     <span i18n>selected line</span>
@@ -40,17 +45,23 @@ import {Observable} from "rxjs/Observable";
                                         <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
                                         <input formControlName="line_name" required
                                                type="text" class="form-control" maxlength="50"
-                                               placeholder="campaign name">
+                                               placeholder="line name">
                                     </div>
                                 </li>
                                 <li class="list-group-item">
                                     <span i18n>reminder ahead of people</span>
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="fa fa-lightbulb-o"></i></span>
-                                        <input formControlName="reminder" required
+                                        <input max="100" min="1" formControlName="reminder" required
                                                type="number" class="form-control"
-                                               placeholder="campaign name">
+                                               placeholder="send reminder">
                                     </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <button class="btn btn-primary inliner" i18n>open terminal</button>
+                                </li>
+                                <li class="list-group-item">
+                                    <button class="btn btn-primary inliner" i18n>reset line</button>
                                 </li>
                             </ul>
                         </div>
@@ -65,7 +76,7 @@ import {Observable} from "rxjs/Observable";
 })
 export class FasterqLineProps extends Compbaser implements AfterViewInit {
 
-    lineSelected: FasterqLineModel;
+    m_selectedLine: FasterqLineModel;
     m_contGroup: FormGroup;
     m_sideProps$: Observable<SideProps>;
     m_sidePropsEnum = SideProps;
@@ -81,15 +92,26 @@ export class FasterqLineProps extends Compbaser implements AfterViewInit {
         this.cancelOnDestroy(
             this.yp.listenFasterqLineSelected()
                 .subscribe((i_lineSelected: FasterqLineModel) => {
-                    this.lineSelected = i_lineSelected;
+                    this.m_selectedLine = i_lineSelected;
                     this._render();
                 }, (e) => console.error(e))
         )
     }
 
     _render() {
-        this.m_contGroup.controls.line_name.setValue(this.lineSelected.lineName)
-        this.m_contGroup.controls.reminder.setValue(this.lineSelected.reminder)
+        this.m_contGroup.controls.line_name.setValue(this.m_selectedLine.lineName)
+        this.m_contGroup.controls.reminder.setValue(this.m_selectedLine.reminder)
+    }
+
+    saveToStore() {
+        this.yp.ngrxStore.dispatch({
+            type: EFFECT_UPDATE_FASTERQ_LINE,
+            payload: {
+                id: this.m_selectedLine.lineId,
+                name: this.m_contGroup.controls.line_name.value,
+                reminder: _.isNumber(this.m_contGroup.controls.reminder.value) ? this.m_contGroup.controls.reminder.value : 1
+            }
+        })
     }
 
     ngAfterViewInit() {

@@ -7,11 +7,10 @@ import * as _ from 'lodash';
 import {Map, List} from 'immutable';
 import {StationModel} from "../../models/StationModel";
 import {Lib} from "../../Lib";
-import {FasterqLineModel} from "../../models/FasterqLineModel";
+import {FasterqLineModel} from "../../models/fasterq-line-model";
 
 const baseUrl = 'https://galaxy.signage.me/WebService/ResellerService.ashx';
 export const appBaseUrlCloud = 'https://secure.digitalsignage.com';
-
 
 export function appDb(state: IAppDb, action: any): IAppDb {
 
@@ -22,7 +21,7 @@ export function appDb(state: IAppDb, action: any): IAppDb {
             return state;
 
         case ActionsConst.ACTION_UISTATE_UPDATE: {
-            _.merge(state.uiState,action.payload);
+            _.merge(state.uiState, action.payload);
             return state;
         }
 
@@ -31,12 +30,25 @@ export function appDb(state: IAppDb, action: any): IAppDb {
             state.userModel = userModel.setTime();
             state.appBaseUrlUser = `${baseUrl}?resellerUserName=${userModel.getKey('user')}&resellerPassword=${userModel.getKey('pass')}`;
             state.appBaseUrlCloud = `${appBaseUrlCloud}/END_POINT/${userModel.getKey('user')}/${userModel.getKey('pass')}`;
-            state.appBaseUrlServices = `https://secure.digitalsignage.com${Lib.DevMode() ? ':443' : ''}`;
+            state.appBaseUrlServices = `https://secure.digitalsignage.com${Lib.DevMode() ? ':442' : ''}`;
             return state;
 
         case EffectActions.EFFECT_LOADED_STATIONS:
             var stations: List<StationModel> = action.payload;
             state.stations = stations;
+            return state;
+
+        case EffectActions.EFFECT_UPDATED_FASTERQ_LINE:
+            var index = state.fasterq.lines.findIndex((i_fasterqLineModel:FasterqLineModel) => i_fasterqLineModel.lineId == action.payload.data.id);
+            state.fasterq.lines = state.fasterq.lines.update(index, (i_fasterqLineModel:FasterqLineModel) => {
+                i_fasterqLineModel = i_fasterqLineModel.setKey<FasterqLineModel>(FasterqLineModel, 'name', action.payload.data.name);
+                return i_fasterqLineModel.setKey<FasterqLineModel>(FasterqLineModel, 'reminder', action.payload.data.reminder);
+            });
+            return state;
+
+        case EffectActions.EFFECT_REMOVED_FASTERQ_LINE:
+            var index = state.fasterq.lines.findIndex((i_fasterqLineModel:FasterqLineModel) => i_fasterqLineModel.lineId == action.payload.data.id);
+            state.fasterq.lines = state.fasterq.lines.remove(index)
             return state;
 
         case EffectActions.EFFECT_LOADED_FASTERQ_LINES:

@@ -11,7 +11,7 @@ import {compose} from "@ngrx/core";
 import {MainAppShowStateEnum} from "../app/app-component";
 import {LocationMarkModel} from "../models/LocationMarkModel";
 import {StationModel} from "../models/StationModel";
-import {FasterqLineModel} from "../models/FasterqLineModel";
+import {FasterqLineModel} from "../models/fasterq-line-model";
 
 const reducers = {msDatabase, appDb};
 export const developmentReducer: ActionReducer<ApplicationState> = compose(storeFreeze, combineReducers)(reducers);

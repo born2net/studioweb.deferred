@@ -31,6 +31,7 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
         </panel-split-container>
     `
 })
+
 export class FasterqNavigation extends Compbaser {
 }
 
