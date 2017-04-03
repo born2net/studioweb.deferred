@@ -51,6 +51,11 @@ declare class RC4 {
     doDecrypt: any;
 }
 
+declare class Stopwatch {
+    stop:()=>void;
+    reset:()=>void;
+}
+
 declare class RC4V2 {
     encrypt: any;
     decrypt: any;

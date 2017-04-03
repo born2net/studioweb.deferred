@@ -39,6 +39,7 @@
         "./libs/rc4v2/rc4v2.js",
         "./libs/bootstrap-timepicker/js/bootstrap-timepicker.min.js",
         "./libs/contextmenu/bootstrap-contextmenu.js",
+        "./libs/stop-watch/stop-watch.js",
         "./store/signage_sdk.js",
         "../node_modules/bootstrap/dist/js/bootstrap.js",
         "../node_modules/bootbox/bootbox.js",
