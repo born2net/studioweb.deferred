@@ -51,6 +51,11 @@ export function appDb(state: IAppDb, action: any): IAppDb {
             state.fasterq.lines = state.fasterq.lines.remove(index)
             return state;
 
+        case EffectActions.EFFECT_ADDED_FASTERQ_LINE:
+            var fasterqLineModel:FasterqLineModel = new FasterqLineModel(action.payload.serverReplay);
+            state.fasterq.lines = state.fasterq.lines.push(fasterqLineModel)
+            return state;
+
         case EffectActions.EFFECT_LOADED_FASTERQ_LINES:
             var lines: List<FasterqLineModel> = action.payload;
             state.fasterq.lines = lines;

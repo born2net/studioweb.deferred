@@ -38,6 +38,8 @@ export const EFFECT_UPDATE_FASTERQ_LINE = 'EFFECT_UPDATE_FASTERQ_LINE';
 export const EFFECT_UPDATED_FASTERQ_LINE = 'EFFECT_UPDATED_FASTERQ_LINE';
 export const EFFECT_REMOVE_FASTERQ_LINE = 'EFFECT_REMOVE_FASTERQ_LINE';
 export const EFFECT_REMOVED_FASTERQ_LINE = 'EFFECT_REMOVED_FASTERQ_LINE';
+export const EFFECT_ADD_FASTERQ_LINE = 'EFFECT_ADD_FASTERQ_LINE';
+export const EFFECT_ADDED_FASTERQ_LINE = 'EFFECT_ADDED_FASTERQ_LINE';
 
 @Injectable()
 export class AppDbEffects {
@@ -374,6 +376,28 @@ export class AppDbEffects {
         return this.http.get(options.url, options)
             .catch((err: any) => {
                 bootbox.alert('Error removing fasterq line, try again later...');
+                return Observable.throw(err);
+            })
+            .finally(() => {
+            })
+            .map((response: Response) => {
+                return {
+                    data: action.payload,
+                    serverReplay: response.json()
+                }
+            })
+    }
+
+    @Effect({dispatch: true})
+    addFasterqLine: Observable<Action> = this.actions$.ofType(EFFECT_ADD_FASTERQ_LINE)
+        .switchMap(action => this._addFasterqLine(action))
+        .map(payload => ({type: EFFECT_ADDED_FASTERQ_LINE, payload: payload}));
+
+    private _addFasterqLine(action: Action): Observable<any> {
+        var options: RequestOptionsArgs = this.fasterqCreateServerCall(`/Line`, RequestMethod.Post, action.payload)
+        return this.http.get(options.url, options)
+            .catch((err: any) => {
+                bootbox.alert('Error adding fasterq line, try again later...');
                 return Observable.throw(err);
             })
             .finally(() => {

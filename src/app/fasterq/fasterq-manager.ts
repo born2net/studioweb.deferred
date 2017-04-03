@@ -6,10 +6,9 @@ import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.action
 import {IUiState} from "../../store/store.data";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {ToastsManager} from "ng2-toastr";
-import {EFFECT_LOAD_FASTERQ_LINES, EFFECT_REMOVE_FASTERQ_LINE} from "../../store/effects/appdb.effects";
-import {Once} from "../../decorators/once-decorator";
+import {EFFECT_ADD_FASTERQ_LINE, EFFECT_LOAD_FASTERQ_LINES, EFFECT_REMOVE_FASTERQ_LINE} from "../../store/effects/appdb.effects";
 import {FasterqLineModel} from "../../models/fasterq-line-model";
-import {Map, List} from 'immutable';
+import {List} from "immutable";
 
 @Component({
     selector: 'fasterq-manager',
@@ -72,17 +71,6 @@ export class FasterqManager extends Compbaser {
     @Output()
     onLineSelected: EventEmitter<any> = new EventEmitter<any>();
 
-    _remove() {
-        bootbox.confirm("Are you sure you want to remove the Line and associated queues?", (result) => {
-            if (!result)
-                return;
-            this.yp.ngrxStore.dispatch({
-                type: EFFECT_REMOVE_FASTERQ_LINE,
-                payload: {id: this.m_selectedLine.lineId}
-            })
-        });
-    }
-
     _onLineSelected(event: MouseEvent, i_fasterqLineModel: FasterqLineModel, index) {
         // event.stopPropagation();
         // event.preventDefault();
@@ -111,10 +99,21 @@ export class FasterqManager extends Compbaser {
     }
 
     _createNew() {
-        // this.sceneCreate.emit();
-        // var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
-        // this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
-        // this.slideToCampaignName.emit();
+        this.yp.ngrxStore.dispatch({
+            type: EFFECT_ADD_FASTERQ_LINE,
+            payload: {name: 'new line', business_id: this.rp.getUserData().businessID}
+        })
+    }
+
+    _remove() {
+        bootbox.confirm("Are you sure you want to remove the Line and associated queues?", (result) => {
+            if (!result)
+                return;
+            this.yp.ngrxStore.dispatch({
+                type: EFFECT_REMOVE_FASTERQ_LINE,
+                payload: {id: this.m_selectedLine.lineId}
+            })
+        });
     }
 
     destroy() {
