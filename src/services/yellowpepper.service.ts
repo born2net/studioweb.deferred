@@ -27,6 +27,7 @@ import {IScreenTemplateData} from "../interfaces/IScreenTemplate";
 import {LocationMarkModel} from "../models/LocationMarkModel";
 import {StationModel} from "../models/StationModel";
 import {FasterqLineModel} from "../models/fasterq-line-model";
+import {FasterqQueueModel} from "../models/fasterq-queue-model";
 
 
 @Injectable()
@@ -472,11 +473,12 @@ export class YellowPepperService {
             });
     }
 
-    /**
-     Get all Scenes and update on any scene change
-     **/
     listenFasterqLines(): Observable<List<FasterqLineModel>> {
         return this.store.select(store => store.appDb.fasterq.lines)
+    }
+
+    listenFasterqQueues(): Observable<List<FasterqQueueModel>> {
+        return this.store.select(store => store.appDb.fasterq.queues)
     }
 
     /**

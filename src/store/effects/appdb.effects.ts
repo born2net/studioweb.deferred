@@ -20,6 +20,7 @@ import {StationModel} from "../../models/StationModel";
 import {Lib} from "../../Lib";
 import {FasterqLineModel} from "../../models/fasterq-line-model";
 import {YellowPepperService} from "../../services/yellowpepper.service";
+import {FasterqQueueModel} from "../../models/fasterq-queue-model";
 
 export const EFFECT_AUTH_START = 'EFFECT_AUTH_START';
 export const EFFECT_AUTH_END = 'EFFECT_AUTH_END';
@@ -34,6 +35,9 @@ export const EFFECT_LOADED_STATIONS = 'EFFECT_LOADED_STATIONS';
 export const EFFECT_LOAD_FASTERQ_LINES = 'EFFECT_LOAD_FASTERQ_LINES';
 export const EFFECT_LOADED_FASTERQ_LINES = 'EFFECT_LOADED_FASTERQ_LINES';
 export const EFFECT_LOADING_FASTERQ_LINES = 'EFFECT_LOADING_FASTERQ_LINES';
+export const EFFECT_LOAD_FASTERQ_QUEUES = 'EFFECT_LOAD_FASTERQ_QUEUES';
+export const EFFECT_LOADED_FASTERQ_QUEUES = 'EFFECT_LOADED_FASTERQ_QUEUES';
+export const EFFECT_LOADING_FASTERQ_QUEUES = 'EFFECT_LOADING_FASTERQ_QUEUES';
 export const EFFECT_UPDATE_FASTERQ_LINE = 'EFFECT_UPDATE_FASTERQ_LINE';
 export const EFFECT_UPDATED_FASTERQ_LINE = 'EFFECT_UPDATED_FASTERQ_LINE';
 export const EFFECT_REMOVE_FASTERQ_LINE = 'EFFECT_REMOVE_FASTERQ_LINE';
@@ -339,6 +343,31 @@ export class AppDbEffects {
                 var rxLines = response.json();
                 rxLines.forEach((line) => {
                     lines = lines.push(new FasterqLineModel(line))
+                })
+                return lines;
+            })
+    }
+
+    @Effect({dispatch: true})
+    loadfasterqQueues: Observable<Action> = this.actions$.ofType(EFFECT_LOAD_FASTERQ_QUEUES)
+        .switchMap(action => this._loadfasterqQueues(action))
+        .map(stations => ({type: EFFECT_LOADED_FASTERQ_QUEUES, payload: stations}));
+
+    private _loadfasterqQueues(action: Action): Observable<List<FasterqLineModel>> {
+        this.store.dispatch({type: EFFECT_LOADING_FASTERQ_QUEUES, payload: {}})
+        var options: RequestOptionsArgs = this.fasterqCreateServerCall(`/Queues`, RequestMethod.Post,  action.payload)
+        return this.http.get(options.url, options)
+            .catch((err: any) => {
+                bootbox.alert('Error loading fasterq queues, try again later...');
+                return Observable.throw(err);
+            })
+            .finally(() => {
+            })
+            .map((response: Response) => {
+                var lines = List([]);
+                var rxQueus = response.json();
+                rxQueus.forEach((queue) => {
+                    lines = lines.push(new FasterqQueueModel(queue))
                 })
                 return lines;
             })

@@ -6,7 +6,7 @@ import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.action
 import {IUiState} from "../../store/store.data";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {ToastsManager} from "ng2-toastr";
-import {EFFECT_ADD_FASTERQ_LINE, EFFECT_LOAD_FASTERQ_LINES, EFFECT_REMOVE_FASTERQ_LINE} from "../../store/effects/appdb.effects";
+import {EFFECT_ADD_FASTERQ_LINE, EFFECT_LOAD_FASTERQ_LINES, EFFECT_LOAD_FASTERQ_QUEUES, EFFECT_REMOVE_FASTERQ_LINE} from "../../store/effects/appdb.effects";
 import {FasterqLineModel} from "../../models/fasterq-line-model";
 import {List} from "immutable";
 
@@ -56,13 +56,13 @@ export class FasterqManager extends Compbaser {
 
     selectedIdx = -1;
     m_selectedLine: FasterqLineModel;
-    public lines$: Observable<List<FasterqLineModel>>
+    lines$: Observable<List<FasterqLineModel>>
 
     constructor(private yp: YellowPepperService, private rp: RedPepperService, private toastr: ToastsManager) {
         super();
         this.preventRedirect(true);
         this.yp.ngrxStore.dispatch({type: EFFECT_LOAD_FASTERQ_LINES, payload: {}})
-        this.lines$ = this.yp.listenFasterqLines()
+        this.lines$ = this.yp.listenFasterqLines();
     }
 
     @Output()
@@ -95,6 +95,7 @@ export class FasterqManager extends Compbaser {
             // this.onCampaignSelected.emit(uiState)
         }
         this.m_selectedLine = i_fasterqLineModel;
+        this.yp.ngrxStore.dispatch(({type: EFFECT_LOAD_FASTERQ_QUEUES, payload: {line_id: i_fasterqLineModel.lineId}}))
         this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 

@@ -1,6 +1,9 @@
 import {Component, ChangeDetectionStrategy, AfterViewInit, ElementRef} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
+import {Observable} from "rxjs/Observable";
+import {FasterqQueueModel} from "../../models/fasterq-queue-model";
+import {Map, List} from 'immutable';
 
 @Component({
     selector: 'fasterq-editor',
@@ -12,9 +15,11 @@ export class FasterqEditor extends Compbaser implements AfterViewInit {
     m_stopWatchHandle = new Stopwatch();
     m_stopTimer = '00:00:00';
     m_selectedServiceID: any = -1;
+    queues$: Observable<List<FasterqQueueModel>>
 
     constructor(private yp: YellowPepperService, private el: ElementRef) {
         super();
+        this.queues$ = this.yp.listenFasterqQueues();
     }
 
     /**

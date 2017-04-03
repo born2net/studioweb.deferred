@@ -8,6 +8,7 @@ import {Map, List} from 'immutable';
 import {StationModel} from "../../models/StationModel";
 import {Lib} from "../../Lib";
 import {FasterqLineModel} from "../../models/fasterq-line-model";
+import {FasterqQueueModel} from "../../models/fasterq-queue-model";
 
 const baseUrl = 'https://galaxy.signage.me/WebService/ResellerService.ashx';
 export const appBaseUrlCloud = 'https://secure.digitalsignage.com';
@@ -59,6 +60,11 @@ export function appDb(state: IAppDb, action: any): IAppDb {
         case EffectActions.EFFECT_LOADED_FASTERQ_LINES:
             var lines: List<FasterqLineModel> = action.payload;
             state.fasterq.lines = lines;
+            return state;
+
+        case EffectActions.EFFECT_LOADED_FASTERQ_QUEUES:
+            var queues: List<FasterqQueueModel> = action.payload;
+            state.fasterq.queues = queues;
             return state;
 
         case EffectActions.EFFECT_TWO_FACTOR_UPDATED:
