@@ -17,19 +17,12 @@ import {MainAppShowStateEnum} from "../app-component";
     templateUrl: './campaign-editors.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     animations: [
-        trigger('visibilityChanged1', [
-            state('true', style({transform: 'rotate(0deg)'})),
-            state('false', style({transform: 'rotate(180deg)'})),
-            transition('1 => 0', animate('300ms')),
-            transition('0 => 1', animate('300ms'))
-        ]),
-        trigger('visibilityChanged2', [
-            state('true', style({transform: 'rotate(0deg)'})),
-            state('false', style({transform: 'rotate(180deg)'})),
-            transition('1 => 0', animate('300ms')),
-            transition('0 => 1', animate('300ms'))
+        trigger('visibilityChanged', [
+            state('on', style({transform: 'rotate(0deg)'})),
+            state('off', style({transform: 'rotate(180deg)'})),
+            transition('* => *', animate('300ms'))
         ])
-    ],
+    ]
 })
 
 export class CampaignEditor extends Compbaser {
@@ -40,9 +33,25 @@ export class CampaignEditor extends Compbaser {
 
     m_campaignTimelinesModels: List<CampaignTimelinesModel>;
     m_campaignTimelineChanelPlayersModel: CampaignTimelineChanelPlayersModelExt;
-    m_isVisible1 = true;
-    m_isVisible2 = true;
+    m_isVisible1 = 'off';
+    m_isVisible2 = 'off';
     m_toggleShowChannel = true;
+
+    id = 0
+    items = []
+
+    remove(id) {
+        let index = this.items.findIndex(item => item.id === id)
+        this.items.splice(index, 1)
+    }
+
+    reset() {
+        this.items = []
+    }
+
+    add() {
+        this.items.unshift({id: this.id++, name: 'item'})
+    }
 
     constructor(private yp: YellowPepperService, private actions: AppdbAction, private rp: RedPepperService) {
         super();

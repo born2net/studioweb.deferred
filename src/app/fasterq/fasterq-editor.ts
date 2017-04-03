@@ -4,10 +4,8 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
 
 @Component({
     selector: 'fasterq-editor',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    template: `
-        <small class="debug">{{me}}</small>
-    `,
+    // changeDetection: ChangeDetectionStrategy.OnPush,
+    templateUrl: './fasterq-editor.html'
 })
 export class FasterqEditor extends Compbaser implements AfterViewInit {
 

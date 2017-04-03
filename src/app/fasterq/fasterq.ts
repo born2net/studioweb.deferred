@@ -15,10 +15,10 @@ import {ISliderItemData, Slideritem} from "../../comps/sliderpanel/Slideritem";
         <Sliderpanel>
             <Slideritem [templateRef]="a" #sliderFqLineManager class="page center fqList selected" [showToButton]="false" [toDirection]="'right'" [to]="'fqEditor'">
                 <ng-template #a>
-                    <fasterq-manager (sceneCreate)="sliderFqLineManager.slideTo('sceneCreator','right')" (slideToSceneEditor)="sliderFqLineManager.onNext()"></fasterq-manager>
+                    <fasterq-manager (slideToFasterqEditor)="sliderFqLineManager.slideTo('fqEditor','right')"></fasterq-manager>
                 </ng-template>
             </Slideritem>
-            <Slideritem [templateRef]="b" #sliderItemCampaignEditor (onChange)="_onSlideChange($event)" [showFromButton]="false" class="page left fqEditor" [fromDirection]="'left'" [from]="'fqList'">
+            <Slideritem [templateRef]="b" #sliderItemCampaignEditor (onChange)="_onSlideChange($event)" [showFromButton]="true" class="page left fqEditor" [fromDirection]="'left'" [from]="'fqList'">
                 <ng-template #b>
                     <fasterq-editor (onGoBack)="sliderItemCampaignEditor.slideTo('fqList','left')"></fasterq-editor>
                 </ng-template>

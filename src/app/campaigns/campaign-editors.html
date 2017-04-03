@@ -1,6 +1,5 @@
 <small class="debug">{{me}}</small>
 <h4 i18n>campaign editor</h4>
-
 <!-- todo: need to investigate as performance sometime laggy when using the matchBodyHeight directive here -->
 <!--<div matchBodyHeight="150" id="campaignView" style="margin-right: 30px; padding-right: 5px; overflow-y: auto">-->
 <div id="campaignView" style="padding-right: 24px">
@@ -9,8 +8,8 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a (click)="m_isVisible1 = !m_isVisible1" id="toggleTimelinesCollapsible" data-toggle="collapse" data-parent="#timelinesCollapsible" href="#screenSelectorContainerCollapse">
-                        <span style="position: relative; top: 3px" [@visibilityChanged1]="m_isVisible1" class="glyphicon glyphicon-chevron-down"></span>
+                    <a (click)="m_isVisible1 = m_isVisible1 == 'on' ? 'off' : 'on'" id="toggleTimelinesCollapsible" data-toggle="collapse" data-parent="#timelinesCollapsible" href="#screenSelectorContainerCollapse">
+                        <span style="position: relative; top: 3px" [@visibilityChanged]="m_isVisible1" class="glyphicon glyphicon-chevron-down"></span>
                     </a>
                     <button (click)="_onGoBack()" type="button" style="margin-left: 8px" title="add new timeline" data-localize="empty" data-localize-tooltip="backToCampaignsTooltip" class="btn btn-default btn-sm">
                         <span class="glyphicon glyphicon-chevron-left"></span>
@@ -57,8 +56,8 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a (click)="m_isVisible2 = !m_isVisible2" id="toggleStorylineCollapsible" data-toggle="collapse" data-parent="#storylineCollapsible" href="#storylineContainerCollapse">
-                        <span [@visibilityChanged2]="m_isVisible2" class="collapsed glyphicon glyphicon-chevron-up"></span>
+                    <a (click)="m_isVisible2 = m_isVisible2 == 'on' ? 'off' : 'on'" id="toggleStorylineCollapsible" data-toggle="collapse" data-parent="#storylineCollapsible" href="#storylineContainerCollapse">
+                        <span [@visibilityChanged]="m_isVisible2" class="collapsed glyphicon glyphicon-chevron-up"></span>
                         <span data-localize="timeline">Timeline</span>
                     </a>
                     <button (click)="sequencer.onSelectNextChannel()" style="margin-left: 30px" id="selectNextChannel" type="button" class="btn btn-default btn-sm">

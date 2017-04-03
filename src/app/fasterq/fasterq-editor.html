@@ -1,0 +1,93 @@
+<small class="debug">{{me}}</small>
+<div id="fasterQManagerContainer">
+    <button i18n style="margin-right: 100px; position: relative; top: -30px" id="fqOpenCustomerRemoteStatus" class="pull-right btn btn-primary">remote status</button>
+    <h5 class="pull-left">Line name: <strong><span id="fqLineName"></span></strong></h5>
+    <div>
+        <br/>
+        <br/>
+        <br/>
+        <div class="row fqStats">
+            <div class="col-xs-6 col-sm-3" style="margin-top: 0; padding: 0;">
+                <div class="fakeVerticalLineDivL" style="height: 58px; width: 100%; float: left">
+                    <span><strong>called customer: </strong></span><br/>
+                    <span id="fqTimeWithCustomer">00:00:00</span>
+                </div>
+            </div>
+
+            <div class="col-xs-6 col-sm-3" style="margin-top: 0; padding: 0">
+                <div class="fakeVerticalLineDivL" style="height: 58px; width: 100%; float: left">
+                    <span><strong>last you serviced</strong></span><br/>
+                    <span id="fqLastServiced">0</span>
+                </div>
+            </div>
+            <div class="col-xs-6 col-sm-3" style="margin-top: 0; padding: 0">
+                <div class="fakeVerticalLineDivL" style="height: 58px; width: 100%; float: left">
+                    <span><strong>last you called</strong></span><br/>
+                    <span id="fqLastCalled">0</span>
+                </div>
+            </div>
+            <div class="col-xs-6 col-sm-3" style="margin-top: 0; padding: 0;">
+                <div class="fakeVerticalLineDivL" style="height: 58px; width: 100%; float: left">
+                    <span><strong>total to be serviced</strong></span><br/>
+                    <span id="fqTotalToBeServiced">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row fqStats">
+            <div class="col-xs-4" style="margin-top: 0; padding: 0;">
+                <div class="fakeVerticalLineDivL" style="width: 100%; float: left">
+                    <span><strong>avg customer service time (minutes): </strong></span><br/>
+
+                    <h1 id="fqAvgCustomerService">00:00:00</h1>
+                </div>
+            </div>
+
+            <div class="col-xs-4" style="margin-top: 0; padding: 0">
+                <div class="fakeVerticalLineDivL" style="width: 100%; float: left">
+                    <span><strong>avg customer wait time (minutes):</strong></span><br/>
+
+                    <h1 id="fqAvgCustomerWait">00:00:00</h1>
+                </div>
+            </div>
+
+            <div class="col-xs-4" style="margin-top: 0; padding: 0;">
+                <div class="fakeVerticalLineDivL" style="width: 100%; float: left">
+                    <span><strong>now servicing: </strong></span><br/>
+
+                    <h1 id="fqNowServicing">0</h1>
+                </div>
+            </div>
+
+        </div>
+        <br/>
+
+        <div id="fqLineQueueComponentWrap">
+            <div id="fqSelectedCustomer"></div>
+            <div id="fqLineQueueComponentContainer">
+                <div id="fqLineQueueComponent"></div>
+            </div>
+        </div>
+        <div style="text-align: center; width: 100%;" class="centerElement">
+            <button id="fqLineCompCall" type="button" data-localize-tooltip="back" data-localize="empty" title="back" class="lineComponentButtons btn btn-default btn-sm">
+                <span class="fa fa-bullhorn"></span> Call
+            </button>
+            <button id="fqLineCompServiced" type="button" data-localize-tooltip="back" data-localize="empty" title="back" class="lineComponentButtons btn btn-default btn-sm">
+                <span class="fa fa-thumbs-up"></span> Serviced
+            </button>
+            <button id="fqLineCompPrev" type="button" data-localize-tooltip="back" data-localize="empty" title="back" class="lineComponentButtons btn btn-default btn-sm">
+                <span class="glyphicon glyphicon-chevron-left"></span> Previous
+            </button>
+            <span>
+                                        <button id="fqLineGoTo" type="button" data-localize-tooltip="goTo" data-localize="empty" title="go to" class="lineComponentButtons btn btn-default btn-sm">Go to &nbsp
+                                          <input id="fqGoToLineInput">
+                                        </button>
+                                    </span>
+            <button id="fqLineCompNext" type="button" data-localize-tooltip="back" data-localize="empty" title="back" class="lineComponentButtons btn btn-default btn-sm">
+                Next
+                <span class="glyphicon glyphicon-chevron-right"></span>
+            </button>
+
+        </div>
+    </div>
+</div>

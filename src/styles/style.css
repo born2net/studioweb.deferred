@@ -1153,3 +1153,57 @@ form .list-group, form .list-group-item {
     padding: 0;
     margin: 0;
 }
+
+#fqLineQueueComponentContainer {
+    width: 2000px;
+    overflow: hidden;
+}
+
+#fqLineQueueComponent {
+    height: 200px;
+    width: 1000000px;
+    padding: 0;
+    margin: 0;
+    overflow: scroll;
+}
+
+#fqLineQueueComponentWrap {
+    width: 700px;
+    padding: 0;
+    margin: 0;
+    position: relative;
+}
+
+#fqSelectedCustomer {
+    border: 2px dashed red;
+    cursor: pointer;
+    background-color: transparent;
+    width: 60px;
+    height: 110px;
+    z-index: 100;
+    position: absolute;
+    left: 486px;
+}
+
+#fqSelectedCustomer:hover {
+    opacity: 0.3;
+    background-color: gray;
+}
+
+.fqStats > div {
+    border: solid 1px #b5b5b5;
+    padding-top: 5px;
+    margin-top: 5px;
+    background-color: white;
+}
+
+
+#fqGoToLineInput {
+    padding: 0;
+    margin: 0;
+    width: 60px;
+}
+
+#fqLineCompCall {
+    background-color: #BE6734;
+}
