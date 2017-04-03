@@ -214,6 +214,17 @@ export class YellowPepperService {
             })
     }
 
+    listenFasterqLineSelected(): Observable<FasterqLineModel> {
+        var selected$ = this.store.select(store => store.appDb.uiState.fasterq.fasterqLineSelected);
+        var lines$ = this.store.select(store => store.appDb.fasterq.lines);
+        return selected$
+            .combineLatest(lines$, (lineId, lines: List<FasterqLineModel>) => {
+                return lines.find((line: FasterqLineModel) => {
+                    return line.lineId == lineId;
+                });
+            }).filter(value => value != null);
+    }
+
     listenGlobalBoardSelectedChanged(emitOnEmpty: boolean = false): Observable<BoardTemplateViewersModel> {
         var globalBoardTemplateViewerSelected$ = this.ngrxStore.select(store => store.appDb.uiState.campaign.campaignTimelineBoardViewerSelected);
         var tableBoardTemplatesList$ = this.ngrxStore.select(store => store.msDatabase.sdk.table_board_template_viewers);

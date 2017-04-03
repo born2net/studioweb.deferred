@@ -43,7 +43,8 @@ export enum SideProps {
     resourceProps,
     sceneEditor,
     stationProps,
-    fasterqLineProps
+    fasterqLineProps,
+    fasterqLineEditor
 }
 
 
