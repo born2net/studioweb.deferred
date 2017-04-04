@@ -1,7 +1,8 @@
 <small class="debug">{{me}}</small>
 <div id="fasterQManagerContainer">
     <button i18n style="margin-right: 100px; position: relative; top: -30px" id="fqOpenCustomerRemoteStatus" class="pull-right btn btn-primary">remote status</button>
-    <h5 class="pull-left">Line name: <strong><span id="fqLineName"></span></strong></h5>
+    <h5>Line: {{m_line?.lineName}}</h5>
+    <h5>Queue: {{m_selectedQueue != undefined && m_selectedQueue.serviceId != 'undefined' ? m_selectedQueue.serviceId : 'none'}}</h5>
     <div>
         <br/>
         <br/>
@@ -13,7 +14,6 @@
                     <span id="fqTimeWithCustomer">{{m_stopTimer}}</span>
                 </div>
             </div>
-
             <div class="col-xs-6 col-sm-3" style="margin-top: 0; padding: 0">
                 <div class="fakeVerticalLineDivL" style="height: 58px; width: 100%; float: left">
                     <span><strong>last you serviced</strong></span><br/>
@@ -33,69 +33,59 @@
                 </div>
             </div>
         </div>
-
         <div style="margin: 0 20px 0 -9px" class="row fqStats">
             <div class="col-xs-4" style="margin-top: 0; padding: 0;">
                 <div class="fakeVerticalLineDivL" style="width: 100%; float: left">
                     <span><strong>avg customer service time (minutes): </strong></span><br/>
-
                     <h1 id="fqAvgCustomerService">00:00:00</h1>
                 </div>
             </div>
-
             <div class="col-xs-4" style="margin-top: 0; padding: 0">
                 <div class="fakeVerticalLineDivL" style="width: 100%; float: left">
                     <span><strong>avg customer wait time (minutes):</strong></span><br/>
-
                     <h1 id="fqAvgCustomerWait">00:00:00</h1>
                 </div>
             </div>
-
             <div class="col-xs-4" style="margin-top: 0; padding: 0;">
                 <div class="fakeVerticalLineDivL" style="width: 100%; float: left">
                     <span><strong>now servicing: </strong></span><br/>
-
                     <h1 id="fqNowServicing">0</h1>
                 </div>
             </div>
-
         </div>
         <br/>
-
         <div id="fqLineQueueComponentWrap">
             <div id="fqSelectedCustomer"></div>
             <div id="fqLineQueueComponentContainer">
                 <div id="fqLineQueueComponent">
-                    <div *ngFor="let queue of m_queues" class="personInLine" (click)="_onQueuSelected(queue,$event)" [ngClass]="{serviced: queue.serviced, called: queue.called}">
+                    <div *ngFor="let queue of m_queues; let i = index" class="personInLine" (click)="_onQueueSelected(queue)" [ngClass]="{serviced: queue.serviced, called: queue.called}">
                         <div *ngIf="queue.lineId != -1">
                             <i style="font-size: 90px" class="fa fa-male"></i>
                             <h3 style="position: relative; left: 6px">{{queue.serviceId}}</h3>
                         </div>
-
                     </div>
                 </div>
             </div>
         </div>
         <div style="text-align: center; width: 100%;" class="centerElement">
-            <button id="fqLineCompCall" type="button" data-localize-tooltip="back" data-localize="empty" title="back" class="lineComponentButtons btn btn-default btn-sm">
+            <button (click)="_onCall()" id="fqLineCompCall" type="button" data-localize-tooltip="back" data-localize="empty" title="back" class="lineComponentButtons btn btn-default btn-sm">
                 <span class="fa fa-bullhorn"></span> Call
             </button>
-            <button id="fqLineCompServiced" type="button" data-localize-tooltip="back" data-localize="empty" title="back" class="lineComponentButtons btn btn-default btn-sm">
+            <button (click)="_onService()" id="fqLineCompServiced" type="button" data-localize-tooltip="back" data-localize="empty" title="back" class="lineComponentButtons btn btn-default btn-sm">
                 <span class="fa fa-thumbs-up"></span> Serviced
             </button>
-            <button id="fqLineCompPrev" type="button" data-localize-tooltip="back" data-localize="empty" title="back" class="lineComponentButtons btn btn-default btn-sm">
+            <button (click)="_onPrev()" id="fqLineCompPrev" type="button" data-localize-tooltip="back" data-localize="empty" title="back" class="lineComponentButtons btn btn-default btn-sm">
                 <span class="glyphicon glyphicon-chevron-left"></span> Previous
             </button>
             <span>
-                                        <button id="fqLineGoTo" type="button" data-localize-tooltip="goTo" data-localize="empty" title="go to" class="lineComponentButtons btn btn-default btn-sm">Go to &nbsp
-                                          <input id="fqGoToLineInput">
-                                        </button>
-                                    </span>
-            <button id="fqLineCompNext" type="button" data-localize-tooltip="back" data-localize="empty" title="back" class="lineComponentButtons btn btn-default btn-sm">
+      <button (click)="_onGoTo()" id="fqLineGoTo" type="button" data-localize-tooltip="goTo" data-localize="empty" title="go to" class="lineComponentButtons btn btn-default btn-sm">
+      Go to <input  [(ngModel)]="m_gotoModel" id="fqGoToLineInput">
+      </button>
+      </span>
+            <button (click)="_onNext()" id="fqLineCompNext" type="button" data-localize-tooltip="back" data-localize="empty" title="back" class="lineComponentButtons btn btn-default btn-sm">
                 Next
                 <span class="glyphicon glyphicon-chevron-right"></span>
             </button>
-
         </div>
     </div>
 </div>

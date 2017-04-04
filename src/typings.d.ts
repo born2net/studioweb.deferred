@@ -54,6 +54,7 @@ declare class RC4 {
 declare class Stopwatch {
     stop:()=>void;
     reset:()=>void;
+    setListener:()=>void;
 }
 
 declare class Power4 {

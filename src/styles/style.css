@@ -1207,3 +1207,42 @@ form .list-group, form .list-group-item {
 #fqLineCompCall {
     background-color: #BE6734;
 }
+
+
+.lineComponentButtons:nth-child(1) {
+    height: 40px;
+}
+
+.lineComponentButtons:nth-child(2) {
+    height: 40px;
+    background-color: #ACFD89;
+}
+
+.lineComponentButtons:nth-child(3) {
+    height: 40px;
+}
+
+.lineComponentButtons:nth-child(5) {
+    height: 40px;
+}
+
+.lineComponentButtons {
+    font-size: 1em;
+    width: 20%;
+    float: left;
+    height: 70px;
+    padding: 0;
+}
+
+.personInLine {
+    margin: 10px;
+    padding: 0;
+    float: left;
+    width: 40px;
+    height: 100px;
+    cursor: pointer;
+}
+
+.personInLine:hover {
+    opacity: 0.6;
+}
