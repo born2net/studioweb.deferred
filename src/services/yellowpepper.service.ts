@@ -27,6 +27,7 @@ import {IScreenTemplateData} from "../interfaces/IScreenTemplate";
 import {LocationMarkModel} from "../models/LocationMarkModel";
 import {StationModel} from "../models/StationModel";
 import {FasterqLineModel} from "../models/fasterq-line-model";
+import {FasterqAnalyticsModel} from "../models/fasterq-analytics";
 import {FasterqQueueModel} from "../models/fasterq-queue-model";
 
 
@@ -479,6 +480,10 @@ export class YellowPepperService {
 
     listenFasterqQueues(): Observable<List<FasterqQueueModel>> {
         return this.store.select(store => store.appDb.fasterq.queues)
+    }
+
+    listenFasterqAnalytics(): Observable<List<FasterqAnalyticsModel>> {
+        return this.store.select(store => store.appDb.fasterq.analytics)
     }
 
     /**

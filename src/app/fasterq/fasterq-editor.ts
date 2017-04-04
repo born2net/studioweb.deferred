@@ -7,6 +7,7 @@ import {Map, List} from 'immutable';
 import * as _ from 'lodash';
 import {Lib} from "../../Lib";
 import {FasterqLineModel} from "../../models/fasterq-line-model";
+import {FasterqAnalyticsModel} from "../../models/fasterq-analytics";
 
 @Component({
     selector: 'fasterq-editor',
@@ -40,6 +41,7 @@ export class FasterqEditor extends Compbaser implements AfterViewInit {
     m_selectedQueue: FasterqQueueModel;
     m_line: FasterqLineModel;
     m_queues: List<FasterqQueueModel> = List([]);
+    m_analytics: List<FasterqAnalyticsModel> = List([]);
     m_offsetPosition = 0;
 
     constructor(private yp: YellowPepperService, private el: ElementRef, private cd: ChangeDetectorRef) {
@@ -62,6 +64,14 @@ export class FasterqEditor extends Compbaser implements AfterViewInit {
                         i_queues = i_queues.unshift(new FasterqQueueModel({line_id: -1}))
                     }
                     this.m_queues = i_queues;
+                    this.cd.markForCheck();
+                }, (e) => console.error(e))
+        )
+
+        this.cancelOnDestroy(
+            this.yp.listenFasterqAnalytics()
+                .subscribe((i_analytics: List<FasterqAnalyticsModel>) => {
+                    this.m_analytics = i_analytics;
                     this.cd.markForCheck();
                 }, (e) => console.error(e))
         )

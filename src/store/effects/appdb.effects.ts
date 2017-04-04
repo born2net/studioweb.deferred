@@ -21,6 +21,7 @@ import {Lib} from "../../Lib";
 import {FasterqLineModel} from "../../models/fasterq-line-model";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {FasterqQueueModel} from "../../models/fasterq-queue-model";
+import {FasterqAnalyticsModel} from "../../models/fasterq-analytics";
 
 export const EFFECT_AUTH_START = 'EFFECT_AUTH_START';
 export const EFFECT_AUTH_END = 'EFFECT_AUTH_END';
@@ -35,6 +36,9 @@ export const EFFECT_LOADED_STATIONS = 'EFFECT_LOADED_STATIONS';
 export const EFFECT_LOAD_FASTERQ_LINES = 'EFFECT_LOAD_FASTERQ_LINES';
 export const EFFECT_LOADED_FASTERQ_LINES = 'EFFECT_LOADED_FASTERQ_LINES';
 export const EFFECT_LOADING_FASTERQ_LINES = 'EFFECT_LOADING_FASTERQ_LINES';
+export const EFFECT_LOAD_FASTERQ_ANALYTICS = 'EFFECT_LOAD_FASTERQ_ANALYTICS';
+export const EFFECT_LOADED_FASTERQ_ANALYTICS = 'EFFECT_LOADED_FASTERQ_ANALYTICS';
+export const EFFECT_LOADING_FASTERQ_ANALYTICS = 'EFFECT_LOADING_FASTERQ_ANALYTICS';
 export const EFFECT_LOAD_FASTERQ_QUEUES = 'EFFECT_LOAD_FASTERQ_QUEUES';
 export const EFFECT_LOADED_FASTERQ_QUEUES = 'EFFECT_LOADED_FASTERQ_QUEUES';
 export const EFFECT_LOADING_FASTERQ_QUEUES = 'EFFECT_LOADING_FASTERQ_QUEUES';
@@ -345,6 +349,31 @@ export class AppDbEffects {
                     lines = lines.push(new FasterqLineModel(line))
                 })
                 return lines;
+            })
+    }
+
+    @Effect({dispatch: true})
+    loadfasterqAnalytics: Observable<Action> = this.actions$.ofType(EFFECT_LOAD_FASTERQ_ANALYTICS)
+        .switchMap(action => this._loadfasterqAnalytics(action))
+        .map(stations => ({type: EFFECT_LOADED_FASTERQ_ANALYTICS, payload: stations}));
+
+    private _loadfasterqAnalytics(action: Action): Observable<List<FasterqLineModel>> {
+        this.store.dispatch({type: EFFECT_LOADING_FASTERQ_ANALYTICS, payload: {}})
+        var options: RequestOptionsArgs = this.fasterqCreateServerCall('/LineAnalytics', RequestMethod.Post, action.payload)
+        return this.http.get(options.url, options)
+            .catch((err: any) => {
+                bootbox.alert('Error loading fasterq analytics, try again later...');
+                return Observable.throw(err);
+            })
+            .finally(() => {
+            })
+            .map((response: Response) => {
+                var analytics = List([]);
+                var rxAnalytics = response.json();
+                rxAnalytics.forEach((data) => {
+                    analytics = analytics.push(new FasterqAnalyticsModel(data))
+                })
+                return analytics;
             })
     }
 

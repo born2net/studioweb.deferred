@@ -13,6 +13,7 @@ import {LocationMarkModel} from "../models/LocationMarkModel";
 import {StationModel} from "../models/StationModel";
 import {FasterqLineModel} from "../models/fasterq-line-model";
 import {FasterqQueueModel} from "../models/fasterq-queue-model";
+import {FasterqAnalyticsModel} from "../models/fasterq-analytics";
 
 const reducers = {msDatabase, appDb};
 export const developmentReducer: ActionReducer<ApplicationState> = compose(storeFreeze, combineReducers)(reducers);
@@ -97,6 +98,7 @@ export interface IUiState {
 export interface IFasterQ {
     lines:List<FasterqLineModel>
     queues:List<FasterqQueueModel>
+    analytics:List<FasterqAnalyticsModel>
 }
 
 export interface IAppDb {
@@ -162,7 +164,8 @@ export const INITIAL_APP_DB: IAppDb = {
     stations: List([]),
     fasterq: {
         lines: List([]),
-        queues: List([])
+        queues: List([]),
+        analytics: List([])
     },
     userModel: new UserModel({
         user: '',
