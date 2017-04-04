@@ -63,6 +63,8 @@ export class FasterqManager extends Compbaser {
         this.preventRedirect(true);
         this.yp.ngrxStore.dispatch({type: EFFECT_LOAD_FASTERQ_LINES, payload: {}})
         this.lines$ = this.yp.listenFasterqLines();
+        var uiState: IUiState = {fasterq: {fasterqLineSelected: -1}};
+        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 
     @Output()
@@ -119,12 +121,7 @@ export class FasterqManager extends Compbaser {
     }
 
     destroy() {
-        var uiState: IUiState = {
-            uiSideProps: SideProps.miniDashboard,
-            fasterq: {
-                fasterqLineSelected: -1
-            }
-        }
+        var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
         this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 }

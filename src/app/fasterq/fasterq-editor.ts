@@ -80,6 +80,7 @@ export class FasterqEditor extends Compbaser {
         this.cancelOnDestroy(
             this.yp.listenFasterqQueueSelected()
                 .subscribe((i_serviceId) => {
+                    console.log(this.m_queues.size);
                     this.m_selectedServiceId = i_serviceId
                 }, (e) => console.error(e))
         )
@@ -154,11 +155,18 @@ export class FasterqEditor extends Compbaser {
         })
     }
 
+    _selectIfDefault() {
+        if (this.m_queues.size >= this.QUEUE_OFFSET + 1 && this.m_selectedServiceId == -1)
+            this.m_selectedServiceId = this.m_queues.get(this.QUEUE_OFFSET).serviceId;
+    }
+
     /**
      Listen to queue being called, mark on UI and post to server
      @method _listenCalled
      **/
     _onCall() {
+        this._selectIfDefault();
+        if (this.m_queues.size == this.QUEUE_OFFSET) return;
         if (!_.isNull(this._getQueueFromSelectedIndex().serviced))
             return bootbox.alert('customer has already been serviced');
         this._watchStart();
@@ -179,6 +187,8 @@ export class FasterqEditor extends Compbaser {
      @method _listenServiced
      **/
     _onService() {
+        this._selectIfDefault();
+        if (this.m_queues.size == this.QUEUE_OFFSET) return;
         this._watchStop();
         if (_.isNull(this._getQueueFromSelectedIndex().called)) {
             bootbox.alert('customer has not been called yet');
@@ -291,7 +301,7 @@ export class FasterqEditor extends Compbaser {
         this.m_stopTimer = '00:00:00';
     }
 
-    destroy(){
+    destroy() {
         var uiState: IUiState = {fasterq: {fasterqQueueSelected: -1}}
         this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
