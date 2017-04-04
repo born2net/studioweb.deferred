@@ -41,31 +41,38 @@ export function appDb(state: IAppDb, action: any): IAppDb {
             return state;
 
         case EffectActions.EFFECT_UPDATED_FASTERQ_LINE:
-            var index = state.fasterq.lines.findIndex((i_fasterqLineModel:FasterqLineModel) => i_fasterqLineModel.lineId == action.payload.data.id);
-            state.fasterq.lines = state.fasterq.lines.update(index, (i_fasterqLineModel:FasterqLineModel) => {
+            var index = state.fasterq.lines.findIndex((i_fasterqLineModel: FasterqLineModel) => i_fasterqLineModel.lineId == action.payload.data.id);
+            state.fasterq.lines = state.fasterq.lines.update(index, (i_fasterqLineModel: FasterqLineModel) => {
                 i_fasterqLineModel = i_fasterqLineModel.setKey<FasterqLineModel>(FasterqLineModel, 'name', action.payload.data.name);
                 return i_fasterqLineModel.setKey<FasterqLineModel>(FasterqLineModel, 'reminder', action.payload.data.reminder);
             });
             return state;
 
         case EffectActions.EFFECT_REMOVED_FASTERQ_LINE:
-            var index = state.fasterq.lines.findIndex((i_fasterqLineModel:FasterqLineModel) => i_fasterqLineModel.lineId == action.payload.data.id);
+            var index = state.fasterq.lines.findIndex((i_fasterqLineModel: FasterqLineModel) => i_fasterqLineModel.lineId == action.payload.data.id);
             state.fasterq.lines = state.fasterq.lines.remove(index)
             return state;
 
         case EffectActions.EFFECT_QUEUE_CALL_SAVED:
             if (_.isNull(action.payload))
                 return state;
-            var index = state.fasterq.queues.findIndex((i_fasterqLineModel:FasterqQueueModel) => i_fasterqLineModel.queueId == action.payload.queue_id);
-            state.fasterq.queues = state.fasterq.queues.update(index, (i_fasterqQueueModel:FasterqQueueModel) => {
+            var index = state.fasterq.queues.findIndex((i_fasterqLineModel: FasterqQueueModel) => i_fasterqLineModel.queueId == action.payload.queue_id);
+            state.fasterq.queues = state.fasterq.queues.update(index, (i_fasterqQueueModel: FasterqQueueModel) => {
                 delete action.payload.queue;
-                var queue = i_fasterqQueueModel.setData<FasterqQueueModel>(FasterqQueueModel,action.payload)
-                return  queue;
+                var queue = i_fasterqQueueModel.setData<FasterqQueueModel>(FasterqQueueModel, action.payload)
+                return queue;
+            });
+            return state;
+                                                      
+        case EffectActions.EFFECT_QUEUE_SERVICE_SAVED:
+            var index = state.fasterq.queues.findIndex((i_fasterqLineModel: FasterqQueueModel) => i_fasterqLineModel.queueId == action.payload.queue_id);
+            state.fasterq.queues = state.fasterq.queues.update(index, (i_fasterqQueueModel: FasterqQueueModel) => {
+                return i_fasterqQueueModel.setKey<FasterqQueueModel>(FasterqQueueModel, 'serviced', action.payload.serviced);
             });
             return state;
 
         case EffectActions.EFFECT_ADDED_FASTERQ_LINE:
-            var fasterqLineModel:FasterqLineModel = new FasterqLineModel(action.payload.serverReplay);
+            var fasterqLineModel: FasterqLineModel = new FasterqLineModel(action.payload.serverReplay);
             state.fasterq.lines = state.fasterq.lines.push(fasterqLineModel)
             return state;
 

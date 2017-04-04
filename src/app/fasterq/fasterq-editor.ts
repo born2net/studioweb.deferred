@@ -9,17 +9,19 @@ import {Lib} from "../../Lib";
 import {FasterqLineModel} from "../../models/fasterq-line-model";
 import {FasterqAnalyticsModel} from "../../models/fasterq-analytics";
 import {RedPepperService} from "../../services/redpepper.service";
-import {EFFECT_QUEUE_CALL_SAVE} from "../../store/effects/appdb.effects";
+import {EFFECT_QUEUE_CALL_SAVE, EFFECT_QUEUE_SERVICE_SAVE} from "../../store/effects/appdb.effects";
 import {CommBroker} from "../../services/CommBroker";
 import {FASTERQ_QUEUE_CALL_CANCLED} from "../../interfaces/Consts";
 
 export interface IQueueSave {
     queue_id: number;
-    called: string;
-    called_by: string;
-    called_by_override: boolean;
     queue: FasterqQueueModel;
+    serviced?:string;
+    called?: string;
+    called_by?: string;
+    called_by_override?: boolean;
 }
+
 @Component({
     selector: 'fasterq-editor',
     styles: [`
@@ -57,20 +59,21 @@ export class FasterqEditor extends Compbaser implements AfterViewInit {
     m_avgServiceTimeCalc: any = '00:00:00';
     m_avgCalledTimeCalc: any = '00:00:00';
     m_lastCalled = '';
+    m_fqLastServiced = '';
 
-    constructor(private yp: YellowPepperService, private rp: RedPepperService, private commBroker:CommBroker, private el: ElementRef, private cd: ChangeDetectorRef) {
+    constructor(private yp: YellowPepperService, private rp: RedPepperService, private commBroker: CommBroker, private el: ElementRef, private cd: ChangeDetectorRef) {
         super();
 
         this.cancelOnDestroy(
             this.commBroker.onEvent(FASTERQ_QUEUE_CALL_CANCLED)
-                .subscribe((data:any) => {
+                .subscribe((data: any) => {
                     bootbox.confirm('Customer already called by user' + data.message.called_by + ' <br/><br/>Would you like to call the customer again?', (result) => {
-                        if (result){
+                        if (result) {
                             data.message['called_by_override'] = true;
                             this.yp.ngrxStore.dispatch({type: EFFECT_QUEUE_CALL_SAVE, payload: data.message})
                         }
                     });
-            }, (e) => console.error(e))
+                }, (e) => console.error(e))
         )
 
         this.cancelOnDestroy(
@@ -84,7 +87,11 @@ export class FasterqEditor extends Compbaser implements AfterViewInit {
         this.cancelOnDestroy(
             this.yp.listenFasterqQueues()
                 .subscribe((i_queues: List<FasterqQueueModel>) => {
-                    this.m_selectedQueue = i_queues.get(0);
+                    if (this.m_selectedQueue){
+                        var index = this._getQueueIndex() - this.QUEUE_OFFSET;
+                        this.m_selectedQueue = i_queues.get(index);
+                    }
+
                     this.m_queues = List([]);
                     for (var i = (0 - this.QUEUE_OFFSET); i < 0; i++) {
                         i_queues = i_queues.unshift(new FasterqQueueModel({line_id: -1}))
@@ -126,13 +133,6 @@ export class FasterqEditor extends Compbaser implements AfterViewInit {
     _scrollTo(i_index) {
         this._watchStop();
         var el = $('#fqLineQueueComponent', this.el.nativeElement).children().eq(i_index);
-
-        // if (i_element.length == 0)
-        //     return;
-        // this.m_selectedServiceID = $(i_element, this.el.nativeElement).data('service_id');
-        // var model = self.m_queuesCollection.where({'service_id': self.m_selectedServiceID})[0];
-        // self._populatePropsQueue(model);
-        //
         var scrollXPos = $(el).position().left;
         // console.log('current offset ' + scrollXPos + ' ' + 'going to index ' + $(i_element).index() + ' service_id ' + i_serviceId);
         this.m_offsetPosition = $('#fqLineQueueComponentContainer', this.el.nativeElement).scrollLeft();
@@ -149,18 +149,9 @@ export class FasterqEditor extends Compbaser implements AfterViewInit {
      @method _listenCalled
      **/
     _onCall() {
-
-        //     var model = self.m_queuesCollection.where({'service_id': self.m_selectedServiceID})[0];
-        //     if (_.isUndefined(model))
-        //         return;
         if (!_.isNull(this.m_selectedQueue.serviced))
             return bootbox.alert('customer has already been serviced');
-
         this._watchStart();
-        //     var elem = self.$('[data-service_id="' + (self.m_selectedServiceID) + '"]');
-        //     $(elem).find('i').fadeOut(function () {
-        //         $(this).css({color: '#BE6734'}).fadeIn();
-        //     });
         this.m_lastCalled = this.m_selectedQueue.serviceId;
         var d = new XDate();
         var payload: IQueueSave = {
@@ -170,29 +161,33 @@ export class FasterqEditor extends Compbaser implements AfterViewInit {
             called_by_override: false,
             queue: this.m_selectedQueue
         }
-
-
         this.yp.ngrxStore.dispatch({type: EFFECT_QUEUE_CALL_SAVE, payload: payload})
+    }
 
-        //     self._populatePropsQueue(model);
-        //
-        //     model.save(null, {
-        //         success: (function (model, data) {
-        //             if (data.updated == 'alreadyCalled') {
-        //                 bootbox.confirm('Customer already called by user' + data.called_by + ' <br/><br/>Would you like to call the customer again?', function (result) {
-        //                     if (result) {
-        //                         model.set('called_by_override', true);
-        //                         model.save();
-        //                     }
-        //                 });
-        //             }
-        //         }),
-        //         error: (function (e) {
-        //             bootbox.alert('Service request failure: ' + e);
-        //         }),
-        //         complete: (function (e) {
-        //         })
-        //     });
+    /**
+     Listen to queue being serviced, mark on UI and post to server
+     @method _listenServiced
+     **/
+    _onService() {
+        this._watchStop();
+        console.log(this.m_selectedQueue.queueId);
+        console.log(this.m_selectedQueue.serviceId);
+        if (_.isNull(this.m_selectedQueue.called)) {
+            bootbox.alert('customer has not been called yet');
+            return;
+        }
+        if (!_.isNull(this.m_selectedQueue.serviced)) {
+            bootbox.alert('customer has already been serviced');
+            return;
+        }
+        this.m_fqLastServiced = this.m_selectedQueue.serviceId;
+        var d = new XDate();
+        var payload: IQueueSave = {
+            queue_id: this.m_selectedQueue.queueId,
+            serviced: d.toString('M/d/yyyy hh:mm:ss TT'),
+            queue: this.m_selectedQueue
+        }
+        this.yp.ngrxStore.dispatch({type: EFFECT_QUEUE_SERVICE_SAVE, payload: payload})
     }
 
     /**
@@ -200,20 +195,15 @@ export class FasterqEditor extends Compbaser implements AfterViewInit {
      @method _calcAverages
      **/
     _calcAverages() {
-
         var avgServiceTime = [];
         var avgCalledTime = [];
-
         this.m_analytics.forEach((i_model: FasterqAnalyticsModel) => {
             var entered = i_model.entered;
             var serviced = i_model.serviced;
             var called = i_model.called;
-            ;
-
             if (_.isNull(called)) {
                 // customer not called, do nothing
             } else if (!_.isNull(serviced)) {
-
                 // customer called & serviced
                 var xEntered = new XDate(entered);
                 var minFromEnteredToCalled = xEntered.diffMinutes(called);
@@ -245,46 +235,6 @@ export class FasterqEditor extends Compbaser implements AfterViewInit {
                 return memo + num;
             }, 0) / (avgCalledTime.length === 0 ? 1 : avgCalledTime.length);
         this.m_avgCalledTimeCalc = Lib.ParseToFloatDouble(this.m_avgCalledTimeCalc)
-    }
-
-    /**
-     Listen to queue being serviced, mark on UI and post to server
-     @method _listenServiced
-     **/
-    _onService() {
-        // var self = this;
-        // $(Elements.FQ_LINE_COMP_SERVICED).on('click', function () {
-        //     self._watchStop();
-        //     var model = self.m_queuesCollection.where({'service_id': self.m_selectedServiceID})[0];
-        //     if (_.isUndefined(model))
-        //         return;
-        //     if (_.isNull(model.get('called'))) {
-        //         bootbox.alert('customer has not been called yet');
-        //         return;
-        //     }
-        //     if (!_.isNull(model.get('serviced'))) {
-        //         bootbox.alert('customer has already been serviced');
-        //         return;
-        //     }
-        //     var elem = self.$('[data-service_id="' + (self.m_selectedServiceID) + '"]');
-        //     $(elem).find('i').fadeOut(function () {
-        //         $(this).css({color: '#ACFD89'}).fadeIn();
-        //     });
-        //     $(Elements.FQ_LAST_SERVICED).text(self.m_selectedServiceID);
-        //     var d = new XDate();
-        //     model.set('serviced', d.toString('M/d/yyyy hh:mm:ss TT'));
-        //     log('service ' + model.get('serviced'));
-        //     model.save({
-        //         success: (function (model, data) {
-        //             log(model);
-        //         }),
-        //         error: (function (e) {
-        //             log('Service request failure: ' + e);
-        //         }),
-        //         complete: (function (e) {
-        //         })
-        //     });
-        // });
     }
 
     _onPrev() {

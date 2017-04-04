@@ -414,18 +414,18 @@ export class AppDbEffects {
     }
 
     @Effect({dispatch: true})
-    savefasterqQueue: Observable<Action> = this.actions$.ofType(EFFECT_QUEUE_CALL_SAVE)
-        .switchMap(action => this._savefasterqQueue(action))
+    savefasterqQueueCall: Observable<Action> = this.actions$.ofType(EFFECT_QUEUE_CALL_SAVE)
+        .switchMap(action => this._savefasterqQueueCall(action))
         .map(stations => ({type: EFFECT_QUEUE_CALL_SAVED, payload: stations}));
 
-    private _savefasterqQueue(action: Action): Observable<List<FasterqLineModel>> {
+    private _savefasterqQueueCall(action: Action): Observable<List<FasterqLineModel>> {
         this.store.dispatch({type: EFFECT_QUEUE_CALL_SAVING, payload: {}})
         var queueSave: IQueueSave = action.payload;
         var data = Object.assign({}, queueSave.queue.getData().toJS(), queueSave)
         var options: RequestOptionsArgs = this.fasterqCreateServerCall(`/Queue/${action.payload.queue_id}`, RequestMethod.Put, data)
         return this.http.get(options.url, options)
             .catch((err: any) => {
-                bootbox.alert('Error loading fasterq queues, try again later...');
+                bootbox.alert('Error saving call fasterq queue, try again later...');
                 return Observable.throw(err);
             })
             .finally(() => {
@@ -442,6 +442,29 @@ export class AppDbEffects {
                     return null;
                 }
                 return data;
+            })
+    }
+
+    @Effect({dispatch: true})
+    savefasterqQueueService: Observable<Action> = this.actions$.ofType(EFFECT_QUEUE_SERVICE_SAVE)
+        .switchMap(action => this._savefasterqQueueService(action))
+        .map(stations => ({type: EFFECT_QUEUE_SERVICE_SAVED, payload: stations}));
+
+    private _savefasterqQueueService(action: Action): Observable<List<FasterqLineModel>> {
+        this.store.dispatch({type: EFFECT_QUEUE_SERVICE_SAVING, payload: {}})
+        var queueSave: IQueueSave = action.payload;
+        var data = Object.assign({}, queueSave.queue.getData().toJS(), queueSave)
+        var options: RequestOptionsArgs = this.fasterqCreateServerCall(`/Queue/${action.payload.queue_id}`, RequestMethod.Put, data)
+        return this.http.get(options.url, options)
+            .catch((err: any) => {
+                bootbox.alert('Error saving service fasterq queue, try again later...');
+                return Observable.throw(err);
+            })
+            .finally(() => {
+            })
+            .map((response: Response) => {
+                var data = response.json();
+                return action.payload;
             })
     }
 
