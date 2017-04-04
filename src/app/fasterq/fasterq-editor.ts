@@ -1,22 +1,23 @@
-import {Component, ChangeDetectionStrategy, AfterViewInit, ElementRef, ChangeDetectorRef, ViewChild} from "@angular/core";
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
-import {Observable} from "rxjs/Observable";
 import {FasterqQueueModel} from "../../models/fasterq-queue-model";
-import {Map, List} from 'immutable';
-import * as _ from 'lodash';
-import {Lib} from "../../Lib";
 import {FasterqLineModel} from "../../models/fasterq-line-model";
 import {FasterqAnalyticsModel} from "../../models/fasterq-analytics";
 import {RedPepperService} from "../../services/redpepper.service";
 import {EFFECT_QUEUE_CALL_SAVE, EFFECT_QUEUE_SERVICE_SAVE} from "../../store/effects/appdb.effects";
 import {CommBroker} from "../../services/CommBroker";
 import {FASTERQ_QUEUE_CALL_CANCLED} from "../../interfaces/Consts";
+import {IUiState} from "../../store/store.data";
+import {ACTION_UISTATE_UPDATE} from "../../store/actions/appdb.actions";
+import {List} from "immutable";
+import {Lib} from "../../Lib";
+import * as _ from "lodash";
 
 export interface IQueueSave {
     queue_id: number;
     queue: FasterqQueueModel;
-    serviced?:string;
+    serviced?: string;
     called?: string;
     called_by?: string;
     called_by_override?: boolean;
@@ -45,14 +46,14 @@ export interface IQueueSave {
     `],
     templateUrl: './fasterq-editor.html'
 })
-export class FasterqEditor extends Compbaser implements AfterViewInit {
+export class FasterqEditor extends Compbaser {
 
     QUEUE_OFFSET = 8;
     m_gotoModel = 0;
     m_stopWatchHandle: any = new Stopwatch();
     m_stopTimer = '00:00:00';
-    m_selectedQueue: FasterqQueueModel;
-    m_line: FasterqLineModel;
+    m_fasterqLineModel: FasterqLineModel;
+    m_selectedServiceId = -1;
     m_queues: List<FasterqQueueModel> = List([]);
     m_analytics: List<FasterqAnalyticsModel> = List([]);
     m_offsetPosition = 0;
@@ -77,21 +78,22 @@ export class FasterqEditor extends Compbaser implements AfterViewInit {
         )
 
         this.cancelOnDestroy(
+            this.yp.listenFasterqQueueSelected()
+                .subscribe((i_serviceId) => {
+                    this.m_selectedServiceId = i_serviceId
+                }, (e) => console.error(e))
+        )
+
+        this.cancelOnDestroy(
             this.yp.listenFasterqLineSelected()
-                .subscribe((i_line: FasterqLineModel) => {
-                    this.m_line = i_line;
-                    this.cd.markForCheck();
+                .subscribe((i_fasterqLineModel) => {
+                    this.m_fasterqLineModel = i_fasterqLineModel;
                 }, (e) => console.error(e))
         )
 
         this.cancelOnDestroy(
             this.yp.listenFasterqQueues()
                 .subscribe((i_queues: List<FasterqQueueModel>) => {
-                    if (this.m_selectedQueue){
-                        var index = this._getQueueIndex() - this.QUEUE_OFFSET;
-                        this.m_selectedQueue = i_queues.get(index);
-                    }
-
                     this.m_queues = List([]);
                     for (var i = (0 - this.QUEUE_OFFSET); i < 0; i++) {
                         i_queues = i_queues.unshift(new FasterqQueueModel({line_id: -1}))
@@ -112,16 +114,18 @@ export class FasterqEditor extends Compbaser implements AfterViewInit {
     }
 
     _onQueueSelected(i_queue: FasterqQueueModel) {
-        this.m_selectedQueue = i_queue;
-        var index = this._getQueueIndex();
+        this.m_selectedServiceId = i_queue.serviceId;
+        var index = this._getQueueIndexByServiceId();
+        var uiState: IUiState = {fasterq: {fasterqLineSelected: this.m_selectedServiceId}}
+        this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
         this._scrollTo(index);
     }
 
-    _getQueueIndex(): number {
-        if (!this.m_selectedQueue)
-            return -1;
+    _getQueueIndexByServiceId(): number {
+        if (this.m_selectedServiceId == -1)
+            return this.m_selectedServiceId;
         return this.m_queues.findIndex((i_fasterqQueueModel) => {
-            return i_fasterqQueueModel == this.m_selectedQueue
+            return i_fasterqQueueModel.serviceId == this.m_selectedServiceId;
         })
     }
 
@@ -144,22 +148,28 @@ export class FasterqEditor extends Compbaser implements AfterViewInit {
         });
     }
 
+    _getQueueFromSelectedIndex(): FasterqQueueModel {
+        return this.m_queues.find(i_fasterqQueueModel => {
+            return i_fasterqQueueModel.serviceId == this.m_selectedServiceId;
+        })
+    }
+
     /**
      Listen to queue being called, mark on UI and post to server
      @method _listenCalled
      **/
     _onCall() {
-        if (!_.isNull(this.m_selectedQueue.serviced))
+        if (!_.isNull(this._getQueueFromSelectedIndex().serviced))
             return bootbox.alert('customer has already been serviced');
         this._watchStart();
-        this.m_lastCalled = this.m_selectedQueue.serviceId;
+        this.m_lastCalled = this._getQueueFromSelectedIndex().serviceId;
         var d = new XDate();
         var payload: IQueueSave = {
-            queue_id: this.m_selectedQueue.queueId,
+            queue_id: this._getQueueFromSelectedIndex().queueId,
             called: d.toString('M/d/yyyy hh:mm:ss TT'),
             called_by: this.rp.getUserData().userName,
             called_by_override: false,
-            queue: this.m_selectedQueue
+            queue: this._getQueueFromSelectedIndex()
         }
         this.yp.ngrxStore.dispatch({type: EFFECT_QUEUE_CALL_SAVE, payload: payload})
     }
@@ -170,22 +180,20 @@ export class FasterqEditor extends Compbaser implements AfterViewInit {
      **/
     _onService() {
         this._watchStop();
-        console.log(this.m_selectedQueue.queueId);
-        console.log(this.m_selectedQueue.serviceId);
-        if (_.isNull(this.m_selectedQueue.called)) {
+        if (_.isNull(this._getQueueFromSelectedIndex().called)) {
             bootbox.alert('customer has not been called yet');
             return;
         }
-        if (!_.isNull(this.m_selectedQueue.serviced)) {
+        if (!_.isNull(this._getQueueFromSelectedIndex().serviced)) {
             bootbox.alert('customer has already been serviced');
             return;
         }
-        this.m_fqLastServiced = this.m_selectedQueue.serviceId;
+        this.m_fqLastServiced = this._getQueueFromSelectedIndex().serviceId;
         var d = new XDate();
         var payload: IQueueSave = {
-            queue_id: this.m_selectedQueue.queueId,
+            queue_id: this._getQueueFromSelectedIndex().queueId,
             serviced: d.toString('M/d/yyyy hh:mm:ss TT'),
-            queue: this.m_selectedQueue
+            queue: this._getQueueFromSelectedIndex()
         }
         this.yp.ngrxStore.dispatch({type: EFFECT_QUEUE_SERVICE_SAVE, payload: payload})
     }
@@ -238,21 +246,17 @@ export class FasterqEditor extends Compbaser implements AfterViewInit {
     }
 
     _onPrev() {
-        if (this._getQueueIndex() == this.QUEUE_OFFSET)
+        if (this._getQueueIndexByServiceId() == this.QUEUE_OFFSET)
             return;
-        var index = this._getQueueIndex() - 1;
-        this.m_selectedQueue = this.m_queues.get(this._getQueueIndex() - 1)
-        this._scrollTo(index)
+        this._onQueueSelected(this.m_queues.get(this._getQueueIndexByServiceId() - 1));
     }
 
     _onNext() {
-        if (this._getQueueIndex() + 1 == this.m_queues.size || this.m_queues.size <= this.QUEUE_OFFSET + 1)
+        if (this._getQueueIndexByServiceId() + 1 == this.m_queues.size || this.m_queues.size <= this.QUEUE_OFFSET + 1)
             return;
-        if (this._getQueueIndex() == -1)
-            this.m_selectedQueue = this.m_queues.get(this.QUEUE_OFFSET)
-        var index = this._getQueueIndex() + 1;
-        this.m_selectedQueue = this.m_queues.get(this._getQueueIndex() + 1)
-        this._scrollTo(index);
+        if (this._getQueueIndexByServiceId() == -1)
+            return this._onQueueSelected(this.m_queues.get(this.QUEUE_OFFSET));
+        this._onQueueSelected(this.m_queues.get(this._getQueueIndexByServiceId() + 1));
     }
 
     _onGoTo() {
@@ -261,17 +265,8 @@ export class FasterqEditor extends Compbaser implements AfterViewInit {
             var selectedId = Lib.PadZeros(this.m_gotoModel, 3, 0);
             return serviceId == selectedId;
         })
-        if (queue) {
-            this.m_selectedQueue = queue;
-            this._scrollTo(this._getQueueIndex());
-        }
-
-
-        // if (goto <= this.QUEUE_OFFSET)
-        //     return;
-        // if (goto >= this.m_queues.size + 1)
-        //     return;
-        // this._scrollTo(goto);
+        if (queue)
+            this._onQueueSelected(queue);
     }
 
     /**
@@ -294,16 +289,5 @@ export class FasterqEditor extends Compbaser implements AfterViewInit {
         this.m_stopWatchHandle.stop();
         this.m_stopWatchHandle.reset();
         this.m_stopTimer = '00:00:00';
-    }
-
-    ngAfterViewInit() {
-
-
-    }
-
-    ngOnInit() {
-    }
-
-    destroy() {
     }
 }

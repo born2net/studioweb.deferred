@@ -73,6 +73,7 @@ export interface IUiStateStations {
 
 export interface IUiStateFatserq {
     fasterqLineSelected?: number;
+    fasterqQueueSelected?: number;
 }
 
 export interface IUiStateScene {
@@ -96,9 +97,9 @@ export interface IUiState {
 }
 
 export interface IFasterQ {
-    lines:List<FasterqLineModel>
-    queues:List<FasterqQueueModel>
-    analytics:List<FasterqAnalyticsModel>
+    lines: List<FasterqLineModel>
+    queues: List<FasterqQueueModel>
+    analytics: List<FasterqAnalyticsModel>
 }
 
 export interface IAppDb {
@@ -148,7 +149,9 @@ export const INITIAL_APP_DB: IAppDb = {
             stationSelected: -1
         },
         fasterq: {
-          fasterqLineSelected: -1
+            fasterqLineSelected: -1,
+            fasterqQueueSelected: -1
+
         },
         scene: {
             sceneSelected: -1,

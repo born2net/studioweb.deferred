@@ -1,8 +1,8 @@
 <small class="debug">{{me}}</small>
 <div id="fasterQManagerContainer">
     <button i18n style="margin-right: 100px; position: relative; top: -30px" id="fqOpenCustomerRemoteStatus" class="pull-right btn btn-primary">remote status</button>
-    <h5>Line: {{m_line?.lineName}}</h5>
-    <h5>Queue: {{m_selectedQueue != undefined && m_selectedQueue.serviceId != 'undefined' ? m_selectedQueue.serviceId : 'none'}}</h5>
+    <h5>Line: {{m_fasterqLineModel?.lineName}}</h5>
+    <h5>Service id: {{m_selectedServiceId > 0 ? m_selectedServiceId : 'none'}}</h5>
     <div>
         <br/>
         <br/>
