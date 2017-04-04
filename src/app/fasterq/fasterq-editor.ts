@@ -116,7 +116,7 @@ export class FasterqEditor extends Compbaser {
     _onQueueSelected(i_queue: FasterqQueueModel) {
         this.m_selectedServiceId = i_queue.serviceId;
         var index = this._getQueueIndexByServiceId();
-        var uiState: IUiState = {fasterq: {fasterqLineSelected: this.m_selectedServiceId}}
+        var uiState: IUiState = {fasterq: {fasterqQueueSelected: this.m_selectedServiceId}}
         this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
         this._scrollTo(index);
     }
@@ -289,5 +289,10 @@ export class FasterqEditor extends Compbaser {
         this.m_stopWatchHandle.stop();
         this.m_stopWatchHandle.reset();
         this.m_stopTimer = '00:00:00';
+    }
+
+    destroy(){
+        var uiState: IUiState = {fasterq: {fasterqQueueSelected: -1}}
+        this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 }
