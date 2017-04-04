@@ -19,6 +19,10 @@ export class FasterqQueueModel extends StoreModel {
         return this.getKey('line_id');
     }
 
+    public get queueId() {
+        return this.getKey('queue_id');
+    }
+
     public get steppedOut() {
         return this.getKey('steppedout');
     }

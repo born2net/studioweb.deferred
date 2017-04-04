@@ -22,6 +22,10 @@ import {FasterqLineModel} from "../../models/fasterq-line-model";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {FasterqQueueModel} from "../../models/fasterq-queue-model";
 import {FasterqAnalyticsModel} from "../../models/fasterq-analytics";
+import {IQueueSave} from "../../app/fasterq/fasterq-editor";
+import {CommBroker, IMessage} from "../../services/CommBroker";
+import {FASTERQ_QUEUE_CALL_CANCLED} from "../../interfaces/Consts";
+import {message} from "gulp-typescript/release/utils";
 
 export const EFFECT_AUTH_START = 'EFFECT_AUTH_START';
 export const EFFECT_AUTH_END = 'EFFECT_AUTH_END';
@@ -48,6 +52,12 @@ export const EFFECT_REMOVE_FASTERQ_LINE = 'EFFECT_REMOVE_FASTERQ_LINE';
 export const EFFECT_REMOVED_FASTERQ_LINE = 'EFFECT_REMOVED_FASTERQ_LINE';
 export const EFFECT_ADD_FASTERQ_LINE = 'EFFECT_ADD_FASTERQ_LINE';
 export const EFFECT_ADDED_FASTERQ_LINE = 'EFFECT_ADDED_FASTERQ_LINE';
+export const EFFECT_QUEUE_CALL_SAVE = 'EFFECT_QUEUE_CALL_SAVE';
+export const EFFECT_QUEUE_CALL_SAVING = 'EFFECT_QUEUE_CALL_SAVING';
+export const EFFECT_QUEUE_CALL_SAVED = 'EFFECT_QUEUE_CALL_SAVED';
+export const EFFECT_QUEUE_SERVICE_SAVE = 'EFFECT_QUEUE_SERVICE_SAVE';
+export const EFFECT_QUEUE_SERVICE_SAVING = 'EFFECT_QUEUE_SERVICE_SAVING';
+export const EFFECT_QUEUE_SERVICE_SAVED = 'EFFECT_QUEUE_SERVICE_SAVED';
 
 @Injectable()
 export class AppDbEffects {
@@ -59,6 +69,7 @@ export class AppDbEffects {
                 private store: Store<ApplicationState>,
                 private rp: RedPepperService,
                 private yp: YellowPepperService,
+                private commBroker:CommBroker,
                 private http: Http) {
 
         // todo: disabled injection as broken in AOT
@@ -384,7 +395,7 @@ export class AppDbEffects {
 
     private _loadfasterqQueues(action: Action): Observable<List<FasterqLineModel>> {
         this.store.dispatch({type: EFFECT_LOADING_FASTERQ_QUEUES, payload: {}})
-        var options: RequestOptionsArgs = this.fasterqCreateServerCall(`/Queues`, RequestMethod.Post,  action.payload)
+        var options: RequestOptionsArgs = this.fasterqCreateServerCall(`/Queues`, RequestMethod.Post, action.payload)
         return this.http.get(options.url, options)
             .catch((err: any) => {
                 bootbox.alert('Error loading fasterq queues, try again later...');
@@ -399,6 +410,38 @@ export class AppDbEffects {
                     lines = lines.push(new FasterqQueueModel(queue))
                 })
                 return lines;
+            })
+    }
+
+    @Effect({dispatch: true})
+    savefasterqQueue: Observable<Action> = this.actions$.ofType(EFFECT_QUEUE_CALL_SAVE)
+        .switchMap(action => this._savefasterqQueue(action))
+        .map(stations => ({type: EFFECT_QUEUE_CALL_SAVED, payload: stations}));
+
+    private _savefasterqQueue(action: Action): Observable<List<FasterqLineModel>> {
+        this.store.dispatch({type: EFFECT_QUEUE_CALL_SAVING, payload: {}})
+        var queueSave: IQueueSave = action.payload;
+        var data = Object.assign({}, queueSave.queue.getData().toJS(), queueSave)
+        var options: RequestOptionsArgs = this.fasterqCreateServerCall(`/Queue/${action.payload.queue_id}`, RequestMethod.Put, data)
+        return this.http.get(options.url, options)
+            .catch((err: any) => {
+                bootbox.alert('Error loading fasterq queues, try again later...');
+                return Observable.throw(err);
+            })
+            .finally(() => {
+            })
+            .map((response: Response) => {
+                var reply = response.json();
+                if (reply.updated == 'alreadyCalled'){
+                    var message:IMessage = {
+                        event: FASTERQ_QUEUE_CALL_CANCLED,
+                        fromInstance: this,
+                        message: data
+                    }
+                    this.commBroker.fire(message)
+                    return null;
+                }
+                return data;
             })
     }
 

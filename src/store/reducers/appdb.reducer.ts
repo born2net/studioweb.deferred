@@ -9,6 +9,7 @@ import {StationModel} from "../../models/StationModel";
 import {Lib} from "../../Lib";
 import {FasterqLineModel} from "../../models/fasterq-line-model";
 import {FasterqQueueModel} from "../../models/fasterq-queue-model";
+import {FasterqAnalyticsModel} from "../../models/fasterq-analytics";
 
 const baseUrl = 'https://galaxy.signage.me/WebService/ResellerService.ashx';
 export const appBaseUrlCloud = 'https://secure.digitalsignage.com';
@@ -52,6 +53,17 @@ export function appDb(state: IAppDb, action: any): IAppDb {
             state.fasterq.lines = state.fasterq.lines.remove(index)
             return state;
 
+        case EffectActions.EFFECT_QUEUE_CALL_SAVED:
+            if (_.isNull(action.payload))
+                return state;
+            var index = state.fasterq.queues.findIndex((i_fasterqLineModel:FasterqQueueModel) => i_fasterqLineModel.queueId == action.payload.queue_id);
+            state.fasterq.queues = state.fasterq.queues.update(index, (i_fasterqQueueModel:FasterqQueueModel) => {
+                delete action.payload.queue;
+                var queue = i_fasterqQueueModel.setData<FasterqQueueModel>(FasterqQueueModel,action.payload)
+                return  queue;
+            });
+            return state;
+
         case EffectActions.EFFECT_ADDED_FASTERQ_LINE:
             var fasterqLineModel:FasterqLineModel = new FasterqLineModel(action.payload.serverReplay);
             state.fasterq.lines = state.fasterq.lines.push(fasterqLineModel)
@@ -63,7 +75,7 @@ export function appDb(state: IAppDb, action: any): IAppDb {
             return state;
 
         case EffectActions.EFFECT_LOADED_FASTERQ_ANALYTICS:
-            var analytics: List<FasterqLineModel> = action.payload;
+            var analytics: List<FasterqAnalyticsModel> = action.payload;
             state.fasterq.analytics = analytics;
             return state;
 

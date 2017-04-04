@@ -8,7 +8,18 @@ import * as _ from 'lodash';
 import {Lib} from "../../Lib";
 import {FasterqLineModel} from "../../models/fasterq-line-model";
 import {FasterqAnalyticsModel} from "../../models/fasterq-analytics";
+import {RedPepperService} from "../../services/redpepper.service";
+import {EFFECT_QUEUE_CALL_SAVE} from "../../store/effects/appdb.effects";
+import {CommBroker} from "../../services/CommBroker";
+import {FASTERQ_QUEUE_CALL_CANCLED} from "../../interfaces/Consts";
 
+export interface IQueueSave {
+    queue_id: number;
+    called: string;
+    called_by: string;
+    called_by_override: boolean;
+    queue: FasterqQueueModel;
+}
 @Component({
     selector: 'fasterq-editor',
     styles: [`
@@ -43,9 +54,24 @@ export class FasterqEditor extends Compbaser implements AfterViewInit {
     m_queues: List<FasterqQueueModel> = List([]);
     m_analytics: List<FasterqAnalyticsModel> = List([]);
     m_offsetPosition = 0;
+    m_avgServiceTimeCalc: any = '00:00:00';
+    m_avgCalledTimeCalc: any = '00:00:00';
+    m_lastCalled = '';
 
-    constructor(private yp: YellowPepperService, private el: ElementRef, private cd: ChangeDetectorRef) {
+    constructor(private yp: YellowPepperService, private rp: RedPepperService, private commBroker:CommBroker, private el: ElementRef, private cd: ChangeDetectorRef) {
         super();
+
+        this.cancelOnDestroy(
+            this.commBroker.onEvent(FASTERQ_QUEUE_CALL_CANCLED)
+                .subscribe((data:any) => {
+                    bootbox.confirm('Customer already called by user' + data.message.called_by + ' <br/><br/>Would you like to call the customer again?', (result) => {
+                        if (result){
+                            data.message['called_by_override'] = true;
+                            this.yp.ngrxStore.dispatch({type: EFFECT_QUEUE_CALL_SAVE, payload: data.message})
+                        }
+                    });
+            }, (e) => console.error(e))
+        )
 
         this.cancelOnDestroy(
             this.yp.listenFasterqLineSelected()
@@ -72,6 +98,7 @@ export class FasterqEditor extends Compbaser implements AfterViewInit {
             this.yp.listenFasterqAnalytics()
                 .subscribe((i_analytics: List<FasterqAnalyticsModel>) => {
                     this.m_analytics = i_analytics;
+                    this._calcAverages();
                     this.cd.markForCheck();
                 }, (e) => console.error(e))
         )
@@ -122,6 +149,7 @@ export class FasterqEditor extends Compbaser implements AfterViewInit {
      @method _listenCalled
      **/
     _onCall() {
+
         //     var model = self.m_queuesCollection.where({'service_id': self.m_selectedServiceID})[0];
         //     if (_.isUndefined(model))
         //         return;
@@ -133,12 +161,19 @@ export class FasterqEditor extends Compbaser implements AfterViewInit {
         //     $(elem).find('i').fadeOut(function () {
         //         $(this).css({color: '#BE6734'}).fadeIn();
         //     });
-        //     $(Elements.FQ_LAST_CALLED).text(self.m_selectedServiceID);
-        //     var d = new XDate();
-        //     model.set('called', d.toString('M/d/yyyy hh:mm:ss TT'));
-        //     model.set('called_by', pepper.getUserData().userName);
-        //     model.set('called_by_override', false);
-        //
+        this.m_lastCalled = this.m_selectedQueue.serviceId;
+        var d = new XDate();
+        var payload: IQueueSave = {
+            queue_id: this.m_selectedQueue.queueId,
+            called: d.toString('M/d/yyyy hh:mm:ss TT'),
+            called_by: this.rp.getUserData().userName,
+            called_by_override: false,
+            queue: this.m_selectedQueue
+        }
+
+
+        this.yp.ngrxStore.dispatch({type: EFFECT_QUEUE_CALL_SAVE, payload: payload})
+
         //     self._populatePropsQueue(model);
         //
         //     model.save(null, {
@@ -158,6 +193,58 @@ export class FasterqEditor extends Compbaser implements AfterViewInit {
         //         complete: (function (e) {
         //         })
         //     });
+    }
+
+    /**
+     Calculate average respond and service line times
+     @method _calcAverages
+     **/
+    _calcAverages() {
+
+        var avgServiceTime = [];
+        var avgCalledTime = [];
+
+        this.m_analytics.forEach((i_model: FasterqAnalyticsModel) => {
+            var entered = i_model.entered;
+            var serviced = i_model.serviced;
+            var called = i_model.called;
+            ;
+
+            if (_.isNull(called)) {
+                // customer not called, do nothing
+            } else if (!_.isNull(serviced)) {
+
+                // customer called & serviced
+                var xEntered = new XDate(entered);
+                var minFromEnteredToCalled = xEntered.diffMinutes(called);
+                if (minFromEnteredToCalled < 0)
+                    minFromEnteredToCalled = 1;
+                avgCalledTime.push(minFromEnteredToCalled);
+
+                var xCalled = new XDate(called);
+                var minFromCalledToServiced = xCalled.diffMinutes(serviced);
+                avgServiceTime.push(minFromCalledToServiced);
+
+            } else {
+
+                // customer called not serviced
+                var xEntered = new XDate(entered);
+                var minFromEnteredToCalled = xEntered.diffMinutes(called);
+                if (minFromEnteredToCalled < 0)
+                    minFromEnteredToCalled = 1;
+                avgCalledTime.push(minFromEnteredToCalled);
+            }
+        });
+
+        this.m_avgServiceTimeCalc = _.reduce(avgServiceTime, function (memo, num) {
+                return memo + num;
+            }, 0) / (avgServiceTime.length === 0 ? 1 : avgServiceTime.length);
+        this.m_avgServiceTimeCalc = Lib.ParseToFloatDouble(this.m_avgServiceTimeCalc);
+
+        this.m_avgCalledTimeCalc = _.reduce(avgCalledTime, function (memo, num) {
+                return memo + num;
+            }, 0) / (avgCalledTime.length === 0 ? 1 : avgCalledTime.length);
+        this.m_avgCalledTimeCalc = Lib.ParseToFloatDouble(this.m_avgCalledTimeCalc)
     }
 
     /**
@@ -244,6 +331,7 @@ export class FasterqEditor extends Compbaser implements AfterViewInit {
     _watchStart() {
         this.m_stopWatchHandle.setListener((e) => {
             this.m_stopTimer = this.m_stopWatchHandle.toString();
+            this.cd.markForCheck();
         });
         this.m_stopWatchHandle.start();
     }

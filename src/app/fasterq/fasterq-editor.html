@@ -23,7 +23,7 @@
             <div class="col-xs-6 col-sm-3" style="margin-top: 0; padding: 0">
                 <div class="fakeVerticalLineDivL" style="height: 58px; width: 100%; float: left">
                     <span><strong>last you called</strong></span><br/>
-                    <span id="fqLastCalled">0</span>
+                    <span id="fqLastCalled">{{m_lastCalled}}</span>
                 </div>
             </div>
             <div class="col-xs-6 col-sm-3" style="margin-top: 0; padding: 0;">
@@ -37,13 +37,13 @@
             <div class="col-xs-4" style="margin-top: 0; padding: 0;">
                 <div class="fakeVerticalLineDivL" style="width: 100%; float: left">
                     <span><strong>avg customer service time (minutes): </strong></span><br/>
-                    <h1 id="fqAvgCustomerService">00:00:00</h1>
+                    <h1 id="fqAvgCustomerService">{{m_avgServiceTimeCalc}}</h1>
                 </div>
             </div>
             <div class="col-xs-4" style="margin-top: 0; padding: 0">
                 <div class="fakeVerticalLineDivL" style="width: 100%; float: left">
                     <span><strong>avg customer wait time (minutes):</strong></span><br/>
-                    <h1 id="fqAvgCustomerWait">00:00:00</h1>
+                    <h1 id="fqAvgCustomerWait">{{m_avgCalledTimeCalc}}</h1>
                 </div>
             </div>
             <div class="col-xs-4" style="margin-top: 0; padding: 0;">
