@@ -6,7 +6,7 @@
         <br/>
         <br/>
         <br/>
-        <div class="row fqStats">
+        <div style="margin: 0 20px 0 -9px" class="row fqStats">
             <div class="col-xs-6 col-sm-3" style="margin-top: 0; padding: 0;">
                 <div class="fakeVerticalLineDivL" style="height: 58px; width: 100%; float: left">
                     <span><strong>called customer: </strong></span><br/>
@@ -34,7 +34,7 @@
             </div>
         </div>
 
-        <div class="row fqStats">
+        <div style="margin: 0 20px 0 -9px" class="row fqStats">
             <div class="col-xs-4" style="margin-top: 0; padding: 0;">
                 <div class="fakeVerticalLineDivL" style="width: 100%; float: left">
                     <span><strong>avg customer service time (minutes): </strong></span><br/>
@@ -66,7 +66,7 @@
             <div id="fqSelectedCustomer"></div>
             <div id="fqLineQueueComponentContainer">
                 <div id="fqLineQueueComponent">
-                    <div *ngFor="let queue of m_queues" class="personInLine" [ngClass]="{serviced: queue.serviced, called: queue.called}">
+                    <div *ngFor="let queue of m_queues" class="personInLine" (click)="_onQueuSelected(queue,$event)" [ngClass]="{serviced: queue.serviced, called: queue.called}">
                         <div *ngIf="queue.lineId != -1">
                             <i style="font-size: 90px" class="fa fa-male"></i>
                             <h3 style="position: relative; left: 6px">{{queue.serviceId}}</h3>

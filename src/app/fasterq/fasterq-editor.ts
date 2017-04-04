@@ -34,12 +34,13 @@ export class FasterqEditor extends Compbaser implements AfterViewInit {
     m_stopTimer = '00:00:00';
     m_selectedServiceID: any = -1;
     m_queues: List<FasterqQueueModel> = List([]);
+    m_offsetPosition = 0;
 
-    constructor(private yp: YellowPepperService, private el: ElementRef, private cd:ChangeDetectorRef) {
+    constructor(private yp: YellowPepperService, private el: ElementRef, private cd: ChangeDetectorRef) {
         super();
         this.cancelOnDestroy(
             this.yp.listenFasterqQueues()
-                .subscribe((i_queues:List<FasterqQueueModel>) => {
+                .subscribe((i_queues: List<FasterqQueueModel>) => {
                     this.m_queues = List([]);
                     for (var i = -8; i < 0; i++) {
                         i_queues = i_queues.unshift(new FasterqQueueModel({line_id: -1}))
@@ -50,28 +51,35 @@ export class FasterqEditor extends Compbaser implements AfterViewInit {
         )
     }
 
+    _onQueuSelected(i_queue: FasterqQueueModel, event) {
+        console.log(i_queue);
+        this._scrollTo(event.target, i_queue.serviceId);
+    }
+
     /**
      Scroll to position of selected queue / UI person
      @method _scrollTo
      @param {Element} i_element
      **/
-    _scrollTo(i_element) {
+    _scrollTo(i_element, i_serviceId) {
         this._watchStop();
         if (i_element.length == 0)
             return;
-        this.m_selectedServiceID = $(i_element, this.el.nativeElement).data('service_id');
+        // this.m_selectedServiceID = $(i_element, this.el.nativeElement).data('service_id');
         // var model = self.m_queuesCollection.where({'service_id': self.m_selectedServiceID})[0];
         // self._populatePropsQueue(model);
         //
-        // var scrollXPos = $(i_element).position().left;
-        // // console.log('current offset ' + scrollXPos + ' ' + 'going to index ' + $(i_element).index() + ' service_id ' + $(i_element).data('service_id'));
-        // self.m_offsetPosition = $(Elements.FQ_LINE_QUEUE_COMPONENT_CONTAINER).scrollLeft();
-        // scrollXPos += self.m_offsetPosition;
-        // var final = scrollXPos - 480;
-        // TweenLite.to(Elements.FQ_LINE_QUEUE_COMPONENT_CONTAINER, 2, {
-        //     scrollTo: {x: final, y: 0},
-        //     ease: Power4.easeOut
-        // });
+        var scrollXPos = $(i_element).position().left;
+        // console.log('current offset ' + scrollXPos + ' ' + 'going to index ' + $(i_element).index() + ' service_id ' + i_serviceId);
+        this.m_offsetPosition = $('#fqLineQueueComponentContainer',this.el.nativeElement).scrollLeft();
+        scrollXPos += this.m_offsetPosition;
+        var final = scrollXPos - 490;
+        TweenLite.to('#fqLineQueueComponentContainer', 2, {
+            scrollTo: {x: final, y: 0},
+            ease: Power4['easeOut']
+        });
+
+
     }
 
     /**

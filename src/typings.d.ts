@@ -56,6 +56,10 @@ declare class Stopwatch {
     reset:()=>void;
 }
 
+declare class Power4 {
+    easeOut:any;
+}
+
 declare class RC4V2 {
     encrypt: any;
     decrypt: any;
