@@ -65,12 +65,13 @@ export class AppDbEffects {
 
     parseString;
     appBaseUrlServices
+    fasterQueueInFlight = false;
 
     constructor(private actions$: Actions,
                 private store: Store<ApplicationState>,
                 private rp: RedPepperService,
                 private yp: YellowPepperService,
-                private commBroker:CommBroker,
+                private commBroker: CommBroker,
                 private http: Http) {
 
         // todo: disabled injection as broken in AOT
@@ -391,6 +392,9 @@ export class AppDbEffects {
 
     @Effect({dispatch: true})
     loadfasterqQueues: Observable<Action> = this.actions$.ofType(EFFECT_LOAD_FASTERQ_QUEUES)
+        .takeWhile(() => {
+            return this.fasterQueueInFlight == false;
+        })
         .switchMap(action => this._loadfasterqQueues(action))
         .map(stations => ({type: EFFECT_LOADED_FASTERQ_QUEUES, payload: stations}));
 
@@ -416,6 +420,7 @@ export class AppDbEffects {
 
     @Effect({dispatch: true})
     savefasterqQueueCall: Observable<Action> = this.actions$.ofType(EFFECT_QUEUE_CALL_SAVE)
+        .do(() => this.fasterQueueInFlight = true)
         .switchMap(action => this._savefasterqQueueCall(action))
         .map(stations => ({type: EFFECT_QUEUE_CALL_SAVED, payload: stations}));
 
@@ -430,11 +435,12 @@ export class AppDbEffects {
                 return Observable.throw(err);
             })
             .finally(() => {
+                this.fasterQueueInFlight = false;
             })
             .map((response: Response) => {
                 var reply = response.json();
-                if (reply.updated == 'alreadyCalled'){
-                    var message:IMessage = {
+                if (reply.updated == 'alreadyCalled') {
+                    var message: IMessage = {
                         event: FASTERQ_QUEUE_CALL_CANCLED,
                         fromInstance: this,
                         message: data
@@ -448,6 +454,7 @@ export class AppDbEffects {
 
     @Effect({dispatch: true})
     savefasterqQueueService: Observable<Action> = this.actions$.ofType(EFFECT_QUEUE_SERVICE_SAVE)
+        .do(() => this.fasterQueueInFlight = true)
         .switchMap(action => this._savefasterqQueueService(action))
         .map(stations => ({type: EFFECT_QUEUE_SERVICE_SAVED, payload: stations}));
 
@@ -462,6 +469,7 @@ export class AppDbEffects {
                 return Observable.throw(err);
             })
             .finally(() => {
+                this.fasterQueueInFlight = false;
             })
             .map((response: Response) => {
                 var data = response.json();
@@ -472,7 +480,7 @@ export class AppDbEffects {
     @Effect({dispatch: false})
     pollServicing: Observable<Action> = this.actions$.ofType(EFFECT_QUEUE_POLL_SERVICE)
         .switchMap(action => this._pollServicing(action))
-        .do((data:any)=>{
+        .do((data: any) => {
             var uiState: IUiState = {fasterq: {fasterqNowServicing: data}}
             this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
         })
