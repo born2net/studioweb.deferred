@@ -13,6 +13,7 @@ import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.action
 import {List} from "immutable";
 import {Lib} from "../../Lib";
 import * as _ from "lodash";
+import {timeout} from "../../decorators/timeout-decorator";
 
 export interface IQueueSave {
     queue_id: number;
@@ -125,6 +126,16 @@ export class FasterqEditor extends Compbaser {
                     this.cd.markForCheck();
                 }, (e) => console.error(e))
         )
+
+        this._selectFirst();
+    }
+
+    @timeout(1000)
+    _selectFirst() {
+        if (this.m_queues.size == this.QUEUE_OFFSET)
+            return;
+        this.m_selectedServiceId = this.m_queues.get(this.QUEUE_OFFSET).serviceId;
+        this._onQueueSelected(this.m_queues.get(this.QUEUE_OFFSET));
     }
 
     _pollServices() {
