@@ -20,6 +20,7 @@ export function appDb(state: IAppDb, action: any): IAppDb {
         case StoreActions.APP_INIT:
             state.appStartTime = Date.now();
             state.appBaseUrl = `${baseUrl}`;
+            state.appBaseUrlServices = `https://secure.digitalsignage.com${Lib.DevMode() ? ':442' : ''}`;
             return state;
 
         case ActionsConst.ACTION_UISTATE_UPDATE: {
@@ -32,7 +33,6 @@ export function appDb(state: IAppDb, action: any): IAppDb {
             state.userModel = userModel.setTime();
             state.appBaseUrlUser = `${baseUrl}?resellerUserName=${userModel.getKey('user')}&resellerPassword=${userModel.getKey('pass')}`;
             state.appBaseUrlCloud = `${appBaseUrlCloud}/END_POINT/${userModel.getKey('user')}/${userModel.getKey('pass')}`;
-            state.appBaseUrlServices = `https://secure.digitalsignage.com${Lib.DevMode() ? ':442' : ''}`;
             return state;
 
         case EffectActions.EFFECT_LOADED_STATIONS:

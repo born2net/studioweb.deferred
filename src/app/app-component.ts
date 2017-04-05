@@ -38,7 +38,7 @@ export class AppComponent implements AfterViewInit {
     ngVersion: string;
     offlineDevMode: any = window['offlineDevMode'];
     m_ShowModeEnum = MainAppShowModeEnum;
-    m_showMode:any = MainAppShowModeEnum.MAIN;
+    m_showMode: any = MainAppShowModeEnum.MAIN;
     m_hidden = false;
 
     constructor(private router: Router,
@@ -74,7 +74,19 @@ export class AppComponent implements AfterViewInit {
         let s = this.router.events
             .subscribe((val) => {
                 if (val instanceof NavigationEnd) {
-                    this.authService.start();
+                    switch (val.url) {
+                        case '/FasterqTerminal': {
+                            console.log(1);
+                            break;
+                        }
+                        case '/FasterqRemoteStatus': {
+                            break;
+
+                        }
+                        default: {
+                            this.authService.start();
+                        }
+                    }
                     s.unsubscribe();
                 }
             }, (e) => console.error(e));

@@ -23,15 +23,6 @@ export class AuthService {
                 private storeService: StoreService,
                 private activatedRoute: ActivatedRoute) {
 
-
-        // todo: disabled injection as broken in AOT
-        // constructor(private ngmslibService: NgmslibService, private router: Router,
-        //     @Inject(forwardRef(() => Store)) private store: Store<ApplicationState>,
-        //     @Inject(forwardRef(() => LocalStorage)) private localStorage: LocalStorage,
-        //     @Inject(forwardRef(() => StoreService)) private storeService: StoreService,
-        //     private activatedRoute: ActivatedRoute) {
-
-
         this.store.select(store => store.appDb.userModel).subscribe((userModel: UserModel) => {
             this.userModel = userModel;
         }, (e) => {
@@ -88,8 +79,9 @@ export class AuthService {
                 var nav = '/App1/Fasterq';
                 // var nav = '/App1/Scenes';
                 // this.router.navigate(['/App1/Dashboard']);
-                Lib.Con(`in dev mode entering:  ${nav}`);
-                this.router.navigate([nav]);
+                // Lib.Con(`in dev mode entering:  ${nav}`);
+                // this.router.navigate([nav]);
+                this.router.navigate([this.requestedRoute]);
             } else {
                 this.router.navigate([this.requestedRoute]);
             }

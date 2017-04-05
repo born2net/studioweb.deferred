@@ -8,6 +8,8 @@ import {Observable} from "rxjs/Observable";
 import {EFFECT_UPDATE_FASTERQ_LINE} from "../../store/effects/appdb.effects";
 import * as _ from 'lodash';
 import {FasterqQueueModel} from "../../models/fasterq-queue-model";
+import {RedPepperService} from "../../services/redpepper.service";
+import {Lib} from "../../Lib";
 
 @Component({
     selector: 'fasterq-line-props',
@@ -59,7 +61,7 @@ import {FasterqQueueModel} from "../../models/fasterq-queue-model";
                                     </div>
                                 </li>
                                 <li class="list-group-item">
-                                    <button class="btn btn-primary inliner" i18n>open terminal</button>
+                                    <button (click)="_onOpenTerminal()" class="btn btn-primary inliner" i18n>open terminal</button>
                                 </li>
                                 <li class="list-group-item">
                                     <button class="btn btn-primary inliner" i18n>reset line</button>
@@ -101,14 +103,22 @@ export class FasterqLineProps extends Compbaser implements AfterViewInit {
     m_customer = '';
     m_verification = '';
     m_calledBy: ''
+    appBaseUrlServices
 
-    constructor(private fb: FormBuilder, private yp: YellowPepperService) {
+    constructor(private fb: FormBuilder, private yp: YellowPepperService, private rp:RedPepperService) {
         super();
         this.m_sideProps$ = this.yp.ngrxStore.select(store => store.appDb.uiState.uiSideProps);
         this.m_contGroup = fb.group({
             'line_name': [''],
             'reminder': [0]
         });
+
+        this.cancelOnDestroy(
+            this.yp.ngrxStore.select(store => store.appDb.appBaseUrlServices)
+                .subscribe((i_appBaseUrlServices) => {
+                    this.appBaseUrlServices = i_appBaseUrlServices;
+                })
+        )
 
         this.cancelOnDestroy(
             this.yp.listenFasterqLineSelected()
@@ -140,6 +150,28 @@ export class FasterqLineProps extends Compbaser implements AfterViewInit {
                 reminder: _.isNumber(this.m_contGroup.controls.reminder.value) ? this.m_contGroup.controls.reminder.value : 1
             }
         })
+    }
+
+    /**
+     Listen to open customer terminal
+     @method _listenOpenCustomerTerminal
+     **/
+    _onOpenTerminal() {
+        var data = {
+            call_type: 'CUSTOMER_TERMINAL',
+            business_id: this.rp.getUserData().businessID,
+            line_id: this.m_selectedLine.lineId,
+            line_name: this.m_selectedLine.lineName
+        };
+        data = jQuery.base64.encode(JSON.stringify(data));
+        var url;
+        if (Lib.DevMode){
+            url = `http://localhost:4208/FasterqTerminal/customerTerminal/${data}`;
+        } else {
+            url = `${this.appBaseUrlServices}/FasterqTerminal?mode=customerTerminal&param=${data}`;
+        }
+
+        window.open(url, '_blank');
     }
 
     ngAfterViewInit() {

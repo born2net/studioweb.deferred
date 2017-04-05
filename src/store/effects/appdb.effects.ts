@@ -40,6 +40,9 @@ export const EFFECT_LOADED_STATIONS = 'EFFECT_LOADED_STATIONS';
 export const EFFECT_LOAD_FASTERQ_LINES = 'EFFECT_LOAD_FASTERQ_LINES';
 export const EFFECT_LOADED_FASTERQ_LINES = 'EFFECT_LOADED_FASTERQ_LINES';
 export const EFFECT_LOADING_FASTERQ_LINES = 'EFFECT_LOADING_FASTERQ_LINES';
+export const EFFECT_LOAD_FASTERQ_LINE = 'EFFECT_LOAD_FASTERQ_LINE';
+export const EFFECT_LOADED_FASTERQ_LINE = 'EFFECT_LOADED_FASTERQ_LINE';
+export const EFFECT_LOADING_FASTERQ_LINE = 'EFFECT_LOADING_FASTERQ_LINE';
 export const EFFECT_LOAD_FASTERQ_ANALYTICS = 'EFFECT_LOAD_FASTERQ_ANALYTICS';
 export const EFFECT_LOADED_FASTERQ_ANALYTICS = 'EFFECT_LOADED_FASTERQ_ANALYTICS';
 export const EFFECT_LOADING_FASTERQ_ANALYTICS = 'EFFECT_LOADING_FASTERQ_ANALYTICS';
@@ -364,6 +367,29 @@ export class AppDbEffects {
                 return lines;
             })
     }
+
+    @Effect({dispatch: true})
+    loadfasterqLine: Observable<Action> = this.actions$.ofType(EFFECT_LOAD_FASTERQ_LINE)
+        .switchMap(action => this._loadFasterqLine(action))
+        .map(stations => ({type: EFFECT_LOADED_FASTERQ_LINE, payload: stations}));
+
+    private _loadFasterqLine(action: Action): Observable<FasterqLineModel> {
+        this.store.dispatch({type: EFFECT_LOADING_FASTERQ_LINE, payload: {}})
+        var options: RequestOptionsArgs = this.fasterqCreateServerCall(`/GetLine`, RequestMethod.Post, action.payload)
+        return this.http.get(options.url, options)
+            .catch((err: any) => {
+                bootbox.alert('Error loading fasterq lines, try again later...');
+                return Observable.throw(err);
+            })
+            .finally(() => {
+            })
+            .map((response: Response) => {
+                var data:any = response.json()[0];
+                var line = new FasterqLineModel(data)
+                return line;
+            })
+    }
+
 
     @Effect({dispatch: true})
     loadfasterqAnalytics: Observable<Action> = this.actions$.ofType(EFFECT_LOAD_FASTERQ_ANALYTICS)
