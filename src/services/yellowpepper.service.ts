@@ -227,6 +227,17 @@ export class YellowPepperService {
             }).filter(value => value != null);
     }
 
+    listenFasterqQueueModelSelected(): Observable<FasterqQueueModel> {
+        var selected$ = this.store.select(store => store.appDb.uiState.fasterq.fasterqQueueSelected);
+        var queues$ = this.store.select(store => store.appDb.fasterq.queues);
+        return selected$
+            .combineLatest(queues$, (serviceId, queues: List<FasterqQueueModel>) => {
+                return queues.find((queue: FasterqQueueModel) => {
+                    return queue.serviceId == serviceId;
+                });
+            }).filter(value => value != null);
+    }
+
     listenFasterqQueueSelected(): Observable<any> {
         return this.store.select(store => store.appDb.uiState.fasterq.fasterqQueueSelected);
     }

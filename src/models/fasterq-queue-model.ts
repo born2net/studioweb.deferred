@@ -19,6 +19,10 @@ export class FasterqQueueModel extends StoreModel {
         return this.getKey('line_id');
     }
 
+    public get verification() {
+        return this.getKey('verification');
+    }
+
     public get queueId() {
         return this.getKey('queue_id');
     }

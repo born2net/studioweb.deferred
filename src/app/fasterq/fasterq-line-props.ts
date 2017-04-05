@@ -7,6 +7,7 @@ import {SideProps} from "../../store/actions/appdb.actions";
 import {Observable} from "rxjs/Observable";
 import {EFFECT_UPDATE_FASTERQ_LINE} from "../../store/effects/appdb.effects";
 import * as _ from 'lodash';
+import {FasterqQueueModel} from "../../models/fasterq-queue-model";
 
 @Component({
     selector: 'fasterq-line-props',
@@ -72,7 +73,20 @@ import * as _ from 'lodash';
                 <h4>line dashboard</h4>
             </div>
             <div *ngSwitchCase="m_sidePropsEnum.fasterqQueueProps">
-                <h4>queue props</h4>
+                <div class="inner">
+                    <h4 i18n>Queue porperties</h4>
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <h5 i18n>selected customer: {{m_customer}}</h5>
+                        </li>
+                        <li class="list-group-item">
+                            <h5 i18n>verification: {{m_verification}}</h5>
+                        </li>
+                        <li class="list-group-item">
+                            <h5 i18n>called by: {{m_calledBy}}</h5>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     `,
@@ -80,9 +94,13 @@ import * as _ from 'lodash';
 export class FasterqLineProps extends Compbaser implements AfterViewInit {
 
     m_selectedLine: FasterqLineModel;
+    m_selectedQueue: FasterqQueueModel;
     m_contGroup: FormGroup;
     m_sideProps$: Observable<SideProps>;
     m_sidePropsEnum = SideProps;
+    m_customer = '';
+    m_verification = '';
+    m_calledBy: ''
 
     constructor(private fb: FormBuilder, private yp: YellowPepperService) {
         super();
@@ -96,26 +114,22 @@ export class FasterqLineProps extends Compbaser implements AfterViewInit {
             this.yp.listenFasterqLineSelected()
                 .subscribe((i_lineSelected: FasterqLineModel) => {
                     this.m_selectedLine = i_lineSelected;
-                    this._render();
+                    this.m_contGroup.controls.line_name.setValue(this.m_selectedLine.lineName)
+                    this.m_contGroup.controls.reminder.setValue(this.m_selectedLine.reminder)
+                }, (e) => console.error(e))
+        )
+
+        this.cancelOnDestroy(
+            this.yp.listenFasterqQueueModelSelected()
+                .subscribe((i_queueSelected: FasterqQueueModel) => {
+                    this.m_selectedQueue = i_queueSelected;
+                    this.m_customer = this.m_selectedQueue.serviceId;
+                    this.m_verification = this.m_selectedQueue.verification == -1 ? 'print out' : this.m_selectedQueue.verification;
+                    this.m_calledBy = (_.isNull(this.m_selectedQueue.calledBy) ? 'none' : this.m_selectedQueue.calledBy);
                 }, (e) => console.error(e))
         )
     }
 
-    _render() {
-        this.m_contGroup.controls.line_name.setValue(this.m_selectedLine.lineName)
-        this.m_contGroup.controls.reminder.setValue(this.m_selectedLine.reminder)
-    }
-
-    /**
-     Populate the selected queue's properties UI
-     @method _populatePropsQueue
-     @params {Number} i_value
-     **/
-    _populatePropsQueue(i_model) {
-        // $(Elements.FQ_SELECTED_QUEUE).text(i_model.get('service_id'));
-        // $(Elements.FQ_VERIFICATION).text(i_model.get('verification') == -1 ? 'print out' : i_model.get('verification'));
-        // $(Elements.FQ_CALLED_BY).text(_.isNull(i_model.get('called_by')) ? 'none' : i_model.get('called_by'));
-    }
 
     saveToStore() {
         this.yp.ngrxStore.dispatch({
