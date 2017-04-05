@@ -7,11 +7,19 @@ import {EFFECT_LOAD_FASTERQ_LINE} from "../../store/effects/appdb.effects";
 
 @Component({
     selector: 'fasterq-terminal',
+    styles: [`
+        .largeFont2em {
+            font-size: 2em;
+        }
+        .lPad {
+            padding-left: 20px;
+        }
+    `],
     template: `
         <small class="debug">{{me}}</small>
         <div id="fasterqCustomerTerminal">
             <div style="width: 100%">
-                <h1 id="fqTakeNumberLineName" style="font-size: 10em; text-align: center" class="centerElement"></h1>
+                <h1 id="fqTakeNumberLineName" style="font-size: 10em; text-align: center" class="centerElement">{{m_fasterqLineModel?.lineName}}</h1>
             </div>
 
             <hr/>
@@ -29,16 +37,15 @@ import {EFFECT_LOAD_FASTERQ_LINE} from "../../store/effects/appdb.effects";
 
                     <div class="item active">
                         <div style="width: 100%; text-align: center">
-                            <i class="carouselLargeHeader fa fa-print"></i>
+                            <i style="font-size: 3em; padding-right: 40px" class="carouselLargeHeader fa fa-print"></i>
                             <span class="carouselLargeHeader" style="font-size: 3em">Print your queue number</span>
                             <br/>
                             <br/>
                             <br/>
                             <a id="fqPrintNumber" style="padding-left: 40px; padding-right: 40px; padding-top: 20px; padding-bottom: 20px" class="btn btn-large btn-danger" type="button" href="#">
-                                <span style="font-size: 2em" class="carouselLargeHeader2 fa fa-download"></span>
-                                <span data-localize="printIt" style="font-size: 2em">PRINT IT</span>
+                                <span  class="carouselLargeHeader2 fa fa-download"></span>
+                                <span class="largeFont2em" data-localize="printIt" >PRINT IT</span>
                             </a>
-
                             <h1 id="fqDisplayPrintNumber"></h1>
                             <br/>
                             <br/>
@@ -71,8 +78,8 @@ import {EFFECT_LOAD_FASTERQ_LINE} from "../../store/effects/appdb.effects";
                             </div>
                             <br/>
                             <a id="fqSenditButton" style="padding-left: 40px; padding-right: 40px; padding-top: 20px; padding-bottom: 20px" class="btn btn-large btn-danger" type="button" href="#">
-                                <span style="font-size: 2em" class="carouselLargeHeader2 fa fa-download"></span>
-                                <span data-localize="sendIt" style="font-size: 2em">SEND IT</span>
+                                <span  class="carouselLargeHeader2 fa fa-download"></span>
+                                <span data-localize="sendIt" >SEND IT</span>
                             </a>
                             <br/>
 
@@ -94,31 +101,30 @@ import {EFFECT_LOAD_FASTERQ_LINE} from "../../store/effects/appdb.effects";
                             <br/>
                             <br/>
                             <a id="fqCallIt" style="padding-left: 40px; padding-right: 40px; padding-top: 20px; padding-bottom: 20px" class="btn btn-large btn-danger" type="button" href="#">
-                                <span style="font-size: 2em" class="carouselLargeHeader2 fa fa-download"></span>
-                                <span style="font-size: 2em">CALL IT</span>
+                                <span  class="carouselLargeHeader2 fa fa-download"></span>
+                                <span >CALL IT</span>
                             </a>
 
                             <h1 id="fqDisplaySMSSent"></h1>
                             <br/>
                         </div>
                     </div>
-
-                </div>
+                </div>             
                 <ul id="carouselItems" class="nav nav-pills nav-justified" style="border: 1px solid #9c9c9c">
                     <li data-target="#terminalCarousel" data-slide-to="0">
-                        <a href="#"><i class="fa fa-print"></i><span class="fasterQCarouselButtons">PRINT</span>
+                        <a href="#"><i class="largeFont2em fa fa-print"></i><span class="lPad largeFont2em fasterQCarouselButtons">PRINT</span>
                         </a>
                     </li>
                     <li data-target="#terminalCarousel" data-slide-to="1">
-                        <a href="#"><i class="fa fa-qrcode"></i><span class="fasterQCarouselButtons">SCAN</span>
+                        <a href="#"><i class="largeFont2em fa fa-qrcode"></i><span  class="lPad largeFont2em fasterQCarouselButtons">SCAN</span>
                         </a>
                     </li>
                     <li data-target="#terminalCarousel" data-slide-to="2">
-                        <a href="#"><i class="fa fa-paper-plane"></i><span class="fasterQCarouselButtons">E-MAIL</span>
+                        <a href="#"><i class="largeFont2em fa fa-paper-plane"></i><span  class="lPad largeFont2em fasterQCarouselButtons">E-MAIL</span>
                         </a>
                     </li>
                     <li data-target="#terminalCarousel" data-slide-to="3">
-                        <a href="#"><i class="fa fa-phone"></i><span class="fasterQCarouselButtons">Text Message</span>
+                        <a href="#"><i class="largeFont2em fa fa-phone"></i><span  class="lPad largeFont2em fasterQCarouselButtons">Text Message</span>
                         </a>
                     </li>
                 </ul>
@@ -132,6 +138,13 @@ export class FasterqTerminal extends Compbaser implements AfterViewInit {
 
     constructor(private yp: YellowPepperService, private router: ActivatedRoute) {
         super();
+
+        this.cancelOnDestroy(
+            this.yp.ngrxStore.select(store => store.appDb.fasterq.terminal)
+                .subscribe((i_fasterqLineModel:FasterqLineModel) => {
+                    this.m_fasterqLineModel = i_fasterqLineModel;
+            }, (e) => console.error(e))
+        )
     }
 
     ngAfterViewInit() {

@@ -75,7 +75,6 @@ export interface IUiStateFatserq {
     fasterqLineSelected?: number;
     fasterqQueueSelected?: number;
     fasterqNowServicing?:string;
-    fasterqTerminalLine?:FasterqLineModel;
 }
 
 export interface IUiStateScene {
@@ -102,6 +101,7 @@ export interface IFasterQ {
     lines: List<FasterqLineModel>
     queues: List<FasterqQueueModel>
     analytics: List<FasterqAnalyticsModel>
+    terminal: FasterqLineModel
 }
 
 export interface IAppDb {
@@ -153,8 +153,7 @@ export const INITIAL_APP_DB: IAppDb = {
         fasterq: {
             fasterqLineSelected: -1,
             fasterqQueueSelected: -1,
-            fasterqNowServicing: '',
-            fasterqTerminalLine: null
+            fasterqNowServicing: ''
 
         },
         scene: {
@@ -172,7 +171,9 @@ export const INITIAL_APP_DB: IAppDb = {
     fasterq: {
         lines: List([]),
         queues: List([]),
-        analytics: List([])
+        analytics: List([]),
+        terminal: null
+
     },
     userModel: new UserModel({
         user: '',

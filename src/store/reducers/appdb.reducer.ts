@@ -91,6 +91,11 @@ export function appDb(state: IAppDb, action: any): IAppDb {
             state.fasterq.lines = lines;
             return state;
 
+        case EffectActions.EFFECT_LOADED_FASTERQ_LINE:
+            var line: FasterqLineModel = action.payload;
+            state.fasterq.terminal = line;
+            return state;
+
         case EffectActions.EFFECT_LOADED_FASTERQ_ANALYTICS:
             var analytics: List<FasterqAnalyticsModel> = action.payload;
             state.fasterq.analytics = analytics;
