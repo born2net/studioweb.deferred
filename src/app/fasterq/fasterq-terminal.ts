@@ -43,7 +43,6 @@ import {EFFECT_LOAD_FASTERQ_LINE} from "../../store/effects/appdb.effects";
                             <br/>
                             <br/>
                             <a id="fqPrintNumber" style="padding-left: 40px; padding-right: 40px; padding-top: 20px; padding-bottom: 20px" class="btn btn-large btn-danger" type="button" href="#">
-                                <span  class="carouselLargeHeader2 fa fa-download"></span>
                                 <span class="largeFont2em" data-localize="printIt" >PRINT IT</span>
                             </a>
                             <h1 id="fqDisplayPrintNumber"></h1>
