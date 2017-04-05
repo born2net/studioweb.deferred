@@ -106,6 +106,17 @@ export class FasterqLineProps extends Compbaser implements AfterViewInit {
         this.m_contGroup.controls.reminder.setValue(this.m_selectedLine.reminder)
     }
 
+    /**
+     Populate the selected queue's properties UI
+     @method _populatePropsQueue
+     @params {Number} i_value
+     **/
+    _populatePropsQueue(i_model) {
+        // $(Elements.FQ_SELECTED_QUEUE).text(i_model.get('service_id'));
+        // $(Elements.FQ_VERIFICATION).text(i_model.get('verification') == -1 ? 'print out' : i_model.get('verification'));
+        // $(Elements.FQ_CALLED_BY).text(_.isNull(i_model.get('called_by')) ? 'none' : i_model.get('called_by'));
+    }
+
     saveToStore() {
         this.yp.ngrxStore.dispatch({
             type: EFFECT_UPDATE_FASTERQ_LINE,
