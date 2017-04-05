@@ -5,7 +5,7 @@ import {FasterqQueueModel} from "../../models/fasterq-queue-model";
 import {FasterqLineModel} from "../../models/fasterq-line-model";
 import {FasterqAnalyticsModel} from "../../models/fasterq-analytics";
 import {RedPepperService} from "../../services/redpepper.service";
-import {EFFECT_QUEUE_CALL_SAVE, EFFECT_QUEUE_SERVICE_SAVE} from "../../store/effects/appdb.effects";
+import {EFFECT_LOAD_FASTERQ_ANALYTICS, EFFECT_LOAD_FASTERQ_QUEUES, EFFECT_QUEUE_CALL_SAVE, EFFECT_QUEUE_POLL_SERVICE, EFFECT_QUEUE_SERVICE_SAVE} from "../../store/effects/appdb.effects";
 import {CommBroker} from "../../services/CommBroker";
 import {FASTERQ_QUEUE_CALL_CANCLED} from "../../interfaces/Consts";
 import {IUiState} from "../../store/store.data";
@@ -59,11 +59,15 @@ export class FasterqEditor extends Compbaser {
     m_offsetPosition = 0;
     m_avgServiceTimeCalc: any = '00:00:00';
     m_avgCalledTimeCalc: any = '00:00:00';
-    m_lastCalled = '';
+    m_lastCalled: any = 0;
+    m_nowServicing: any = 0;
+    m_totalToBeServiced = 0;
     m_fqLastServiced = '';
+    m_liveUpdateHandler;
 
     constructor(private yp: YellowPepperService, private rp: RedPepperService, private commBroker: CommBroker, private el: ElementRef, private cd: ChangeDetectorRef) {
         super();
+        this._pollServices();
 
         this.cancelOnDestroy(
             this.commBroker.onEvent(FASTERQ_QUEUE_CALL_CANCLED)
@@ -74,6 +78,14 @@ export class FasterqEditor extends Compbaser {
                             this.yp.ngrxStore.dispatch({type: EFFECT_QUEUE_CALL_SAVE, payload: data.message})
                         }
                     });
+                }, (e) => console.error(e))
+        )
+
+        this.cancelOnDestroy(
+            this.yp.listenFasterqQueueLastServicedPolled()
+                .subscribe((i_fasterqNowServicing) => {
+                    this.m_nowServicing = i_fasterqNowServicing;
+                    this.cd.markForCheck();
                 }, (e) => console.error(e))
         )
 
@@ -112,6 +124,49 @@ export class FasterqEditor extends Compbaser {
                     this.cd.markForCheck();
                 }, (e) => console.error(e))
         )
+    }
+
+    _pollServices() {
+        this.m_liveUpdateHandler = setInterval(() => {
+            this.yp.ngrxStore.dispatch({type: EFFECT_QUEUE_POLL_SERVICE, payload: {business_id: this.rp.getUserData().businessID, line_id: this.m_fasterqLineModel.lineId}})
+            this.yp.ngrxStore.dispatch(({type: EFFECT_LOAD_FASTERQ_QUEUES, payload: {line_id: this.m_fasterqLineModel.lineId}}))
+            this.yp.ngrxStore.dispatch(({type: EFFECT_LOAD_FASTERQ_ANALYTICS, payload: {line_id: this.m_fasterqLineModel.lineId}}))
+            this._updateTotalToBeServiced();
+        }, 10000);
+    }
+
+    /**
+     Update the total number of queues left to be serviced
+     @method _updateTotalToBeServiced
+     **/
+    _updateTotalToBeServiced() {
+        var total = 0;
+        this.m_queues.forEach((i_asterqQueueModel:FasterqQueueModel) => {
+            if (_.isNull(i_asterqQueueModel.serviced))
+                total++;
+            this.m_totalToBeServiced = total;
+        });
+    }
+
+    /**
+     Get Queues collection from server and render UI
+     @method _getLines server:getQueues
+     @params {boolean} i_scrollTo scroll to
+     **/
+    _getQueues(i_scrollTo) {
+        // self.m_queuesCollection = new QueuesCollection();
+        // self.m_queuesCollection.fetch({
+        //     data: {line_id: self.m_fqCreatorView.getSelectedLine()},
+        //     success: function (models) {
+        //         self._updateTotalToBeServiced();
+        //         self._render();
+        //         if (i_scrollTo)
+        //             self._scrollToFirstNotServiced();
+        //     },
+        //     error: function () {
+        //         log('error fetch /Queues collection');
+        //     }
+        // });
     }
 
     _onQueueSelected(i_queue: FasterqQueueModel) {
@@ -302,6 +357,7 @@ export class FasterqEditor extends Compbaser {
     }
 
     destroy() {
+        clearInterval(this.m_liveUpdateHandler);
         var uiState: IUiState = {fasterq: {fasterqQueueSelected: -1}}
         this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }

@@ -231,6 +231,10 @@ export class YellowPepperService {
         return this.store.select(store => store.appDb.uiState.fasterq.fasterqQueueSelected);
     }
 
+    listenFasterqQueueLastServicedPolled(): Observable<any> {
+        return this.store.select(store => store.appDb.uiState.fasterq.fasterqNowServicing);
+    }
+
     listenGlobalBoardSelectedChanged(emitOnEmpty: boolean = false): Observable<BoardTemplateViewersModel> {
         var globalBoardTemplateViewerSelected$ = this.ngrxStore.select(store => store.appDb.uiState.campaign.campaignTimelineBoardViewerSelected);
         var tableBoardTemplatesList$ = this.ngrxStore.select(store => store.msDatabase.sdk.table_board_template_viewers);

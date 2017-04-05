@@ -10,11 +10,11 @@ import {ApplicationState} from "../application.state";
 import {Actions, Effect} from "@ngrx/effects";
 import {Observable} from "rxjs";
 import {UserModel} from "../../models/UserModel";
-import {AuthenticateFlags} from "../actions/appdb.actions";
+import {ACTION_UISTATE_UPDATE, AuthenticateFlags} from "../actions/appdb.actions";
 import {RedPepperService} from "../../services/redpepper.service";
 import {IPepperConnection} from "../../store/imsdb.interfaces";
 import * as _ from "lodash";
-import {IStation} from "../store.data";
+import {IStation, IUiState} from "../store.data";
 import {List} from "immutable";
 import {StationModel} from "../../models/StationModel";
 import {Lib} from "../../Lib";
@@ -58,6 +58,7 @@ export const EFFECT_QUEUE_CALL_SAVED = 'EFFECT_QUEUE_CALL_SAVED';
 export const EFFECT_QUEUE_SERVICE_SAVE = 'EFFECT_QUEUE_SERVICE_SAVE';
 export const EFFECT_QUEUE_SERVICE_SAVING = 'EFFECT_QUEUE_SERVICE_SAVING';
 export const EFFECT_QUEUE_SERVICE_SAVED = 'EFFECT_QUEUE_SERVICE_SAVED';
+export const EFFECT_QUEUE_POLL_SERVICE = 'EFFECT_QUEUE_POLL_SERVICE';
 
 @Injectable()
 export class AppDbEffects {
@@ -465,6 +466,30 @@ export class AppDbEffects {
             .map((response: Response) => {
                 var data = response.json();
                 return action.payload;
+            })
+    }
+
+    @Effect({dispatch: false})
+    pollServicing: Observable<Action> = this.actions$.ofType(EFFECT_QUEUE_POLL_SERVICE)
+        .switchMap(action => this._pollServicing(action))
+        .do((data:any)=>{
+            var uiState: IUiState = {fasterq: {fasterqNowServicing: data}}
+            this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+        })
+        .map(result => ({type: null}));
+
+    private _pollServicing(action: Action): Observable<List<FasterqLineModel>> {
+        var options: RequestOptionsArgs = this.fasterqCreateServerCall(`/LastCalledQueue`, RequestMethod.Post, action.payload)
+        return this.http.get(options.url, options)
+            .catch((err: any) => {
+                bootbox.alert('Error saving service fasterq queue, try again later...');
+                return Observable.throw(err);
+            })
+            .finally(() => {
+            })
+            .map((response: Response) => {
+                var data = response.json().service_id
+                return data;
             })
     }
 

@@ -74,6 +74,7 @@ export interface IUiStateStations {
 export interface IUiStateFatserq {
     fasterqLineSelected?: number;
     fasterqQueueSelected?: number;
+    fasterqNowServicing?:string;
 }
 
 export interface IUiStateScene {
@@ -150,7 +151,8 @@ export const INITIAL_APP_DB: IAppDb = {
         },
         fasterq: {
             fasterqLineSelected: -1,
-            fasterqQueueSelected: -1
+            fasterqQueueSelected: -1,
+            fasterqNowServicing: ''
 
         },
         scene: {
