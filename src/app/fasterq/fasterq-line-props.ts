@@ -71,6 +71,9 @@ import * as _ from 'lodash';
             <div *ngSwitchCase="m_sidePropsEnum.miniDashboard">
                 <h4>line dashboard</h4>
             </div>
+            <div *ngSwitchCase="m_sidePropsEnum.fasterqQueueProps">
+                <h4>queue props</h4>
+            </div>
         </div>
     `,
 })

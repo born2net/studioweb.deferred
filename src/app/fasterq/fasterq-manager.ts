@@ -88,7 +88,6 @@ export class FasterqManager extends Compbaser {
             this.onLineSelected.emit(uiState)
         } else {
             uiState = {
-                uiSideProps: SideProps.fasterqLineEditor,
                 fasterq: {
                     fasterqLineSelected: i_fasterqLineModel.lineId
                 }

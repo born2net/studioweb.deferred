@@ -9,7 +9,7 @@ import {EFFECT_LOAD_FASTERQ_ANALYTICS, EFFECT_LOAD_FASTERQ_QUEUES, EFFECT_QUEUE_
 import {CommBroker} from "../../services/CommBroker";
 import {FASTERQ_QUEUE_CALL_CANCLED} from "../../interfaces/Consts";
 import {IUiState} from "../../store/store.data";
-import {ACTION_UISTATE_UPDATE} from "../../store/actions/appdb.actions";
+import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
 import {List} from "immutable";
 import {Lib} from "../../Lib";
 import * as _ from "lodash";
@@ -92,8 +92,8 @@ export class FasterqEditor extends Compbaser {
         this.cancelOnDestroy(
             this.yp.listenFasterqQueueSelected()
                 .subscribe((i_serviceId) => {
-                    console.log(this.m_queues.size);
                     this.m_selectedServiceId = i_serviceId
+                    this.cd.markForCheck();
                 }, (e) => console.error(e))
         )
 
@@ -101,6 +101,7 @@ export class FasterqEditor extends Compbaser {
             this.yp.listenFasterqLineSelected()
                 .subscribe((i_fasterqLineModel) => {
                     this.m_fasterqLineModel = i_fasterqLineModel;
+                    this.cd.markForCheck();
                 }, (e) => console.error(e))
         )
 
@@ -141,38 +142,22 @@ export class FasterqEditor extends Compbaser {
      **/
     _updateTotalToBeServiced() {
         var total = 0;
-        this.m_queues.forEach((i_asterqQueueModel:FasterqQueueModel) => {
+        this.m_queues.forEach((i_asterqQueueModel: FasterqQueueModel) => {
             if (_.isNull(i_asterqQueueModel.serviced))
                 total++;
             this.m_totalToBeServiced = total;
         });
     }
 
-    /**
-     Get Queues collection from server and render UI
-     @method _getLines server:getQueues
-     @params {boolean} i_scrollTo scroll to
-     **/
-    _getQueues(i_scrollTo) {
-        // self.m_queuesCollection = new QueuesCollection();
-        // self.m_queuesCollection.fetch({
-        //     data: {line_id: self.m_fqCreatorView.getSelectedLine()},
-        //     success: function (models) {
-        //         self._updateTotalToBeServiced();
-        //         self._render();
-        //         if (i_scrollTo)
-        //             self._scrollToFirstNotServiced();
-        //     },
-        //     error: function () {
-        //         log('error fetch /Queues collection');
-        //     }
-        // });
-    }
-
     _onQueueSelected(i_queue: FasterqQueueModel) {
         this.m_selectedServiceId = i_queue.serviceId;
         var index = this._getQueueIndexByServiceId();
-        var uiState: IUiState = {fasterq: {fasterqQueueSelected: this.m_selectedServiceId}}
+        var uiState: IUiState = {
+            uiSideProps: SideProps.fasterqQueueProps,
+            fasterq: {
+                fasterqQueueSelected: this.m_selectedServiceId
+            }
+        }
         this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
         this._scrollTo(index);
     }
@@ -358,7 +343,12 @@ export class FasterqEditor extends Compbaser {
 
     destroy() {
         clearInterval(this.m_liveUpdateHandler);
-        var uiState: IUiState = {fasterq: {fasterqQueueSelected: -1}}
+        var uiState: IUiState = {
+            uiSideProps: SideProps.miniDashboard,
+            fasterq: {
+                fasterqQueueSelected: -1
+            }
+        }
         this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
     }
 }
