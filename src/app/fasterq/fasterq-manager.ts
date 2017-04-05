@@ -116,6 +116,8 @@ export class FasterqManager extends Compbaser {
                 type: EFFECT_REMOVE_FASTERQ_LINE,
                 payload: {id: this.m_selectedLine.lineId}
             })
+            this.m_selectedLine = null;
+            this.selectedIdx = -1;
         });
     }
 
