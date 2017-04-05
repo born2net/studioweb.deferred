@@ -58,6 +58,11 @@ export function appDb(state: IAppDb, action: any): IAppDb {
                 return state;
             var index = state.fasterq.queues.findIndex((i_fasterqLineModel: FasterqQueueModel) => i_fasterqLineModel.queueId == action.payload.queue_id);
             state.fasterq.queues = state.fasterq.queues.update(index, (i_fasterqQueueModel: FasterqQueueModel) => {
+                // var prev = state.fasterq.queues.get(index).called
+                // var curr = i_fasterqQueueModel.called;
+                // if (!_.isNull(prev) && _.isNull(curr)){
+                //     console.log('oops');
+                // }
                 delete action.payload.queue;
                 var queue = i_fasterqQueueModel.setData<FasterqQueueModel>(FasterqQueueModel, action.payload)
                 return queue;
@@ -67,6 +72,11 @@ export function appDb(state: IAppDb, action: any): IAppDb {
         case EffectActions.EFFECT_QUEUE_SERVICE_SAVED:
             var index = state.fasterq.queues.findIndex((i_fasterqLineModel: FasterqQueueModel) => i_fasterqLineModel.queueId == action.payload.queue_id);
             state.fasterq.queues = state.fasterq.queues.update(index, (i_fasterqQueueModel: FasterqQueueModel) => {
+                // var prev = state.fasterq.queues.get(index).serviced
+                // var curr = i_fasterqQueueModel.serviced;
+                // if (!_.isNull(prev) && _.isNull(curr)){
+                //     console.log('oops');
+                // }
                 return i_fasterqQueueModel.setKey<FasterqQueueModel>(FasterqQueueModel, 'serviced', action.payload.serviced);
             });
             return state;

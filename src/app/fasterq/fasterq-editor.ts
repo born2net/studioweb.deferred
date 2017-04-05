@@ -114,6 +114,7 @@ export class FasterqEditor extends Compbaser {
                         i_queues = i_queues.unshift(new FasterqQueueModel({line_id: -1}))
                     }
                     this.m_queues = i_queues;
+                    this._selectFirst();
                     this.cd.markForCheck();
                 }, (e) => console.error(e))
         )
@@ -132,7 +133,7 @@ export class FasterqEditor extends Compbaser {
 
     @timeout(1000)
     _selectFirst() {
-        if (this.m_queues.size == this.QUEUE_OFFSET)
+        if (this.m_queues.size != this.QUEUE_OFFSET + 1)
             return;
         this.m_selectedServiceId = this.m_queues.get(this.QUEUE_OFFSET).serviceId;
         this._onQueueSelected(this.m_queues.get(this.QUEUE_OFFSET));
@@ -144,7 +145,7 @@ export class FasterqEditor extends Compbaser {
             this.yp.ngrxStore.dispatch(({type: EFFECT_LOAD_FASTERQ_QUEUES, payload: {line_id: this.m_fasterqLineModel.lineId}}))
             this.yp.ngrxStore.dispatch(({type: EFFECT_LOAD_FASTERQ_ANALYTICS, payload: {line_id: this.m_fasterqLineModel.lineId}}))
             this._updateTotalToBeServiced();
-        }, 10000);
+        }, 5000);
     }
 
     /**
