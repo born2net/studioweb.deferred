@@ -37,6 +37,7 @@
         "./libs/flashdetect/flashdetect.js",
         "./libs/rc4v1/rc4v1.js",
         "./libs/rc4v2/rc4v2.js",
+        "./libs/qrcode/qrcode.js",
         "./libs/bootstrap-timepicker/js/bootstrap-timepicker.min.js",
         "./libs/contextmenu/bootstrap-contextmenu.js",
         "./libs/stop-watch/stop-watch.js",

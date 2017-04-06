@@ -1,9 +1,11 @@
-import {AfterViewInit, Component} from "@angular/core";
+import {AfterViewInit, Component, ElementRef} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {ActivatedRoute} from "@angular/router";
 import {FasterqLineModel} from "../../models/fasterq-line-model";
 import {EFFECT_LOAD_FASTERQ_LINE} from "../../store/effects/appdb.effects";
+import * as _ from 'lodash';
+import {timeout} from "../../decorators/timeout-decorator";
 
 @Component({
     selector: 'fasterq-terminal',
@@ -11,8 +13,12 @@ import {EFFECT_LOAD_FASTERQ_LINE} from "../../store/effects/appdb.effects";
         .largeFont2em {
             font-size: 2em;
         }
+
         .lPad {
             padding-left: 20px;
+        }
+        .carousel-inner {
+            height: 400px;
         }
     `],
     template: `
@@ -43,7 +49,7 @@ import {EFFECT_LOAD_FASTERQ_LINE} from "../../store/effects/appdb.effects";
                             <br/>
                             <br/>
                             <a id="fqPrintNumber" style="padding-left: 40px; padding-right: 40px; padding-top: 20px; padding-bottom: 20px" class="btn btn-large btn-danger" type="button" href="#">
-                                <span class="largeFont2em" data-localize="printIt" >PRINT IT</span>
+                                <span class="largeFont2em" data-localize="printIt">PRINT IT</span>
                             </a>
                             <h1 id="fqDisplayPrintNumber"></h1>
                             <br/>
@@ -54,7 +60,7 @@ import {EFFECT_LOAD_FASTERQ_LINE} from "../../store/effects/appdb.effects";
 
                     <div class="item">
                         <div style="width: 100%; text-align: center">
-                            <i class="carouselLargeHeader fa fa-qrcode"></i>
+                            <i style="font-size: 3em; padding-right: 40px" class="carouselLargeHeader fa fa-qrcode"></i>
                             <span class="carouselLargeHeader" data-localize="scanMobile" style="font-size: 3em">Scan with your mobile device</span>
                             <br/>
 
@@ -67,7 +73,7 @@ import {EFFECT_LOAD_FASTERQ_LINE} from "../../store/effects/appdb.effects";
 
                     <div class="item">
                         <div style="width: 100%; text-align: center">
-                            <i class="carouselLargeHeader fa fa-paper-plane"></i>
+                            <i style="font-size: 3em; padding-right: 40px" class="carouselLargeHeader fa fa-paper-plane"></i>
                             <span class="carouselLargeHeader" data-localize="notifyEmail" style="font-size: 3em">Notify via email</span>
                             <br/>
                             <br/>
@@ -77,8 +83,7 @@ import {EFFECT_LOAD_FASTERQ_LINE} from "../../store/effects/appdb.effects";
                             </div>
                             <br/>
                             <a id="fqSenditButton" style="padding-left: 40px; padding-right: 40px; padding-top: 20px; padding-bottom: 20px" class="btn btn-large btn-danger" type="button" href="#">
-                                <span  class="carouselLargeHeader2 fa fa-download"></span>
-                                <span data-localize="sendIt" >SEND IT</span>
+                                <span class="largeFont2em" data-localize="printIt">SEND IT</span>
                             </a>
                             <br/>
 
@@ -89,7 +94,7 @@ import {EFFECT_LOAD_FASTERQ_LINE} from "../../store/effects/appdb.effects";
 
                     <div class="item">
                         <div style="width: 100%; text-align: center">
-                            <i class="carouselLargeHeader fa fa-phone"></i>
+                            <i style="font-size: 3em; padding-right: 40px" class="carouselLargeHeader fa fa-phone"></i>
                             <span class="carouselLargeHeader" style="font-size: 3em">Notify via Text Message</span>
                             <br/>
                             <br/>
@@ -100,30 +105,30 @@ import {EFFECT_LOAD_FASTERQ_LINE} from "../../store/effects/appdb.effects";
                             <br/>
                             <br/>
                             <a id="fqCallIt" style="padding-left: 40px; padding-right: 40px; padding-top: 20px; padding-bottom: 20px" class="btn btn-large btn-danger" type="button" href="#">
-                                <span  class="carouselLargeHeader2 fa fa-download"></span>
-                                <span >CALL IT</span>
+                                <span class="largeFont2em" data-localize="printIt">CALL IT</span>
+                                
                             </a>
 
                             <h1 id="fqDisplaySMSSent"></h1>
                             <br/>
                         </div>
                     </div>
-                </div>             
+                </div>
                 <ul id="carouselItems" class="nav nav-pills nav-justified" style="border: 1px solid #9c9c9c">
                     <li data-target="#terminalCarousel" data-slide-to="0">
                         <a href="#"><i class="largeFont2em fa fa-print"></i><span class="lPad largeFont2em fasterQCarouselButtons">PRINT</span>
                         </a>
                     </li>
                     <li data-target="#terminalCarousel" data-slide-to="1">
-                        <a href="#"><i class="largeFont2em fa fa-qrcode"></i><span  class="lPad largeFont2em fasterQCarouselButtons">SCAN</span>
+                        <a href="#"><i class="largeFont2em fa fa-qrcode"></i><span class="lPad largeFont2em fasterQCarouselButtons">SCAN</span>
                         </a>
                     </li>
                     <li data-target="#terminalCarousel" data-slide-to="2">
-                        <a href="#"><i class="largeFont2em fa fa-paper-plane"></i><span  class="lPad largeFont2em fasterQCarouselButtons">E-MAIL</span>
+                        <a href="#"><i class="largeFont2em fa fa-paper-plane"></i><span class="lPad largeFont2em fasterQCarouselButtons">E-MAIL</span>
                         </a>
                     </li>
                     <li data-target="#terminalCarousel" data-slide-to="3">
-                        <a href="#"><i class="largeFont2em fa fa-phone"></i><span  class="lPad largeFont2em fasterQCarouselButtons">Text Message</span>
+                        <a href="#"><i class="largeFont2em fa fa-phone"></i><span class="lPad largeFont2em fasterQCarouselButtons">Text Message</span>
                         </a>
                     </li>
                 </ul>
@@ -134,20 +139,59 @@ import {EFFECT_LOAD_FASTERQ_LINE} from "../../store/effects/appdb.effects";
 export class FasterqTerminal extends Compbaser implements AfterViewInit {
 
     m_fasterqLineModel: FasterqLineModel;
+    appBaseUrlServices;
 
-    constructor(private yp: YellowPepperService, private router: ActivatedRoute) {
+    constructor(private yp: YellowPepperService, private router: ActivatedRoute, private el: ElementRef) {
         super();
 
         this.cancelOnDestroy(
             this.yp.ngrxStore.select(store => store.appDb.fasterq.terminal)
-                .subscribe((i_fasterqLineModel:FasterqLineModel) => {
+                .filter(v => !_.isNull(v))
+                .take(1)
+                .subscribe((i_fasterqLineModel: FasterqLineModel) => {
                     this.m_fasterqLineModel = i_fasterqLineModel;
-            }, (e) => console.error(e))
+                    this._createQRcode();
+                }, (e) => console.error(e))
+        )
+
+        this.cancelOnDestroy(
+            this.yp.ngrxStore.select(store => store.appDb.appBaseUrlServices)
+                .subscribe((i_appBaseUrlServices) => {
+                    this.appBaseUrlServices = i_appBaseUrlServices;
+                })
         )
     }
 
     ngAfterViewInit() {
         this._initTerminal(this.router.snapshot.url["1"].path);
+    }
+
+    /**
+     Listen to custom selection on queue id creator via QR scan
+     @method _createQRcode
+     **/
+    @timeout(1000)
+    _createQRcode() {
+        var q: any = $("#qrcode", this.el.nativeElement);
+        q = q[0];
+        var qrcode = new QRCode(q, {width: 200, height: 200});
+        var url = this._buildURL();
+        qrcode.makeCode(url);
+    }
+
+    /**
+     Create URL string to load customer terminal UI for FasterQ queue generation
+     @method _buildURL
+     @return {String} URL
+     **/
+    _buildURL() {
+        var data = {
+            line_id: this.m_fasterqLineModel.lineId,
+            business_id: this.m_fasterqLineModel.businessId,
+            call_type: 'QR'
+        };
+        data = $.base64.encode(JSON.stringify(data));
+        return `${this.appBaseUrlServices}?mode=remoteStatus&param=${data}`;
     }
 
     _initTerminal(i_app: 'customerTerminal' | 'customerRemote') {

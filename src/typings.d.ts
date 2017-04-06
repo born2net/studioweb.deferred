@@ -51,6 +51,11 @@ declare class RC4 {
     doDecrypt: any;
 }
 
+declare class QRCode {
+    constructor(a:any,b:any);
+    makeCode(a:any);
+}
+
 declare class Stopwatch {
     stop:()=>void;
     reset:()=>void;
