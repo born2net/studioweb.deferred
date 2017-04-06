@@ -9,6 +9,7 @@ import {timeout} from "../../decorators/timeout-decorator";
 import {Http, RequestMethod, RequestOptionsArgs, Response} from "@angular/http";
 import {Observable} from "rxjs/Observable";
 import {Lib} from "../../Lib";
+import {ToastsManager} from "ng2-toastr";
 
 @Component({
     selector: 'fasterq-terminal',
@@ -83,11 +84,11 @@ import {Lib} from "../../Lib";
                             <br/>
 
                             <div style="text-align: center; width: 500px" class="centerElement">
-                                <input id="fqEnterEmail" type="text" style="font-size: 3em; height: 2em; text-align: center" class="form-control" data-localize="enterEmail" placeholder="enter email">
+                                <input [(ngModel)]="emailAddress" id="fqEnterEmail" type="text" style="font-size: 3em; height: 2em; text-align: center" class="form-control" data-localize="enterEmail" placeholder="enter email">
                             </div>
                             <br/>
                             <a (click)="_onSend($event)" id="fqSenditButton" style="padding-left: 40px; padding-right: 40px; padding-top: 20px; padding-bottom: 20px" class="btn btn-large btn-danger" type="button" href="#">
-                                <span class="largeFont2em" data-localize="printIt">SEND IT</span>
+                                <span class="largeFont2em">SEND IT</span>
                             </a>
                             <br/>
 
@@ -104,7 +105,7 @@ import {Lib} from "../../Lib";
                             <br/>
 
                             <div style="text-align: center; width: 500px" class="centerElement">
-                                <input id="fqEnterSMS" type="text" style="font-size: 3em; height: 2em; text-align: center" class="form-control" data-localize="enterSMS" placeholder="enter your phone number">
+                                <input [(ngModel)]="sms" id="fqEnterSMS" type="text" style="font-size: 3em; height: 2em; text-align: center" class="form-control" data-localize="enterSMS" placeholder="enter your phone number">
                             </div>
                             <br/>
                             <br/>
@@ -138,34 +139,17 @@ import {Lib} from "../../Lib";
                 </ul>
             </div>
         </div>
-        <!--<div id="printSectionId" style="display: none" >-->
-        <!--<div>-->
-        <!--<h1>AngularJS Print html templates</h1>-->
-        <!--<form novalidate>-->
-        <!--First Name:-->
-        <!--<input type="text"  class="tb8">-->
-        <!--<br>-->
-        <!--<br> Last Name:-->
-        <!--<input type="text"  class="tb8">-->
-        <!--<br>-->
-        <!--<br>-->
-        <!--<button  class="button">Submit</button>-->
-        <!--<button (click)="printToCart('printSectionId')" class="button">Print</button>-->
-        <!--</form>-->
-        <!--</div>-->
-        <!--<div>-->
-        <!--<br/>-->
-        <!--</div>-->
-        <!--</div>-->
-    `,
+    `
 })
 export class FasterqTerminal extends Compbaser implements AfterViewInit {
 
     m_fasterqLineModel: FasterqLineModel;
     m_displayServiceId = '';
     appBaseUrlServices;
+    emailAddress = ''
+    sms = ''
 
-    constructor(private http: Http, private yp: YellowPepperService, private router: ActivatedRoute, private el: ElementRef, private zone: NgZone) {
+    constructor(private toastr: ToastsManager, private http: Http, private yp: YellowPepperService, private router: ActivatedRoute, private el: ElementRef, private zone: NgZone) {
         super();
         // this.preventRedirect(true);
         this.cancelOnDestroy(
@@ -198,6 +182,11 @@ export class FasterqTerminal extends Compbaser implements AfterViewInit {
 
     }
 
+    _isValidEmail(email) {
+        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+    }
+
     /**
      Listen to custom selection on queue id creator via QR scan
      @method _createQRcode
@@ -212,20 +201,71 @@ export class FasterqTerminal extends Compbaser implements AfterViewInit {
         qrcode.makeCode(url);
     }
 
-    _onCall($event){
+    _onCall($event) {
         event.stopImmediatePropagation();
         event.preventDefault();
+        const baseUrl = `${this.appBaseUrlServices}/?mode=remoteStatus&param=`;
+        if (this.sms.length < 6)
+            return this.toastr.error('The phone number entered is invalid');
+        $.ajax({
+            url: `${this.appBaseUrlServices}/SendQueueSMSEmail`,
+            data: {
+                business_id: this.m_fasterqLineModel.businessId,
+                line_id: this.m_fasterqLineModel.lineId,
+                line_name: this.m_fasterqLineModel.lineName,
+                sms: this.sms,
+                call_type: 'SMS',
+                url: baseUrl
+            },
+            success: (e) => {
+                this.toastr.info('Thank you')
+                setTimeout(() => {
+                    this.sms = ''
+                }, 4000)
+            },
+            error: (e) => {
+                console.log('error ajax ' + e);
+            },
+            dataType: 'json'
+        });
+
+
     }
 
-    _onSend($event){
+    _onSend($event) {
         event.stopImmediatePropagation();
         event.preventDefault();
+        const baseUrl = `${this.appBaseUrlServices}/?mode=remoteStatus&param=`;
+        if (!this._isValidEmail(this.emailAddress))
+            return this.toastr.error('The email address entered is invalid');
+        $.ajax({
+            url: `${this.appBaseUrlServices}/SendQueueSMSEmail`,
+            data: {
+                business_id: this.m_fasterqLineModel.businessId,
+                line_id: this.m_fasterqLineModel.lineId,
+                line_name: this.m_fasterqLineModel.lineName,
+                email: this.emailAddress,
+                call_type: 'EMAIL',
+                url: baseUrl
+            },
+            success: (e) => {
+                this.toastr.info('Thank you')
+                setTimeout(() => {
+                    this.emailAddress = ''
+                }, 4000)
+            },
+            error: (e) => {
+                console.log('error ajax ' + e);
+            },
+            dataType: 'json'
+        });
+
     }
 
     _onPrint(event) {
         event.stopImmediatePropagation();
         event.preventDefault();
-        
+
         // this.printToCart('printSectionId');
         // urlRoot: BB.CONSTS.ROOT_URL + '/',
         //     idAttribute: 'queue_id'
@@ -302,7 +342,7 @@ export class FasterqTerminal extends Compbaser implements AfterViewInit {
     // _initTerminal(i_app: 'customerTerminal' | 'customerRemote') {
     _initTerminal(i_params) {
         var rc4v2 = new RC4V2();
-        var rcData:any = rc4v2.decrypt(i_params.replace(/=/ig,''), '8547963624824263');
+        var rcData: any = rc4v2.decrypt(i_params.replace(/=/ig, ''), '8547963624824263');
         var data = JSON.parse(rcData);
         this.yp.ngrxStore.dispatch({type: EFFECT_LOAD_FASTERQ_LINE, payload: {lineId: data.line_id, businessId: data.business_id}})
 
