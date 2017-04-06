@@ -52,7 +52,7 @@ import {Lib} from "../../Lib";
                             <br/>
                             <br/>
                             <br/>
-                            <a (click)="_onPrint()" id="fqPrintNumber" style="padding-left: 40px; padding-right: 40px; padding-top: 20px; padding-bottom: 20px" class="btn btn-large btn-danger" type="button" href="#">
+                            <a (click)="_onPrint($event)" id="fqPrintNumber" style="padding-left: 40px; padding-right: 40px; padding-top: 20px; padding-bottom: 20px" class="btn btn-large btn-danger" type="button" href="#">
                                 <span class="largeFont2em" data-localize="printIt">PRINT IT</span>
                             </a>
                             <h1 id="fqDisplayPrintNumber">{{m_displayServiceId}}</h1>
@@ -86,7 +86,7 @@ import {Lib} from "../../Lib";
                                 <input id="fqEnterEmail" type="text" style="font-size: 3em; height: 2em; text-align: center" class="form-control" data-localize="enterEmail" placeholder="enter email">
                             </div>
                             <br/>
-                            <a id="fqSenditButton" style="padding-left: 40px; padding-right: 40px; padding-top: 20px; padding-bottom: 20px" class="btn btn-large btn-danger" type="button" href="#">
+                            <a (click)="_onSend($event)" id="fqSenditButton" style="padding-left: 40px; padding-right: 40px; padding-top: 20px; padding-bottom: 20px" class="btn btn-large btn-danger" type="button" href="#">
                                 <span class="largeFont2em" data-localize="printIt">SEND IT</span>
                             </a>
                             <br/>
@@ -108,7 +108,7 @@ import {Lib} from "../../Lib";
                             </div>
                             <br/>
                             <br/>
-                            <a id="fqCallIt" style="padding-left: 40px; padding-right: 40px; padding-top: 20px; padding-bottom: 20px" class="btn btn-large btn-danger" type="button" href="#">
+                            <a (click)="_onCall($event)" id="fqCallIt" style="padding-left: 40px; padding-right: 40px; padding-top: 20px; padding-bottom: 20px" class="btn btn-large btn-danger" type="button" href="#">
                                 <span class="largeFont2em" data-localize="printIt">CALL IT</span>
 
                             </a>
@@ -167,7 +167,7 @@ export class FasterqTerminal extends Compbaser implements AfterViewInit {
 
     constructor(private http: Http, private yp: YellowPepperService, private router: ActivatedRoute, private el: ElementRef, private zone: NgZone) {
         super();
-        this.preventRedirect(true);
+        // this.preventRedirect(true);
         this.cancelOnDestroy(
             this.yp.ngrxStore.select(store => store.appDb.fasterq.terminal)
                 .filter(v => !_.isNull(v))
@@ -195,7 +195,7 @@ export class FasterqTerminal extends Compbaser implements AfterViewInit {
     }
 
     ngAfterViewInit() {
-        // this._initTerminal(this.router.snapshot.url["1"].path);
+
     }
 
     /**
@@ -204,6 +204,7 @@ export class FasterqTerminal extends Compbaser implements AfterViewInit {
      **/
     @timeout(1000)
     _createQRcode() {
+        $('.carousel').carousel()
         var q: any = $("#qrcode", this.el.nativeElement);
         q = q[0];
         var qrcode = new QRCode(q, {width: 200, height: 200});
@@ -211,11 +212,20 @@ export class FasterqTerminal extends Compbaser implements AfterViewInit {
         qrcode.makeCode(url);
     }
 
-    /**
-     Get the next service id from remote server
-     @method _getServiceID server:setQueue
-     **/
-    _onPrint() {
+    _onCall($event){
+        event.stopImmediatePropagation();
+        event.preventDefault();
+    }
+
+    _onSend($event){
+        event.stopImmediatePropagation();
+        event.preventDefault();
+    }
+
+    _onPrint(event) {
+        event.stopImmediatePropagation();
+        event.preventDefault();
+        
         // this.printToCart('printSectionId');
         // urlRoot: BB.CONSTS.ROOT_URL + '/',
         //     idAttribute: 'queue_id'
@@ -265,15 +275,6 @@ export class FasterqTerminal extends Compbaser implements AfterViewInit {
         // printWindow.print();
     }
 
-    printToCart(printSectionId: string) {
-        let popupWinindow
-        let innerContents = document.getElementById(printSectionId).innerHTML;
-        popupWinindow = window.open('', '_blank', 'width=600,height=700,scrollbars=no,menubar=no,toolbar=no,location=no,status=no,titlebar=no');
-        popupWinindow.document.open();
-        popupWinindow.document.write('<html><head><link rel="stylesheet" type="text/css" href="style.css" /></head><body onload="window.print()">' + innerContents + '</html>');
-        popupWinindow.document.close();
-    }
-
     private createOptionArgs(i_urlEndPoint, i_method, i_body): RequestOptionsArgs {
         var url = `${this.appBaseUrlServices}${i_urlEndPoint}`;
         return {
@@ -300,8 +301,6 @@ export class FasterqTerminal extends Compbaser implements AfterViewInit {
 
     // _initTerminal(i_app: 'customerTerminal' | 'customerRemote') {
     _initTerminal(i_params) {
-
-        var self = this;
         var data: any = $.base64.decode(i_params);
         data = JSON.parse(data);
         this.yp.ngrxStore.dispatch({type: EFFECT_LOAD_FASTERQ_LINE, payload: {lineId: data.line_id, businessId: data.business_id}})

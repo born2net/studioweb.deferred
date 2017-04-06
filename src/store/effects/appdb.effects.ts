@@ -329,7 +329,6 @@ export class AppDbEffects {
      * Fasterq
      *
      */
-
     private fasterqCreateServerCall(i_urlEndPoint, i_method, i_body): RequestOptionsArgs {
         var credentials = Lib.EncryptUserPass(this.rp.getUserData().userName, this.rp.getUserData().userPass);
         var url = `${this.appBaseUrlServices}${i_urlEndPoint}`;
