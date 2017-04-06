@@ -163,12 +163,12 @@ export class FasterqLineProps extends Compbaser implements AfterViewInit {
             line_id: this.m_selectedLine.lineId,
             line_name: this.m_selectedLine.lineName
         };
-        data = jQuery.base64.encode(JSON.stringify(data));
+        data = jQuery.base64.encode(JSON.stringify(data)).replace(/==/,'');
         var url;
-        if (Lib.DevMode){
-            url = `http://localhost:4208/FasterqTerminal/customerTerminal/${data}`;
+        if (Lib.DevMode()){
+            url = `http://localhost:4208/index.html?data=${data}`;
         } else {
-            url = `${this.appBaseUrlServices}/FasterqTerminal?mode=customerTerminal&param=${data}`;
+            url = `${this.appBaseUrlServices}/studioweb/index.html?data=${data}`;
         }
 
         window.open(url, '_blank');

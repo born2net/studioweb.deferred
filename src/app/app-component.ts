@@ -74,18 +74,10 @@ export class AppComponent implements AfterViewInit {
         let s = this.router.events
             .subscribe((val) => {
                 if (val instanceof NavigationEnd) {
-                    switch (val.url) {
-                        case '/FasterqTerminal': {
-                            console.log(1);
-                            break;
-                        }
-                        case '/FasterqRemoteStatus': {
-                            break;
-
-                        }
-                        default: {
-                            this.authService.start();
-                        }
+                    if (val.url.indexOf('data') > -1) {
+                        this.router.navigate(['/FasterqTerminal', val.url.split('?')[1]]);
+                    } else {
+                        this.authService.start();
                     }
                     s.unsubscribe();
                 }

@@ -10,7 +10,7 @@ import {FasterqTerminal} from "./app/fasterq/fasterq-terminal";
 const routes: Routes = [
     {path: 'index.html', data: {title: 'Login'}, component: AutoLogin},
     {path: 'AutoLogin', data: {title: 'Login'}, component: AutoLogin},
-    {path: 'FasterqTerminal/customerTerminal/:id', data: {title: 'FasterqTerminal'}, component: FasterqTerminal},
+    {path: 'FasterqTerminal/:id', data: {title: 'FasterqTerminal'}, component: FasterqTerminal},
     {path: 'UserLogin', data: {title: 'Login'}, component: LoginPanel},
     {path: 'UserLogin/:twoFactor', data: {title: 'Login'}, component: LoginPanel},
     {path: 'UserLogin/:twoFactor/:user/:pass', data: {title: 'Login'}, component: LoginPanel},

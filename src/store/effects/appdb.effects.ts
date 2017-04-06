@@ -378,7 +378,7 @@ export class AppDbEffects {
         var options: RequestOptionsArgs = this.fasterqCreateServerCall(`/GetLine`, RequestMethod.Post, action.payload)
         return this.http.get(options.url, options)
             .catch((err: any) => {
-                bootbox.alert('Error loading fasterq lines, try again later...');
+                bootbox.alert('Error loading fasterq line, try again later...');
                 return Observable.throw(err);
             })
             .finally(() => {
