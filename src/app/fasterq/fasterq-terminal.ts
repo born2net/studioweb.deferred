@@ -301,23 +301,11 @@ export class FasterqTerminal extends Compbaser implements AfterViewInit {
 
     // _initTerminal(i_app: 'customerTerminal' | 'customerRemote') {
     _initTerminal(i_params) {
-        var data: any = $.base64.decode(i_params);
-        data = JSON.parse(data);
+        var rc4v2 = new RC4V2();
+        var rcData:any = rc4v2.decrypt(i_params.replace(/=/ig,''), '8547963624824263');
+        var data = JSON.parse(rcData);
         this.yp.ngrxStore.dispatch({type: EFFECT_LOAD_FASTERQ_LINE, payload: {lineId: data.line_id, businessId: data.business_id}})
 
-        // this.m_fasterqLineModel = new FasterqLineModel(data)
-
-        // self.m_lineModel = new LineModel({
-        //     call_type: data.call_type,
-        //     business_id: data.business_id,
-        //     line_id: data.line_id,
-        //     email: data.email,
-        //     service_id: data.service_id,
-        //     verification: data.verification,
-        //     date: data.date,
-        //     line_name: data.line_name
-        // });
-        // BB.comBroker.setService(BB.SERVICES.FQ_LINE_MODEL, self.m_lineModel);
 
         // switch (i_app) {
         //     case 'customerTerminal': {
