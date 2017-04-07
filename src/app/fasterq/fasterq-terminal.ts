@@ -38,10 +38,8 @@ import {LocalStorage} from "../../services/LocalStorage";
 
             <h3>your verification number is {{m_fasterqLineModel?.verification}}</h3>
 
-            <button (click)="_releaseSpot()" id="fqReleaseSpot" style="float: right; width: 50%" class="tn btn-lg btn-primary">release my spot
-            </button>
-            <button (click)="_getNewSpot()" id="fqGetNewNumber" style="float: right; width: 50%;" class="tn btn-lg btn-primary">get a new number
-            </button>
+            <button (click)="_releaseSpot()" id="fqReleaseSpot" style="float: right; width: 50%" class="tn btn-lg btn-primary">release number</button>
+            <button (click)="_getNewSpot()" id="fqGetNewNumber" style="float: right; width: 50%;" class="tn btn-lg btn-primary">renew number</button>
         </div>
 
         <div *ngIf="m_appMode=='CUSTOMER_TERMINAL'" id="fasterqCustomerTerminal">
@@ -415,7 +413,7 @@ export class FasterqTerminal extends Compbaser implements AfterViewInit {
     _onCall($event) {
         event.stopImmediatePropagation();
         event.preventDefault();
-        const baseUrl = `${this.appBaseUrlServices}/?mode=remoteStatus&param=`;
+        const baseUrl = `${this.appBaseUrlServices}/studioweb/index.html?mode=remoteStatus&param=`;
         if (this.sms.length < 6)
             return this.toastr.error('The phone number entered is invalid');
         $.ajax({
@@ -444,7 +442,7 @@ export class FasterqTerminal extends Compbaser implements AfterViewInit {
     _onSend($event) {
         event.stopImmediatePropagation();
         event.preventDefault();
-        const baseUrl = `${this.appBaseUrlServices}/?mode=remoteStatus&param=`;
+        const baseUrl = `${this.appBaseUrlServices}/studioweb/index.html?mode=remoteStatus&param=`;
         if (!this._isValidEmail(this.emailAddress))
             return this.toastr.error('The email address entered is invalid');
         $.ajax({
