@@ -1,13 +1,85 @@
 import {ChangeDetectionStrategy, Component} from "@angular/core";
 import {Compbaser} from "ng-mslib";
-import {SelectItem} from "primeng/primeng";
-import {Observable} from "rxjs";
-import {UserModel} from "../../models/UserModel";
-import {YellowPepperService} from "../../services/yellowpepper.service";
 import {animate, state, style, transition, trigger} from "@angular/animations";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
+    styles: [`
+
+        .dottedHR {
+            height: 6px;
+            width: 1500px;
+            opacity: 0.6;
+            position: relative;
+            border-top: 12px dotted #c1c1c1;
+            padding-bottom: 7px;
+            top: 20px;
+        }
+
+        .activated {
+            background-color: #428bca;
+            color: white;
+        }
+
+        .headerPropIcon {
+            position: fixed !important;
+            top: 0px !important;
+            color: #f5f5f5;
+            right: 50px !important;
+            z-index: 1500;
+            background-color: #151515;
+            float: right;
+            border: black;
+        }
+
+        .whiteFont {
+            color: white;
+        }
+
+        .pricingContainer {
+            padding-top: 40px;
+        }
+
+        .price {
+            font-size: 25px;
+            float: left;
+        }
+
+        .faHeader {
+            font-size: 1.9em !important;
+            color: #bababa;
+        }
+
+        .faHeader:hover {
+            color: white;
+        }
+
+        .pricing_header1 {
+            background: none repeat scroll 0% 0% rgb(0, 181, 255);
+            border-radius: 5px 5px 0px 0px;
+        }
+
+        .pricing_header2 {
+            background: none repeat scroll 0% 0% rgb(0, 121, 171);
+            border-radius: 5px 5px 0px 0px;
+        }
+
+        .pricing_header3 {
+            background: none repeat scroll 0% 0% rgb(0, 81, 115);
+            border-radius: 5px 5px 0px 0px;
+        }
+
+        .pricing_headerh2 {
+            text-align: center;
+            line-height: 25px;
+            padding: 15px 0px;
+            margin: 0px;
+            font-size: 1.5em;
+            font-weight: 400;
+            color: white;
+        }
+
+    `],
     host: {
         '[@routeAnimation]': 'true',
         '[style.display]': "'block'"
@@ -23,39 +95,172 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
         ])
     ],
     template: `
-               <small class="release">studiopro
-                   <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
-               </small>
-               
-               <h4>user name: {{(userModel$ | async)?.getUser() }}</h4>
-               <h4>account type: {{(userModel$ | async)?.getAccountType()}}</h4>
-               <hr/>
-               <small class="debug">{{me}}</small>
-               <p-dropdown [options]="cities" ></p-dropdown>
-               <hr/>
-               <Infobox [value1]="lastLogin" value2="in seconds" value3="time since last login" icon="fa-clock-o"></Infobox>
-           `,
+        <div id="proStudioPanel">
+            <h3 data-localize="theRightPackage">Choose the package that's right for you</h3>
+            <!-- price & service -->
+            <div class="pricingContainer">
+                <div class="row"></div>
+                <br>
+
+                <div id="pricingTableWrap" style="overflow-x: hidden; overflow-y: scroll; height: 100%">
+                    <div class="col-md-4" id="home-box">
+                        <div class="pricing_header1">
+                            <h2 class="pricing_headerh2" data-localize="studioLiteFree">StudioLite</h2>
+
+                            <div class="space"></div>
+                        </div>
+                        <ul class="list-group">
+                            <li class="reshid list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span>
+                                <span data-localize="onehundredFree"> 100% FREE</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span>
+                                <span data-localize="simpleInterface"> simple to use interface</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="campaignManager"> Campaign manager</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="timelineManagement"> Timeline management</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="screenTemplates"> Screen templates</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="screenEditor"> Screen editor</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="StationManager"> Station Manager</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="supportComponents"> Support 10 components</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="sceneEditor"> Scene editor (coming)</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="filesVIF"> Files: videos/images/flash</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="tabletsPhones"> Run on Tablets and phones</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="openSourceGitHub"> Open source (GitHub)</span>
+                            </li>
+                        </ul>
+                        <div class="reshid try">
+                            <p class="price">$0.00</p>
+                            <button class="btnPrice btn btn-default" disabled="disabled" href="#" type="button" data-localize="youAreHere">you are here
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-4" id="home-box">
+                        <div class="pricing_header2">
+                            <h2 class="pricing_headerh2" data-localize="studioProFree">StudioPro (FREE)</h2>
+
+                            <div class="space"></div>
+                        </div>
+                        <ul class="list-group">
+                            <li class="reshid list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="onehundredFree"> 100% FREE</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="higherLearningCurve"> Higher learning curve</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="professionalEditor"> Professional editor</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="campaignManager"> Campaign manager</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="timelineManagement"> Timeline management</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="channelManagement"> Channel management</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="schedulerSequencer"> Scheduler / sequencer</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="richSceneEditor"> Rich scene editor</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="supportMoreComponents"> Support more components</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="advanceStationManager"> Advance Station Manager</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="runDesktopWeb"> Runs on Desktop and Web</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="muchMore"> and much more...</span>
+                            </li>
+                        </ul>
+                        <div class="reshid try">
+                            <p class="price">$0.00</p>
+                            <a id="convertAccount" class="btnPrice btn-primary btn btn-default" href="#" type="button" data-localize="convert">Convert</a>
+                        </div>
+                    </div>
+                    <div class="col-md-4" id="home-box">
+                        <div class="pricing_header3">
+                            <h2 class="pricing_headerh2" data-localize="StudioEnterprise">
+                                StudioEnterprise</h2>
+
+                            <div class="space"></div>
+                        </div>
+                        <ul class="list-group">
+                            <li class="reshid list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="nintynine"> $99 a month (flat)</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="everythingFromLiteAndPro"> Everything from Lite & Pro</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="whiteLabel"> White label / branding</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="supportAllComponents"> Support all components</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="transitions"> Transitions / Effects</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="multiUserManagement"> Multi user management</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="advertisingManager"> Advertising manager</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="accessControl"> Access control</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="unlimitedCloudStorage"> Unlimited cloud storage</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="phoneSupport"> Phone support</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="hardwareDiscounts"> Hardware discounts</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="glyphicon glyphicon-ok"></span><span data-localize="muchMore"> and much more...</span>
+                            </li>
+                        </ul>
+                        <div class="try">
+                            <p class="reshid price">$99/<span class="reshid" data-localize="month">month</span>
+                            </p>
+                            <button id="subscribeAccount" class="showUpgradeModal reshid btnPrice btn-primary btn btn-default" href="#" type="button" data-localize="subscribe"> Subscribe
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    `,
 })
 export class StudioProNavigation extends Compbaser {
-
-    constructor(private yp:YellowPepperService) {
-        super();
-        this.cities = [];
-        this.cities.push({label: 'Select City', value: null});
-        this.cities.push({label: 'New York', value: {id: 1, name: 'New York', code: 'NY'}});
-        this.cities.push({label: 'Rome', value: {id: 2, name: 'Rome', code: 'RM'}});
-        this.cities.push({label: 'London', value: {id: 3, name: 'London', code: 'LDN'}});
-        this.cities.push({label: 'Istanbul', value: {id: 4, name: 'Istanbul', code: 'IST'}});
-        this.cities.push({label: 'Paris', value: {id: 5, name: 'Paris', code: 'PRS'}});
-
-        this.userModel$ = this.yp.ngrxStore.select(store => store.appDb.userModel);
-    }
-
-    public userModel$: Observable<UserModel>;
-
-    cities: SelectItem[];
-    selectedCity: string;
-    lastLogin = 'v9';
 
     ngOnInit() {
     }
