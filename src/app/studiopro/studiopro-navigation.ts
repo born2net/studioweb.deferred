@@ -151,7 +151,7 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
                         </ul>
                         <div class="reshid try">
                             <p class="price">$0.00</p>
-                            <button class="btnPrice btn btn-default" disabled="disabled" href="#" type="button" data-localize="youAreHere">you are here
+                            <button class="pull-right btnPrice btn btn-default" disabled="disabled" href="#" type="button" data-localize="youAreHere">you are here
                             </button>
                         </div>
                     </div>
@@ -201,7 +201,7 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
                         </ul>
                         <div class="reshid try">
                             <p class="price">$0.00</p>
-                            <a id="convertAccount" class="btnPrice btn-primary btn btn-default" href="#" type="button" data-localize="convert">Convert</a>
+                            <a id="convertAccount" class="pull-right btnPrice btn-primary btn btn-default" href="#" type="button" data-localize="convert">Convert</a>
                         </div>
                     </div>
                     <div class="col-md-4" id="home-box">
@@ -252,7 +252,7 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
                         <div class="try">
                             <p class="reshid price">$99/<span class="reshid" data-localize="month">month</span>
                             </p>
-                            <button id="subscribeAccount" class="showUpgradeModal reshid btnPrice btn-primary btn btn-default" href="#" type="button" data-localize="subscribe"> Subscribe
+                            <button id="subscribeAccount" class="pull-right showUpgradeModal reshid btnPrice btn-primary btn btn-default" href="#" type="button" data-localize="subscribe"> Subscribe
                             </button>
                         </div>
                     </div>

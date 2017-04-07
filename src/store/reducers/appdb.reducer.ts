@@ -20,7 +20,7 @@ export function appDb(state: IAppDb, action: any): IAppDb {
         case StoreActions.APP_INIT:
             state.appStartTime = Date.now();
             state.appBaseUrl = `${baseUrl}`;
-            state.appBaseUrlServices = `https://secure.digitalsignage.com${Lib.DevMode() ? ':442' : ''}`;
+            state.appBaseUrlServices = `https://secure.digitalsignage.com${Lib.DevMode() ? ':443' : ''}`;
             return state;
 
         case ActionsConst.ACTION_UISTATE_UPDATE: {

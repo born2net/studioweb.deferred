@@ -56,6 +56,7 @@ import {Compbaser} from "ng-mslib";
 
         .iconSize {
             font-size: 1.3em;
+            padding-right: 20px;
         }
     `]
 })
