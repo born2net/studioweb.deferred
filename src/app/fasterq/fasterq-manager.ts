@@ -116,6 +116,8 @@ export class FasterqManager extends Compbaser {
                 type: EFFECT_REMOVE_FASTERQ_LINE,
                 payload: {id: this.m_selectedLine.lineId}
             })
+            var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
+            this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
             this.m_selectedLine = null;
             this.selectedIdx = -1;
         });
