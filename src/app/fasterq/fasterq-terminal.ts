@@ -3,13 +3,13 @@ import {Compbaser} from "ng-mslib";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {ActivatedRoute} from "@angular/router";
 import {FasterqLineModel} from "../../models/fasterq-line-model";
-import {EFFECT_LOAD_FASTERQ_LINE} from "../../store/effects/appdb.effects";
+import {EFFECT_LOAD_FASTERQ_LINE, EFFECT_LOADED_FASTERQ_LINE, EFFECT_QUEUE_CALL_SAVE} from "../../store/effects/appdb.effects";
 import * as _ from 'lodash';
 import {timeout} from "../../decorators/timeout-decorator";
 import {Http, RequestMethod, RequestOptionsArgs, Response} from "@angular/http";
-import {Observable} from "rxjs/Observable";
 import {Lib} from "../../Lib";
 import {ToastsManager} from "ng2-toastr";
+import {LocalStorage} from "../../services/LocalStorage";
 
 @Component({
     selector: 'fasterq-terminal',
@@ -28,7 +28,23 @@ import {ToastsManager} from "ng2-toastr";
     `],
     template: `
         <small class="debug">{{me}}</small>
-        <div id="fasterqCustomerTerminal">
+
+        <div *ngIf="m_appMode=='REMOTE_STATUS'" id="fqRemoteStatus" style="font-size: 2em; text-align: center">
+            <h1>now serving {{m_currentlyServing}}</h1>
+
+            <h3>you are {{m_fasterqLineModel.serviceId}} in line</h3>
+
+            <h3>line name: {{m_fasterqLineModel?.lineName}}</h3>
+
+            <h3>your verification number is {{m_fasterqLineModel?.verification}}</h3>
+
+            <button (click)="_releaseSpot()" id="fqReleaseSpot" style="float: right; width: 50%" class="tn btn-lg btn-primary">release my spot
+            </button>
+            <button (click)="_getNewSpot()" id="fqGetNewNumber" style="float: right; width: 50%;" class="tn btn-lg btn-primary">get a new number
+            </button>
+        </div>
+
+        <div *ngIf="m_appMode=='CUSTOMER_TERMINAL'" id="fasterqCustomerTerminal">
             <div style="width: 100%">
                 <h1 id="fqTakeNumberLineName" style="font-size: 10em; text-align: center" class="centerElement">{{m_fasterqLineModel?.lineName}}</h1>
             </div>
@@ -147,18 +163,39 @@ export class FasterqTerminal extends Compbaser implements AfterViewInit {
     m_displayServiceId = '';
     appBaseUrlServices;
     emailAddress = ''
+    m_appMode = '';
+    m_baseUrl
     sms = ''
+    m_remoteStatusServiceId;
+    m_remoteStatusVerification;
+    m_statusHandler;
+    m_currentlyServing = 0;
 
-    constructor(private toastr: ToastsManager, private http: Http, private yp: YellowPepperService, private router: ActivatedRoute, private el: ElementRef, private zone: NgZone) {
+    constructor(private toastr: ToastsManager, private http: Http, private yp: YellowPepperService, private router: ActivatedRoute, private el: ElementRef, private zone: NgZone, private simplestorage: LocalStorage) {
         super();
         // this.preventRedirect(true);
         this.cancelOnDestroy(
             this.yp.ngrxStore.select(store => store.appDb.fasterq.terminal)
                 .filter(v => !_.isNull(v))
-                .take(1)
                 .subscribe((i_fasterqLineModel: FasterqLineModel) => {
                     this.m_fasterqLineModel = i_fasterqLineModel;
-                    this._createQRcode();
+                    switch (this.m_appMode) {
+                        case 'CUSTOMER_TERMINAL': {
+                            this._createQRcode();
+                            break;
+                        }
+                        case 'REMOTE_STATUS': {
+                            this.m_baseUrl = `${this.appBaseUrlServices}?mode=remoteStatus&param=`;
+                            this._getServerDateTime(this._initServices);
+                            // this._releaseSpot();
+                            // this._getNewSpot();
+                            break;
+                        }
+                        default: {
+                            console.log('fasterq problem, did not get line id');
+                        }
+                    }
+
                 }, (e) => console.error(e))
         )
 
@@ -172,14 +209,188 @@ export class FasterqTerminal extends Compbaser implements AfterViewInit {
 
     ngOnInit() {
         this.cancelOnDestroy(
-            this.router.params.subscribe(params => {
-                this._initTerminal(params['id'].split('=')[1] + '==');
-            })
+            this.router.params
+                .take(1)
+                .subscribe(i_params => {
+                    if (i_params.id.indexOf('data') > -1) {
+                        /** Terminal mode, coming from Studio link **/
+                        var params = i_params['id'].split('=')[1] + '==';
+                        var rc4v2 = new RC4V2();
+                        var rcData: any = rc4v2.decrypt(params.replace(/=/ig, ''), '8547963624824263');
+                        var data = JSON.parse(rcData);
+                        this.m_appMode = 'CUSTOMER_TERMINAL';
+                        this.yp.ngrxStore.dispatch({type: EFFECT_LOAD_FASTERQ_LINE, payload: {lineId: data.line_id, businessId: data.business_id}})
+                    } else {
+                        /** Remote status mode, coming server short url **/
+                        var params: string = i_params['id'].split('=')[2].replace(/%3D/ig, '=');
+                        var rcData = $.base64.decode(params);
+                        var data = JSON.parse(rcData);
+                        this.m_appMode = 'REMOTE_STATUS';
+                        this.yp.ngrxStore.dispatch({type: EFFECT_LOADED_FASTERQ_LINE, payload: new FasterqLineModel(data)})
+
+                    }
+                }, (e) => console.error(e))
         )
     }
 
     ngAfterViewInit() {
+    }
 
+    /**
+     Get current server date / time
+     @method _getServerDateTime server:getDateTime
+     @param {Function} i_cb
+     **/
+    _getServerDateTime(i_cb) {
+        var self = this;
+        $.ajax({
+            url: `${self.appBaseUrlServices}/GetDateTime`,
+            success: function (dateTime) {
+                $.proxy(i_cb, self)(dateTime);
+            },
+            error: function (e) {
+                console.log('error ajax ' + e);
+            },
+            dataType: 'json'
+        });
+    }
+
+    /**
+     Check if service id exists in local storage, if not get one from server
+     @method _initServices
+     **/
+    _initServices(i_dateTime) {
+        // STORAGE FIRST
+
+        //debug; //this.simplestorage.removeItem('data');
+        var storage = this.simplestorage.getItem('data');
+        if (!_.isUndefined(storage)) {
+            var storedDate = storage.date;
+            if (storedDate != i_dateTime.date) {
+                this.simplestorage.removeItem('data');
+            } else {
+                this.m_remoteStatusServiceId = storage.service_id;
+                this.m_remoteStatusVerification = storage.verification;
+                this._pollNowServicing();
+                return;
+            }
+        }
+
+        // EMAIL OR SMS
+        var call_type = this.m_fasterqLineModel.callType;
+
+        if (call_type == 'SMS' || call_type == 'EMAIL') {
+            if (i_dateTime.date != this.m_fasterqLineModel.date) {
+                bootbox.alert('your number expired on ' + this.m_fasterqLineModel.date + ', so we generated a new number for you...');
+                this._getServiceID();
+                return;
+            }
+            this._createStorage(this.m_fasterqLineModel.serviceId, this.m_fasterqLineModel.verification, this.m_fasterqLineModel.date);
+            this._pollNowServicing();
+        }
+
+        // QR
+        if (call_type == 'QR') {
+            this._getServiceID();
+        }
+    }
+
+    _createStorage(i_service_id, i_verification, i_date) {
+        this.simplestorage.setItem('data', {
+            service_id: i_service_id,
+            date: i_date,
+            verification: i_verification
+        });
+    }
+
+    /**
+     Forget spot in line
+     @method _getNewSpot
+     **/
+    _getNewSpot() {
+        bootbox.prompt('are you sure you want to get a new number (type yes or no)?', (i_answer) => {
+            if (i_answer) {
+                if (i_answer.toLowerCase() == 'yes') {
+                    this.simplestorage.removeItem('data');
+                    window.clearInterval(this.m_statusHandler);
+                    var url = this._buildURL();
+                    $(location).attr('href', url);
+                }
+            }
+        })
+    }
+
+    /**
+     Forget spot in line
+     @method _releaseSpot
+     **/
+    _releaseSpot() {
+        bootbox.prompt('are you sure you want to let go of your spot (type yes or no)?', (i_answer) => {
+            if (i_answer) {
+                if (i_answer.toLowerCase() == 'yes') {
+                    $('#appEntry').html('<h1 style="text-align: center; padding: 100px">have a nice day</h1>');
+                    this.simplestorage.removeItem('data');
+                    window.clearInterval(this.m_statusHandler);
+                }
+            }
+        })
+    }
+
+    /**
+     Create queue in table as well as matching data in analytics
+     @method _getServiceID server:setQueue
+     **/
+    _getServiceID() {
+        var options: RequestOptionsArgs = this.createOptionArgs('/Queue', RequestMethod.Post, {
+            line_id: this.m_fasterqLineModel.lineId,
+            business_id: this.m_fasterqLineModel.businessId,
+            email: this.m_fasterqLineModel.email,
+            call_type: this.m_fasterqLineModel.callType,
+        })
+        return this.http.get(options.url, options)
+            .catch((err) => {
+                // return Observable.throw(err);
+                return err;
+            })
+            .finally(() => {
+            }).take(1)
+            .subscribe((i_response: Response) => {
+                var jData = i_response.json()
+                var fasterqLineModel: FasterqLineModel = new FasterqLineModel(jData)
+                this._createStorage(fasterqLineModel.serviceId, fasterqLineModel.verification, fasterqLineModel.date);
+                this.yp.ngrxStore.dispatch({type: EFFECT_LOADED_FASTERQ_LINE, payload: fasterqLineModel})
+                // this._populateCustomerInfo();
+                this._pollNowServicing();
+            }, (e) => console.error(e));
+    }
+
+    /**
+     Get the last called service_id for line
+     @method _pollNowServicing server:LastCalledQueue
+     **/
+    _pollNowServicing() {
+        var self = this;
+        var lastCalledQueue = () => {
+            $.ajax({
+                url: `${this.appBaseUrlServices}/LastCalledQueue`,
+                data: {
+                    business_id: this.m_fasterqLineModel.businessId,
+                    line_id: this.m_fasterqLineModel.lineId
+                },
+                success: function (i_model) {
+                    self.m_currentlyServing = i_model.service_id;
+
+                },
+                error: function (e) {
+                    console.log('error ajax ' + e);
+                },
+                dataType: 'json'
+            });
+        };
+        this.m_statusHandler = setInterval(function () {
+            lastCalledQueue();
+        }, 5000);
+        lastCalledQueue();
     }
 
     _isValidEmail(email) {
@@ -228,8 +439,6 @@ export class FasterqTerminal extends Compbaser implements AfterViewInit {
             },
             dataType: 'json'
         });
-
-
     }
 
     _onSend($event) {
@@ -336,26 +545,8 @@ export class FasterqTerminal extends Compbaser implements AfterViewInit {
             call_type: 'QR'
         };
         data = $.base64.encode(JSON.stringify(data));
-        return `${this.appBaseUrlServices}?mode=remoteStatus&param=${data}`;
+        return `${this.appBaseUrlServices}/studioweb/index.html?mode=remoteStatus&param=${data}`;
     }
 
-    // _initTerminal(i_app: 'customerTerminal' | 'customerRemote') {
-    _initTerminal(i_params) {
-        var rc4v2 = new RC4V2();
-        var rcData: any = rc4v2.decrypt(i_params.replace(/=/ig, ''), '8547963624824263');
-        var data = JSON.parse(rcData);
-        this.yp.ngrxStore.dispatch({type: EFFECT_LOAD_FASTERQ_LINE, payload: {lineId: data.line_id, businessId: data.business_id}})
-
-
-        // switch (i_app) {
-        //     case 'customerTerminal': {
-        //         // self._loadCustomerTerminalApp();
-        //         break;
-        //     }
-        //     case 'customerRemote': {
-        //         // self._getLine();
-        //         break;
-        //     }
-        // }
-    }
+    
 }

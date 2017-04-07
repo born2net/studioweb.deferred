@@ -65,10 +65,18 @@ export class FasterqEditor extends Compbaser {
     m_totalToBeServiced = 0;
     m_fqLastServiced = '';
     m_liveUpdateHandler;
+    appBaseUrlServices;
 
     constructor(private yp: YellowPepperService, private rp: RedPepperService, private commBroker: CommBroker, private el: ElementRef, private cd: ChangeDetectorRef) {
         super();
         this._pollServices();
+
+        this.cancelOnDestroy(
+            this.yp.ngrxStore.select(store => store.appDb.appBaseUrlServices)
+                .subscribe((i_appBaseUrlServices) => {
+                    this.appBaseUrlServices = i_appBaseUrlServices;
+                })
+        )
 
         this.cancelOnDestroy(
             this.commBroker.onEvent(FASTERQ_QUEUE_CALL_CANCLED)
@@ -129,6 +137,26 @@ export class FasterqEditor extends Compbaser {
         )
 
         this._selectFirst();
+    }
+
+    _openRemoteStatus() {
+        var data = {
+            call_type: 'REMOTE_STATUS',
+            business_id: this.rp.getUserData().businessID,
+            line_id: this.m_fasterqLineModel.lineId,
+            line_name: this.m_fasterqLineModel.lineName
+        };
+        var rc4v2 = new RC4V2();
+        var rcData:any = rc4v2.encrypt(JSON.stringify(data), '8547963624824263');
+        var url;
+        if (Lib.DevMode()){
+            url = `http://localhost:4208/index.html?data=${rcData}`;
+        } else {
+            url = `${this.appBaseUrlServices}/studioweb/index.html?data=${rcData}`;
+        }
+        window.open(url, "_blank", "toolbar=yes, scrollbars=yes, resizable=yes, top=10, left=10, width=400, height=400");
+        // data = $.base64.encode(JSON.stringify(data));
+        // var url = BB.CONSTS.BASE_URL + '?mode=remoteStatus&param=' + data;
     }
 
     @timeout(1000)

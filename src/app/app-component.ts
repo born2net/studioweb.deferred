@@ -74,7 +74,7 @@ export class AppComponent implements AfterViewInit {
         let s = this.router.events
             .subscribe((val) => {
                 if (val instanceof NavigationEnd) {
-                    if (val.url.indexOf('data') > -1) {
+                    if (val.url.indexOf('data') > -1 || val.url.indexOf('remoteStatus') > -1) {
                         this.router.navigate(['/FasterqTerminal', val.url.split('?')[1]]);
                     } else {
                         this.authService.start();
