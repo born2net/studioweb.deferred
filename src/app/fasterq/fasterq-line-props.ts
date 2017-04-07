@@ -5,7 +5,7 @@ import {FasterqLineModel} from "../../models/fasterq-line-model";
 import {FormBuilder, FormGroup} from "@angular/forms";
 import {SideProps} from "../../store/actions/appdb.actions";
 import {Observable} from "rxjs/Observable";
-import {EFFECT_UPDATE_FASTERQ_LINE} from "../../store/effects/appdb.effects";
+import {EFFECT_RESET_FASTERQ_LINE, EFFECT_UPDATE_FASTERQ_LINE} from "../../store/effects/appdb.effects";
 import * as _ from 'lodash';
 import {FasterqQueueModel} from "../../models/fasterq-queue-model";
 import {RedPepperService} from "../../services/redpepper.service";
@@ -64,7 +64,7 @@ import {Lib} from "../../Lib";
                                     <button (click)="_onOpenTerminal()" class="btn btn-primary inliner" i18n>open terminal</button>
                                 </li>
                                 <li class="list-group-item">
-                                    <button class="btn btn-primary inliner" i18n>reset line</button>
+                                    <button (click)="_onResetLine()" class="btn btn-primary inliner" i18n>reset line</button>
                                 </li>
                             </ul>
                         </div>
@@ -105,7 +105,7 @@ export class FasterqLineProps extends Compbaser implements AfterViewInit {
     m_calledBy: ''
     appBaseUrlServices
 
-    constructor(private fb: FormBuilder, private yp: YellowPepperService, private rp:RedPepperService) {
+    constructor(private fb: FormBuilder, private yp: YellowPepperService, private rp: RedPepperService) {
         super();
         this.m_sideProps$ = this.yp.ngrxStore.select(store => store.appDb.uiState.uiSideProps);
         this.m_contGroup = fb.group({
@@ -140,7 +140,6 @@ export class FasterqLineProps extends Compbaser implements AfterViewInit {
         )
     }
 
-
     saveToStore() {
         this.yp.ngrxStore.dispatch({
             type: EFFECT_UPDATE_FASTERQ_LINE,
@@ -150,6 +149,20 @@ export class FasterqLineProps extends Compbaser implements AfterViewInit {
                 reminder: _.isNumber(this.m_contGroup.controls.reminder.value) ? this.m_contGroup.controls.reminder.value : 1
             }
         })
+    }
+
+    _onResetLine() {
+        bootbox.prompt('are you sure you want to reset the counter? (enter YES)', (i_password) => {
+            if (i_password != 'YES') return;
+            this.yp.ngrxStore.dispatch({
+                type: EFFECT_RESET_FASTERQ_LINE,
+                payload: {
+                    business_id: this.rp.getUserData().businessID,
+                    line_id: this.m_selectedLine.lineId,
+                    counter: 1
+                }
+            });
+        });
     }
 
     /**
@@ -164,9 +177,9 @@ export class FasterqLineProps extends Compbaser implements AfterViewInit {
             line_name: this.m_selectedLine.lineName
         };
         var rc4v2 = new RC4V2();
-        var rcData:any = rc4v2.encrypt(JSON.stringify(data), '8547963624824263');
+        var rcData: any = rc4v2.encrypt(JSON.stringify(data), '8547963624824263');
         var url;
-        if (Lib.DevMode()){
+        if (Lib.DevMode()) {
             url = `http://localhost:4208/index.html?data=${rcData}`;
         } else {
             url = `${this.appBaseUrlServices}/studioweb/index.html?data=${rcData}`;

@@ -62,6 +62,7 @@ export const EFFECT_QUEUE_SERVICE_SAVE = 'EFFECT_QUEUE_SERVICE_SAVE';
 export const EFFECT_QUEUE_SERVICE_SAVING = 'EFFECT_QUEUE_SERVICE_SAVING';
 export const EFFECT_QUEUE_SERVICE_SAVED = 'EFFECT_QUEUE_SERVICE_SAVED';
 export const EFFECT_QUEUE_POLL_SERVICE = 'EFFECT_QUEUE_POLL_SERVICE';
+export const EFFECT_RESET_FASTERQ_LINE = 'EFFECT_RESET_FASTERQ_LINE';
 
 @Injectable()
 export class AppDbEffects {
@@ -474,6 +475,26 @@ export class AppDbEffects {
                     return null;
                 }
                 return data;
+            })
+    }
+
+    @Effect({dispatch: false})
+    resetFasterqLine: Observable<Action> = this.actions$.ofType(EFFECT_RESET_FASTERQ_LINE)
+        .switchMap(action => this._resetFasterqLine(action))
+        .map(res => ({type: null}));
+
+    private _resetFasterqLine(action: Action): Observable<List<FasterqLineModel>> {
+        var options: RequestOptionsArgs = this.fasterqCreateServerCall(`/ResetQueueCounter`, RequestMethod.Post, action.payload)
+        return this.http.get(options.url, options)
+            .catch((err: any) => {
+                bootbox.alert('Error resetting line, try again later...');
+                return Observable.throw(err);
+            })
+            .finally(() => {
+            })
+            .map((response: Response) => {
+                var reply = response.json();
+                return {};
             })
     }
 

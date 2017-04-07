@@ -140,23 +140,22 @@ export class FasterqEditor extends Compbaser {
     }
 
     _openRemoteStatus() {
+        window.open(this._buildURL(), "_blank", "toolbar=yes, scrollbars=yes, resizable=yes, top=10, left=10, width=400, height=400");
+    }
+
+    /**
+     Create URL string to load customer terminal UI for FasterQ queue generation
+     @method _buildURL
+     @return {String} URL
+     **/
+    _buildURL() {
         var data = {
-            call_type: 'REMOTE_STATUS',
-            business_id: this.rp.getUserData().businessID,
             line_id: this.m_fasterqLineModel.lineId,
-            line_name: this.m_fasterqLineModel.lineName
+            business_id: this.m_fasterqLineModel.businessId,
+            call_type: 'QR'
         };
-        var rc4v2 = new RC4V2();
-        var rcData:any = rc4v2.encrypt(JSON.stringify(data), '8547963624824263');
-        var url;
-        if (Lib.DevMode()){
-            url = `http://localhost:4208/index.html?data=${rcData}`;
-        } else {
-            url = `${this.appBaseUrlServices}/studioweb/index.html?data=${rcData}`;
-        }
-        window.open(url, "_blank", "toolbar=yes, scrollbars=yes, resizable=yes, top=10, left=10, width=400, height=400");
-        // data = $.base64.encode(JSON.stringify(data));
-        // var url = BB.CONSTS.BASE_URL + '?mode=remoteStatus&param=' + data;
+        data = $.base64.encode(JSON.stringify(data));
+        return `${this.appBaseUrlServices}/studioweb/index.html?mode=remoteStatus&param=${data}`;
     }
 
     @timeout(1000)
