@@ -1,18 +1,13 @@
 import {Component} from "@angular/core";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Compbaser} from "ng-mslib";
-import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {RedPepperService} from "../../services/redpepper.service";
-import {timeout} from "../../decorators/timeout-decorator";
-import {Observable} from "rxjs";
-import * as _ from "lodash";
 import {NGValidators} from "ng-validators";
 import {equalValueValidator} from "../../Lib";
 
 @Component({
     selector: 'pro-upgrade',
-    host: {'(input-blur)': 'saveToStore($event)'},
     templateUrl: './pro-upgrades.html',
     styles: [`
         input.ng-invalid {
@@ -35,13 +30,11 @@ import {equalValueValidator} from "../../Lib";
 })
 export class ProUpgrade extends Compbaser {
 
-    campaignModel: CampaignsModelExt;
     formInputs = {};
     m_contGroup: FormGroup;
 
     constructor(private fb: FormBuilder, private yp: YellowPepperService, private rp: RedPepperService) {
         super();
-
         this.m_contGroup = this.fb.group({
                 'userName': ['', [Validators.required]],
                 'creditCard': ['', [NGValidators.isCreditCard()]],
@@ -53,39 +46,7 @@ export class ProUpgrade extends Compbaser {
             },
             {validator: equalValueValidator('password', 'confirmPassword')}
         );
-
-        // this.m_contGroup = fb.group({
-        //     'campaign_name': ['', [Validators.required, Validators.pattern(simpleRegExp)]],
-        //     'campaign_playlist_mode': [0],
-        //     'kiosk_mode': [0],
-        // });
-        // _.forEach(this.m_contGroup.controls, (value, key: string) => {
-        //     this.formInputs[key] = this.m_contGroup.controls[key] as FormControl;
-        // })
     }
-
-    @timeout()
-    private saveToStore(event) {
-        // console.log(this.m_contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.m_contGroup.value)));
-        console.log(this.m_contGroup.status);
-        // if (this.m_contGroup.status != 'VALID')
-        //     return;
-        // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_name', this.m_contGroup.value.campaign_name);
-        // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_playlist_mode', this.m_contGroup.value.campaign_playlist_mode);
-        // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_timeline_id', 0); //todo: you need to fix this as zero is arbitrary number right now
-        // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_mode', this.m_contGroup.value.kiosk_mode);
-        // this.rp.reduxCommit()
-    }
-
-    // private renderFormInputs() {
-    //     if (!this.campaignModel)
-    //         return;
-    //     _.forEach(this.formInputs, (value, key: string) => {
-    //         let data = this.campaignModel.getKey(key);
-    //         data = StringJS(data).booleanToNumber();
-    //         this.formInputs[key].setValue(data)
-    //     });
-    // };
 
     private showMessage(i_title: string, i_msg: string, i_status: boolean): void {
         bootbox.hideAll();
@@ -93,15 +54,16 @@ export class ProUpgrade extends Compbaser {
             closeButton: true,
             title: i_title,
             message: `<br/><br/><br/>
-                                <center>
-                                ${i_status == true ? '<i style="color: green; font-size: 4em; padding:30px" class="fa fa-thumbs-up"></i>'
-                : '<i style="color: red; font-size: 4em; padding: 30px" class="fa fa-thumbs-down"></i>'}
-                                    <h4>${i_msg}</h4>
-                                </center>
-                              <br/><br/><br/>
-                               `
+                        <center>
+                            ${i_status == true ? '<i style="color: green; font-size: 6em; padding:30px" class="fa fa-thumbs-up"></i>' : '<i style="color: red; font-size: 4em; padding: 30px" class="fa fa-thumbs-down"></i>'}
+                            <h4>${i_msg}</h4>
+                            <br/><br/><br/>
+                        </center>`
+
         });
     }
+
+
 
     _detectCardType(number) {
         var re = {
@@ -153,8 +115,30 @@ export class ProUpgrade extends Compbaser {
         const userPass = this.rp.getUserData().userPass;
         const year = this.m_contGroup.controls.year.value.length == 2 ? '20' + this.m_contGroup.controls.year.value : this.m_contGroup.controls.year.value;
         const month = this.m_contGroup.controls.month.value.replace(/^0+/, '');
+        var card;
+        switch (cardType) {
+            case 'VISA': {
+                card = '0';
+                break;
+            }
+            case 'MASTERCARD': {
+                card = '1';
+                break;
+            }
+            case 'DISCOVER': {
+                card = '2';
+                break;
+            }
+            case 'AMEX': {
+                card = '3';
+                break;
+            }
+            default: {
+                card = '-1';
+            }
+        }
 
-        var url = `https://galaxy.signage.me/WebService/UpgradeToResellerAccount.ashx?userName=${userName}&userPassword=${userPass}&resellerUserName=${this.m_contGroup.controls.userName.value}&resellerPassword=${this.m_contGroup.controls.password.value}&cardType=${cardType}&cardNumber=${this.m_contGroup.controls.creditCard.value}&expirationMonth=${month}&expirationYear=${year}&securityCode=${this.m_contGroup.controls.cv.value}&callback=?`;
+        var url = `https://galaxy.signage.me/WebService/UpgradeToResellerAccount.ashx?userName=${userName}&userPassword=${userPass}&resellerUserName=${this.m_contGroup.controls.userName.value}&resellerPassword=${this.m_contGroup.controls.password.value}&cardType=${card}&cardNumber=${this.m_contGroup.controls.creditCard.value}&expirationMonth=${month}&expirationYear=${year}&securityCode=${this.m_contGroup.controls.cv.value}&callback=?`;
         $.getJSON(url, (e) => {
             var msg = '';
             console.log('Credit card status ' + e.result);
@@ -192,14 +176,11 @@ export class ProUpgrade extends Compbaser {
                     }
                 }
             }
-        })
-            .done((e) => {
-            })
-            .fail((e) => {
-                this.showMessage(e.status, 'Could not complete, something went wrong on server side', false);
-            })
-            .always(() => {
-            });
+        }).done((e) => {
+        }).fail((e) => {
+            this.showMessage(e.status, 'Could not complete, something went wrong on server side', false);
+        }).always(() => {
+        });
     }
 
 

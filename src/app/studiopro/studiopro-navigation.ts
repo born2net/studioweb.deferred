@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, Component, ViewChild} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
+import {RedPepperService} from "../../services/redpepper.service";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -111,7 +112,7 @@ import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
                             <div class="space"></div>
                         </div>
                         <ul class="list-group">
-                            <li class="reshid list-group-item">
+                            <li *ngIf="subAccount" class="list-group-item">
                                 <span class="glyphicon glyphicon-ok"></span>
                                 <span data-localize="onehundredFree"> 100% FREE</span>
                             </li>
@@ -150,7 +151,7 @@ import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
                                 <span class="glyphicon glyphicon-ok"></span><span data-localize="openSourceGitHub"> Open source (GitHub)</span>
                             </li>
                         </ul>
-                        <div class="reshid try">
+                        <div *ngIf="subAccount" class="try">
                             <p class="price">$0.00</p>
                             <button class="pull-right btnPrice btn btn-default" disabled="disabled" href="#" type="button" data-localize="youAreHere">you are here
                             </button>
@@ -163,7 +164,7 @@ import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
                             <div class="space"></div>
                         </div>
                         <ul class="list-group">
-                            <li class="reshid list-group-item">
+                            <li *ngIf="subAccount" class="list-group-item">
                                 <span class="glyphicon glyphicon-ok"></span><span data-localize="onehundredFree"> 100% FREE</span>
                             </li>
                             <li class="list-group-item">
@@ -200,7 +201,7 @@ import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
                                 <span class="glyphicon glyphicon-ok"></span><span data-localize="muchMore"> and much more...</span>
                             </li>
                         </ul>
-                        <div class="reshid try">
+                        <div *ngIf="subAccount" class="try">
                             <p class="price">$0.00</p>
                             <a (click)="_onConvert($event)" id="convertAccount" class="pull-right btnPrice btn-primary btn btn-default" href="#" type="button" data-localize="convert">Convert</a>
                         </div>
@@ -213,7 +214,7 @@ import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
                             <div class="space"></div>
                         </div>
                         <ul class="list-group">
-                            <li class="reshid list-group-item">
+                            <li *ngIf="subAccount" class="list-group-item">
                                 <span class="glyphicon glyphicon-ok"></span><span data-localize="nintynine"> $99 a month (flat)</span>
                             </li>
                             <li class="list-group-item">
@@ -251,9 +252,9 @@ import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
                             </li>
                         </ul>
                         <div class="try">
-                            <p class="reshid price">$99/<span class="reshid" data-localize="month">month</span>
+                            <p *ngIf="subAccount" class="price">$99/<span data-localize="month">month</span>
                             </p>
-                            <button (click)="_onSubscribe($event)" id="subscribeAccount" class="pull-right showUpgradeModal reshid btnPrice btn-primary btn btn-default" href="#" type="button" data-localize="subscribe"> Subscribe
+                            <button *ngIf="subAccount" (click)="_onSubscribe($event)" id="subscribeAccount" class="pull-right showUpgradeModal btnPrice btn-primary btn btn-default" href="#" type="button" data-localize="subscribe"> Subscribe
                             </button>
                         </div>
                     </div>
@@ -275,6 +276,19 @@ export class StudioProNavigation extends Compbaser {
 
     @ViewChild(ModalComponent)
     modal: ModalComponent;
+    subAccount = false;
+
+    constructor(private rp:RedPepperService){
+        super();
+    }
+    
+    _initCustomer() {
+        if (this.rp.getUserData().resellerID == 1 || this.rp.getUserData().whiteLabel == false) {
+            this.subAccount = false;
+        } else {
+            this.subAccount = true;
+        }
+    }
 
     _onConvert(event) {
         window.open('http://galaxy.mediasignage.com/WebService/signagestudio.aspx?mode=login&v=4&eri=f7bee07a7e79c8efdb961c4d30d20e10c66442110de03d6141', '_blank');
@@ -286,6 +300,7 @@ export class StudioProNavigation extends Compbaser {
 
     ngOnInit() {
         this.preventRedirect(true);
+        this._initCustomer();
     }
 
     destroy() {
