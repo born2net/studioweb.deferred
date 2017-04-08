@@ -7,7 +7,9 @@
                 </small>
                 <small class="debug">{{me}}</small>
             </div>
-            <a href="http://www.digitalsignage.com/_html/benefits.html" target="_blank">Learn more about Enterprise</a>
+            <a style="padding: 10px" i18n href="http://www.digitalsignage.com/_html/benefits.html" target="_blank">
+                Learn more about Enterprise
+            </a>
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">
@@ -69,7 +71,7 @@
                         </div>
                         <div class="row">
                             <div class="col-xs-12">
-                                <button class="startUpgrade btn btn-success btn-lg btn-block" type="submit">Start Subscription</button>
+                                <button (click)="_onStartSubscription()" class="startUpgrade btn btn-success btn-lg btn-block" type="submit">Start Subscription</button>
                             </div>
                         </div>
                         <div class="row" style="display:none;">
