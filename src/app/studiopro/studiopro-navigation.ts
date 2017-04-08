@@ -1,6 +1,7 @@
-import {ChangeDetectionStrategy, Component} from "@angular/core";
+import {ChangeDetectionStrategy, Component, ViewChild} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {animate, state, style, transition, trigger} from "@angular/animations";
+import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -201,7 +202,7 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
                         </ul>
                         <div class="reshid try">
                             <p class="price">$0.00</p>
-                            <a id="convertAccount" class="pull-right btnPrice btn-primary btn btn-default" href="#" type="button" data-localize="convert">Convert</a>
+                            <a (click)="_onConvert()" id="convertAccount" class="pull-right btnPrice btn-primary btn btn-default" href="#" type="button" data-localize="convert">Convert</a>
                         </div>
                     </div>
                     <div class="col-md-4" id="home-box">
@@ -252,17 +253,39 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
                         <div class="try">
                             <p class="reshid price">$99/<span class="reshid" data-localize="month">month</span>
                             </p>
-                            <button id="subscribeAccount" class="pull-right showUpgradeModal reshid btnPrice btn-primary btn btn-default" href="#" type="button" data-localize="subscribe"> Subscribe
+                            <button (click)="_onSubscribe($event)" id="subscribeAccount" class="pull-right showUpgradeModal reshid btnPrice btn-primary btn btn-default" href="#" type="button" data-localize="subscribe"> Subscribe
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
-    `,
+        </div>
+        <modal #modal>
+            <modal-header [show-close]="true">
+                <h4 i18n class="modal-title">Upgrade to Enterprise - $99.00 per month</h4>
+            </modal-header>
+            <modal-body>
+                <pro-upgrade></pro-upgrade>
+            </modal-body>
+            <modal-footer [show-default-buttons]="false"></modal-footer>
+        </modal>
+    `
 })
 export class StudioProNavigation extends Compbaser {
 
+    @ViewChild(ModalComponent)
+    modal: ModalComponent;
+
+    _onConvert(event) {
+        window.open('http://galaxy.mediasignage.com/WebService/signagestudio.aspx?mode=login&v=4&eri=f7bee07a7e79c8efdb961c4d30d20e10c66442110de03d6141', '_blank');
+    }
+
+    _onSubscribe(event) {
+        this.modal.open();
+    }
+
     ngOnInit() {
+        this.preventRedirect(true);
     }
 
     destroy() {

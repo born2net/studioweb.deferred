@@ -4,6 +4,7 @@ import {RouterModule} from "@angular/router";
 import {StudioProNavigation} from "./studiopro-navigation";
 import {DropdownModule as DropdownModulePrime} from "primeng/primeng";
 import {SharedModule} from "../../modules/shared.module";
+import {ProUpgrade} from "./pro-upgrade";
 
 export const LAZY_ROUTES = [
     {path: ':folder', component: StudioProNavigation},
@@ -13,7 +14,7 @@ export const LAZY_ROUTES = [
 
 @NgModule({
     imports: [DropdownModulePrime, SharedModule, CommonModule, RouterModule.forChild(LAZY_ROUTES)],
-    declarations: [StudioProNavigation]
+    declarations: [StudioProNavigation, ProUpgrade]
 })
 export class StudioProLazyModule {
 }
