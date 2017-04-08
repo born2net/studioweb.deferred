@@ -202,7 +202,7 @@ import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
                         </ul>
                         <div class="reshid try">
                             <p class="price">$0.00</p>
-                            <a (click)="_onConvert()" id="convertAccount" class="pull-right btnPrice btn-primary btn btn-default" href="#" type="button" data-localize="convert">Convert</a>
+                            <a (click)="_onConvert($event)" id="convertAccount" class="pull-right btnPrice btn-primary btn btn-default" href="#" type="button" data-localize="convert">Convert</a>
                         </div>
                     </div>
                     <div class="col-md-4" id="home-box">
