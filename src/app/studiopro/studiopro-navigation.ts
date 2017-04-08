@@ -107,7 +107,10 @@ import {RedPepperService} from "../../services/redpepper.service";
                 <div id="pricingTableWrap" style="overflow-x: hidden; overflow-y: scroll; height: 100%">
                     <div class="col-md-4" id="home-box">
                         <div class="pricing_header1">
-                            <h2 class="pricing_headerh2" data-localize="studioLiteFree">StudioLite</h2>
+                            <h2 class="pricing_headerh2" data-localize="studioLiteFree">
+                                <i class="fa fa-plus"></i>
+                                StudioLite
+                            </h2>
 
                             <div class="space"></div>
                         </div>
@@ -159,7 +162,10 @@ import {RedPepperService} from "../../services/redpepper.service";
                     </div>
                     <div class="col-md-4" id="home-box">
                         <div class="pricing_header2">
-                            <h2 class="pricing_headerh2" data-localize="studioProFree">StudioPro (FREE)</h2>
+                            <h2 class="pricing_headerh2" data-localize="studioProFree">
+                                <i class="fa fa-desktop"></i>
+                                StudioPro (FREE)
+                            </h2>
 
                             <div class="space"></div>
                         </div>
@@ -209,6 +215,7 @@ import {RedPepperService} from "../../services/redpepper.service";
                     <div class="col-md-4" id="home-box">
                         <div class="pricing_header3">
                             <h2 class="pricing_headerh2" data-localize="StudioEnterprise">
+                                <i class="fa fa-cloud-upload"></i>
                                 StudioEnterprise</h2>
 
                             <div class="space"></div>
