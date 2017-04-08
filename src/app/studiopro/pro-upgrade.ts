@@ -1,13 +1,14 @@
-import {ChangeDetectionStrategy, Component, Input} from "@angular/core";
-import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
+import {Component, Input} from "@angular/core";
+import {FormBuilder, FormControl, FormGroup, ValidatorFn, Validators} from "@angular/forms";
 import {Compbaser, NgmslibService} from "ng-mslib";
 import {CampaignsModelExt} from "../../store/model/msdb-models-extended";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {RedPepperService} from "../../services/redpepper.service";
 import {timeout} from "../../decorators/timeout-decorator";
 import {Observable} from "rxjs";
-import {simpleRegExp} from "../../Lib";
 import * as _ from "lodash";
+import { NGValidators } from 'ng-validators';
+import {equalValueValidator} from "../../Lib";
 
 @Component({
     selector: 'pro-upgrade',
@@ -38,54 +39,54 @@ import * as _ from "lodash";
                                     <div class="col-xs-12">
                                         <div class="form-group">
                                             <label for="newName">Pick a new enterprise user name</label>
-                                            <input id="upgUserName" type="text" class="form-control" name="newName"/>
+                                            <input [formControl]="contGroup.controls['userName']" type="text" class="form-control" name="newName"/>
                                         </div>
                                         <div class="form-group">
                                             <label for="newPass">Pick an enterprise password</label>
-                                            <input id="upgPass" type="password" class="form-control" name="newPass"/>
+                                            <input [formControl]="contGroup.controls['password']" id="upgPass" type="password" class="form-control" name="newPass"/>
                                         </div>
                                         <div class="form-group">
                                             <label for="newPass2">Repeat your new password</label>
-                                            <input id="upgPass2" type="password" class="form-control" name="newPass2"/>
+                                            <input [formControl]="contGroup.controls['confirmPassword']" id="upgPass2" type="password" class="form-control" name="newPass2"/>
                                         </div>
                                     </div>
                                     <div class="col-xs-12">
                                         <div class="form-group">
                                             <label for="cardNumber">CARD NUMBER</label>
                                             <div class="input-group">
-                                                <input id="upgCredit" type="text" class="form-control" name="cardNumber" placeholder="Valid Card Number" required autofocus data-stripe="number"/>
+                                                <input  [formControl]="contGroup.controls['creditCard']" id="upgCredit" type="text" class="form-control" name="cardNumber" placeholder="Valid Card Number" required autofocus data-stripe="number"/>
                                                 <span class="input-group-addon"><i class="fa fa-credit-card"></i></span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-xs-7 col-md-7">
-                                        <div class="form-group">
+                                <div class="col-xs-7 col-md-7">
+                                <div class="form-group">
 
-                                            <div class="col-xs-6 col-lg-6 pl-ziro">
-                                                <input id="upgMonth" type="text" class="form-control" name="expMonth" placeholder="MM" required data-stripe="exp_month"/>
-                                            </div>
-                                            <div class="col-xs-6 col-lg-6 pl-ziro">
-                                                <input id="upgYear" type="text" class="form-control" name="expYear" placeholder="YYYY" required data-stripe="exp_year"/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-5 col-md-5 pull-right">
-                                        <div class="form-group">
-                                            <input id="upgCV" class="form-control" name="cvCode" placeholder="CV" required data-stripe="cvc"/>
-                                        </div>
-                                    </div>
+                                <div class="col-xs-6 col-lg-6 pl-ziro">
+                                <input id="upgMonth" type="text" class="form-control" name="expMonth" placeholder="MM" required data-stripe="exp_month"/>
+                                </div>
+                                <div class="col-xs-6 col-lg-6 pl-ziro">
+                                <input id="upgYear" type="text" class="form-control" name="expYear" placeholder="YYYY" required data-stripe="exp_year"/>
+                                </div>
+                                </div>
+                                </div>
+                                <div class="col-xs-5 col-md-5 pull-right">
+                                <div class="form-group">
+                                <input id="upgCV" class="form-control" name="cvCode" placeholder="CV" required data-stripe="cvc"/>
+                                </div>
+                                </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-xs-12">
-                                        <button class="startUpgrade btn btn-success btn-lg btn-block" type="submit">Start Subscription</button>
-                                    </div>
+                                <div class="col-xs-12">
+                                <button class="startUpgrade btn btn-success btn-lg btn-block" type="submit">Start Subscription</button>
+                                </div>
                                 </div>
                                 <div class="row" style="display:none;">
-                                    <div class="col-xs-12">
-                                        <p class="payment-errors"></p>
-                                    </div>
+                                <div class="col-xs-12">
+                                <p class="payment-errors"></p>
+                                </div>
                                 </div>
                             </form>
                         </div>
@@ -124,14 +125,25 @@ export class ProUpgrade extends Compbaser {
     constructor(private fb: FormBuilder, private ngmslibService: NgmslibService, private yp: YellowPepperService, private rp: RedPepperService) {
         super();
 
-        this.contGroup = fb.group({
-            'campaign_name': ['', [Validators.required, Validators.pattern(simpleRegExp)]],
-            'campaign_playlist_mode': [0],
-            'kiosk_mode': [0]
-        });
-        _.forEach(this.contGroup.controls, (value, key: string) => {
-            this.formInputs[key] = this.contGroup.controls[key] as FormControl;
-        })
+        this.contGroup = this.fb.group({
+                'userName': ['', [Validators.required]],
+                'creditCard': ['', [NGValidators.isCreditCard()]],
+                'password': ['', [Validators.required, Validators.minLength(3)]],
+                'confirmPassword': ['', [Validators.required, Validators.minLength(3)]]
+            },
+            {validator: equalValueValidator('password', 'confirmPassword')}
+        );
+
+        // this.contGroup = fb.group({
+        //     'campaign_name': ['', [Validators.required, Validators.pattern(simpleRegExp)]],
+        //     'campaign_playlist_mode': [0],
+        //     'kiosk_mode': [0],
+        //
+        //
+        // });
+        // _.forEach(this.contGroup.controls, (value, key: string) => {
+        //     this.formInputs[key] = this.contGroup.controls[key] as FormControl;
+        // })
 
         this.cancelOnDestroy(
             this.yp.listenCampaignSelected().subscribe((campaign: CampaignsModelExt) => {
@@ -153,13 +165,14 @@ export class ProUpgrade extends Compbaser {
     @timeout()
     private saveToStore() {
         // console.log(this.contGroup.status + ' ' + JSON.stringify(this.ngmslibService.cleanCharForXml(this.contGroup.value)));
-        if (this.contGroup.status != 'VALID')
-            return;
-        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_name', this.contGroup.value.campaign_name);
-        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_playlist_mode', this.contGroup.value.campaign_playlist_mode);
-        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_timeline_id', 0); //todo: you need to fix this as zero is arbitrary number right now
-        this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_mode', this.contGroup.value.kiosk_mode);
-        this.rp.reduxCommit()
+        console.log(this.contGroup.status);
+        // if (this.contGroup.status != 'VALID')
+        //     return;
+        // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_name', this.contGroup.value.campaign_name);
+        // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'campaign_playlist_mode', this.contGroup.value.campaign_playlist_mode);
+        // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_timeline_id', 0); //todo: you need to fix this as zero is arbitrary number right now
+        // this.rp.setCampaignRecord(this.campaignModel.getCampaignId(), 'kiosk_mode', this.contGroup.value.kiosk_mode);
+        // this.rp.reduxCommit()
     }
 
     private renderFormInputs() {
