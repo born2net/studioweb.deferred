@@ -629,6 +629,16 @@ export class YellowPepperService {
             .take(1)
     }
 
+    isBrandingDisabled(): Observable<boolean> {
+        return this.store.select(store => store.appDb.userModel)
+            .filter(i_user => {
+                return i_user.getAccountType() != -1;
+            })
+            .map((i_user: UserModel) => {
+                return i_user.resellerId == 1 || i_user.resellerWhiteLabel.WhiteLabel.attr.enabled == "1"
+            })
+    }
+
     /**
      Get all timeline s for specified campaign id
      **/

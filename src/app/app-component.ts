@@ -40,7 +40,8 @@ export class AppComponent implements AfterViewInit {
     m_ShowModeEnum = MainAppShowModeEnum;
     m_showMode: any = MainAppShowModeEnum.MAIN;
     m_hidden = false;
-
+    isBrandingDisabled: Observable<boolean>
+    
     constructor(private router: Router,
                 private localStorage: LocalStorage,
                 private commBroker: CommBroker,
@@ -71,6 +72,7 @@ export class AppComponent implements AfterViewInit {
     }
 
     ngOnInit() {
+        this.isBrandingDisabled = this.yp.isBrandingDisabled()
         let s = this.router.events
             .subscribe((val) => {
                 if (val instanceof NavigationEnd) {

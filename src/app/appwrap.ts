@@ -1,6 +1,8 @@
 import {Component} from "@angular/core";
 import {Router} from "@angular/router";
 import {Compbaser} from "ng-mslib";
+import {Observable} from "rxjs/Observable";
+import {YellowPepperService} from "../services/yellowpepper.service";
 
 @Component({
     template: `
@@ -13,7 +15,7 @@ import {Compbaser} from "ng-mslib";
                 <ng-menu-item [fontawesome]="'fa-laptop'" [title]="'Stations'"></ng-menu-item>
                 <ng-menu-item [fontawesome]="'fa-group'" [title]="'Fasterq'"></ng-menu-item>
                 <ng-menu-item [fontawesome]="'fa-cog'" [title]="'Settings'"></ng-menu-item>
-                <ng-menu-item [fontawesome]="'fa-cloud-upload'" [title]="'Studiopro'"></ng-menu-item>
+                <ng-menu-item *ngIf="isBrandingDisabled | async" [fontawesome]="'fa-cloud-upload'" [title]="'Studiopro'"></ng-menu-item>
                 <ng-menu-item [fontawesome]="'fa-power-off'" [title]="'Logout'"></ng-menu-item>
             </ng-menu>
             <div class="col-md-11" id="mainPanelWrapWasp" >
@@ -24,13 +26,15 @@ import {Compbaser} from "ng-mslib";
 })
 export class Appwrap extends Compbaser {
 
-    constructor(private router: Router) {
+    isBrandingDisabled: Observable<boolean>
+
+    constructor(private router: Router, private yp:YellowPepperService) {
         super();
         jQuery(".navbar-header .navbar-toggle").trigger("click");
         jQuery('.navbar-nav').css({
             display: 'block'
         });
-        // this.listenMenuChanges();
+        this.isBrandingDisabled = this.yp.isBrandingDisabled()
     }
 
     // public listenMenuChanges() {

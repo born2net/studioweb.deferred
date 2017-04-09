@@ -1,6 +1,6 @@
 {
   "name": "studioweb",
-  "version": "0.1.250",
+  "version": "0.1.254",
   "license": "Modified GPL (see readme.md)",
   "angular-cli": {},
   "scripts": {
@@ -92,6 +92,7 @@
     "@angular/compiler-cli": "^4.0.0",
     "@angular/language-service": "^4.1.0-beta",
     "@angularclass/hmr": "^1.2.2",
+    "@types/core-js": "^0.9.41",
     "@types/hammerjs": "^2.0.33",
     "@types/immutable": "^3.8.6",
     "@types/jasmine": "2.5.38",

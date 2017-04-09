@@ -312,7 +312,7 @@ export class FasterqTerminal extends Compbaser implements AfterViewInit {
                     this.simplestorage.removeItem('data');
                     window.clearInterval(this.m_statusHandler);
                     var url = this._buildURL();
-                    $(location).attr('href', url);
+                    jQuery(location).attr('href', url);
                 }
             }
         })
@@ -326,7 +326,7 @@ export class FasterqTerminal extends Compbaser implements AfterViewInit {
         bootbox.prompt('are you sure you want to let go of your spot (type yes or no)?', (i_answer) => {
             if (i_answer) {
                 if (i_answer.toLowerCase() == 'yes') {
-                    $('#appEntry').html('<h1 style="text-align: center; padding: 100px">have a nice day</h1>');
+                    jQuery('#appEntry').html('<h1 style="text-align: center; padding: 100px">have a nice day</h1>');
                     this.simplestorage.removeItem('data');
                     window.clearInterval(this.m_statusHandler);
                 }
@@ -402,8 +402,8 @@ export class FasterqTerminal extends Compbaser implements AfterViewInit {
      **/
     @timeout(1000)
     _createQRcode() {
-        $('.carousel').carousel()
-        var q: any = $("#qrcode", this.el.nativeElement);
+        jQuery('.carousel').carousel()
+        var q: any = jQuery("#qrcode", this.el.nativeElement);
         q = q[0];
         var qrcode = new QRCode(q, {width: 200, height: 200});
         var url = this._buildURL();
@@ -501,10 +501,10 @@ export class FasterqTerminal extends Compbaser implements AfterViewInit {
      **/
     _printNumber(i_service_id, name) {
         this.zone.runOutsideAngular(() => {
-            var $printDiag = $('#printDiag');
+            var $printDiag = jQuery('#printDiag');
             //var div = document.getElementById("printerDiv");
             var p = function () {
-                $('body').append('<h2></h2>')
+                jQuery('body').append('<h2></h2>')
             }
             var arg = Lib.Base64Encode(i_service_id + ':_:' + name)
             $printDiag.html('<iframe src="print.html?serviceId=' + arg + '" onload="this.contentWindow.print();"></iframe>');
@@ -512,7 +512,7 @@ export class FasterqTerminal extends Compbaser implements AfterViewInit {
 
         // $printDiag.find('h1').text('your number is ' + i_service_id);
         // $printDiag.find('h3').text('created on ' + moment().format('MMMM Do YYYY, h:mm:ss a'));
-        // var divContents = $(Elements.PRINT_DIAG).html();
+        // var divContents = jQuery(Elements.PRINT_DIAG).html();
         // var printWindow = window.open('', '', 'height=250,width=450');
         // printWindow.document.write('<html><head><title>' + self.model.get('name') + '</title>');
         // printWindow.document.write('</head><body><center>');

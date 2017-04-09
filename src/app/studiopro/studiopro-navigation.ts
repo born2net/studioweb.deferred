@@ -3,6 +3,9 @@ import {Compbaser} from "ng-mslib";
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
 import {RedPepperService} from "../../services/redpepper.service";
+import {YellowPepperService} from "../../services/yellowpepper.service";
+import {Observable} from "rxjs/Observable";
+import {UserModel} from "../../models/UserModel";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -115,7 +118,7 @@ import {RedPepperService} from "../../services/redpepper.service";
                             <div class="space"></div>
                         </div>
                         <ul class="list-group">
-                            <li *ngIf="subAccount" class="list-group-item">
+                            <li *ngIf="isBrandingDisabled | async" class="list-group-item">
                                 <span class="glyphicon glyphicon-ok"></span>
                                 <span data-localize="onehundredFree"> 100% FREE</span>
                             </li>
@@ -154,7 +157,7 @@ import {RedPepperService} from "../../services/redpepper.service";
                                 <span class="glyphicon glyphicon-ok"></span><span data-localize="openSourceGitHub"> Open source (GitHub)</span>
                             </li>
                         </ul>
-                        <div *ngIf="subAccount" class="try">
+                        <div *ngIf="isBrandingDisabled | async" class="try">
                             <p class="price">$0.00</p>
                             <button class="pull-right btnPrice btn btn-default" disabled="disabled" href="#" type="button" data-localize="youAreHere">you are here
                             </button>
@@ -170,7 +173,7 @@ import {RedPepperService} from "../../services/redpepper.service";
                             <div class="space"></div>
                         </div>
                         <ul class="list-group">
-                            <li *ngIf="subAccount" class="list-group-item">
+                            <li *ngIf="isBrandingDisabled | async" class="list-group-item">
                                 <span class="glyphicon glyphicon-ok"></span><span data-localize="onehundredFree"> 100% FREE</span>
                             </li>
                             <li class="list-group-item">
@@ -207,7 +210,7 @@ import {RedPepperService} from "../../services/redpepper.service";
                                 <span class="glyphicon glyphicon-ok"></span><span data-localize="muchMore"> and much more...</span>
                             </li>
                         </ul>
-                        <div *ngIf="subAccount" class="try">
+                        <div *ngIf="isBrandingDisabled | async" class="try">
                             <p class="price">$0.00</p>
                             <a (click)="_onConvert($event)" id="convertAccount" class="pull-right btnPrice btn-primary btn btn-default" href="#" type="button" data-localize="convert">Convert</a>
                         </div>
@@ -221,7 +224,7 @@ import {RedPepperService} from "../../services/redpepper.service";
                             <div class="space"></div>
                         </div>
                         <ul class="list-group">
-                            <li *ngIf="subAccount" class="list-group-item">
+                            <li *ngIf="isBrandingDisabled | async" class="list-group-item">
                                 <span class="glyphicon glyphicon-ok"></span><span data-localize="nintynine"> $99 a month (flat)</span>
                             </li>
                             <li class="list-group-item">
@@ -259,9 +262,9 @@ import {RedPepperService} from "../../services/redpepper.service";
                             </li>
                         </ul>
                         <div class="try">
-                            <p *ngIf="subAccount" class="price">$99/<span data-localize="month">month</span>
+                            <p *ngIf="isBrandingDisabled | async" class="price">$99/<span data-localize="month">month</span>
                             </p>
-                            <button *ngIf="subAccount" (click)="_onSubscribe($event)" id="subscribeAccount" class="pull-right showUpgradeModal btnPrice btn-primary btn btn-default" href="#" type="button" data-localize="subscribe"> Subscribe
+                            <button *ngIf="isBrandingDisabled | async" (click)="_onSubscribe($event)" id="subscribeAccount" class="pull-right showUpgradeModal btnPrice btn-primary btn btn-default" href="#" type="button" data-localize="subscribe"> Subscribe
                             </button>
                         </div>
                     </div>
@@ -284,11 +287,13 @@ export class StudioProNavigation extends Compbaser {
     @ViewChild(ModalComponent)
     modal: ModalComponent;
     subAccount = false;
+    isBrandingDisabled: Observable<boolean>
 
-    constructor(private rp:RedPepperService){
+    constructor(private yp: YellowPepperService, private rp: RedPepperService) {
         super();
+        this.isBrandingDisabled = this.yp.isBrandingDisabled()
     }
-    
+
     _initCustomer() {
         if (this.rp.getUserData().resellerID == 1 || this.rp.getUserData().whiteLabel == false) {
             this.subAccount = false;

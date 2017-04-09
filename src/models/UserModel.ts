@@ -49,6 +49,10 @@ export class UserModel extends StoreModel {
         return this.user();
     }
 
+    get resellerId(){
+        return this.getKey('resellerId');
+    }
+
     user() {
         return this.getKey('user');
     }
@@ -89,7 +93,11 @@ export class UserModel extends StoreModel {
         return this.setKey<UserModel>(UserModel, 'resellerWhiteLabelJson', value);
     }
 
-    getAccountType(): boolean {
+    get resellerWhiteLabel() {
+        return this.getKey('resellerWhiteLabelJson');
+    }
+
+    getAccountType() {
         return this.getKey('accountType');
     }
 
