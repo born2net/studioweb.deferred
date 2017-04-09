@@ -6,6 +6,9 @@ import {MediaPlayer} from "../../comps/media-player/media-player";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
+    styles: [`
+        button { padding: 8px; margin: 8px; width: 200px }
+    `],
     host: {
         '[@routeAnimation]': 'true',
         '[style.display]': "'block'"
