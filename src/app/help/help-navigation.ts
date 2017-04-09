@@ -1,6 +1,8 @@
-import {ChangeDetectionStrategy, Component} from "@angular/core";
+import {ChangeDetectionStrategy, Component, ViewChild} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {animate, state, style, transition, trigger} from "@angular/animations";
+import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
+import {MediaPlayer} from "../../comps/media-player/media-player";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -55,43 +57,61 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
                 <h3 data-localize="additionalLinks">Additional links</h3>
                 <ul>
                     <li>
-                        <a class="helpLinks" href="http://lite.digitalsignage.com" data-localize="studioLitePage">StudioLite page</a>
+                        <a class="helpLinks"target="_blank" href="http://lite.digitalsignage.com" data-localize="studioLitePage">StudioLite page</a>
                     </li>
                     <li>
-                        <a class="helpLinks" href="http://script.digitalsignage.com/forum/index.php" data-localize="supportForum">Support forum</a>
+                        <a class="helpLinks"target="_blank" href="http://script.digitalsignage.com/forum/index.php" data-localize="supportForum">Support forum</a>
                     </li>
 
                     <li>
-                        <a class="helpLinks" href="http://git.digitalsignage.com" data-localize="openSource">Open source</a>
+                        <a class="helpLinks"target="_blank" href="http://git.digitalsignage.com" data-localize="openSource">Open source</a>
                     </li>
                     <li>
-                        <a class="helpLinks" href="http://script.digitalsignage.com/cgi-bin/webinar.cgi" data-localize="webinar">Webinar</a>
+                        <a class="helpLinks" target="_blank" href="http://script.digitalsignage.com/cgi-bin/webinar.cgi" data-localize="webinar">Webinar</a>
                     </li>
                     <li>
-                        <a class="helpLinks" href="http://www.digitalsignage.com/_html/faqs.html" data-localize="faq">FAQs</a>
+                        <a class="helpLinks" target="_blank" href="http://www.digitalsignage.com/_html/faqs.html" data-localize="faq">FAQs</a>
                     </li>
                     <li>
-                        <a class="helpLinks"  href="http://www.digitalsignage.com/support/upload/index.php?/Knowledgebase/List" data-localize="knowledgeBase">Knowledge base</a>
+                        <a class="helpLinks" target="_blank"  href="http://www.digitalsignage.com/support/upload/index.php?/Knowledgebase/List" data-localize="knowledgeBase">Knowledge base</a>
                     </li>
                 </ul>
             </div>
             <hr/>
         </div>
-        <media-player [playResource]="m_playResource"></media-player>
-
-
-    `,
+        <modal (onDismiss)="_onClose()" (onClose)="_onClose()" [size]="'lg'" #modal>
+            <modal-header [show-close]="true">
+            </modal-header>
+            <modal-body>
+                <media-player *ngIf="m_playing" [autoPlay]="true" #mediaPlayer [playResource]="m_playResource"></media-player>
+            </modal-body>
+            <modal-footer [show-default-buttons]="false"></modal-footer>
+        </modal>
+    `
 })
 export class HelpNavigation extends Compbaser {
 
     m_playResource
+    m_playing = false;
+
+    @ViewChild('modal')
+    modal: ModalComponent;
+
+    @ViewChild('mediaPlayer')
+    media: MediaPlayer;
 
     constructor() {
         super();
     }
 
+    _onClose(){
+        this.m_playing = false;
+    }
+
     _onPlay(i_path){
         this.m_playResource = i_path;
+        this.modal.open('lg')
+        this.m_playing = true;
     }
     destroy() {
     }

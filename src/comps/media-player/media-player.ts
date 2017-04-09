@@ -60,6 +60,8 @@ export class MediaPlayer {
         this.onSwap(i_resource, 'video/mp4')
     }
 
+    @Input() autoPlay:boolean = false;
+
     onSwap(source: string, type: string) {
         if (this.api) this.api.pause();
         this.sources = new Array<Object>();
@@ -69,10 +71,15 @@ export class MediaPlayer {
         });
         setTimeout(() => {
             this.api.getDefaultMedia().currentTime = 0;
-            // if (this.api) this.api.play();
+            if (this.api && this.autoPlay)
+                this.api.play();
         }, 300)
 
 
+    }
+
+    getApi(): VgAPI {
+        return this.api;
     }
 
     onPlayerReady(i_api: VgAPI) {
