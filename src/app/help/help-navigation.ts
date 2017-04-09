@@ -51,7 +51,6 @@ import {MediaPlayer} from "../../comps/media-player/media-player";
             <button class="videos btn btn-primary btn-lg"  (click)="_onPlay('http://s3.signage.me/business1000/resources/FasterQv2.mp4')">
                 <span>FasterQue line management</span>
             </button>
-
             <hr/>
             <div class="reshid">
                 <h3 data-localize="additionalLinks">Additional links</h3>
@@ -62,7 +61,6 @@ import {MediaPlayer} from "../../comps/media-player/media-player";
                     <li>
                         <a class="helpLinks"target="_blank" href="http://script.digitalsignage.com/forum/index.php" data-localize="supportForum">Support forum</a>
                     </li>
-
                     <li>
                         <a class="helpLinks"target="_blank" href="http://git.digitalsignage.com" data-localize="openSource">Open source</a>
                     </li>
