@@ -56,7 +56,7 @@ import {MediaPlayer} from "../../comps/media-player/media-player";
             </button>
             <hr/>
             <div class="reshid">
-                <h3 data-localize="additionalLinks">Additional links</h3>
+                <h3 i18n > links</h3>
                 <ul>
                     <li>
                         <a class="helpLinks"target="_blank" href="http://lite.digitalsignage.com" data-localize="studioLitePage">StudioLite page</a>
@@ -79,6 +79,11 @@ import {MediaPlayer} from "../../comps/media-player/media-player";
                 </ul>
             </div>
             <hr/>
+            <h5 i18n>Powered by Google's Angular framework</h5>
+            <a class="helpLinks" target="_blank"  href="https://angular.io/">
+                <img src="./assets/angular.png"/>
+            </a>
+            
         </div>
         <modal (onDismiss)="_onClose()" (onClose)="_onClose()" [size]="'lg'" #modal>
             <modal-header [show-close]="true">

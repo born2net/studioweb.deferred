@@ -9,10 +9,11 @@
                 <span class="icon-bar"></span>
             </button>
             <span id="angularText">
-        StudioWeb
-        <Logo></Logo>
-        <label [ngClass]="{offline: offlineDevMode}" style="font-size: 10px; font-family: Arial">{{version}} | ng {{ngVersion}} | {{offlineDevMode==true ? 'offline' : 'online'}}</label>
-      </span>
+                StudioWeb
+                <Logo></Logo>
+                <label [ngClass]="{offline: offlineDevMode}" style="font-size: 10px; font-family: Arial">{{version}} | ng {{ngVersion}} | {{offlineDevMode==true ? 'offline' : 'online'}}</label>
+            </span>
+
         </div>
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">>
             <ng-menu [routePrefix]="'App1'" [fileMenuMode]="false">
@@ -27,6 +28,30 @@
                 <ng-menu-item [fontawesome]="'fa-cloud-upload'" [title]="'Studiopro'"></ng-menu-item>
                 <ng-menu-item [fontawesome]="'fa-power-off'" [title]="'Resources'"></ng-menu-item>
             </ng-menu>
+
+            <ul style="height: 20px" class="nav navbar-nav navbar-right">
+                <li>
+                    <a class="showUpgradeModal reshid" href="#"><i class="faHeader fa fa-cloud-upload"></i></a>
+                </li>
+                <li>
+                    <a id="saveConfig" href="#"><i class="faHeader fa fa-save"></i></a>
+                </li>
+                <li>
+                    <a class="reshid" id="liveChat" href="#"><i class="faHeader fa fa-comments-o"></i></a>
+                </li>
+                <!-- disabled menubar tutorial view -->
+                <div style="display: none">
+                    <li>
+                        <a class="hidden-xs hidden-sm hidden-md" id="liveTutorial" href="#"><i class="faHeader fa fa-magic"></i></a>
+                    </li>
+                </div>
+                <li>
+                    <a id="languagePrompt" href="#"><i class="faHeader fa fa-globe"></i></a>
+                </li>
+                <li style="padding-right: 20px">
+                    <a id="dashboard" href="#"><i class="faHeader fa fa-dashboard"></i></a>
+                </li>
+            </ul>
         </div>
     </nav>
     <div id="appEntry">

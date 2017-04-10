@@ -4,10 +4,7 @@ import {LocalStorage} from "../../services/LocalStorage";
 @Component({
     selector: 'Logout',
     providers: [LocalStorage],
-    template: `
-        <h1>Goodbye</h1>
-        <small>I am Logout component</small>
-        `
+    template: ``
 })
 
 export class Logout {
