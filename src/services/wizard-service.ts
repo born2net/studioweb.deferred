@@ -543,7 +543,7 @@ export class WizardService {
     // "wstep8": "<text>select next channel<br/></text>with this button you can simply cycle through all<br/>the channels of the currently selected timeline, its simple...",
     // "wstep9": "<text>add content<br/></text>Click [+] to add content to your selected channel (and matching screen division)",
 
-    public inModule(i_name: string) {
+    public inModule(i_name: 'scenes' | 'campaigns' | 'resources' | 'stations') {
         this.m_enjoyHint = new EnjoyHint({
             onStart: () => {
             },
