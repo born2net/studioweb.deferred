@@ -49,7 +49,7 @@
                     <a (click)="_onMenuIcon('web',$event)" *ngIf="isBrandingDisabled | async" id="languagePrompt" href="#"><i class="faHeader fa fa-globe"></i></a>
                 </li>
                 <!--<li style="padding-right: 20px">-->
-                    <!--<a (click)="_onMenuIcon('dash',$event)" id="dashboard" href="#"><i class="faHeader fa fa-dashboard"></i></a>-->
+                <!--<a (click)="_onMenuIcon('dash',$event)" id="dashboard" href="#"><i class="faHeader fa fa-dashboard"></i></a>-->
                 <!--</li>-->
             </ul>
 
@@ -82,6 +82,10 @@
     </div>
 </div>
 <loading [style]="{'margin-top': '150px'}" *ngIf="m_showMode == m_ShowModeEnum.SAVE"></loading>
+<div *ngIf="m_showMode == m_ShowModeEnum.LOGOUT">
+    <h1 style="text-align: center; margin-top: 200px" i18n>Have a nice day <i class="fa fa-smile-o"></i></h1>
+</div>
+
 <live-preview *ngIf="m_showMode == m_ShowModeEnum.PREVIEW"></live-preview>
 <modal #modal>
     <modal-header [show-close]="true">

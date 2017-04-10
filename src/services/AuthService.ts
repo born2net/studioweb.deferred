@@ -1,5 +1,5 @@
-import {Injectable, Inject, forwardRef} from "@angular/core";
-import {Router, ActivatedRouteSnapshot, RouterStateSnapshot, ActivatedRoute, NavigationEnd, NavigationStart} from "@angular/router";
+import {Injectable} from "@angular/core";
+import {ActivatedRoute, ActivatedRouteSnapshot, NavigationStart, Router, RouterStateSnapshot} from "@angular/router";
 import {LocalStorage} from "./LocalStorage";
 import {StoreService} from "./StoreService";
 import "rxjs/add/observable/fromPromise";

@@ -1262,3 +1262,18 @@ form .list-group, form .list-group-item {
     -o-transition: height 0.01s;
     transition: height 0.01s;
 }
+
+#toast-container > div {
+    position: relative;
+    overflow: hidden;
+    margin: 0 0 6px;
+    padding: 15px 15px 15px 50px;
+    width: 300px;
+    -moz-border-radius: 3px 3px 3px 3px;
+    -webkit-border-radius: 3px 3px 3px 3px;
+    border-radius: 3px 3px 3px 3px;
+    background-position: 15px center;
+    background-repeat: no-repeat;
+    color: #FFFFFF;
+    opacity: 0.8;
+}

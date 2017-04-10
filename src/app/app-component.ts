@@ -18,7 +18,8 @@ import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
 enum MainAppShowModeEnum {
     MAIN,
     SAVE,
-    PREVIEW
+    PREVIEW,
+    LOGOUT
 }
 
 export enum MainAppShowStateEnum {
@@ -27,7 +28,8 @@ export enum MainAppShowStateEnum {
     SAVE,
     SAVING,
     SAVE_AND_PREVIEW,
-    SAVED
+    SAVED,
+    GOODBYE
 }
 
 @Component({
@@ -199,6 +201,12 @@ export class AppComponent implements AfterViewInit {
                         break;
                     }
 
+                    case MainAppShowStateEnum.GOODBYE: {
+                        con('Goodbye');
+                        this.viewMode(MainAppShowModeEnum.LOGOUT);
+                        break;
+                    }
+
                     case MainAppShowStateEnum.SAVE: {
                         this.save(() => {
                             this.viewMode(MainAppShowModeEnum.MAIN);
@@ -239,6 +247,10 @@ export class AppComponent implements AfterViewInit {
                 break;
             }
             case MainAppShowModeEnum.SAVE: {
+                this.m_hidden = true;
+                break;
+            }
+            case MainAppShowModeEnum.LOGOUT: {
                 this.m_hidden = true;
                 break;
             }

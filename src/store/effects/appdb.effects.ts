@@ -26,6 +26,7 @@ import {IQueueSave} from "../../app/fasterq/fasterq-editor";
 import {CommBroker, IMessage} from "../../services/CommBroker";
 import {FASTERQ_QUEUE_CALL_CANCLED} from "../../interfaces/Consts";
 import {message} from "gulp-typescript/release/utils";
+import {ToastsManager} from "ng2-toastr";
 
 export const EFFECT_AUTH_START = 'EFFECT_AUTH_START';
 export const EFFECT_AUTH_END = 'EFFECT_AUTH_END';
@@ -76,6 +77,7 @@ export class AppDbEffects {
                 private rp: RedPepperService,
                 private yp: YellowPepperService,
                 private commBroker: CommBroker,
+                private toastr: ToastsManager,
                 private http: Http) {
 
         // todo: disabled injection as broken in AOT
@@ -109,7 +111,7 @@ export class AppDbEffects {
                 const url = baseUrl.replace('END_POINT', 'twoFactor') + `/${action.payload.token}/${action.payload.enable}`
                 return this.http.get(url)
                     .catch((err: any) => {
-                        alert('Error getting two factor');
+                        this.toastr.error('Error getting two factor');
                         return Observable.throw(err);
                     })
                     .finally(() => {
@@ -137,7 +139,7 @@ export class AppDbEffects {
                 const url = baseUrl.replace('END_POINT', 'twoFactor') + `/${action.payload.token}/${action.payload.enable}`
                 return this.http.get(url)
                     .catch((err: any) => {
-                        alert('Error getting two factor');
+                        this.toastr.error('Error getting two factor');
                         return Observable.throw(err);
                     })
                     .finally(() => {
@@ -166,6 +168,7 @@ export class AppDbEffects {
         .map(authStatus => ({type: EFFECT_AUTH_END, payload: authStatus}));
 
     private authUser(action: Action): Observable<any> {
+        this.toastr.warning('Authenticating, please wait');
         let userModel: UserModel = action.payload;
         this.store.dispatch({type: EFFECT_UPDATE_USER_MODEL, payload: userModel});
 
@@ -181,7 +184,7 @@ export class AppDbEffects {
             } else {
 
                 if (pepperConnection.pepperAuthReply.warning == 'not a studioLite account') {
-                    // console.log('pro account!!');
+                    return bootbox.alert('This is not a StudioLite account, please use StudioPro')
                 } else {
                     // console.log('lite account');
                 }
@@ -256,6 +259,7 @@ export class AppDbEffects {
                                 payload: AuthenticateFlags.TWO_FACTOR_ENABLED
                             });
                         } else {
+                            this.toastr.info('Authenticated successfully');
                             this.store.dispatch({
                                 type: EFFECT_AUTH_STATUS,
                                 payload: AuthenticateFlags.AUTH_PASS_NO_TWO_FACTOR

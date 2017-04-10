@@ -1,6 +1,8 @@
 import {ChangeDetectionStrategy, Component} from "@angular/core";
 import {Compbaser} from "ng-mslib";
 import {animate, state, style, transition, trigger} from "@angular/animations";
+import {ToastsManager} from "ng2-toastr";
+import {timeout} from "../../decorators/timeout-decorator";
 
 @Component({
     selector: 'Dashboard',
@@ -25,8 +27,9 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
 })
 export class Dashboard extends Compbaser {
 
-    constructor() {
+    constructor(private toastr: ToastsManager) {
         super();
+
         this.options = {
             title: {text: 'simple chart'},
             series: [{
@@ -34,6 +37,15 @@ export class Dashboard extends Compbaser {
             }]
         };
 
+    }
+
+    ngAfterViewInit(){
+        this.clearToasts();
+    }
+
+    @timeout(1000)
+    clearToasts(){
+        this.toastr.clearAllToasts();
     }
 
     options: Object;
