@@ -56,9 +56,9 @@ export class SceneManager extends Compbaser {
         this.sceneSelected$ = this.yp.ngrxStore.select(store => store.appDb.uiState.scene.sceneSelected)
         this._notifyResetSceneSelection();
 
-        setTimeout(()=>{
-            this.wizardService.inModule('scenes');
-        },4000)
+        // setTimeout(()=>{
+        //     this.wizardService.inModule('scenes');
+        // },4000)
     }
 
     @ViewChild(SceneList)
