@@ -96,12 +96,11 @@ export class AppComponent implements AfterViewInit {
         event.preventDefault();
         switch (icon) {
             case 'web': {
-                break;
-            }
-            case 'dash': {
+                window.open('http://www.digitalsignage.com', '_blank');
                 break;
             }
             case 'chat': {
+                window.open('http://www.digitalsignage.com/_html/live_chat.html', '_blank');
                 break;
             }
             case 'upgrade': {
@@ -110,7 +109,6 @@ export class AppComponent implements AfterViewInit {
             }
             case 'save': {
                 this.saveAndRestartPrompt(() => {
-
                 })
                 break;
             }
