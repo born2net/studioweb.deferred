@@ -168,13 +168,17 @@ export class AppDbEffects {
         .map(authStatus => ({type: EFFECT_AUTH_END, payload: authStatus}));
 
     private authUser(action: Action): Observable<any> {
+        console.log('authenticating');
+        this.toastr.clearAllToasts();
         this.toastr.warning('Authenticating, please wait');
         let userModel: UserModel = action.payload;
         this.store.dispatch({type: EFFECT_UPDATE_USER_MODEL, payload: userModel});
 
         return this.rp.dbConnect(userModel.user(), userModel.pass()).take(1).map((pepperConnection: IPepperConnection) => {
-
+            console.log('authenticating in process');
             if (pepperConnection.pepperAuthReply.status == false) {
+                console.log('authentication failed');
+                this.toastr.error('Authentication failed')
                 userModel = userModel.setAuthenticated(false);
                 userModel = userModel.setAccountType(-1);
                 this.store.dispatch({type: EFFECT_UPDATE_USER_MODEL, payload: userModel});
@@ -182,7 +186,7 @@ export class AppDbEffects {
                 return;
 
             } else {
-
+                console.log('authenticating check account type');
                 if (pepperConnection.pepperAuthReply.warning == 'not a studioLite account') {
                     return bootbox.alert('This is not a StudioLite account, please use StudioPro')
                 } else {

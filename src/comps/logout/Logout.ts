@@ -14,7 +14,7 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
 
 export class Logout {
     constructor(private localStorage: LocalStorage, private rp: RedPepperService, private yp:YellowPepperService) {
-        this.localStorage.removeItem('remember_me');
+        this.localStorage.removeItem('remember_me_studioweb');
         let uiState: IUiState = {mainAppState: MainAppShowStateEnum.GOODBYE}
         this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
         if (this.rp.getUserData().resellerID == 1)

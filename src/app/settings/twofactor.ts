@@ -107,7 +107,7 @@ export class Twofactor extends Compbaser {
             this.twoFactorStatus = true;
             this.removeQrCode();
             this.cd.markForCheck();
-            this.localStorage.removeItem('remember_me');
+            this.localStorage.removeItem('remember_me_studioweb');
             this.renderFormInputs();
         } else {
             // this.removeQrCode();

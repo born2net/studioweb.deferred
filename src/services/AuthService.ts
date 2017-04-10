@@ -93,14 +93,18 @@ export class AuthService {
         var i_user, i_pass, i_remember;
 
         // check local store first
-        var credentials = this.localStorage.getItem('remember_me');
+        console.log('checking credentials in local storage');
+        var credentials = this.localStorage.getItem('remember_me_studioweb');
         if (credentials && (credentials && credentials.u != '')) {
+
             i_user = credentials.u;
             i_pass = credentials.p;
             i_remember = credentials.r;
+            console.log(`credentials found ${i_user}`);
 
         } else {
             // check url params
+            console.log('credentials not found, checking url params');
             var id = this.activatedRoute.snapshot.queryParams['id'];
             if (!_.isUndefined(id)) {
                 id = `${id}=`;
@@ -118,6 +122,7 @@ export class AuthService {
         }
         if (i_user && i_pass) {
             this.router.navigate(['/AutoLogin']);
+            console.log(`auth manually ${i_user}`);
             this.authUser(i_user, i_pass, i_remember)
         } else {
             // no valid user/pass found so go to user login, end of process
@@ -127,13 +132,15 @@ export class AuthService {
 
     public  saveCredentials(i_user, i_pass, i_remember) {
         if (i_remember) {
-            this.localStorage.setItem('remember_me', {
+            console.log('saving local storage');
+            this.localStorage.setItem('remember_me_studioweb', {
                 u: i_user,
                 p: i_pass,
                 r: i_remember
             });
         } else {
-            this.localStorage.setItem('remember_me', {
+            console.log('not saving local storage');
+            this.localStorage.setItem('remember_me_studioweb', {
                 u: '',
                 p: '',
                 r: i_remember
@@ -154,7 +161,7 @@ export class AuthService {
 
 
     public getLocalstoreCred(): { u: string, p: string, r: string } {
-        var credentials = this.localStorage.getItem('remember_me');
+        var credentials = this.localStorage.getItem('remember_me_studioweb');
         if (!credentials)
             return {
                 u: '',
