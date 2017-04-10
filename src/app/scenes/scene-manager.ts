@@ -9,6 +9,7 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
 import {ISceneData} from "../blocks/block-service";
 import {SceneList} from "./scene-list";
 import {ToastsManager} from "ng2-toastr";
+import {WizardService} from "../../services/wizard-service";
 
 @Component({
     // changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,7 +21,7 @@ import {ToastsManager} from "ng2-toastr";
         </div>
         <div>
             <div class="btn-group">
-                <button (click)="_newScene()" type="button" class="btn btn-default">
+                <button id="newScene" (click)="_newScene()" type="button" class="btn btn-default">
                     <i style="font-size: 1em" class="fa fa-rocket"></i>
                     <span i18n>new scene</span>
                 </button>
@@ -48,12 +49,16 @@ export class SceneManager extends Compbaser {
     sceneSelected$;
     public scenes$: Observable<Array<ISceneData>>
 
-    constructor(private yp: YellowPepperService, private rp: RedPepperService, private toastr: ToastsManager) {
+    constructor(private yp: YellowPepperService, private rp: RedPepperService, private toastr: ToastsManager, private wizardService:WizardService) {
         super();
         this.preventRedirect(true);
         this.scenes$ = this.yp.listenScenes()
         this.sceneSelected$ = this.yp.ngrxStore.select(store => store.appDb.uiState.scene.sceneSelected)
         this._notifyResetSceneSelection();
+
+        setTimeout(()=>{
+            this.wizardService.inModule('scenes');
+        },4000)
     }
 
     @ViewChild(SceneList)

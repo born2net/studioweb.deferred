@@ -45,6 +45,12 @@ declare module FlashDetect {
     export var versionAtLeast:(v:number)=>void;
 }
 
+declare class EnjoyHint {
+    constructor(config:any)
+    set(value:any);
+    run:()=>void;
+}
+
 declare class RC4 {
     constructor(key:any);
     doEncrypt: any;
@@ -114,7 +120,7 @@ interface jQueryModal extends JQuery {
 // interface JQuery {
 //     modal: any;
 // }
-             
+
 declare var Draggable;
 declare var con:Con;
 declare var jXML: JQueryStatic;

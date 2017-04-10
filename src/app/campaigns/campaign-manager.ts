@@ -10,6 +10,7 @@ import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.action
 import {IUiState} from "../../store/store.data";
 import {YellowPepperService} from "../../services/yellowpepper.service";
 import {MainAppShowStateEnum} from "../app-component";
+import {WizardService} from "../../services/wizard-service";
 
 @Component({
     // changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,7 +37,7 @@ export class CampaignManager extends Compbaser {
     public timelineSelected$: Observable<number>;
     cars;
 
-    constructor(private el: ElementRef, private yp: YellowPepperService, private redPepperService: RedPepperService, private router: Router) {
+    constructor(private el: ElementRef, private yp: YellowPepperService, private redPepperService: RedPepperService, private router: Router, private wizardService:WizardService) {
         super();
         this.preventRedirect(true);
         this.timelineSelected$ = this.yp.ngrxStore.select(store => store.appDb.uiState.campaign.timelineSelected).map(v => v);
@@ -134,6 +135,10 @@ export class CampaignManager extends Compbaser {
         var uiState: IUiState = {uiSideProps: SideProps.miniDashboard}
         this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
         this.slideToCampaignName.emit();
+    }
+
+    _onWizard(){
+        this.wizardService.inModule('campaigns');
     }
 
     destroy() {
