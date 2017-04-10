@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, VERSION, ViewContainerRef} from "@angular/core";
+import {AfterViewInit, Component, VERSION, ViewChild, ViewContainerRef} from "@angular/core";
 import "rxjs/add/operator/catch";
 import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
 import {CommBroker} from "../services/CommBroker";
@@ -13,6 +13,7 @@ import {YellowPepperService} from "../services/yellowpepper.service";
 import {RedPepperService} from "../services/redpepper.service";
 import {IUiState} from "../store/store.data";
 import {ACTION_UISTATE_UPDATE} from "../store/actions/appdb.actions";
+import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
 
 enum MainAppShowModeEnum {
     MAIN,
@@ -41,7 +42,8 @@ export class AppComponent implements AfterViewInit {
     m_showMode: any = MainAppShowModeEnum.MAIN;
     m_hidden = false;
     isBrandingDisabled: Observable<boolean>
-    
+    syncOnSave: boolean = false;
+
     constructor(private router: Router,
                 private localStorage: LocalStorage,
                 private commBroker: CommBroker,
@@ -71,6 +73,9 @@ export class AppComponent implements AfterViewInit {
             });
     }
 
+    @ViewChild(ModalComponent)
+    modal: ModalComponent;
+
     ngOnInit() {
         this.isBrandingDisabled = this.yp.isBrandingDisabled()
         let s = this.router.events
@@ -84,6 +89,86 @@ export class AppComponent implements AfterViewInit {
                     s.unsubscribe();
                 }
             }, (e) => console.error(e));
+    }
+
+    _onMenuIcon(icon, event) {
+        event.stopImmediatePropagation();
+        event.preventDefault();
+        switch (icon) {
+            case 'web': {
+                break;
+            }
+            case 'dash': {
+                break;
+            }
+            case 'chat': {
+                break;
+            }
+            case 'upgrade': {
+                this.modal.open();
+                break;
+            }
+            case 'save': {
+                this.saveAndRestartPrompt(() => {
+
+                })
+                break;
+            }
+        }
+    }
+
+    /**
+     Save and serialize configuration to remote mediaSERVER> Save and restart will check if
+     the Stations module has been loaded and if no connected stations are present, it will NOT
+     prompt for option to restart station on save, otherwise it will.
+     @method saveAndRestartPrompt
+     @param {Function} call back after save
+     **/
+    saveAndRestartPrompt(i_callBack) {
+        // self.m_stationsListView = BB.comBroker.getService(BB.SERVICES['STATIONS_LIST_VIEW']);
+        // if (self.m_stationsListView != undefined) {
+        //     var totalStations = self.m_stationsListView.getTotalActiveStation();
+        //     if (totalStations == 0) {
+        //         self.save(function () {
+        //         });
+        //         return;
+        //     }
+        // }
+
+        bootbox.dialog({
+            message: 'Restart connected stations and apply your saved work?',
+            title: 'Save work to remote server',
+            buttons: {
+                success: {
+                    label: 'OK',
+                    className: "btn-success",
+                    callback: () => {
+                        let uiState: IUiState = {mainAppState: MainAppShowStateEnum.SAVE}
+                        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+                    }
+                },
+                danger: {
+                    label: 'Save & restart stations',
+                    className: "btn-success",
+                    callback: () => {
+                        // reboot will reboot the PC or exits presentation android
+                        // pepper.sendCommand('rebootStation', -1, function () {});
+                        // reboot player exits player
+                        // pepper.sendCommand('rebootPlayer', -1, function () {
+                        // sync and restart does a fast / soft restart of player
+                        this.syncOnSave = true;
+                        let uiState: IUiState = {mainAppState: MainAppShowStateEnum.SAVE}
+                        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+                    }
+                },
+                main: {
+                    label: 'Cancel',
+                    callback: () => {
+                        return;
+                    }
+                }
+            }
+        });
     }
 
     ngAfterViewInit() {
@@ -110,6 +195,9 @@ export class AppComponent implements AfterViewInit {
 
                     case MainAppShowStateEnum.SAVED: {
                         con('Saved to server');
+                        if (this.syncOnSave)
+                            this.rp.sendCommand('syncAndStart', -1, () => {});
+                        this.syncOnSave = false;
                         break;
                     }
 

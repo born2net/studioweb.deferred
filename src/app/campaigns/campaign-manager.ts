@@ -121,10 +121,10 @@ export class CampaignManager extends Compbaser {
         this.router.navigate(['/App1/StudioPro'])
     }
 
-    save() {
-        let uiState: IUiState = {mainAppState: MainAppShowStateEnum.SAVE}
-        this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
-    }
+    // save() {
+    //     let uiState: IUiState = {mainAppState: MainAppShowStateEnum.SAVE}
+    //     this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+    // }
 
     _onCampaignSelected(i_uiState: IUiState) {
         this.yp.ngrxStore.dispatch(({type: ACTION_UISTATE_UPDATE, payload: i_uiState}))

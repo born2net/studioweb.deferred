@@ -286,6 +286,7 @@ export class StudioProNavigation extends Compbaser {
 
     @ViewChild(ModalComponent)
     modal: ModalComponent;
+
     subAccount = false;
     isBrandingDisabled: Observable<boolean>
 

@@ -15,7 +15,7 @@
             </span>
 
         </div>
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">>
+        <div class="noCollapsing collapse navbar-collapse" id="bs-example-navbar-collapse-1">>
             <ng-menu [routePrefix]="'App1'" [fileMenuMode]="false">
                 <ng-menu-item [fontawesome]="'fa-dashboard'" [title]="'Dashboard'"></ng-menu-item>
                 <ng-menu-item [fontawesome]="'fa-navicon'" [title]="'Campaigns'"></ng-menu-item>
@@ -29,15 +29,15 @@
                 <ng-menu-item [fontawesome]="'fa-power-off'" [title]="'Resources'"></ng-menu-item>
             </ng-menu>
 
-            <ul style="height: 20px" class="nav navbar-nav navbar-right">
+            <ul style="height: 20px" class="nav navbar-nav navbar-right noCollapsing">
                 <li>
-                    <a class="showUpgradeModal reshid" href="#"><i class="faHeader fa fa-cloud-upload"></i></a>
+                    <a (click)="_onMenuIcon('upgrade',$event)" *ngIf="isBrandingDisabled | async" class="showUpgradeModal reshid" href="#"><i style="color: red" class="faHeader fa fa-cloud-upload"></i></a>
                 </li>
                 <li>
-                    <a id="saveConfig" href="#"><i class="faHeader fa fa-save"></i></a>
+                    <a (click)="_onMenuIcon('save',$event)" id="saveConfig" href="#"><i class="faHeader fa fa-save"></i></a>
                 </li>
                 <li>
-                    <a class="reshid" id="liveChat" href="#"><i class="faHeader fa fa-comments-o"></i></a>
+                    <a (click)="_onMenuIcon('chat',$event)" *ngIf="isBrandingDisabled | async" class="reshid" id="liveChat" href="#"><i class="faHeader fa fa-comments-o"></i></a>
                 </li>
                 <!-- disabled menubar tutorial view -->
                 <div style="display: none">
@@ -46,12 +46,13 @@
                     </li>
                 </div>
                 <li>
-                    <a id="languagePrompt" href="#"><i class="faHeader fa fa-globe"></i></a>
+                    <a (click)="_onMenuIcon('web',$event)" id="languagePrompt" href="#"><i class="faHeader fa fa-globe"></i></a>
                 </li>
                 <li style="padding-right: 20px">
-                    <a id="dashboard" href="#"><i class="faHeader fa fa-dashboard"></i></a>
+                    <a (click)="_onMenuIcon('dash',$event)" id="dashboard" href="#"><i class="faHeader fa fa-dashboard"></i></a>
                 </li>
             </ul>
+
         </div>
     </nav>
     <div id="appEntry">
@@ -82,6 +83,15 @@
 </div>
 <loading [style]="{'margin-top': '150px'}" *ngIf="m_showMode == m_ShowModeEnum.SAVE"></loading>
 <live-preview *ngIf="m_showMode == m_ShowModeEnum.PREVIEW"></live-preview>
+<modal #modal>
+    <modal-header [show-close]="true">
+        <h4 i18n class="modal-title">Upgrade to Enterprise - $99.00 per month</h4>
+    </modal-header>
+    <modal-body>
+        <pro-upgrade></pro-upgrade>
+    </modal-body>
+    <modal-footer [show-default-buttons]="false"></modal-footer>
+</modal>
 
 
 

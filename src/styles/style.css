@@ -1253,3 +1253,12 @@ form .list-group, form .list-group-item {
 .personInLine:hover {
     opacity: 0.6;
 }
+
+
+.noCollapsing {
+    -webkit-transition: height 0.01s;
+    -moz-transition: height 0.01s;
+    -ms-transition: height 0.01s;
+    -o-transition: height 0.01s;
+    transition: height 0.01s;
+}
