@@ -8,12 +8,12 @@ import {IUiState, IUiStateCampaign} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE, SideProps} from "../../store/actions/appdb.actions";
 import {List} from "immutable";
 import * as _ from "lodash";
-import {ContextMenuService} from "angular2-contextmenu/src/contextMenu.service";
+import {ContextMenuService} from "ngx-contextmenu";
 import {Once} from "../../decorators/once-decorator";
 import {IScreenTemplateData} from "../../interfaces/IScreenTemplate";
 import {Compbaser} from "ng-mslib";
 // import TweenLite = gsap.TweenLite;
-
+          
 @Component({
     selector: 'sequencer',
     styles: [`
@@ -58,12 +58,12 @@ import {Compbaser} from "ng-mslib";
                 </screen-template>
             </div>
             <context-menu>
-                <template contextMenuItem let-item (execute)="_onContextClicked('load props ',$event.item)">
+                <ng-template contextMenuItem let-item (execute)="_onContextClicked('load props ',$event.item)">
                     timeline properties for {{item?.name}}
-                </template>
-                <template contextMenuItem divider="true"></template>
-                <template contextMenuItem (execute)="_onContextClicked('edit',$event.item)"><span i18n>edit layout</span></template>
-                <template contextMenuItem (execute)="_onContextClicked('nextch',$event.item)"><span i18n>next channel</span></template>
+                </ng-template>
+                <ng-template contextMenuItem divider="true"></ng-template>
+                <ng-template contextMenuItem (execute)="_onContextClicked('edit',$event.item)"><span i18n>edit layout</span></ng-template>
+                <ng-template contextMenuItem (execute)="_onContextClicked('nextch',$event.item)"><span i18n>next channel</span></ng-template>
             </context-menu>
         </div>
     `

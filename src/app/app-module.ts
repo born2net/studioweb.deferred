@@ -43,7 +43,7 @@ import "gsap/CSSPlugin";
 import "gsap/Draggable";
 import "gsap/TweenLite";
 import "gsap/ScrollToPlugin";
-import {Lib} from "../Lib";
+import {Lib} from "../Lib";   
 import {FontLoaderService} from "../services/font-loader-service";
 import {SimpleGridModule} from "../comps/simple-grid-module/SimpleGridModule";
 import {GlobalErrorHandler} from "../services/global-error-handler";
