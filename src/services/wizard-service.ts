@@ -38,8 +38,9 @@ export class WizardService {
             "click #firstImage": 'select your screen orientation, vertical or horizontal',
             "skipButton": {text: "quit"},
             timeout: 500,
-            margin: 0,
-            padding: 0,
+            left: -10,
+            margin: 10,
+            padding: 10,
             onBeforeStart: () => {
                 log('STEP 3');
             }
@@ -57,15 +58,17 @@ export class WizardService {
             }
         },
         {
-            "click #screenLayoutList": 'select your screen layout</text><br/>Each screen division (area) will run some different content',
+            selector: '#screenLayoutList',
+            event: "click",
+            description: 'select your screen layout</text><br/>Each screen division (area) will run some different content',
             skipButton: {text: "quit"},
             top: 0,
             margin: 0,
-            right: 1500,
-            left: -300,
-            bottom: -250,
+            right: 500,
+            left: 0,
+            bottom: 200,
             padding: 0,
-            timeout: 500,
+            timeout: 1000,
             onBeforeStart: function () {
                 log('STEP 5');
             }
