@@ -1,5 +1,11 @@
-import {Injectable} from "@angular/core";
+import {Injectable, NgZone} from "@angular/core";
+import {Router} from "@angular/router";
+import {RedPepperService} from "./redpepper.service";
+import * as _ from 'lodash';
 
+const log = (i_msg) => {
+    console.log(i_msg)
+}
 
 @Injectable()
 export class WizardService {
@@ -23,41 +29,43 @@ export class WizardService {
             "key #newCampaignName": 'name your campaign, press [ENTER] when done</text><br/>this will become useful later<br/>when you assign your campaign to a remote screen<br/>(a screen is also referred to as a <u>station</u>)',
             "skipButton": {text: "quit"},
             keyCode: 13,
+            timeout: 500,
             onBeforeStart: function () {
                 log('STEP 2');
             }
         },
         {
-            event: "click",
-            selector: $('#orientationView').find('img').eq(0),
+            "click #firstImage": 'select your screen orientation, vertical or horizontal',
             "skipButton": {text: "quit"},
-            description: 'select your screen orientation, vertical or horizontal',
             timeout: 500,
             margin: 0,
             padding: 0,
-            onBeforeStart: function () {
+            onBeforeStart: () => {
                 log('STEP 3');
             }
         },
         {
             "click #resolutionList": 'select your screen resolution',
             "skipButton": {text: "quit"},
-            timeout: 500,
+            timeout: 1000,
             bottom: 250,
             margin: 0,
-            right: 500,
+            right: 1500,
             padding: 0,
             onBeforeStart: function () {
                 log('STEP 4');
             }
         },
         {
-            event: "click",
-            "skipButton": {text: "quit"},
-            selector: $('#screenLayoutList'),
-            description: 'select your screen layout</text><br/>Each screen division (area) will run some different content',
+            "click #screenLayoutList": 'select your screen layout</text><br/>Each screen division (area) will run some different content',
+            skipButton: {text: "quit"},
+            top: 0,
+            margin: 0,
+            right: 1500,
+            left: -300,
+            bottom: -250,
+            padding: 0,
             timeout: 500,
-            bottom: 250,
             onBeforeStart: function () {
                 log('STEP 5');
             }
@@ -487,63 +495,11 @@ export class WizardService {
     ];
 
 
-    constructor() {
+    constructor(private router: Router, private rp: RedPepperService, private zone: NgZone) {
     }
 
-    //
-    // "wstep0": "<text>a quick 5 minute tutorial</text><br/>and we will teach you how to use StudioLite... its easy.",
-    // "wstep1": "<text>name your campaign, press [ENTER] when done</text><br/>this will become useful later<br/>when you assign your campaign to a remote screen<br/>(a screen is also referred to as a <u>station</u>)",
-    // "wstep10": "<text>select resource<br/></text>Add images, videos and other files<br/>(later you can also upload file from your own PC)",
-    // "wstep11": "<text>select resource<br/></text>",
-    // "wstep12": "<text>now the resource has been added to the selected channel</text><br/>just go ahead and select it to load up its properties",
-    // "wstep13": "<text>additional properties<br/></text>anytime you select anything in StudioLite,<br/>be sure to checkout the properties box<br/>on the right for additional options and settings",
-    // "wstep14": "<text>resource duration<br/></text>like here, where you can set the playback duration<br/>of your currently selected resource,<br/>the one that you just added",
-    // "wstep15": "<text>edit your screen division layout<br/></text>use this button to edit your current screen layout",
-    // "wstep16": "<text>lets add a new screen division<br/></text>it will automatically be assigned a channel on your timeline",
-    // "wstep17": "<text>position and size your new screen division",
-    // "wstep18": "<text>go back when done</text>",
-    // "wstep19": "<text>click the newly created screen division to continue<br/></text>notice how the screen division was automatically assigned a new channel",
-    // "wstep2": "<text>select your screen orientation, vertical or horizontal</text>",
-    // "wstep20": "<text>mixing content</text><br/>sometimes you want to mix resources and components into a single screen division<br/>Scenes are perfect for that",
-    // "wstep21": "<text>lets create a new scene</text>",
-    // "wstep22": "<text>select your newly created scene to edit it</text>",
-    // "wstep23": "<text>lets add a new resource or component to our scene</text>",
-    // "wstep24": "<text>select a smart component</text>",
-    // "wstep25": "<text>edit your scene</text><br/>now you can position your content<br/>anywhere you like, resize it and change any of the properties",
-    // "wstep26": "<text>lets add another resource</text>",
-    // "wstep27": "<text>assign scene to channel</text>will switch back to campaigns to assign the scene to any timeline we like",
-    // "wstep28": "<text>again position and resize the resource</text>",
-    // "wstep29": "<text>go back to campaigns<br/></text>so we can assign our newly created scene<br/>to any timeline and channel we like",
-    // "wstep3": "<text>select your screen resolution</text>",
-    // "wstep30": "<text>expand the timeline</text>",
-    // "wstep31": "<text>select the next channel</text>",
-    // "wstep32": "<text>now lets add our scene to this channel</text>",
-    // "wstep33": "<text>select scenes to get a list of all available scenes</text>",
-    // "wstep34": "<text>select your scene<br/></text>it will automatically get added to<br/>your selected channel",
-    // "wstep35": "<text>next lets switch to Install</text>",
-    // "wstep36": "<text>install SignagePlayer</text><br/>now you need to register a physical player<br/>and connect it to any type of screen you like",
-    // "wstep37": "<text>choose an OS</text><br/>you can pick from Android, Windows or even order our hardware (recommended)<br/>as it comes plug and play ready to impress your audience",
-    // "wstep38": "<text>now lets switch to stations</text>",
-    // "wstep39": "<text>station management</text><br/>here you manage remote screens<br/>(stations) and assign them any campaign you like",
-    // "wstep4": "<text>select your screen layout</text><br/>Each screen division (area) will run some different content",
-    // "wstep40": "<text>switch into help, we are almost done",
-    // "wstep41": "<text>here you will find video tutorials for additional help</text>",
-    // "wstep42": "<text>well done!</text><br/>give yourself a pat on the back",
-    // "wstep43": "<text></text>",
-    // "wstep44": "<text></text>",
-    // "wstep45": "<text></text>",
-    // "wstep46": "<text></text>",
-    // "wstep47": "<text></text>",
-    // "wstep48": "<text></text>",
-    // "wstep49": "<text></text>",
-    // "wstep5": "<text>this is your Timelines</text><br/>you can create multiple timelines to play one after the other<br/>each timeline includes one or more channels",
-    // "wstep50": "<text></text>",
-    // "wstep6": "<text>click to expand and see your timeline details</text><br/>",
-    // "wstep7": "<text>these are your channels<br/></text>each channel is automatically assigned to one screen division<br/>right now your channels are empty (no fun)",
-    // "wstep8": "<text>select next channel<br/></text>with this button you can simply cycle through all<br/>the channels of the currently selected timeline, its simple...",
-    // "wstep9": "<text>add content<br/></text>Click [+] to add content to your selected channel (and matching screen division)",
-
     public inModule(i_name: 'scenes' | 'campaigns' | 'resources' | 'stations') {
+
         this.m_enjoyHint = new EnjoyHint({
             onStart: () => {
             },
@@ -554,32 +510,46 @@ export class WizardService {
                 this._closeWizard();
             }
         });
-
-        var enjoyhint_script_steps;
-        switch (i_name) {
-            case 'campaigns': {
-                enjoyhint_script_steps = [
-                    {
-                        'click #newCampaign': 'Click the "New" button to start creating your project'
-                    }
-                ];
-                break;
-            }
-
-            case 'scenes': {
-                enjoyhint_script_steps = [
-                    {
-                        'click #newScene': 'Click the "New" button to start creating your project'
-                    }
-                ];
-                break;
-            }
+        if (this.rp.getUserData().resellerID != 1) {
+            _.forEach(this.wizardSteps, (item: any, index) => {
+                if (item.hideInEnterprise == true) {
+                    this.wizardSteps = _.without(this.wizardSteps, item);
+                }
+            });
         }
-        this.m_enjoyHint.set(enjoyhint_script_steps);
-        this.m_enjoyHint.run();
+
+        this.zone.runOutsideAngular(() => {
+            this.m_enjoyHint.set(this.wizardSteps);
+            this.m_enjoyHint.run();
+        })
+
+
+        // var enjoyhint_script_steps;
+        // switch (i_name) {
+        //     case 'campaigns': {
+        //         enjoyhint_script_steps = [
+        //             {
+        //                 'click #newCampaign': 'Click the "New" button to start creating your project'
+        //             }
+        //         ];
+        //         break;
+        //     }
+        //
+        //     case 'scenes': {
+        //         enjoyhint_script_steps = [
+        //             {
+        //                 'click #newScene': 'Click the "New" button to start creating your project'
+        //             }
+        //         ];
+        //         break;
+        //     }
+        // }
+        // this.m_enjoyHint.set(enjoyhint_script_steps);
+        // this.m_enjoyHint.run();
     }
 
     _closeWizard() {
-        console.log('wizard closed');
+        log('wizard closed');
     }
+
 }

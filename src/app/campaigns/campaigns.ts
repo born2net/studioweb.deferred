@@ -23,9 +23,9 @@ import {IScreenTemplateData} from "../../interfaces/IScreenTemplate";
                     <campaign-manager (slideToCampaignName)="sliderItemCampaignManager.slideTo('campaignName','right')" (slideToCampaignEditor)="sliderItemCampaignManager.onNext()"></campaign-manager>
                 </ng-template>
             </Slideritem>
-            <Slideritem [templateRef]="b" class="page left campaignName" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignList'" [to]="'campaignOrientation'">
+            <Slideritem [templateRef]="b" #campaignNameSlider class="page left campaignName" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignList'" [to]="'campaignOrientation'">
                 <ng-template #b>
-                    <campaign-name #campaignName></campaign-name>
+                    <campaign-name (onNext)="campaignNameSlider.onNext()" #campaignName></campaign-name>
                 </ng-template>
             </Slideritem>
             <Slideritem [templateRef]="c" #sliderItemCampaignOrientation class="page left campaignOrientation" [showToButton]="false" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignName'" [to]="'campaignResolution'">

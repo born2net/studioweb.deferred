@@ -33,7 +33,7 @@ export enum OrientationEnum {
             <table width="100%" border="0" cellspacing="0" cellpadding="50">
                 <tr>
                     <td align="center">
-                        <img (click)="_nextClick.next(OrientationEnum.HORIZONTAL)" [ngClass]="{'selectedOrientation': m_orientation==OrientationEnum.HORIZONTAL}" class="defaultOpacity img-responsive" src="assets/orientationH.png"/>
+                        <img id="firstImage" (click)="_nextClick.next(OrientationEnum.HORIZONTAL)" [ngClass]="{'selectedOrientation': m_orientation==OrientationEnum.HORIZONTAL}" class="defaultOpacity img-responsive" src="assets/orientationH.png"/>
                     </td>
                     <td align="center">
                         <img (click)="_nextClick.next(OrientationEnum.VERTICAL)" [ngClass]="{'selectedOrientation': m_orientation==OrientationEnum.VERTICAL}" class="defaultOpacity img-responsive" src="assets/orientationV.png"/>

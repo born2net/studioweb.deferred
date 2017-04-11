@@ -15,7 +15,7 @@ import {ACTION_UISTATE_UPDATE} from "../../store/actions/appdb.actions";
     template: `
         <small class="debug">{{me}}</small>
         <h4 i18n>screen resolution</h4>
-        <div (click)="$event.preventDefault()">
+        <div id="resolutionList" (click)="$event.preventDefault()">
             <a (click)="_nextClick.next(screen)" href="#" class="list-group-item" *ngFor="let screen of m_screens">
                 <label class="screenResolutionLabel">{{screen}}</label>
             </a>
