@@ -12,7 +12,7 @@ import {ListToArrayPipe} from "../pipes/list-to-array-pipe";
 import {MatchBodyHeight} from "../comps/match-body-height/match-body-height";
 import {ScreenTemplate} from "../comps/screen-template/screen-template";
 import {BlurForwarder} from "../comps/blurforwarder/BlurForwarder";
-import {ContextMenuModule} from "angular2-contextmenu";
+import {ContextMenuModule} from "ngx-contextmenu";
 import {ChartModule} from "angular2-highcharts";
 import {BlockPropContainer} from "../app/blocks/block-prop-container";
 import {FormatSecondsPipe} from "../pipes/format-seconds-pipe";
