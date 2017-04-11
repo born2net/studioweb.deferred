@@ -119,7 +119,7 @@ export class WizardService {
         {
             event: "click",
             "skipButton": {text: "quit"},
-            selector: $('#addResourcesBlockListContainer a'),
+            selector: $('#accordion a'),
             description: 'select resource<br/></text>Add images, videos and other files<br/>(later you can also upload file from your own PC)',
             timeout: 400,
             padding: 15,

@@ -49,6 +49,7 @@ import {SimpleGridModule} from "../comps/simple-grid-module/SimpleGridModule";
 import {GlobalErrorHandler} from "../services/global-error-handler";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {FasterqTerminal} from "./fasterq/fasterq-terminal";
+import {WizardService} from "../services/wizard-service";
 // import {WizardService} from "../services/wizard-service";
 
 // import "fabric"; // need to remove if we import via cli
@@ -65,7 +66,7 @@ declare global {
     }
 }
 
-export var providing = [CommBroker, AUTH_PROVIDERS, RedPepperService, YellowPepperService, LocalStorage, StoreService, FontLoaderService, AppdbAction, {
+export var providing = [CommBroker, WizardService, AUTH_PROVIDERS, RedPepperService, YellowPepperService, LocalStorage, StoreService, FontLoaderService, AppdbAction, {
     provide: "OFFLINE_ENV",
     useValue: window['offlineDevMode']
 },
