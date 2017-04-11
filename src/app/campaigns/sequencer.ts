@@ -47,7 +47,6 @@ import {Compbaser} from "ng-mslib";
         <div (click)="$event.preventDefault()">
             <small class="debug">{{me}}</small>
             <h4 style="color: #a9a9a9">total timelines: {{m_campaignTimelinesModels?.size}}</h4>
-            <context-menu></context-menu>
             <hr class="dottedHR">
             <div id="dragcontainer">
                 <screen-template #st class="draggableTimeline"
@@ -87,6 +86,10 @@ export class Sequencer extends Compbaser {
         super();
         this.m_thumbsContainer = el.nativeElement;
     }
+
+    @ViewChildren(ScreenTemplate)
+    screenTemplatesQueryList: QueryList<any>;
+
 
     trackByFn(index, item) {
         return item.campaignTimelineId;
@@ -275,7 +278,7 @@ export class Sequencer extends Compbaser {
                     } else {
                         if (preIndex >= 0) t.parentNode.insertBefore(t, t.kids[newIndex + 1]);
                         else t.parentNode.insertBefore(t, t.kids[newIndex]);
-                    }    
+                    }
                     TweenLite.set(t.kids, {xPercent: 0, overwrite: "all"});
                     TweenLite.set(t, {x: 0, color: ""});
 
@@ -394,8 +397,8 @@ export class Sequencer extends Compbaser {
      **/
     @Once()
     public onSelectNextChannel(): Subscription {
-        if (!this.m_selectedScreenTemplate)
-            return null;
+        if (!this.m_selectedScreenTemplate && this.screenTemplatesQueryList)
+            this._onScreenTemplateSelected(null, this.screenTemplatesQueryList.first)
         var timeline_channel_id;
         return this.yp.getChannelsOfTimeline(this.m_selectedTimelineId)
             .subscribe((channelsIDs) => {
