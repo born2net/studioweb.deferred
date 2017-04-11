@@ -129,32 +129,36 @@ export class WizardService {
         },
         {
             event: "click",
-            "skipButton": {text: "quit"},
-            selector: $('#collapseOne'),
-            description: 'select resource<br/></text>Add images, videos and other files<br/>(later you can also upload file from your own PC)',
-            timeout: 1500,
+            skipButton: {text: "quit"},
+            selector: '#collapseOne',
+            description: 'select something to <br/></text>add such as images, videos and other files<br/>(later you can also upload file from your own PC)',
+            timeout: 1000,
             padding: 15,
             margin: 15,
-            debugInclude: true,
-            onBeforeStart: function () {
-                log('STEP 10');
-            }
-        },
-        {
-            event: "click",
-            "skipButton": {text: "quit"},
-            selector: $('#addResourceBlockList'),
-            description: 'select resource<br/>',
-            timeout: 1000,
             bottom: 400,
             top: 20,
             left: 25,
             right: 25,
             debugInclude: true,
             onBeforeStart: function () {
-                log('STEP 11');
+                log('STEP 10');
             }
         },
+        // {
+        //     event: "click",
+        //     "skipButton": {text: "quit"},
+        //     selector: $('#addResourceBlockList'),
+        //     description: 'select resource<br/>',
+        //     timeout: 1000,
+        //     bottom: 400,
+        //     top: 20,
+        //     left: 25,
+        //     right: 25,
+        //     debugInclude: true,
+        //     onBeforeStart: function () {
+        //         log('STEP 11');
+        //     }
+        // },
         {
             "click .channelListItems": 'now the resource has been added to the selected channel</text><br/>just go ahead and select it to load up its properties',
             "skipButton": {text: "quit"},
@@ -543,10 +547,10 @@ export class WizardService {
 
 
     constructor(private router: Router, private rp: RedPepperService, private zone: NgZone) {
-        if (Lib.DevMode()){
-            setTimeout(()=>{
+        if (Lib.DevMode()) {
+            setTimeout(() => {
                 this.inModule("campaigns");
-            },3000)
+            }, 3000)
         }
     }
 
