@@ -14,7 +14,6 @@ const log = (i_msg) => {
 export class WizardService {
 
     private m_enjoyHint: EnjoyHint;
-
     private wizardSteps = [
 
         {
@@ -521,7 +520,6 @@ export class WizardService {
             }
         }
     ];
-
 
     constructor(private router: Router, private rp: RedPepperService, private zone: NgZone, private bs:BlockService) {
         // if (Lib.DevMode()) {
