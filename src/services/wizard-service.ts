@@ -110,7 +110,7 @@ export class WizardService {
             right: 6,
             top: 6,
             bottom: 6,
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 8');
             }
@@ -122,7 +122,7 @@ export class WizardService {
             right: 6,
             top: 6,
             bottom: 6,
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 9');
             }
@@ -139,46 +139,32 @@ export class WizardService {
             top: 20,
             left: 25,
             right: 25,
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 10');
             }
         },
-        // {
-        //     event: "click",
-        //     "skipButton": {text: "quit"},
-        //     selector: $('#addResourceBlockList'),
-        //     description: 'select resource<br/>',
-        //     timeout: 1000,
-        //     bottom: 400,
-        //     top: 20,
-        //     left: 25,
-        //     right: 25,
-        //     debugInclude: true,
-        //     onBeforeStart: function () {
-        //         log('STEP 11');
-        //     }
-        // },
         {
-            "click .channelListItems": 'now the resource has been added to the selected channel</text><br/>just go ahead and select it to load up its properties',
+            "click #campaignViewList": 'now the resource has been added to the selected channel</text><br/>just go ahead and select it to load up its properties',
             "skipButton": {text: "quit"},
-            debugInclude: true,
+            timeout: 1500,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 12');
             }
         },
         {
-            "next #blockProperties": 'additional properties<br/></text>anytime you select anything in StudioLite,<br/>be sure to checkout the properties box<br/>on the right for additional options and settings',
+            "next #campaignPropsManager": 'anytime you select anything in StudioLite,<br/>be sure to checkout the properties box<br/>on the right for additional options and settings',
             "skipButton": {text: "quit"},
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 13');
             }
         },
         {
-            "next #channelBlockProps": 'resource duration<br/></text>like here, where you can set the playback duration<br/>of your currently selected resource,<br/>the one that you just added',
+            "next #resourceLengthDuration": 'resource duration<br/></text>like here, where you can set the playback duration<br/>of your currently selected resource',
             "skipButton": {text: "quit"},
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 14');
             }
@@ -190,7 +176,7 @@ export class WizardService {
             right: 6,
             top: 6,
             bottom: 6,
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 15');
             }
@@ -202,7 +188,8 @@ export class WizardService {
             right: 8,
             top: 6,
             bottom: 6,
-            debugInclude: true,
+            timeout: 1000,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 16');
             }
@@ -210,53 +197,51 @@ export class WizardService {
         {
             "next #screenLayoutEditorCanvasWrap": 'position and size your new screen division',
             "skipButton": {text: "quit"},
-            bottom: 200,
+            bottom: 20,
             right: 100,
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 17');
             }
         },
         {
             event: "click",
-            selector: $('#prev', "#screenLayoutEditorView"),
+            selector: '.openPropsButton',
             "skipButton": {text: "quit"},
-            description: 'go back when done',
-            debugInclude: true,
+            description: 'lets go back to the campaign editor',
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 18');
             }
         },
         {
-            event: "click",
-            selector: '#screenSelectorContainerCollapse',
+            "next #screenSelectorContainerCollapse": 'good job, you just added a new timeline',
             "skipButton": {text: "quit"},
-            description: 'click the newly created screen division to continue<br/></text>notice how the screen division was automatically assigned a new channel',
             timeout: 500,
             bottom: 10,
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 19');
             }
         },
         {
             event: "click",
-            selector: $('.scenesPanel', '#appNavigator'),
+            selector: $('.fa-crosshairs').parent(),
             "skipButton": {text: "quit"},
             description: 'mixing content</text><br/>sometimes you want to mix resources and components into a single screen division<br/>Scenes are perfect for that',
             right: 10,
             top: 6,
             bottom: 10,
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 20');
             }
         },
-
         {
             event: "click",
-            selector: $('#newScene'),
+            selector: '#newScene',
             "skipButton": {text: "quit"},
+            timeout: 1500,
             description: 'lets create a new scene',
             left: 8,
             right: 8,
@@ -273,7 +258,7 @@ export class WizardService {
             "skipButton": {text: "quit"},
             description: 'select your newly created scene to edit it',
             bottom: 400,
-            timeout: 300,
+            timeout: 1500,
             debugInclude: true,
             onBeforeStart: function () {
                 //$('#sceneSelectorList').children().:not(:last-child)')fadeOut();

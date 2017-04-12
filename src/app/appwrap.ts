@@ -11,7 +11,7 @@ import {YellowPepperService} from "../services/yellowpepper.service";
                 <ng-menu-item [fontawesome]="'fa-dashboard'" [title]="'Dashboard'"></ng-menu-item>
                 <ng-menu-item [fontawesome]="'fa-navicon'" [title]="'Campaigns'"></ng-menu-item>
                 <ng-menu-item [fontawesome]="'fa-certificate'" [title]="'Resources'"></ng-menu-item>
-                <ng-menu-item [fontawesome]="'fa-edit'" [title]="'Scenes'"></ng-menu-item>
+                <ng-menu-item [fontawesome]="'fa-crosshairs'" [title]="'Scenes'" class="wizardHookScene"></ng-menu-item>
                 <ng-menu-item [fontawesome]="'fa-laptop'" [title]="'Stations'"></ng-menu-item>
                 <ng-menu-item [fontawesome]="'fa-group'" [title]="'Fasterq'"></ng-menu-item>
                 <ng-menu-item [fontawesome]="'fa-cog'" [title]="'Settings'"></ng-menu-item>

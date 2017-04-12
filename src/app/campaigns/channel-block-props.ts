@@ -15,7 +15,7 @@ import {CampaignTimelineChanelPlayersModelExt} from "../../store/model/msdb-mode
         </small>
         <small class="debug">{{me}}</small>
         <div class="center-block" style="width: 240px">
-            <h5 i18n>hours / minutes /seconds</h5>
+            <h5 id="resourceLengthDuration" i18n>hours / minutes /seconds</h5>
             <input id="blockLengthHours" data-displayPrevious="false" data-min="0" data-max="23" data-skin="tron" data-width="60" data-height="60" data-thickness=".2" type="text" class="knob" data-fgColor="gray">
             <input id="blockLengthMinutes" data-displayPrevious="false" data-min="0" data-max="59" data-skin="tron" data-width="60" data-height="60" data-thickness=".2" type="text" class="knob" data-fgColor="gray">
             <input id="blockLengthSeconds" data-displayPrevious="false" data-min="0" data-max="59" data-skin="tron" data-width="60" data-height="60" data-thickness=".2" type="text" class="knob" data-fgColor="gray">

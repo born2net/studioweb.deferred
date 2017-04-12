@@ -53,7 +53,7 @@ import {timeout} from "../../decorators/timeout-decorator";
     template: `
         <small class="debug">{{me}}</small>
         <!-- todo: need to investigate as performance sometime lag when using the matchBodyHeight directive here -->
-        <div matchBodyHeight="540" id="campaignView" style="padding-right: 5px; overflow-y: auto">
+        <div matchBodyHeight="540" id="campaignViewList" style="padding-right: 5px; overflow-y: auto">
             <draggable-list (onItemSelected)="_onItemSelected($event)" [customTemplate]="customTemplate" (onDragComplete)="_onDragComplete($event)" [items]="m_blockList"></draggable-list>
             <ng-template #customTemplate let-item>
                 <a href="#" [attr.data-block_id]="item.blockID">
