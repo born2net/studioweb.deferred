@@ -48,6 +48,7 @@ declare module FlashDetect {
 declare class EnjoyHint {
     constructor(config:any)
     set(value:any);
+    trigger(value:any);
     run:()=>void;
 }
 

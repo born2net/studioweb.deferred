@@ -27,6 +27,7 @@ const routes: Routes = [
             {path: 'Scenes', loadChildren: '../app/scenes/index#ScenesLazyModule', data: {title: 'Scenes'}, canActivate: [AuthService]},
             {path: 'Resources', loadChildren: '../app/resources/index#ResourcesLazyModule', data: {title: 'Resources'}, canActivate: [AuthService]},
             {path: 'Help', loadChildren: '../app/help/index#HelpLazyModule', data: {title: 'Help'}, canActivate: [AuthService]},
+            {path: 'Install', loadChildren: '../app/install/index#InstallLazyModule', data: {title: 'Install'}, canActivate: [AuthService]},
             {path: 'Settings', loadChildren: '../app/settings/index#SettingsLazyModule', data: {title: 'Settings'}, canActivate: [AuthService]},
             {path: 'Stations', loadChildren: '../app/stations/index#StationsLazyModule', data: {title: 'Stations'}, canActivate: [AuthService]},
             {path: 'Studiopro', loadChildren: '../app/studiopro/index#StudioProLazyModule', data: {title: 'Studiopro'}, canActivate: [AuthService]},

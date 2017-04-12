@@ -1,4 +1,4 @@
-import {Injectable, NgZone} from "@angular/core";
+import {ChangeDetectorRef, Injectable, NgZone} from "@angular/core";
 import {Router} from "@angular/router";
 import {RedPepperService} from "./redpepper.service";
 import * as _ from 'lodash';
@@ -15,6 +15,7 @@ const log = (i_msg) => {
 export class WizardService {
     private m_enjoyHint: EnjoyHint;
     private wizardSteps = [
+
         {
             "click #newCampaign": 'a quick 5 minute tutorial</text><br/>and we will teach you how to use StudioLite... its easy.',
             "skipButton": {text: "quit"},
@@ -22,7 +23,7 @@ export class WizardService {
             right: 10,
             top: 6,
             bottom: 6,
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 1');
             }
@@ -32,7 +33,7 @@ export class WizardService {
             "skipButton": {text: "quit"},
             keyCode: 13,
             timeout: 500,
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 2');
             }
@@ -44,7 +45,7 @@ export class WizardService {
             left: -10,
             margin: 10,
             padding: 10,
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: () => {
                 log('STEP 3');
             }
@@ -57,7 +58,7 @@ export class WizardService {
             margin: 0,
             right: 1500,
             padding: 0,
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 4');
             }
@@ -74,7 +75,7 @@ export class WizardService {
             bottom: 200,
             padding: 0,
             timeout: 1000,
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 5');
             }
@@ -82,13 +83,13 @@ export class WizardService {
         {
             "next #screenSelectorContainer": 'this is your Timelines</text><br/>you can create multiple timelines to play one after the other<br/>each timeline includes one or more channels',
             timeout: 1500,
-            debugInclude: true,
+            debugInclude: false,
             "skipButton": {text: "quit"}
         },
         {
             "click #toggleStorylineCollapsible": 'click to expand and see your timeline details</text><br/>',
             "skipButton": {text: "quit"},
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 //todo: fix
                 // BB.comBroker.getService(BB.SERVICES.STORYLINE).collapseStoryLine();
@@ -98,7 +99,7 @@ export class WizardService {
         {
             "next #storylineContainerCollapse": 'these are your channels<br/></text>each channel is automatically assigned to one screen division<br/>right now your channels are empty (no fun)',
             "skipButton": {text: "quit"},
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 7');
             }
@@ -110,7 +111,7 @@ export class WizardService {
             right: 6,
             top: 6,
             bottom: 6,
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 8');
             }
@@ -122,7 +123,7 @@ export class WizardService {
             right: 6,
             top: 6,
             bottom: 6,
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 9');
             }
@@ -139,7 +140,7 @@ export class WizardService {
             top: 20,
             left: 25,
             right: 25,
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 10');
             }
@@ -148,7 +149,7 @@ export class WizardService {
             "click #campaignViewList": 'now the resource has been added to the selected channel</text><br/>just go ahead and select it to load up its properties',
             "skipButton": {text: "quit"},
             timeout: 1500,
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 12');
             }
@@ -156,7 +157,7 @@ export class WizardService {
         {
             "next #campaignPropsManager": 'anytime you select anything in StudioLite,<br/>be sure to checkout the properties box<br/>on the right for additional options and settings',
             "skipButton": {text: "quit"},
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 13');
             }
@@ -164,7 +165,7 @@ export class WizardService {
         {
             "next #resourceLengthDuration": 'resource duration<br/></text>like here, where you can set the playback duration<br/>of your currently selected resource',
             "skipButton": {text: "quit"},
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 14');
             }
@@ -176,7 +177,7 @@ export class WizardService {
             right: 6,
             top: 6,
             bottom: 6,
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 15');
             }
@@ -189,7 +190,7 @@ export class WizardService {
             top: 6,
             bottom: 6,
             timeout: 1000,
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 16');
             }
@@ -199,7 +200,7 @@ export class WizardService {
             "skipButton": {text: "quit"},
             bottom: 20,
             right: 100,
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 17');
             }
@@ -209,7 +210,7 @@ export class WizardService {
             selector: '.openPropsButton',
             "skipButton": {text: "quit"},
             description: 'lets go back to the campaign editor',
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 18');
             }
@@ -219,7 +220,7 @@ export class WizardService {
             "skipButton": {text: "quit"},
             timeout: 500,
             bottom: 10,
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 19');
             }
@@ -232,30 +233,18 @@ export class WizardService {
             right: 10,
             top: 6,
             bottom: 10,
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 20');
             }
         },
         {
-            event: "click",
-            selector: '#sceneListItems',
+            "next #sceneSelection": "click next to create a new empty scene so we can edit it",
             "skipButton": {text: "quit"},
             description: 'select a scene',
-            bottom: 100,
             timeout: 1000,
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: () => {
-                //$('#sceneSelectorList').children().:not(:last-child)')fadeOut();
-                // var sceneCreationService = BB.comBroker.getService(BB.SERVICES['SCENES_CREATION_VIEW']);
-                // sceneCreationService.createBlankScene('New Scene from Wizard');
-                // $('a:not(:last-child)', '#sceneSelectorList').slideUp();
-                if (_.size(this.rp.getScenes())==0){
-                    var player_data = this.m_blockService.getBlockBoilerplate('3510').getDefaultPlayerData(PLACEMENT_IS_SCENE);
-                    var sceneId = this.rp.createScene(player_data, '', 'blank scene');
-                    this.rp.reduxCommit();
-                }
-
                 log('STEP 22');
             }
         },
@@ -268,111 +257,120 @@ export class WizardService {
             left: 8,
             top: 5,
             bottom: 5,
-            timeout: 1000,
-            debugInclude: true,
-            onBeforeStart: function () {
+            timeout: 1500,
+            debugInclude: false,
+            onBeforeStart: () => {
+                this.zone.runOutsideAngular(()=>{
+                    var player_data = this.m_blockService.getBlockBoilerplate('3510').getDefaultPlayerData(PLACEMENT_IS_SCENE);
+                    var sceneId = this.rp.createScene(player_data, '', 'blank scene');
+                    this.rp.reduxCommit();
+                    setTimeout(()=>{
+                        $('.appList').find('a').last().find('h4').click()
+                    },1)
+                })
                 log('STEP 23');
             }
         },
+        // {
+        //     event: "click",
+        //     selector: '#addComponentBlockList',
+        //     "skipButton": {text: "quit"},
+        //     description: 'select a smart component',
+        //     timeout: 2000,
+        //     right: 300,
+        //     left: 50,
+        //     top: 175,
+        //     debugInclude: false,
+        //     onBeforeStart: function () {
+        //         log('STEP 24');
+        //         // $('#sceneAddNewBlock').find('[data-toggle]').trigger('click');
+        //         // $('.primeComponent').closest('.addBlockListItems').hide();
+        //         // $('#addResourcesBlockListContainer', '#sceneAddNewBlock').hide();
+        //     }
+        // },
         {
-            event: "click",
-            selector: '#addComponentBlockList',
-            "skipButton": {text: "quit"},
-            description: 'select a smart component',
-            timeout: 2000,
-            right: 300,
-            left: 50,
-            top: 175,
-            debugInclude: true,
-            onBeforeStart: function () {
-                log('STEP 24');
-                // $('#sceneAddNewBlock').find('[data-toggle]').trigger('click');
-                // $('.primeComponent').closest('.addBlockListItems').hide();
-                // $('#addResourcesBlockListContainer', '#sceneAddNewBlock').hide();
-            }
-        },
-        {
-            "next #sceneCanvas": 'edit your scene</text><br/>now you can position your content<br/>anywhere you like, resize it and change any of the properties',
+            "next #sceneCanvas": 'you can edit your scene,</text><br/>position your content<br/>anywhere you like, resize it and change any of the properties',
             event: "next",
             timeout: 300,
             bottom: 200,
             "skipButton": {text: "quit"},
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 25');
             }
         },
+        // {
+        //     event: "click",
+        //     selector: '.sceneAddNew',
+        //     "skipButton": {text: "quit"},
+        //     description: 'lets add another resource',
+        //     right: 8,
+        //     left: 8,
+        //     top: 5,
+        //     bottom: 5,
+        //     timeout: 300,
+        //     debugInclude: false,
+        //     onBeforeStart: function () {
+        //         log('STEP 26');
+        //     }
+        // },
+        // {
+        //     event: "click",
+        //     selector: '#sceneAddNewBlock',
+        //     "skipButton": {text: "quit"},
+        //     description: 'select a smart component',
+        //     timeout: 500,
+        //     right: 300,
+        //     left: 50,
+        //     top: 175,
+        //     debugInclude: false,
+        //     onBeforeStart: function () {
+        //         log('STEP 27');
+        //         $('#sceneAddNewBlock').find('[data-toggle]').trigger('click');
+        //         $('#addResourcesBlockListContainer', '#sceneAddNewBlock').show();
+        //         $('#addComponentsBlockListContainer', '#sceneAddNewBlock').hide();
+        //         $('.primeComponent').closest('.addBlockListItems').hide();
+        //     }
+        // },
+        // {
+        //     "next #sceneCanvas": 'again position and resize the resource',
+        //     event: "next",
+        //     timeout: 300,
+        //     bottom: 200,
+        //     "skipButton": {text: "quit"},
+        //     debugInclude: false,
+        //     onBeforeStart: function () {
+        //         log('STEP 28');
+        //     }
+        // },
         {
             event: "click",
-            selector: '.sceneAddNew',
-            "skipButton": {text: "quit"},
-            description: 'lets add another resource',
-            right: 8,
-            left: 8,
-            top: 5,
-            bottom: 5,
-            timeout: 300,
-            debugInclude: true,
-            onBeforeStart: function () {
-                log('STEP 26');
-            }
-        },
-        {
-            event: "click",
-            selector: '#sceneAddNewBlock',
-            "skipButton": {text: "quit"},
-            description: 'select a smart component',
-            timeout: 500,
-            right: 300,
-            left: 50,
-            top: 175,
-            debugInclude: true,
-            onBeforeStart: function () {
-                log('STEP 27');
-                $('#sceneAddNewBlock').find('[data-toggle]').trigger('click');
-                $('#addResourcesBlockListContainer', '#sceneAddNewBlock').show();
-                $('#addComponentsBlockListContainer', '#sceneAddNewBlock').hide();
-                $('.primeComponent').closest('.addBlockListItems').hide();
-            }
-        },
-        {
-            "next #sceneCanvas": 'again position and resize the resource',
-            event: "next",
-            timeout: 300,
-            bottom: 200,
-            "skipButton": {text: "quit"},
-            debugInclude: true,
-            onBeforeStart: function () {
-                log('STEP 28');
-            }
-        },
-        {
-            event: "click",
-            selector: $('.campaignManagerView', '#appNavigator'),
+            selector: $('.fa-navicon').parent(),
             "skipButton": {text: "quit"},
             description: 'go back to campaigns<br/></text>so we can assign our newly created scene<br/>to any timeline and channel we like',
             right: 10,
             left: 6,
             top: 10,
+            timeout: 1000,
             bottom: 10,
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 29');
             }
         },
         {
-            "click #toggleStorylineCollapsible": 'expand the timeline',
+            "click .appList": 'select a campaign',
             "skipButton": {text: "quit"},
+            right: 100,
             debugInclude: true,
             onBeforeStart: function () {
-                //todo: fix
-                // BB.comBroker.getService(BB.SERVICES.STORYLINE).collapseStoryLine();
                 log('STEP 30');
             }
         },
         {
             left: 10,
             right: 10,
+            timeout: 1000,
             "click #selectNextChannel": 'select the next channel',
             "skipButton": {text: "quit"},
             debugInclude: true,
@@ -390,35 +388,21 @@ export class WizardService {
             debugInclude: true,
             onBeforeStart: function () {
                 log('STEP 32');
-                $('#addResourcesBlockListContainer').find('[data-toggle]').trigger('click');
+                // $('#addResourcesBlockListContainer').find('[data-toggle]').trigger('click');
             }
         },
         {
             event: "click",
             "skipButton": {text: "quit"},
-            selector: $('#addSceneBlockListContainer a'),
-            description: 'select scenes to get a list of all available scenes',
-            timeout: 400,
+            selector: '#addComponentBlockList',
+            description: 'select your item<br/></text>it will automatically get added to<br/>your selected channel',
+            timeout: 1500,
             padding: 15,
             margin: 15,
+            right: 1200,
             debugInclude: true,
             onBeforeStart: function () {
                 log('STEP 33');
-            }
-        },
-        {
-            event: "click",
-            "skipButton": {text: "quit"},
-            selector: $('#addSceneBlockList'),
-            description: 'select your scene<br/></text>it will automatically get added to<br/>your selected channel',
-            timeout: 700,
-            left: 25,
-            right: 25,
-            bottom: 25,
-            top: 25,
-            debugInclude: true,
-            onBeforeStart: function () {
-                log('STEP 34');
             }
         },
         {
@@ -440,7 +424,7 @@ export class WizardService {
             "next #installPanel": 'install SignagePlayer</text><br/>now you need to register a physical player<br/>and connect it to any type of screen you like',
             hideInEnterprise: true,
             "skipButton": {text: "quit"},
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 36');
             }
@@ -449,7 +433,7 @@ export class WizardService {
             "next #installPanel": 'choose an OS</text><br/>you can pick from Android, Windows or even order our hardware (recommended)<br/>as it comes plug and play ready to impress your audience',
             "skipButton": {text: "quit"},
             hideInEnterprise: true,
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 37');
             }
@@ -463,7 +447,7 @@ export class WizardService {
             bottom: 10,
             description: 'now lets switch to stations',
             right: 10,
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 38');
             }
@@ -473,7 +457,7 @@ export class WizardService {
             timeout: 600,
             "skipButton": {text: "quit"},
             bottom: 400,
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 39');
             }
@@ -488,7 +472,7 @@ export class WizardService {
             top: 10,
             bottom: 10,
             hideInEnterprise: true,
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 40');
             }
@@ -498,7 +482,7 @@ export class WizardService {
             timeout: 200,
             hideInEnterprise: true,
             "skipButton": {text: "quit"},
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 41');
             }
@@ -510,7 +494,7 @@ export class WizardService {
             "skipButton": {text: "quit"},
             description: 'well done!</text><br/>give yourself a pat on the back',
             bottom: 600,
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 42');
                 setTimeout(function () {
@@ -520,15 +504,14 @@ export class WizardService {
         }
     ];
 
-    m_blockService:BlockService;
+    m_blockService: BlockService;
 
-    constructor(private router: Router, private rp: RedPepperService, private zone: NgZone, private commBroker:CommBroker) {
+    constructor(private router: Router, private rp: RedPepperService, private zone: NgZone, private commBroker: CommBroker) {
         this.m_blockService = this.commBroker.getService(BLOCK_SERVICE)
-
         // if (Lib.DevMode()) {
         //     setTimeout(() => {
         //         this.start();
-        //     }, 5000)
+        //     }, 2000)
         // }
     }
 
