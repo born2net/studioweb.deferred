@@ -3,6 +3,8 @@ import {Router} from "@angular/router";
 import {RedPepperService} from "./redpepper.service";
 import * as _ from 'lodash';
 import {Lib} from "../Lib";
+import {PLACEMENT_IS_SCENE} from "../interfaces/Consts";
+import {BlockService} from "../app/blocks/block-service";
 
 const log = (i_msg) => {
     console.log(i_msg)
@@ -22,7 +24,7 @@ export class WizardService {
             right: 10,
             top: 6,
             bottom: 6,
-            debugInclude: false,
+            debugInclude: true,
             onBeforeStart: function () {
                 log('STEP 1');
             }
@@ -32,7 +34,7 @@ export class WizardService {
             "skipButton": {text: "quit"},
             keyCode: 13,
             timeout: 500,
-            debugInclude: false,
+            debugInclude: true,
             onBeforeStart: function () {
                 log('STEP 2');
             }
@@ -44,7 +46,7 @@ export class WizardService {
             left: -10,
             margin: 10,
             padding: 10,
-            debugInclude: false,
+            debugInclude: true,
             onBeforeStart: () => {
                 log('STEP 3');
             }
@@ -57,7 +59,7 @@ export class WizardService {
             margin: 0,
             right: 1500,
             padding: 0,
-            debugInclude: false,
+            debugInclude: true,
             onBeforeStart: function () {
                 log('STEP 4');
             }
@@ -74,7 +76,7 @@ export class WizardService {
             bottom: 200,
             padding: 0,
             timeout: 1000,
-            debugInclude: false,
+            debugInclude: true,
             onBeforeStart: function () {
                 log('STEP 5');
             }
@@ -82,13 +84,13 @@ export class WizardService {
         {
             "next #screenSelectorContainer": 'this is your Timelines</text><br/>you can create multiple timelines to play one after the other<br/>each timeline includes one or more channels',
             timeout: 1500,
-            debugInclude: false,
+            debugInclude: true,
             "skipButton": {text: "quit"}
         },
         {
             "click #toggleStorylineCollapsible": 'click to expand and see your timeline details</text><br/>',
             "skipButton": {text: "quit"},
-            debugInclude: false,
+            debugInclude: true,
             onBeforeStart: function () {
                 //todo: fix
                 // BB.comBroker.getService(BB.SERVICES.STORYLINE).collapseStoryLine();
@@ -98,7 +100,7 @@ export class WizardService {
         {
             "next #storylineContainerCollapse": 'these are your channels<br/></text>each channel is automatically assigned to one screen division<br/>right now your channels are empty (no fun)',
             "skipButton": {text: "quit"},
-            debugInclude: false,
+            debugInclude: true,
             onBeforeStart: function () {
                 log('STEP 7');
             }
@@ -110,7 +112,7 @@ export class WizardService {
             right: 6,
             top: 6,
             bottom: 6,
-            debugInclude: false,
+            debugInclude: true,
             onBeforeStart: function () {
                 log('STEP 8');
             }
@@ -122,7 +124,7 @@ export class WizardService {
             right: 6,
             top: 6,
             bottom: 6,
-            debugInclude: false,
+            debugInclude: true,
             onBeforeStart: function () {
                 log('STEP 9');
             }
@@ -139,7 +141,7 @@ export class WizardService {
             top: 20,
             left: 25,
             right: 25,
-            debugInclude: false,
+            debugInclude: true,
             onBeforeStart: function () {
                 log('STEP 10');
             }
@@ -148,7 +150,7 @@ export class WizardService {
             "click #campaignViewList": 'now the resource has been added to the selected channel</text><br/>just go ahead and select it to load up its properties',
             "skipButton": {text: "quit"},
             timeout: 1500,
-            debugInclude: false,
+            debugInclude: true,
             onBeforeStart: function () {
                 log('STEP 12');
             }
@@ -156,7 +158,7 @@ export class WizardService {
         {
             "next #campaignPropsManager": 'anytime you select anything in StudioLite,<br/>be sure to checkout the properties box<br/>on the right for additional options and settings',
             "skipButton": {text: "quit"},
-            debugInclude: false,
+            debugInclude: true,
             onBeforeStart: function () {
                 log('STEP 13');
             }
@@ -164,7 +166,7 @@ export class WizardService {
         {
             "next #resourceLengthDuration": 'resource duration<br/></text>like here, where you can set the playback duration<br/>of your currently selected resource',
             "skipButton": {text: "quit"},
-            debugInclude: false,
+            debugInclude: true,
             onBeforeStart: function () {
                 log('STEP 14');
             }
@@ -176,7 +178,7 @@ export class WizardService {
             right: 6,
             top: 6,
             bottom: 6,
-            debugInclude: false,
+            debugInclude: true,
             onBeforeStart: function () {
                 log('STEP 15');
             }
@@ -189,7 +191,7 @@ export class WizardService {
             top: 6,
             bottom: 6,
             timeout: 1000,
-            debugInclude: false,
+            debugInclude: true,
             onBeforeStart: function () {
                 log('STEP 16');
             }
@@ -199,7 +201,7 @@ export class WizardService {
             "skipButton": {text: "quit"},
             bottom: 20,
             right: 100,
-            debugInclude: false,
+            debugInclude: true,
             onBeforeStart: function () {
                 log('STEP 17');
             }
@@ -209,7 +211,7 @@ export class WizardService {
             selector: '.openPropsButton',
             "skipButton": {text: "quit"},
             description: 'lets go back to the campaign editor',
-            debugInclude: false,
+            debugInclude: true,
             onBeforeStart: function () {
                 log('STEP 18');
             }
@@ -219,7 +221,7 @@ export class WizardService {
             "skipButton": {text: "quit"},
             timeout: 500,
             bottom: 10,
-            debugInclude: false,
+            debugInclude: true,
             onBeforeStart: function () {
                 log('STEP 19');
             }
@@ -232,40 +234,30 @@ export class WizardService {
             right: 10,
             top: 6,
             bottom: 10,
-            debugInclude: false,
+            debugInclude: true,
             onBeforeStart: function () {
                 log('STEP 20');
             }
         },
         {
             event: "click",
-            selector: '#newScene',
+            selector: '#sceneListItems',
             "skipButton": {text: "quit"},
-            timeout: 1500,
-            description: 'lets create a new scene',
-            left: 8,
-            right: 8,
-            top: 5,
-            bottom: 5,
+            description: 'select a scene',
+            bottom: 100,
+            timeout: 1000,
             debugInclude: true,
-            onBeforeStart: function () {
-                log('STEP 21');
-            }
-        },
-        {
-            event: "click",
-            selector: '#sceneSelectorList',
-            "skipButton": {text: "quit"},
-            description: 'select your newly created scene to edit it',
-            bottom: 400,
-            timeout: 1500,
-            debugInclude: true,
-            onBeforeStart: function () {
+            onBeforeStart: () => {
                 //$('#sceneSelectorList').children().:not(:last-child)')fadeOut();
-                //todo: fix
                 // var sceneCreationService = BB.comBroker.getService(BB.SERVICES['SCENES_CREATION_VIEW']);
                 // sceneCreationService.createBlankScene('New Scene from Wizard');
-                $('a:not(:last-child)', '#sceneSelectorList').slideUp();
+                // $('a:not(:last-child)', '#sceneSelectorList').slideUp();
+                if (_.size(this.rp.getScenes())==0){
+                    var player_data = this.bs.getBlockBoilerplate('3510').getDefaultPlayerData(PLACEMENT_IS_SCENE);
+                    var sceneId = this.rp.createScene(player_data, '', 'blank scene');
+                    this.rp.reduxCommit();
+                }
+
                 log('STEP 22');
             }
         },
@@ -278,7 +270,7 @@ export class WizardService {
             left: 8,
             top: 5,
             bottom: 5,
-            timeout: 300,
+            timeout: 1000,
             debugInclude: true,
             onBeforeStart: function () {
                 log('STEP 23');
@@ -286,19 +278,19 @@ export class WizardService {
         },
         {
             event: "click",
-            selector: '#sceneAddNewBlock',
+            selector: '#addComponentBlockList',
             "skipButton": {text: "quit"},
             description: 'select a smart component',
-            timeout: 500,
+            timeout: 2000,
             right: 300,
             left: 50,
             top: 175,
             debugInclude: true,
             onBeforeStart: function () {
                 log('STEP 24');
-                $('#sceneAddNewBlock').find('[data-toggle]').trigger('click');
-                $('.primeComponent').closest('.addBlockListItems').hide();
-                $('#addResourcesBlockListContainer', '#sceneAddNewBlock').hide();
+                // $('#sceneAddNewBlock').find('[data-toggle]').trigger('click');
+                // $('.primeComponent').closest('.addBlockListItems').hide();
+                // $('#addResourcesBlockListContainer', '#sceneAddNewBlock').hide();
             }
         },
         {
@@ -531,15 +523,15 @@ export class WizardService {
     ];
 
 
-    constructor(private router: Router, private rp: RedPepperService, private zone: NgZone) {
-        if (Lib.DevMode()) {
-            setTimeout(() => {
-                this.inModule("campaigns");
-            }, 3000)
-        }
+    constructor(private router: Router, private rp: RedPepperService, private zone: NgZone, private bs:BlockService) {
+        // if (Lib.DevMode()) {
+        //     setTimeout(() => {
+        //         this.start();
+        //     }, 5000)
+        // }
     }
 
-    public inModule(i_name: 'scenes' | 'campaigns' | 'resources' | 'stations') {
+    public start() {
 
         this.m_enjoyHint = new EnjoyHint({
             onStart: () => {

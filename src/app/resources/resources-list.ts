@@ -17,7 +17,7 @@ import {SideProps} from "../../store/actions/appdb.actions";
                [ngClass]="{'selectedItem': selectedIdx == i}" href="#" class="list-group-item resourcesListItems">
                 <h4>{{resource.getResourceName()}}</h4>
                 <i class="pull-left fa {{bs.getFontAwesome(resource.getResourceType())}}"></i>
-                <p class="pull-left list-group-item-text">file type: {{resource.getResourceType()}} </p>
+                <p class="pull-left list-group-item-text">file type: {{resource.getResourceType()}} </p>         
                 <span class="clearfix"></span>
                 <!--<div class="openProps">-->
                 <!--<button type="button" class="props btn btn-default btn-sm"><i style="font-size: 1.5em" class="props fa fa-gear"></i></button>-->
@@ -31,7 +31,7 @@ export class ResourcesList extends Compbaser {
     m_resources: List<ResourcesModel>;
     m_selected;
 
-    constructor(private bs: BlockService, private el: ElementRef) {
+    constructor(public bs: BlockService, private el: ElementRef) {
         super();
     }
 

@@ -37,7 +37,7 @@ import {WizardService} from "../../services/wizard-service";
         </div>
         <!-- move scroller to proper offset -->
         <div class="responsive-pad-right">
-            <div matchBodyHeight="350" style="overflow: scroll">
+            <div id="sceneListItems" matchBodyHeight="350" style="overflow: scroll">
                 <scene-list [scenes]="scenes$ | async" (slideToSceneEditor)="slideToSceneEditor.emit($event)" (onSceneSelected)="_onSceneSelected($event)">
                 </scene-list>
             </div>

@@ -33,8 +33,8 @@ export class SimpleGridDataChecks {
     constructor(private cdr: ChangeDetectorRef) {
     }
 
-    private m_checkId = _.uniqueId('slideCheck');
-    private m_checkboxes: List<any>
+    m_checkId = _.uniqueId('slideCheck');
+    m_checkboxes: List<any>
     private m_storeModel: StoreModel;
 
     @ViewChildren('checkInputs')

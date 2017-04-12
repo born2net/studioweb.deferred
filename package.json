@@ -92,7 +92,7 @@
   "devDependencies": {
     "@angular/cli": "^1.0.0",
     "@angular/compiler-cli": "^4.0.2",
-    "@angular/language-service": "^4.1.0-beta",
+    "@angular/language-service": "^4.0.2",
     "@angularclass/hmr": "^1.2.2",
     "@types/core-js": "^0.9.41",
     "@types/hammerjs": "^2.0.33",

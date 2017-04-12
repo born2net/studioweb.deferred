@@ -138,7 +138,7 @@ export class CampaignManager extends Compbaser {
     }
 
     _onWizard(){
-        this.wizardService.inModule('campaigns');
+        this.wizardService.start();
     }
 
     destroy() {
