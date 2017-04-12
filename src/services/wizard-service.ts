@@ -3,8 +3,9 @@ import {Router} from "@angular/router";
 import {RedPepperService} from "./redpepper.service";
 import * as _ from 'lodash';
 import {Lib} from "../Lib";
-import {PLACEMENT_IS_SCENE} from "../interfaces/Consts";
+import {BLOCK_SERVICE, PLACEMENT_IS_SCENE} from "../interfaces/Consts";
 import {BlockService} from "../app/blocks/block-service";
+import {CommBroker} from "./CommBroker";
 
 const log = (i_msg) => {
     console.log(i_msg)
@@ -14,7 +15,6 @@ const log = (i_msg) => {
 export class WizardService {
     private m_enjoyHint: EnjoyHint;
     private wizardSteps = [
-
         {
             "click #newCampaign": 'a quick 5 minute tutorial</text><br/>and we will teach you how to use StudioLite... its easy.',
             "skipButton": {text: "quit"},
@@ -251,7 +251,7 @@ export class WizardService {
                 // sceneCreationService.createBlankScene('New Scene from Wizard');
                 // $('a:not(:last-child)', '#sceneSelectorList').slideUp();
                 if (_.size(this.rp.getScenes())==0){
-                    var player_data = this.bs.getBlockBoilerplate('3510').getDefaultPlayerData(PLACEMENT_IS_SCENE);
+                    var player_data = this.m_blockService.getBlockBoilerplate('3510').getDefaultPlayerData(PLACEMENT_IS_SCENE);
                     var sceneId = this.rp.createScene(player_data, '', 'blank scene');
                     this.rp.reduxCommit();
                 }
@@ -520,7 +520,11 @@ export class WizardService {
         }
     ];
 
-    constructor(private router: Router, private rp: RedPepperService, private zone: NgZone, private bs:BlockService) {
+    m_blockService:BlockService;
+
+    constructor(private router: Router, private rp: RedPepperService, private zone: NgZone, private commBroker:CommBroker) {
+        this.m_blockService = this.commBroker.getService(BLOCK_SERVICE)
+
         // if (Lib.DevMode()) {
         //     setTimeout(() => {
         //         this.start();

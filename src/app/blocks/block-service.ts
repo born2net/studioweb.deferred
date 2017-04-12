@@ -10,7 +10,7 @@ import {Observable} from "rxjs";
 import {CampaignTimelineChanelPlayersModelExt, PlayerDataModelExt} from "../../store/model/msdb-models-extended";
 import {RedPepperService} from "../../services/redpepper.service";
 import {ResourcesModel} from "../../store/imsdb.interfaces_auto";
-import {BlockLabels, PLACEMENT_CHANNEL, PLACEMENT_SCENE} from "../../interfaces/Consts";
+import {BLOCK_SERVICE, BlockLabels, PLACEMENT_CHANNEL, PLACEMENT_SCENE} from "../../interfaces/Consts";
 import {CommBroker} from "../../services/CommBroker";
 import {IUiState} from "../../store/store.data";
 import {ACTION_UISTATE_UPDATE} from "../../store/actions/appdb.actions";
@@ -745,6 +745,8 @@ export class BlockService {
                 fontAwesome: self.getFontAwesome('rss')
             }
         };
+
+        this.commBroker.setService(BLOCK_SERVICE, this)
     }
 
     getBlockNameByCode(i_blockCode: number): string {

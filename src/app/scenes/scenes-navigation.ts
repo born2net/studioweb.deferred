@@ -4,7 +4,6 @@ import {BlockService} from "../blocks/block-service";
 import {BlockFactoryService} from "../../services/block-factory-service";
 import {PLACEMENT_SCENE} from "../../interfaces/Consts";
 import {animate, state, style, transition, trigger} from "@angular/animations";
-import {WizardService} from "../../services/wizard-service";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -15,7 +14,7 @@ import {WizardService} from "../../services/wizard-service";
     providers: [BlockService, BlockFactoryService, {
         provide: "BLOCK_PLACEMENT",
         useValue: PLACEMENT_SCENE
-    }, WizardService],
+    }],
     animations: [
         trigger('routeAnimation', [
             state('*', style({opacity: 1})),

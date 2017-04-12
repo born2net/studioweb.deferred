@@ -4,7 +4,6 @@ import {Compbaser} from "ng-mslib";
 import {BlockService} from "../blocks/block-service";
 import {AppdbAction} from "../../store/actions/appdb.actions";
 import {PLACEMENT_CHANNEL} from "../../interfaces/Consts";
-import {WizardService} from "../../services/wizard-service";
 
 
 @Component({
@@ -18,7 +17,7 @@ import {WizardService} from "../../services/wizard-service";
     providers: [BlockService, {
         provide: "BLOCK_PLACEMENT",
         useValue: PLACEMENT_CHANNEL
-    }, WizardService],
+    }],
     host: {
         '[@routeAnimation]': 'true',
         '[style.display]': "'block'"
