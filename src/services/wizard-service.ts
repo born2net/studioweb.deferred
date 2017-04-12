@@ -12,7 +12,6 @@ const log = (i_msg) => {
 
 @Injectable()
 export class WizardService {
-
     private m_enjoyHint: EnjoyHint;
     private wizardSteps = [
 
