@@ -21,9 +21,6 @@ interface selectTimelineBoardIdResult {
 @Component({
     selector: 'screen-layout-editor',
     template: `
-        <small class="release">my component
-            <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
-        </small>
         <small class="debug">{{me}}</small>
         <div [hidden]="true">
             <ng-container #container></ng-container>

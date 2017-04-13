@@ -37,9 +37,6 @@ import {timeout} from "../../decorators/timeout-decorator";
         }
     `],
     template: `
-        <small class="release">my component
-            <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
-        </small>
         <small class="debug">{{me}}</small>
         <div>
             <div *ngIf="customTemplate">

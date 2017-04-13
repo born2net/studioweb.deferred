@@ -24,9 +24,6 @@ import {MediaPlayer} from "../../comps/media-player/media-player";
         ])
     ],
     template: `
-        <small class="release">help
-            <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
-        </small>
         <div id="helpPanel">
             <!-- video tutorials -->
             <h3 data-localize="videoTutorial">Video tutorial</h3>

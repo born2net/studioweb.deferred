@@ -19,9 +19,6 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
         ])
     ],
     template: `
-               <small class="release">settings
-                   <i style="font-size: 1.4em" class="fa fa-cog pull-right"></i>
-               </small>
                <Twofactor></Twofactor>
            `,
 })
