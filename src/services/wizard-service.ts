@@ -528,8 +528,11 @@ export class WizardService {
             .subscribe((size: Map<any, any>) => {
                 this.width = size.get('width');
                 this.height = size.get('height');
-                if (this.m_enjoyHint)
+                if (this.m_enjoyHint){
                     this.m_enjoyHint.trigger('skip');
+                    this.m_enjoyHint.end();
+                }
+
             }, (e) => console.error(e));
     }
 
