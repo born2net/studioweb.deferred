@@ -60,6 +60,7 @@ export class AuthService {
                     } else {
                         this.saveCredentials('', '', '');
                     }
+                    console.log('Auth pass no two factor');
                     this.enterApplication();
                     break;
                 }
@@ -79,10 +80,13 @@ export class AuthService {
                 var nav = '/App1/Campaigns';
                 // this.router.navigate(['/App1/Dashboard']);
                 // Lib.Con(`in dev mode entering:  ${nav}`);
-                this.router.navigate([nav]);
                 // this.router.navigate([this.requestedRoute]);
+                this.router.navigate([nav]);
             } else {
-                this.router.navigate([this.requestedRoute]);
+                console.log('requested route ' + this.requestedRoute);
+                console.log('entering /App1/Dashboard');
+                // this.router.navigate([this.requestedRoute]);
+                this.router.navigate(['/App1/Dashboard']);
             }
             this.storeService.loadServices();
         }, 10)
@@ -104,9 +108,10 @@ export class AuthService {
         } else {
             // check url params
             console.log('credentials not found, checking url params');
-            var id = this.activatedRoute.snapshot.queryParams['id'];
+            // var id = this.activatedRoute.snapshot.queryParams['id'];
+            var id = this.activatedRoute.snapshot.queryParams['param'];
             if (!_.isUndefined(id)) {
-                id = `${id}=`;
+                id = id.replace(/=/ig, '');
                 try {
                     credentials = this.ngmslibService.base64().decode(id);
                     var local = this.activatedRoute.snapshot.queryParams['local'];
@@ -114,8 +119,9 @@ export class AuthService {
                     i_user = credentialsArr[1];
                     i_pass = credentialsArr[2];
                     i_remember = 'false';
+                    console.log('auth with url ' + i_user);
                 } catch (e) {
-                    console.error('error login ' + e);
+                    console.error('error problem decoding url base65 params on login ' + e);
                 }
             }
         }
@@ -125,20 +131,19 @@ export class AuthService {
             this.authUser(i_user, i_pass, i_remember)
         } else {
             // no valid user/pass found so go to user login, end of process
+            console.log(`auth no valids`);
             this.router.navigate(['/UserLogin']);
         }
     }
 
-    public  saveCredentials(i_user, i_pass, i_remember) {
+    public saveCredentials(i_user, i_pass, i_remember) {
         if (i_remember) {
-            console.log('saving local storage');
             this.localStorage.setItem('remember_me_studioweb', {
                 u: i_user,
                 p: i_pass,
                 r: i_remember
             });
         } else {
-            console.log('not saving local storage');
             this.localStorage.setItem('remember_me_studioweb', {
                 u: '',
                 p: '',
