@@ -74,7 +74,7 @@ export interface IUiStateStations {
 export interface IUiStateFatserq {
     fasterqLineSelected?: number;
     fasterqQueueSelected?: number;
-    fasterqNowServicing?:string;
+    fasterqNowServicing?: string;
 }
 
 export interface IUiStateScene {
@@ -89,6 +89,7 @@ export interface IUiState {
     mainAppState?: MainAppShowStateEnum;
     previewMode?: number;
     uiSideProps?: number;
+    appSized?: Map<any,any>;
     campaign?: IUiStateCampaign;
     locationMap?: IUiStateLocation;
     resources?: IUiStateResources;
@@ -130,6 +131,7 @@ export const INITIAL_APP_DB: IAppDb = {
         mainAppState: MainAppShowStateEnum.INIT,
         previewMode: -1,
         uiSideProps: SideProps.none,
+        appSized: Map({}),
         campaign: {
             campaignTimelineBoardViewerSelected: -1,
             campaignTimelineChannelSelected: -1,

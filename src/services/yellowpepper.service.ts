@@ -181,6 +181,10 @@ export class YellowPepperService {
         return this.store.select(store => store.appDb.uiState.locationMap.loadLocationMap);
     }
 
+    listenAppSizeChanged(): Observable<any> {
+        return this.store.select(store => store.appDb.uiState.appSized);
+    }
+
     listenLocationMarkerSelected(): Observable<LocationMarkModel> {
         return this.store.select(store => store.appDb.uiState.locationMap.locationMarkerSelected)
             .filter(v => !_.isNull(v));

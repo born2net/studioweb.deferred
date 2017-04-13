@@ -14,6 +14,7 @@ import {RedPepperService} from "../services/redpepper.service";
 import {IUiState} from "../store/store.data";
 import {ACTION_UISTATE_UPDATE} from "../store/actions/appdb.actions";
 import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
+import {Map, List} from 'immutable';
 
 enum MainAppShowModeEnum {
     MAIN,
@@ -67,6 +68,7 @@ export class AppComponent implements AfterViewInit {
         this.listenAppStateChange();
         this.toastr.setRootViewContainerRef(vRef);
         this.listenRouterUpdateTitle();
+        this.appResized();
         Observable.fromEvent(window, 'resize').debounceTime(250)
             .subscribe(() => {
                 this.appResized();
@@ -196,7 +198,8 @@ export class AppComponent implements AfterViewInit {
                     case MainAppShowStateEnum.SAVED: {
                         con('Saved to server');
                         if (this.syncOnSave)
-                            this.rp.sendCommand('syncAndStart', -1, () => {});
+                            this.rp.sendCommand('syncAndStart', -1, () => {
+                            });
                         this.syncOnSave = false;
                         break;
                     }
@@ -276,6 +279,9 @@ export class AppComponent implements AfterViewInit {
     public appResized(): void {
         var appHeight = document.body.clientHeight;
         var appWidth = document.body.clientWidth;
+        var uiState: IUiState = {appSized: Map({width: appWidth, height: appHeight})}
+        this.yp.dispatch(({type: ACTION_UISTATE_UPDATE, payload: uiState}))
+
         this.commBroker.setValue(Consts.Values().APP_SIZE, {
             height: appHeight,
             width: appWidth
