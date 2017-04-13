@@ -50,6 +50,7 @@ declare class EnjoyHint {
     set(value:any);
     trigger(value:any);
     run:()=>void;
+    getCurrentStep:()=>void;
 }
 
 declare class RC4 {

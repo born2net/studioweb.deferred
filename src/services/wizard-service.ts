@@ -1,11 +1,12 @@
 import {Injectable, NgZone} from "@angular/core";
 import {Router} from "@angular/router";
 import {RedPepperService} from "./redpepper.service";
-import * as _ from "lodash";
 import {Lib} from "../Lib";
 import {BLOCK_SERVICE, PLACEMENT_IS_SCENE} from "../interfaces/Consts";
 import {BlockService} from "../app/blocks/block-service";
-import {CommBroker} from "./CommBroker";
+import {CommBroker, IMessage} from "./CommBroker";
+import {Consts} from "../Conts";
+import * as _ from 'lodash';
 
 const log = (i_msg) => {
     console.log(i_msg)
@@ -504,11 +505,34 @@ export class WizardService {
 
     constructor(private router: Router, private rp: RedPepperService, private zone: NgZone, private commBroker: CommBroker) {
         this.m_blockService = this.commBroker.getService(BLOCK_SERVICE)
+        this._listenAppResized();
+
         // if (Lib.DevMode()) {
         //     setTimeout(() => {
         //         this.start();
         //     }, 2000)
         // }
+    }
+
+    /**
+     Listen to when the app is resized so we can re-render
+     @method _listenAppResized
+     **/
+    _listenAppResized() {
+        this.commBroker.onEvent(Consts.Events().WIN_SIZED)
+            .subscribe((msg: IMessage) => {
+                if (!this.m_enjoyHint)
+                    return;
+                // var step = this.m_enjoyHint.getCurrentStep();
+                // var exists = _.contains(this.m_ignoreResizeInStep, step);
+                // if (exists)
+                //     return;
+                if (this.m_enjoyHint) {
+                    this.m_enjoyHint.trigger('skip');
+                    this._closeWizard();
+                }
+
+            }, (e) => console.error(e))
     }
 
     public start() {
@@ -518,6 +542,7 @@ export class WizardService {
             },
             onEnd: () => {
                 this._closeWizard();
+                this
             },
             onSkip: () => {
                 this._closeWizard();
@@ -571,6 +596,7 @@ export class WizardService {
     }
 
     _closeWizard() {
+        this.m_enjoyHint = null;
         log('wizard closed');
     }
 
