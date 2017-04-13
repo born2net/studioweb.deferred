@@ -362,7 +362,7 @@ export class WizardService {
             "click .appList": 'select a campaign',
             "skipButton": {text: "quit"},
             right: 100,
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 30');
             }
@@ -373,7 +373,7 @@ export class WizardService {
             timeout: 1000,
             "click #selectNextChannel": 'select the next channel',
             "skipButton": {text: "quit"},
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 31');
             }
@@ -385,7 +385,7 @@ export class WizardService {
             top: 6,
             bottom: 6,
             "skipButton": {text: "quit"},
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 32');
                 // $('#addResourcesBlockListContainer').find('[data-toggle]').trigger('click');
@@ -400,22 +400,22 @@ export class WizardService {
             padding: 15,
             margin: 15,
             right: 1200,
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 33');
             }
         },
         {
             event: "click",
-            selector: $('.installPanel', '#appNavigator'),
+            selector: $('.fa-rocket', '#appWrapComp').parent(),
             "skipButton": {text: "quit"},
             timeout: 600,
             description: 'next lets switch to Install',
             right: 10,
             top: 10,
-            bottom: 10,
+            bottom: 10,              
             hideInEnterprise: true,
-            debugInclude: true,
+            debugInclude: false,
             onBeforeStart: function () {
                 log('STEP 35');
             }
@@ -440,14 +440,14 @@ export class WizardService {
         },
         {
             event: "click",
-            selector: $('.stationsPanel', '#appNavigator'),
+            selector: $('.fa-laptop', '#appWrapComp').parent(),
             "skipButton": {text: "quit"},
             timeout: 600,
             top: 10,
             bottom: 10,
             description: 'now lets switch to stations',
             right: 10,
-            debugInclude: false,
+            debugInclude: true,
             onBeforeStart: function () {
                 log('STEP 38');
             }
@@ -457,14 +457,14 @@ export class WizardService {
             timeout: 600,
             "skipButton": {text: "quit"},
             bottom: 400,
-            debugInclude: false,
+            debugInclude: true,
             onBeforeStart: function () {
                 log('STEP 39');
             }
         },
         {
             event: "click",
-            selector: $('.helpPanel', '#appNavigator'),
+            selector: $('.fa-heart', '#appWrapComp').parent(),
             "skipButton": {text: "quit"},
             timeout: 600,
             description: 'switch into help, we are almost done',
@@ -472,7 +472,7 @@ export class WizardService {
             top: 10,
             bottom: 10,
             hideInEnterprise: true,
-            debugInclude: false,
+            debugInclude: true,
             onBeforeStart: function () {
                 log('STEP 40');
             }
@@ -482,19 +482,16 @@ export class WizardService {
             timeout: 200,
             hideInEnterprise: true,
             "skipButton": {text: "quit"},
-            debugInclude: false,
+            debugInclude: true,
             onBeforeStart: function () {
                 log('STEP 41');
             }
         },
         {
-            event: "next",
+            "next #helpPanel": 'well done!</text><br/>give yourself a pat on the back',
             timeout: 200,
-            selector: $('#appEntry'),
             "skipButton": {text: "quit"},
-            description: 'well done!</text><br/>give yourself a pat on the back',
-            bottom: 600,
-            debugInclude: false,
+            debugInclude: true,
             onBeforeStart: function () {
                 log('STEP 42');
                 setTimeout(function () {

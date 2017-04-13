@@ -37,7 +37,7 @@ import * as _ from 'lodash';
         </div>
         <!-- move scroller to proper offset -->
         <div class="responsive-pad-right">
-            <div matchBodyHeight="150" style="overflow: scroll">
+            <div id="stationsPanel" matchBodyHeight="150" style="overflow: scroll">
                 <stations-list [filter]="m_filter" [stations]="m_stationModels$ | async" (onSelected)="_onSelected($event)">
                 </stations-list>
             </div>
