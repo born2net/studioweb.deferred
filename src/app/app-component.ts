@@ -4,7 +4,6 @@ import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
 import {CommBroker} from "../services/CommBroker";
 import {Title} from "@angular/platform-browser";
 import {ToastsManager} from "ng2-toastr";
-import {Consts} from "../Conts";
 import {Observable} from "rxjs";
 import * as packageJson from "../../package.json";
 import {AuthService} from "../services/AuthService";
@@ -15,6 +14,7 @@ import {IUiState} from "../store/store.data";
 import {ACTION_UISTATE_UPDATE} from "../store/actions/appdb.actions";
 import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
 import {Map, List} from 'immutable';
+import {Consts} from "../interfaces/Consts";
 
 enum MainAppShowModeEnum {
     MAIN,

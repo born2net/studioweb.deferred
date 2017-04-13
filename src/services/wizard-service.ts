@@ -5,7 +5,6 @@ import {Lib} from "../Lib";
 import {BLOCK_SERVICE, PLACEMENT_IS_SCENE} from "../interfaces/Consts";
 import {BlockService} from "../app/blocks/block-service";
 import {CommBroker, IMessage} from "./CommBroker";
-import {Consts} from "../Conts";
 import * as _ from 'lodash';
 import {YellowPepperService} from "./yellowpepper.service";
 
