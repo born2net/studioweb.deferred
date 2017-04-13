@@ -639,7 +639,8 @@ export class YellowPepperService {
                 return i_user.getAccountType() != -1;
             })
             .map((i_user: UserModel) => {
-                return i_user.resellerId == 1 || i_user.resellerWhiteLabel.WhiteLabel.attr.enabled == "1"
+                var res = i_user.resellerId == 1 || i_user.resellerWhiteLabel.WhiteLabel.attr.enabled == "0"
+                return res;
             })
     }
 
