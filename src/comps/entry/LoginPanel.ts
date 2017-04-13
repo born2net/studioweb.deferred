@@ -77,7 +77,7 @@ import {Compbaser, NgmslibService} from "ng-mslib";
                     <br/>
                 </div>
                 <br/>
-                <a id="loginButton" (click)="onClickedLogin()" type="submit" class="btn rounded-btn"> enterprise member login
+                <a id="loginButton" (click)="onClickedLogin()" type="submit" class="btn rounded-btn">  login to your account
                     <span *ngIf="m_showTwoFactor" style="font-size: 9px; max-height: 15px; display: block; padding: 0; margin: 0; position: relative; top: -20px">with Google authenticator</span>
                 </a>&nbsp;
                 <br/>
@@ -90,7 +90,7 @@ import {Compbaser, NgmslibService} from "ng-mslib";
                 <br/>
                 <br/>
                 <br/>
-                <a href="http://www.digitalsignage.com/_html/benefits.html" target="_blank">not an enterprise member? learn more</a>
+                <!--<a href="http://www.digitalsignage.com/_html/benefits.html" target="_blank">not an enterprise member? learn more</a>-->
                 <!-- todo: add forgot password in v2-->
                 <div id="languageSelectionLogin"></div>
             </form>

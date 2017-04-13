@@ -19,8 +19,9 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
         ])
     ],
     template: `
-               <Twofactor></Twofactor>
-           `,
+        <!-- not using two factor for now -->
+        <!--<Twofactor></Twofactor>-->
+    `,
 })
 export class SettingsNavigation extends Compbaser {
 
