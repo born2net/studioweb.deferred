@@ -509,8 +509,9 @@ export class WizardService {
 
     constructor(private router: Router, private rp: RedPepperService, private zone: NgZone, private commBroker: CommBroker, private yp: YellowPepperService) {
         this.m_blockService = this.commBroker.getService(BLOCK_SERVICE)
-        this._listenAppResized();
-
+        this.zone.runOutsideAngular(()=>{
+            this._listenAppResized();
+        })
         // if (Lib.DevMode()) {
         //     setTimeout(() => {
         //         this.start();
@@ -527,89 +528,50 @@ export class WizardService {
             .subscribe((size: Map<any, any>) => {
                 this.width = size.get('width');
                 this.height = size.get('height');
+                if (this.m_enjoyHint)
+                    this.m_enjoyHint.trigger('skip');
             }, (e) => console.error(e));
-
-        // this.commBroker.onEvent(Consts.Events().WIN_SIZED)
-        //     .subscribe((msg: IMessage) => {
-        //         if (!this.m_enjoyHint)
-        //             return;
-        //         // var step = this.m_enjoyHint.getCurrentStep();
-        //         // var exists = _.contains(this.m_ignoreResizeInStep, step);
-        //         // if (exists)
-        //         //     return;
-        //         if (this.m_enjoyHint) {
-        //             this.m_enjoyHint.trigger('skip');
-        //             this._closeWizard();
-        //         }
-        //
-        //     }, (e) => console.error(e))
     }
 
     public start() {
-        if (this.width < 1535 || this.height < 830)
+        if (this.width < 1535 || this.height < 820)
             return bootbox.alert('Your browser window is too small to run the wizard');
 
-        this.m_enjoyHint = new EnjoyHint({
-            onStart: () => {
-            },
-            onEnd: () => {
-                this._closeWizard();
-                this
-            },
-            onSkip: () => {
-                this._closeWizard();
-            }
-        });
-        if (this.rp.getUserData().resellerID != 1) {
-            _.forEach(this.wizardSteps, (item: any, index) => {
-                if (item.hideInEnterprise == true) {
-                    this.wizardSteps = _.without(this.wizardSteps, item);
-                }
-            });
-        }
-
-        if (Lib.DevMode()) {
-            _.forEach(this.wizardSteps, (item: any, index) => {
-                if (!item.debugInclude) {
-                    this.wizardSteps = _.without(this.wizardSteps, item);
-                }
-            });
-        }
-
-        var self = this;
         this.zone.runOutsideAngular(() => {
-            this.m_enjoyHint.set(self.wizardSteps);
-            this.m_enjoyHint.run();
+            this.m_enjoyHint = new EnjoyHint({
+                onStart: () => {
+                },
+                onEnd: () => {
+                    this.m_enjoyHint = null;
+                    this
+                },
+                onSkip: () => {
+                    this.m_enjoyHint = null;
+                }
+            });
+            if (this.rp.getUserData().resellerID != 1) {
+                _.forEach(this.wizardSteps, (item: any, index) => {
+                    if (item.hideInEnterprise == true) {
+                        this.wizardSteps = _.without(this.wizardSteps, item);
+                    }
+                });
+            }
+
+            if (Lib.DevMode()) {
+                _.forEach(this.wizardSteps, (item: any, index) => {
+                    if (!item.debugInclude) {
+                        this.wizardSteps = _.without(this.wizardSteps, item);
+                    }
+                });
+            }
+
+            var self = this;
+            this.zone.runOutsideAngular(() => {
+                this.m_enjoyHint.set(self.wizardSteps);
+                this.m_enjoyHint.run();
+            })
         })
-
-
-        // var enjoyhint_script_steps;
-        // switch (i_name) {
-        //     case 'campaigns': {
-        //         enjoyhint_script_steps = [
-        //             {
-        //                 'click #newCampaign': 'Click the "New" button to start creating your project'
-        //             }
-        //         ];
-        //         break;
-        //     }
-        //
-        //     case 'scenes': {
-        //         enjoyhint_script_steps = [
-        //             {
-        //                 'click #newScene': 'Click the "New" button to start creating your project'
-        //             }
-        //         ];
-        //         break;
-        //     }
-        // }
-        // this.m_enjoyHint.set(enjoyhint_script_steps);
-        // this.m_enjoyHint.run();
     }
 
-    _closeWizard() {
-        this.m_enjoyHint = null;
-        log('wizard closed');
-    }
 
 }
