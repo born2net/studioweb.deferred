@@ -67,7 +67,7 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
                                 <ul class="installopts">
                                     <li>
                                         <b data-localize="step1">Step 1:</b><span data-localize="purchaseOne"> purchase one of our devices: </span>
-                                        <button data-localize="orderNow" type="button" href="http://www.digitalsignage.com/_html/mediaplayer.html" class="helpLinks btn btn-primary btn-xs">order now
+                                        <button data-localize="orderNow" type="button" (click)="_openInNewTab('http://www.digitalsignage.com/_html/mediaplayer.html')" class="helpLinks btn btn-primary btn-xs">order now
                                         </button>
                                     </li>
                                     <li>
@@ -92,7 +92,7 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
                                 <ul class="installopts">
                                     <li>
                                         <b data-localize="step1">Step 1:</b><span data-localize="downloadAndroid"> download player from Google play store: </span>
-                                        <button href="http://android.digitalsignage.com" type="button" data-localize="download" class="helpLinks btn btn-primary btn-xs">download
+                                        <button (click)="_openInNewTab('http://android.digitalsignage.com')" type="button" data-localize="download" class="helpLinks btn btn-primary btn-xs">download
                                         </button>
                                     </li>
                                     <li>
@@ -117,7 +117,7 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
                                 <ul class="installopts">
                                     <li>
                                         <b data-localize="step1">Step 1:</b><span data-localize="downloadSignagePlayerExe"> download the SignagePlayer EXE app: </span>
-                                        <button href="http://galaxy.signage.me/Code/install/exe/CloudSignagePlayerSetup.exe" type="button" data-localize="download" class="helpLinks btn btn-primary btn-xs">
+                                        <button (click)="_openInNewTab('http://galaxy.signage.me/Code/install/exe/CloudSignagePlayerSetup.exe')" type="button" data-localize="download" class="helpLinks btn btn-primary btn-xs">
                                             download
                                         </button>
                                     </li>
@@ -143,12 +143,12 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
                                 <ul class="installopts">
                                     <li>
                                         <b data-localize="step1">Step 1:</b><span data-localize="downloadAIR"> download Adobe AIR runtime: </span>
-                                        <button type="button" href="http://get.adobe.com/air/" data-localize="download" class="helpLinks btn btn-primary btn-xs">download
+                                        <button type="button" (click)="_openInNewTab('http://get.adobe.com/air/')" data-localize="download" class="helpLinks btn btn-primary btn-xs">download
                                         </button>
                                     </li>
                                     <li>
                                         <b data-localize="step2">Step 2:</b><span data-localize="downloadSignagePlayer"> download the SignagePlayer AIR app: </span>
-                                        <button href="http://galaxy.signage.me/Code/Install/air/CloudSignagePlayer.air" type="button" data-localize="download" class="helpLinks btn btn-primary btn-xs">
+                                        <button (click)="_openInNewTab('http://galaxy.signage.me/Code/Install/air/CloudSignagePlayer.air')" type="button" data-localize="download" class="helpLinks btn btn-primary btn-xs">
                                             download
                                         </button>
                                     </li>
@@ -174,7 +174,7 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
                                 <ul class="installopts">
                                     <li>
                                         <b data-localize="step1">Step 1:</b><span data-localize="downloadIOS"> download player from the App store: </span>
-                                        <button href="http://ios.digitalsignage.com" type="button" data-localize="download" class="helpLinks btn btn-primary btn-xs">download
+                                        <button (click)="_openInNewTab('http://ios.digitalsignage.com')" type="button" data-localize="download" class="helpLinks btn btn-primary btn-xs">download
                                         </button>
                                     </li>
                                     <li>
@@ -192,5 +192,15 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
     `
 })
 export class InstallNavigation extends Compbaser {
+
+    _openInNewTab(url, event?:MouseEvent) {
+        if (event){
+            event.stopImmediatePropagation();
+            event.preventDefault();
+        }
+        var win = window.open(url, '_blank');
+        win.focus();
+    }
+
 }
 
