@@ -13,7 +13,7 @@ import {Subject} from "rxjs/Subject";
  usage:
 
  <img lazyImage class="center-block" style="width: 229px; height: 130px"
- [url]="'https://secure.digitalsignage.com/studioweb/assets/some_lazy.png'"
+ [url]="['https://secure.digitalsignage.com/studioweb/assets/some_lazy1.png','https://secure.digitalsignage.com/studioweb/assets/some_lazy2.png']"
  [loadingImage]="'https://secure.digitalsignage.com/studioweb/assets/screen_loading.png'"
  [defaultImage]="'https://secure.digitalsignage.com/studioweb/assets/screen.png'"
  [errorImage]="'https://secure.digitalsignage.com/studioweb/assets/screen_error.png'"
@@ -108,7 +108,6 @@ export class LazyImage {
             return new Promise((resolve, reject) => {
                 const img = new Image();
                 var url;
-                console.log(this.m_index);
                 if (i_urls[this.m_index]){
                     url =  i_urls[this.m_index];
                     this.m_index++;
@@ -116,7 +115,6 @@ export class LazyImage {
                     this.m_index = 0;
                     url =  i_urls[this.m_index];
                 }
-                console.log(this.m_index);
                 img.src = url;
                 img.onload = () => {
                     resolve(url);

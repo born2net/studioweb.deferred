@@ -34,9 +34,9 @@ import * as _ from "lodash";
     `],
     template: `
         <small class="debug">{{me}}</small>
-        <button *ngIf="m_placement == m_PLACEMENT_CHANNEL" (click)="_close()" id="prev" type="button" class="openPropsButton btn btn-default btn-sm">
-            <span class="glyphicon glyphicon-chevron-left"></span>
-        </button>
+        <!--<button *ngIf="m_placement == m_PLACEMENT_CHANNEL" (click)="_close()" id="prev" type="button" class="openPropsButton btn btn-default btn-sm">-->
+            <!--<span class="glyphicon glyphicon-chevron-left"></span>-->
+        <!--</button>-->
         <div style="padding-top: 20px; padding-right: 30px" class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
             <div *ngIf="m_placement == m_PLACEMENT_SCENE || m_placement == m_PLACEMENT_CHANNEL" class="panel panel-default">
                 <div class="panel-heading" role="tab" id="headingOne">

@@ -9,10 +9,10 @@ import {UserModel} from "../../models/UserModel";
     selector: 'reseller-logo',
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <img lazyImage class="center-block" style="width: 50px; height: 50px"
-             [loadingImage]="'https://secure.digitalsignage.com/studioweb/assets/screen_loading.png'"
-             [defaultImage]="'https://secure.digitalsignage.com/studioweb/assets/screen.png'"
-             [errorImage]="'https://secure.digitalsignage.com/studioweb/assets/screen_error.png'"
+        <img lazyImage class="center-block img-circle" style="width: 30px; height: 30px; position: relative; top: -8px"
+             [loadingImage]="'https://secure.digitalsignage.com/studioweb/assets/default_logo.png'"
+             [defaultImage]="'https://secure.digitalsignage.com/studioweb/assets/default_logo.png'"
+             [errorImage]="'https://secure.digitalsignage.com/studioweb/assets/default_logo.png'"
              [retry]="3"
              [delay]="500"
              (loaded)="_onLoaded()"

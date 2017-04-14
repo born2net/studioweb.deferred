@@ -10,7 +10,7 @@
             </button>
             <span id="angularText">
                 StudioWeb
-                <Logo></Logo>
+                <Logo *ngIf="isBrandingDisabled | async"></Logo>
                 <label [ngClass]="{offline: offlineDevMode}" style="font-size: 10px; font-family: Arial">{{version}} | ng {{ngVersion}} | {{offlineDevMode==true ? 'offline' : 'online'}}</label>
             </span>
 

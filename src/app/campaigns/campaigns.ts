@@ -38,8 +38,7 @@ import {IScreenTemplateData} from "../../interfaces/IScreenTemplate";
                     <campaign-resolution #campaignResolution (onSelection)="sliderItemCampaignResolution.onNext()"></campaign-resolution>
                 </ng-template>
             </Slideritem>
-            <Slideritem [templateRef]="e" #sliderItemCampaignLayout (onChange)="_onSlideChange($event)" class="page left campaignLayout" [showToButton]="false" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignResolution'"
-                        [to]="'campaignEditor'">
+            <Slideritem [templateRef]="e" #sliderItemCampaignLayout (onChange)="_onSlideChange($event)" class="page left campaignLayout" [showToButton]="false" [toDirection]="'right'" [fromDirection]="'left'" [from]="'campaignResolution'"  [to]="'campaignEditor'">
                 <ng-template #e>
                     <campaign-layout [onNewCampaignMode]="true" (onSelection)="sliderItemCampaignLayout.onNext(); _createCampaign($event)"></campaign-layout>
                 </ng-template>
@@ -64,7 +63,7 @@ import {IScreenTemplateData} from "../../interfaces/IScreenTemplate";
                     <screen-layout-editor #screenLayoutEditor (onGoBack)="sliderItemCampaignEditor.slideTo('campaignEditor','left')"></screen-layout-editor>
                 </ng-template>
             </Slideritem>
-            <Slideritem [templateRef]="h" #sliderAddContent [showFromButton]="false" class="page left addContent" [fromDirection]="'left'" [from]="'campaignList'">
+            <Slideritem [templateRef]="h" #sliderAddContent [showFromButton]="true" class="page left addContent" [fromDirection]="'left'" [from]="'campaignEditor'">
                 <ng-template #h>
                     <add-content #addContent [placement]="m_PLACEMENT_CHANNEL" (onClosed)="_onAddedContentClosed()" (onAddContentSelected)="_onAddedContent($event) ; sliderItemCampaignEditor.slideTo('campaignEditor','left')"></add-content>
                 </ng-template>
