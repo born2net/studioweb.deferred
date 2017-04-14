@@ -208,6 +208,11 @@ export class YellowPepperService {
             })
     }
 
+    listenUserModel(): Observable<UserModel> {
+        return this.store.select(store => store.appDb.userModel)
+            .filter((userModel) => !_.isUndefined(userModel.resellerId) )
+    }
+
     /**
      listen to all timeline for specified campaign id
      **/

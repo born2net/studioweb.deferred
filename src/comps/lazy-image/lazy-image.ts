@@ -31,7 +31,7 @@ import {Subject} from "rxjs/Subject";
  lazyImage: LazyImage;
 
  _lazyLoad() {
-     this.lazyImage.setUrl('https://secure.digitalsignage.com/studioweb/assets/some_lazy.png');
+     this.lazyImage.setUrl(['https://secure.digitalsignage.com/studioweb/assets/some_lazy.png']);
  }
 
  _resetSnapshotSelection() {
@@ -52,7 +52,8 @@ import {Subject} from "rxjs/Subject";
 })
 export class LazyImage {
 
-    private m_url;
+    private m_urls: Array<string> = [];
+    private m_index = 0;
     private cancel$ = new Subject();
 
     constructor(private el: ElementRef, private ngZone: NgZone) {
@@ -60,26 +61,24 @@ export class LazyImage {
 
     // @Input('lazyImage') lazyImage;   // to change support to directive of: <img lazyImage="'http://www...'" ...
 
-    @Input() defaultImage: string;
-    @Input() loadingImage: string;
-    @Input() errorImage: string;
-    @Input() retry: number = 10;
-    @Input() delay: number = 500;
-
-
-    @Input()
-    set url(i_url: string) {
-        this.m_url = i_url;
-        this.loadImage(i_url);
-    }
-
     @Output() loaded: EventEmitter<any> = new EventEmitter<any>();
     @Output() completed: EventEmitter<any> = new EventEmitter<any>();
     @Output() errored: EventEmitter<any> = new EventEmitter<any>();
+    @Input() defaultImage: string;
+    @Input() loadingImage: string;
+    @Input() errorImage: string;
+    @Input() retry: number = 5;
+    @Input() delay: number = 1000;
 
-    set setUrl(i_url) {
-        this.m_url = i_url;
-        this.loadImage(i_url);
+    @Input()
+    set urls(i_urls: Array<string>) {
+        this.setUrls(i_urls)
+    }
+
+    setUrls(i_urls: Array<string>) {
+        this.m_index = 0;
+        this.m_urls = i_urls;
+        this.loadImage(i_urls);
     }
 
     public resetToDefault() {
@@ -104,13 +103,23 @@ export class LazyImage {
         return element;
     }
 
-    loadImage(i_url) {
+    loadImage(i_urls) {
         const pollAPI$ = Observable.defer(() => {
             return new Promise((resolve, reject) => {
                 const img = new Image();
-                img.src = i_url;
+                var url;
+                console.log(this.m_index);
+                if (i_urls[this.m_index]){
+                    url =  i_urls[this.m_index];
+                    this.m_index++;
+                } else {
+                    this.m_index = 0;
+                    url =  i_urls[this.m_index];
+                }
+                console.log(this.m_index);
+                img.src = url;
                 img.onload = () => {
-                    resolve(i_url);
+                    resolve(url);
                 };
                 img.onerror = err => {
                     this.setImage(this.el.nativeElement, this.loadingImage);
@@ -129,7 +138,7 @@ export class LazyImage {
             .takeUntil(this.cancel$)
 
         pollAPI$.subscribe((v) => {
-            this.setImage(this.el.nativeElement, this.m_url)
+            this.setImage(this.el.nativeElement, v)
             this.loaded.emit();
         }, (e) => {
             this.setImage(this.el.nativeElement, this.errorImage);

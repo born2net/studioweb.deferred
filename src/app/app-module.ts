@@ -50,6 +50,7 @@ import {GlobalErrorHandler} from "../services/global-error-handler";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {FasterqTerminal} from "./fasterq/fasterq-terminal";
 import {WizardService} from "../services/wizard-service";
+import {ResellerLogo} from "../comps/logo/reseller-logo";
 
 // import "fabric"; // need to remove if we import via cli
 // import {ScreenTemplate} from "../comps/screen-template/screen-template";
@@ -79,7 +80,7 @@ export var providing = [CommBroker, WizardService, AUTH_PROVIDERS, RedPepperServ
     }
 ];
 
-var decelerations = [AppComponent, AutoLogin, LoginPanel, Logo, Appwrap, Dashboard, Logout, NgMenu, NgMenuItem, ImgLoader, FasterqTerminal];
+var decelerations = [AppComponent, AutoLogin, LoginPanel, Logo, ResellerLogo ,Appwrap, Dashboard, Logout, NgMenu, NgMenuItem, ImgLoader, FasterqTerminal];
 
 export function appReducer(state: any = INITIAL_APPLICATION_STATE, action: any) {
     if (environment.production) {

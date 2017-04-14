@@ -224,7 +224,7 @@ export class StationsPropsManager extends Compbaser {
         this.m_loading = true;
         var path = this.rp.sendSnapshot(d, 0.2, this.m_selectedStation.id, () => {
             this.m_snapPath = path;
-            this.lazyImage.url = path;
+            this.lazyImage.urls = [path];
         });
         setTimeout(() => {
             this.loadImage(path)
