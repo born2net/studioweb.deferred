@@ -150,6 +150,7 @@ export class AppModule {
         window['jXML'] = jQuery;
         this.ngmslibService.globalizeStringJS();
         Lib.Con(StringJS('app-loaded-and-ready').humanize().s);
+        Lib.AlertOnLeave();
     }
 }
 

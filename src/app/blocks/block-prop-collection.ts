@@ -79,7 +79,6 @@ import {YellowPepperService} from "../../services/yellowpepper.service";
                     <json-event-grid [collectionList]="m_collectionList" [resources]="this.m_jsonEventResources" [showOption]="'page'" [setBlockData]="m_blockData"></json-event-grid>
                 </li>
             </div>
-        </form><h5>block id {{m_blockData.blockID}}</h5>
         <modal #modal>
             <modal-header [show-close]="true">
                 <h4 i18n class="modal-title">add content to collection</h4>

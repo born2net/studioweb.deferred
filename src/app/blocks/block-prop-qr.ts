@@ -24,7 +24,6 @@ import * as _ from "lodash";
                 </ul>
             </div>
         </form>
-        <h5>block id {{m_blockData.blockID}}</h5>
     `
 })
 export class BlockPropQR extends Compbaser implements AfterViewInit {

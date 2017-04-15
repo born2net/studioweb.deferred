@@ -73,6 +73,9 @@ import {MediaPlayer} from "../../comps/media-player/media-player";
                     <li>
                         <a class="helpLinks" target="_blank"  href="http://www.digitalsignage.com/support/upload/index.php?/Knowledgebase/List" data-localize="knowledgeBase">Knowledge base</a>
                     </li>
+                    <li>
+                        <a class="helpLinks" target="_blank"  href="http://www.digitalsignage.com/files/FQ_PrinterSetup.pdf">Setting up FasterQ printer</a>
+                    </li>
                 </ul>
             </div>
             <hr/>

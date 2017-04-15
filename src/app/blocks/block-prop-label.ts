@@ -27,7 +27,6 @@ import {IFontSelector} from "../../comps/font-selector/font-selector";
             </div>
         </form>
         <font-selector (onChange)="_onFontChanged($event)" [setConfig]="m_fontConfig"></font-selector>
-        <h5>block id {{m_blockData.blockID}}</h5>
     `
 })
 export class BlockPropLabel extends Compbaser implements AfterViewInit {

@@ -41,7 +41,6 @@ const rxjsDebugger = true;
 const rc4Key = '226a3a42f34ddd778ed2c3ba56644315';
 Observable.prototype.sub = Observable.prototype.subscribe;
 
-
 window['con'] = (msg, stringify) => {
     if (Lib.DevMode()) {
         if (stringify)
@@ -159,6 +158,21 @@ export class Lib {
         return rc4.doEncrypt(crumb);
     }
 
+    static AlertOnLeave(){
+        if (!Lib.DevMode()) {
+            window.onbeforeunload = function (e) {
+                var message = "Did you save your changes?",
+                    e = e || window.event;
+                // For IE and Firefox
+                if (e) {
+                    e.returnValue = message;
+                }
+                // For Safari
+                return message;
+            };
+        }
+
+    }
     /**
      Format a seconds value into an object broken into hours / minutes / seconds
      @method formatSecondsToObject

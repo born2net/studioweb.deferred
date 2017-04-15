@@ -15,6 +15,7 @@ import {ACTION_UISTATE_UPDATE} from "../store/actions/appdb.actions";
 import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
 import {Map, List} from 'immutable';
 import {Consts} from "../interfaces/Consts";
+import {animate, state, style, transition, trigger} from "@angular/animations";
 
 enum MainAppShowModeEnum {
     MAIN,
@@ -35,7 +36,17 @@ export enum MainAppShowStateEnum {
 
 @Component({
     selector: 'app-root',
-    templateUrl: './app-component.html'
+    templateUrl: './app-component.html',
+    animations: [
+        trigger('logoutState', [
+            state('active', style({
+                backgroundColor: '#6cff1c',
+                transform: 'scale(2)',
+                alpha: 0
+            })),
+            transition('* => active', animate('1000ms ease-out'))
+        ])
+    ]
 })
 export class AppComponent implements AfterViewInit {
     version: string;
@@ -46,6 +57,7 @@ export class AppComponent implements AfterViewInit {
     m_hidden = false;
     isBrandingDisabled: Observable<boolean>
     syncOnSave: boolean = false;
+    m_logoutState = '';
 
     constructor(private router: Router,
                 private localStorage: LocalStorage,
@@ -127,16 +139,6 @@ export class AppComponent implements AfterViewInit {
      @param {Function} call back after save
      **/
     saveAndRestartPrompt(i_callBack) {
-        // self.m_stationsListView = BB.comBroker.getService(BB.SERVICES['STATIONS_LIST_VIEW']);
-        // if (self.m_stationsListView != undefined) {
-        //     var totalStations = self.m_stationsListView.getTotalActiveStation();
-        //     if (totalStations == 0) {
-        //         self.save(function () {
-        //         });
-        //         return;
-        //     }
-        // }
-
         bootbox.dialog({
             message: 'Restart connected stations and apply your saved work?',
             title: 'Save work to remote server',
@@ -194,7 +196,7 @@ export class AppComponent implements AfterViewInit {
                         this.viewMode(MainAppShowModeEnum.MAIN);
                         break;
                     }
-
+                            
                     case MainAppShowStateEnum.SAVED: {
                         con('Saved to server');
                         if (this.syncOnSave)
@@ -206,6 +208,7 @@ export class AppComponent implements AfterViewInit {
 
                     case MainAppShowStateEnum.GOODBYE: {
                         con('Goodbye');
+                        this.m_logoutState = 'active'
                         this.viewMode(MainAppShowModeEnum.LOGOUT);
                         break;
                     }

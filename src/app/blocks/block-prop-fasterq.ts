@@ -60,7 +60,6 @@ import {timeout} from "../../decorators/timeout-decorator";
                 </ul>
             </div>
         </form>
-        <h5>block id {{m_blockData.blockID}}</h5>
     `
 })
 export class BlockPropFasterQ extends Compbaser implements AfterViewInit {
