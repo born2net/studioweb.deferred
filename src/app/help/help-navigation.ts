@@ -3,6 +3,8 @@ import {Compbaser} from "ng-mslib";
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import {ModalComponent} from "ng2-bs3-modal/ng2-bs3-modal";
 import {MediaPlayer} from "../../comps/media-player/media-player";
+import {YellowPepperService} from "../../services/yellowpepper.service";
+import {Observable} from "rxjs/Observable";
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -55,22 +57,22 @@ import {MediaPlayer} from "../../comps/media-player/media-player";
             <div class="reshid">
                 <h3 i18n > links</h3>
                 <ul>
-                    <li>
+                    <li *ngIf="isBrandingDisabled | async">
                         <a class="helpLinks"target="_blank" href="http://lite.digitalsignage.com" data-localize="studioLitePage">StudioLite page</a>
                     </li>
-                    <li>
+                    <li *ngIf="isBrandingDisabled | async">
                         <a class="helpLinks"target="_blank" href="http://script.digitalsignage.com/forum/index.php" data-localize="supportForum">Support forum</a>
                     </li>
-                    <li>
+                    <li *ngIf="isBrandingDisabled | async">
                         <a class="helpLinks"target="_blank" href="http://git.digitalsignage.com" data-localize="openSource">Open source</a>
                     </li>
-                    <li>
+                    <li *ngIf="isBrandingDisabled | async">
                         <a class="helpLinks" target="_blank" href="http://script.digitalsignage.com/cgi-bin/webinar.cgi" data-localize="webinar">Webinar</a>
                     </li>
-                    <li>
+                    <li *ngIf="isBrandingDisabled | async">
                         <a class="helpLinks" target="_blank" href="http://www.digitalsignage.com/_html/faqs.html" data-localize="faq">FAQs</a>
                     </li>
-                    <li>
+                    <li *ngIf="isBrandingDisabled | async">
                         <a class="helpLinks" target="_blank"  href="http://www.digitalsignage.com/support/upload/index.php?/Knowledgebase/List" data-localize="knowledgeBase">Knowledge base</a>
                     </li>
                     <li>
@@ -99,6 +101,7 @@ export class HelpNavigation extends Compbaser {
 
     m_playResource
     m_playing = false;
+    isBrandingDisabled: Observable<boolean>;
 
     @ViewChild('modal')
     modal: ModalComponent;
@@ -106,8 +109,9 @@ export class HelpNavigation extends Compbaser {
     @ViewChild('mediaPlayer')
     media: MediaPlayer;
 
-    constructor() {
+    constructor(private yp:YellowPepperService) {
         super();
+        this.isBrandingDisabled = this.yp.isBrandingDisabled()
     }
 
     _onClose(){

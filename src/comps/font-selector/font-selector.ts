@@ -3,6 +3,7 @@ import {Compbaser} from "ng-mslib";
 import {Subject} from "rxjs";
 import {FontLoaderService} from "../../services/font-loader-service";
 import {timeout} from "../../decorators/timeout-decorator";
+import {Lib} from "../../Lib";
 
 export interface IFontSelector {
     bold: boolean;
@@ -135,6 +136,9 @@ export class FontSelector extends Compbaser implements AfterViewInit {
     @Input()
     set setConfig(i_config: IFontSelector) {
         if (!i_config) return;
+        if (Lib.ColorToDecimal(i_config.color)==0){
+            i_config.color = '#ffffff';
+        };
         this.m_config = i_config
     }
 

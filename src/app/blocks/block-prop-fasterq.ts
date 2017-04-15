@@ -5,6 +5,7 @@ import {Compbaser} from "ng-mslib";
 import * as _ from "lodash";
 import {Subject} from "rxjs";
 import {timeout} from "../../decorators/timeout-decorator";
+import {Lib} from "../../Lib";
 
 @Component({
     selector: 'block-prop-fasterq',
@@ -129,13 +130,16 @@ export class BlockPropFasterQ extends Compbaser implements AfterViewInit {
 
     @timeout()
     _moveColorPicker() {
+        console.log(this.m_color);
         if (this.m_moveColorPickerOnce) return;
         this.m_moveColorPickerOnce = true;
         jXML(".color-picker", this.el.nativeElement).css("left", "+=100");
     }
 
-    @timeout()
+    @timeout(50)
     private setNewColor(i_color) {
+        if (_.isNaN(Lib.ColorToDecimal(i_color)))
+            i_color = '#ffffff';
         this.m_color = i_color
         this.cd.markForCheck();
     }

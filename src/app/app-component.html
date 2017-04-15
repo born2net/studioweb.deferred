@@ -23,7 +23,7 @@
                 <ng-menu-item [fontawesome]="'fa-edit'" [title]="'Scenes'"></ng-menu-item>
                 <ng-menu-item [fontawesome]="'fa-laptop'" [title]="'Stations'"></ng-menu-item>
                 <ng-menu-item [fontawesome]="'fa-group'" [title]="'Fasterq'"></ng-menu-item>
-                <ng-menu-item *ngIf="isBrandingDisabled | async" [fontawesome]="'fa-heart'" [title]="'Help'"></ng-menu-item>
+                <ng-menu-item [fontawesome]="'fa-heart'" [title]="'Help'"></ng-menu-item>
                 <ng-menu-item *ngIf="isBrandingDisabled | async" [fontawesome]="'fa-laptop'" [title]="'Install'"></ng-menu-item>
                 <!--<ng-menu-item [fontawesome]="'fa-cog'" [title]="'Settings'"></ng-menu-item>-->
                 <ng-menu-item [fontawesome]="'fa-cloud-upload'" [title]="'Studiopro'"></ng-menu-item>
@@ -90,7 +90,7 @@
     <h5 style="text-align: center; margin-top: 20px" i18n>loading...</h5>
 </div>
 <div [@logoutState]="m_logoutState" *ngIf="m_showMode == m_ShowModeEnum.LOGOUT">
-    <h1 style="text-align: center; margin-top: 200px" i18n>Have a nice day <i class="fa fa-smile-o"></i></h1>
+    <h1 style="text-align: center; margin-top: 200px" i18n>have a nice day <i class="fa fa-smile-o"></i></h1>
 </div>
 
 <live-preview *ngIf="m_showMode == m_ShowModeEnum.PREVIEW"></live-preview>
