@@ -158,7 +158,7 @@ export class BlockPropContainer extends Compbaser implements AfterViewInit {
                     this.m_tabTitle = blockData.blockAcronym;
                     this.m_blockData = blockData;
                     // for json based scenes show the settings, unless its the actual Json Player which we don't
-                    if (blockData.playerDataJsonHandle && this.m_blockTypeSelected != '4300') {
+                    if (blockData.playerMimeScene && this.m_blockTypeSelected != '4300') {
                         this.m_showSettingsTab = true;
                         this.toggleSettingsTab();
                     } else {
